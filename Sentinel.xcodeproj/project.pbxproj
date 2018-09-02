@@ -16,7 +16,6 @@
 		65B83F81213C08C600515915 /* TerrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F80213C08C600515915 /* TerrainNode.swift */; };
 		65B83F83213C08E400515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65B83F84213C09A000515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
-		65B83F86213C0D5500515915 /* GridTestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F85213C0D5500515915 /* GridTestExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +41,6 @@
 		6546A858213C0652009F0650 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65B83F80213C08C600515915 /* TerrainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainNode.swift; sourceTree = "<group>"; };
 		65B83F82213C08E400515915 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
-		65B83F85213C0D5500515915 /* GridTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTestExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +98,6 @@
 			isa = PBXGroup;
 			children = (
 				6546A856213C0652009F0650 /* GridTests.swift */,
-				65B83F85213C0D5500515915 /* GridTestExtensions.swift */,
 				6546A858213C0652009F0650 /* Info.plist */,
 			);
 			path = SentinelTests;
@@ -217,7 +214,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65B83F86213C0D5500515915 /* GridTestExtensions.swift in Sources */,
 				6546A857213C0652009F0650 /* GridTests.swift in Sources */,
 				65B83F84213C09A000515915 /* Grid.swift in Sources */,
 			);

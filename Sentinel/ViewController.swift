@@ -43,11 +43,11 @@ class ViewController: UIViewController {
         grid.build(at: GridPoint(x: 4, z: 2))
         grid.build(at: GridPoint(x: 3, z: 1))
         grid.build(at: GridPoint(x: 3, z: 3))
-//        grid.build(at: GridPoint(x: 8, z: 8))
-//        grid.build(at: GridPoint(x: 8, z: 8))
-//        grid.build(at: GridPoint(x: 8, z: 8))
-//        grid.build(at: GridPoint(x: 8, z: 8))
-//        grid.build(at: GridPoint(x: 8, z: 8))
+        grid.build(at: GridPoint(x: 8, z: 8))
+        grid.build(at: GridPoint(x: 8, z: 8))
+        grid.build(at: GridPoint(x: 8, z: 8))
+        grid.build(at: GridPoint(x: 8, z: 8))
+        grid.build(at: GridPoint(x: 8, z: 8))
 
         return grid
     }

@@ -42,25 +42,25 @@ class TerrainNode: SCNNode {
                         addChildNode(node)
                     case .slopeUpX:
                         let node = createSlopeXPiece(x: Float(x),
-                                                     y: Float(gridPiece.level) - 0.5,
+                                                     y: Float(gridPiece.level) + 0.5,
                                                      z: Float(z),
                                                      rotation: SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 4.0))
                         addChildNode(node)
                     case .slopeDownX:
                         let node = createSlopeXPiece(x: Float(x),
-                                                     y: Float(gridPiece.level) - 0.5,
+                                                     y: Float(gridPiece.level) + 0.5,
                                                      z: Float(z),
                                                      rotation: SCNVector4Make(0.0, 0.0, 1.0, Float.pi / -4.0))
                         addChildNode(node)
                     case .slopeUpZ:
                         let node = createSlopeZPiece(x: Float(x),
-                                                     y: Float(gridPiece.level) - 0.5,
+                                                     y: Float(gridPiece.level) + 0.5,
                                                      z: Float(z),
                                                      rotation: SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -4.0))
                         addChildNode(node)
                     case .slopeDownZ:
                         let node = createSlopeZPiece(x: Float(x),
-                                                     y: Float(gridPiece.level) - 0.5,
+                                                     y: Float(gridPiece.level) + 0.5,
                                                      z: Float(z),
                                                      rotation: SCNVector4Make(1.0, 0.0, 0.0, Float.pi / 4.0))
                         addChildNode(node)
