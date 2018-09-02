@@ -143,26 +143,9 @@ class GridTests: XCTestCase {
                              file: StaticString = #file,
                              line: UInt = #line) {
         let piece = grid.get(point: point)
+        let sortFunction = GridShape.sortFunction()
         XCTAssertEqual(piece.level, expectedLevel, file: file, line: line)
-        let sortFunction: (GridShape, GridShape) -> Bool = {shape1, shape2 in
-            return self.value(for: shape1) < self.value(for: shape2)
-        }
         XCTAssertEqual(piece.shapes.sorted(by: sortFunction), expectedShapes.sorted(by: sortFunction), file: file, line: line)
-    }
-
-    private func value(for shape: GridShape) -> Int {
-        switch shape {
-        case .flat:
-            return 0
-        case .slopeDownX:
-            return 1
-        case .slopeUpX:
-            return 2
-        case .slopeUpZ:
-            return 3
-        case .slopeDownZ:
-            return 4
-        }
     }
 
     private func outputLevels(grid: Grid) {
@@ -179,27 +162,11 @@ class GridTests: XCTestCase {
             for x in 0 ..< grid.width {
                 let piece = grid.get(point: GridPoint(x: x, z: z))
                 for shape in piece.shapes {
-                    print(string(for: shape), terminator: "")
+                    print(shape.stringValue(), terminator: "")
                 }
                 print(" ", terminator: "")
             }
             print("\n")
         }
     }
-
-    private func string(for shape: GridShape) -> String {
-        switch shape {
-        case .flat:
-            return "__"
-        case .slopeDownX:
-            return "-x"
-        case .slopeUpX:
-            return "+x"
-        case .slopeDownZ:
-            return "-z"
-        case .slopeUpZ:
-            return "+z"
-        }
-    }
-
 }
