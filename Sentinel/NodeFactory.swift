@@ -1,19 +1,16 @@
 import GLKit
 import SceneKit
 
-class TerrainNode: SCNNode {
-    let grid: Grid
+class NodeFactory: NSObject {
     let sideLength: Float
     let thickness: Float
 
-    let squareNode1: SCNNode
-    let squareNode2: SCNNode
-    let slopeNode: SlopeNode
+    let geometryFactory = GeometryFactory()
+    let flatNode1: SCNNode
+    let flatNode2: SCNNode
+    let wedgeNode: SCNNode
 
-    init(grid: Grid,
-         sideLength: Float,
-         thickness: Float) {
-        self.grid = grid
+    init(sideLength: Float, thickness: Float) {
         self.sideLength = sideLength
         self.thickness = thickness
 
@@ -28,7 +25,7 @@ class TerrainNode: SCNNode {
                              chamferRadius: 0.0)
         flatBox.firstMaterial = material
 
-        self.squareNode1 = SCNNode(geometry: flatBox)
+        self.flatNode1 = SCNNode(geometry: flatBox)
 
         // Yellow box
         material = material.copy() as! SCNMaterial
@@ -37,22 +34,22 @@ class TerrainNode: SCNNode {
         flatBox = flatBox.copy() as! SCNBox
         flatBox.firstMaterial = material
 
-        self.squareNode2 = SCNNode(geometry: flatBox)
+        self.flatNode2 = SCNNode(geometry: flatBox)
 
-        // Grey slope
-        self.slopeNode = SlopeNode()
-        self.slopeNode.createChildren(sideLength: sideLength, thickness: thickness)
+        // Grey wedge
+        material = material.copy() as! SCNMaterial
+        material.diffuse.contents = UIColor.darkGray
+
+        let wedge = geometryFactory.createWedge(size: sideLength)
+        wedge.firstMaterial = material
+        self.wedgeNode = SCNNode(geometry: wedge)
 
         super.init()
-
-        generateTerrain()
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    public func createTerrainNode(grid: Grid) -> SCNNode {
+        let terrainNode = SCNNode()
 
-    private func generateTerrain() {
         let width = grid.width
         let depth = grid.depth
 
@@ -62,56 +59,64 @@ class TerrainNode: SCNNode {
                 for gridShape in gridPiece.shapes {
                     switch gridShape {
                     case .flat:
-                        let node = createFlatPiece(x: x,
+                        let node = createFlatPiece(grid: grid,
+                                                   x: x,
                                                    y: Float(gridPiece.level),
                                                    z: z)
-                        addChildNode(node)
+                        terrainNode.addChildNode(node)
                     case .slopeUpX:
-                        let node = createSlopePiece(x: x,
+                        let node = createWedgePiece(grid: grid,
+                                                    x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z,
                                                     rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi))
-                        addChildNode(node)
+                        terrainNode.addChildNode(node)
                     case .slopeDownX:
-                        let node = createSlopePiece(x: x,
+                        let node = createWedgePiece(grid: grid,
+                                                    x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z)
-                        addChildNode(node)
+                        terrainNode.addChildNode(node)
                     case .slopeUpZ:
-                        let node = createSlopePiece(x: x,
+                        let node = createWedgePiece(grid: grid,
+                                                    x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z,
                                                     rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi / 2.0))
-                        addChildNode(node)
+                        terrainNode.addChildNode(node)
                     case .slopeDownZ:
-                        let node = createSlopePiece(x: x,
+                        let node = createWedgePiece(grid: grid,
+                                                    x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z,
                                                     rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi / -2.0))
-                        addChildNode(node)
+                        terrainNode.addChildNode(node)
                     }
                 }
             }
         }
+        return terrainNode
     }
+}
 
-    private func createFlatPiece(x: Int, y: Float, z: Int) -> SCNNode {
-        let source = (x + z) % 2 == 0 ? squareNode1 : squareNode2
+extension NodeFactory {
+    private func createFlatPiece(grid: Grid, x: Int, y: Float, z: Int) -> SCNNode {
+        let source = (x + z) % 2 == 0 ? flatNode1 : flatNode2
         let boxNode = source.clone()
-        boxNode.position = calculatePosition(x: x, y: y, z: z)
+        boxNode.position = calculatePosition(grid: grid, x: x, y: y, z: z)
         return boxNode
     }
 
-    private func createSlopePiece(x: Int, y: Float, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
-        let clone = slopeNode.clone()
-        clone.position = calculatePosition(x: x, y: y, z: z)
+    private func createWedgePiece(grid: Grid, x: Int, y: Float, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
+        let clone = wedgeNode.clone()
+        clone.position = calculatePosition(grid: grid, x: x, y: y, z: z)
         if let rotation = rotation {
             clone.rotation = rotation
         }
         return clone
     }
 
-    private func calculatePosition(x: Int, y: Float, z: Int) -> SCNVector3 {
+    private func calculatePosition(grid: Grid, x: Int, y: Float, z: Int) -> SCNVector3 {
         let width = Float(grid.width)
         let depth = Float(grid.depth)
         return SCNVector3Make((Float(x) - (width / 2.0)) * Float(sideLength),

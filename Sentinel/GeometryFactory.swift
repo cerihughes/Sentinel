@@ -1,11 +1,8 @@
-import GLKit
 import SceneKit
 
-import SceneKit
+class GeometryFactory: NSObject {
 
-private class GeometryFactory {
-
-    class func createWedge(size: Float) -> SCNGeometry {
+    func createWedge(size: Float) -> SCNGeometry {
         let halfSide = size / 2.0
 
         let vertices: [SCNVector3] = [
@@ -63,19 +60,5 @@ private class GeometryFactory {
 
         return SCNGeometry(sources: [vertexSource, normalSource],
                            elements: [triangleElement])
-    }
-}
-
-class SlopeNode: SCNNode {
-    func createChildren(sideLength: Float, thickness: Float) {
-        let material = SCNMaterial()
-        material.diffuse.contents = UIColor.darkGray
-        material.locksAmbientWithDiffuse = true
-
-        let wedge = GeometryFactory.createWedge(size: sideLength)
-        wedge.firstMaterial = material
-        let wedgeNode = SCNNode(geometry: wedge)
-
-        addChildNode(wedgeNode)
     }
 }
