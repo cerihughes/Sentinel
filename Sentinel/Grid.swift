@@ -144,10 +144,16 @@ extension Grid {
         if let neighbourPoint = neighbour(of: point, deltaX: deltas.x, deltaZ: deltas.z) {
             let neighbour = get(point: neighbourPoint)
             let neighbourLevel = neighbour.level
-            if level != neighbourLevel &&  !neighbour.isFlat {
+
+            if level == neighbourLevel && neighbour.isFlat {
+                return
+            }
+
+            if level != neighbourLevel && !neighbour.isFlat {
                 let directions = GridDirection.allValues(except: direction.opposite)
                 raise(point: neighbourPoint, shape: .flat, processDirections: directions)
             }
+            
             let shape = direction.toShape()
             raise(point: neighbourPoint, shape: shape, processDirections: [])
         }

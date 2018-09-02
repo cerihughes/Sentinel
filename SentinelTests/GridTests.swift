@@ -94,7 +94,7 @@ class GridTests: XCTestCase {
         assertPiece(in: grid, at: GridPoint(x: 0, z: 1), expectedLevel: 2, expectedShapes: [.slopeUpX])
         assertPiece(in: grid, at: point, expectedLevel: 2, expectedShapes: [.flat])
         assertPiece(in: grid, at: GridPoint(x: 2, z: 1), expectedLevel: 2, expectedShapes: [.slopeDownX])
-        assertPiece(in: grid, at: GridPoint(x: 0, z: 2), expectedLevel: 1, expectedShapes: [.slopeDownX, .slopeUpZ])
+        assertPiece(in: grid, at: GridPoint(x: 0, z: 2), expectedLevel: 1, expectedShapes: [.slopeDownZ, .slopeUpX])
         assertPiece(in: grid, at: GridPoint(x: 1, z: 2), expectedLevel: 2, expectedShapes: [.slopeDownZ])
         assertPiece(in: grid, at: GridPoint(x: 2, z: 2), expectedLevel: 1, expectedShapes: [.slopeDownX, .slopeDownZ])
     }
@@ -136,6 +136,7 @@ class GridTests: XCTestCase {
         assertPiece(in: grid, at: point4, expectedLevel: 1, expectedShapes: [.flat])
         assertPiece(in: grid, at: GridPoint(x: 2, z: 2), expectedLevel: 1, expectedShapes: [.slopeDownX, .slopeDownZ])
     }
+
     private func assertPiece(in grid: Grid,
                              at point: GridPoint,
                              expectedLevel: Int,
