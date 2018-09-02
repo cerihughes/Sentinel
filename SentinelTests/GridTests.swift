@@ -113,6 +113,29 @@ class GridTests: XCTestCase {
         assertPiece(in: grid, at: point2, expectedLevel: 1, expectedShapes: [.flat])
     }
 
+    func test_3x3_withSpacer() {
+        let grid = Grid(width: 3, depth: 3)
+        let point1 = GridPoint(x: 1, z: 0)
+        let point2 = GridPoint(x: 0, z: 1)
+        let point3 = GridPoint(x: 2, z: 1)
+        let point4 = GridPoint(x: 1, z: 2)
+        grid.build(at: point1)
+        grid.build(at: point2)
+        grid.build(at: point3)
+        grid.build(at: point4)
+        outputLevels(grid: grid)
+        outputShapes(grid: grid)
+
+        assertPiece(in: grid, at: GridPoint(x: 0, z: 0), expectedLevel: 1, expectedShapes: [.slopeUpX, .slopeUpZ])
+        assertPiece(in: grid, at: point1, expectedLevel: 1, expectedShapes: [.flat])
+        assertPiece(in: grid, at: GridPoint(x: 2, z: 0), expectedLevel: 1, expectedShapes: [.slopeDownX, .slopeUpZ])
+        assertPiece(in: grid, at: point2, expectedLevel: 1, expectedShapes: [.flat])
+        assertPiece(in: grid, at: GridPoint(x: 1, z: 1), expectedLevel: 1, expectedShapes: [.slopeUpX, .slopeUpZ, .slopeDownX, .slopeDownZ])
+        assertPiece(in: grid, at: point3, expectedLevel: 1, expectedShapes: [.flat])
+        assertPiece(in: grid, at: GridPoint(x: 0, z: 2), expectedLevel: 1, expectedShapes: [.slopeUpX, .slopeDownZ])
+        assertPiece(in: grid, at: point4, expectedLevel: 1, expectedShapes: [.flat])
+        assertPiece(in: grid, at: GridPoint(x: 2, z: 2), expectedLevel: 1, expectedShapes: [.slopeDownX, .slopeDownZ])
+    }
     private func assertPiece(in grid: Grid,
                              at point: GridPoint,
                              expectedLevel: Int,
