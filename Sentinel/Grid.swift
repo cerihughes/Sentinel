@@ -177,16 +177,6 @@ extension Grid {
         }
     }
 
-//    private func increment(point: GridPoint, shape: GridShape) -> Int {
-//        let piece = get(point: point)
-//        var level = piece.level
-//        if piece.isFlat {
-//            level += 1
-//        }
-//        piece.set(level: level, with: shape)
-//        return level
-//    }
-
     private func processNeighbour(of point: GridPoint, direction: GridDirection, level: Int) {
         let deltas = direction.toDeltas()
         if let neighbourPoint = neighbour(of: point, deltaX: deltas.x, deltaZ: deltas.z) {
