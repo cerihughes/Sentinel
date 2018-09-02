@@ -1,24 +1,21 @@
+import GLKit
 import SceneKit
 
 class TerrainNode: SCNNode {
     let grid: Grid
     let sideLength: Float
     let thickness: Float
-    let hypotenuse: Float
 
     let squareNode1: SCNNode
     let squareNode2: SCNNode
-    let slopeXNode: SCNNode
-    let slopeZNode: SCNNode
+    let slopeNode: SlopeNode
 
     init(grid: Grid,
          sideLength: Float,
-         thickness: Float = 0.1) {
+         thickness: Float) {
         self.grid = grid
         self.sideLength = sideLength
         self.thickness = thickness
-
-        self.hypotenuse = sqrtf(Float(powf(sideLength, 2.0)) * 2.0)
 
         // Red box
         var material = SCNMaterial()
@@ -42,26 +39,9 @@ class TerrainNode: SCNNode {
 
         self.squareNode2 = SCNNode(geometry: flatBox)
 
-        // Grey slope X
-        material = material.copy() as! SCNMaterial
-        material.diffuse.contents = UIColor.darkGray
-
-        let slopeXBox = SCNBox(width: CGFloat(hypotenuse),
-                               height: CGFloat(thickness),
-                               length: CGFloat(sideLength),
-                               chamferRadius: 0.0)
-        slopeXBox.firstMaterial = material
-        self.slopeXNode = SCNNode(geometry: slopeXBox)
-
-        // Grey slope Z
-        material = material.copy() as! SCNMaterial
-
-        let slopeZBox = SCNBox(width: CGFloat(sideLength),
-                               height: CGFloat(thickness),
-                               length: CGFloat(hypotenuse),
-                               chamferRadius: 0.0)
-        slopeZBox.firstMaterial = material
-        self.slopeZNode = SCNNode(geometry: slopeZBox)
+        // Grey slope
+        self.slopeNode = SlopeNode()
+        self.slopeNode.createChildren(sideLength: sideLength, thickness: thickness)
 
         super.init()
 
@@ -87,32 +67,27 @@ class TerrainNode: SCNNode {
                                                    z: z)
                         addChildNode(node)
                     case .slopeUpX:
-                        let node = createSlopePiece(sourceNode: slopeXNode,
-                                                    x: x,
+                        let node = createSlopePiece(x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z,
-                                                    rotation: SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 4.0))
+                                                    rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi))
                         addChildNode(node)
                     case .slopeDownX:
-                        let node = createSlopePiece(sourceNode: slopeXNode,
-                                                    x: x,
+                        let node = createSlopePiece(x: x,
                                                     y: Float(gridPiece.level) + 0.5,
-                                                    z: z,
-                                                    rotation: SCNVector4Make(0.0, 0.0, 1.0, Float.pi / -4.0))
+                                                    z: z)
                         addChildNode(node)
                     case .slopeUpZ:
-                        let node = createSlopePiece(sourceNode: slopeZNode,
-                                                    x: x,
+                        let node = createSlopePiece(x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z,
-                                                    rotation: SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -4.0))
+                                                    rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi / 2.0))
                         addChildNode(node)
                     case .slopeDownZ:
-                        let node = createSlopePiece(sourceNode: slopeZNode,
-                                                    x: x,
+                        let node = createSlopePiece(x: x,
                                                     y: Float(gridPiece.level) + 0.5,
                                                     z: z,
-                                                    rotation: SCNVector4Make(1.0, 0.0, 0.0, Float.pi / 4.0))
+                                                    rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi / -2.0))
                         addChildNode(node)
                     }
                 }
@@ -122,16 +97,18 @@ class TerrainNode: SCNNode {
 
     private func createFlatPiece(x: Int, y: Float, z: Int) -> SCNNode {
         let source = (x + z) % 2 == 0 ? squareNode1 : squareNode2
-        let boxNode = source.copy() as! SCNNode
+        let boxNode = source.clone()
         boxNode.position = calculatePosition(x: x, y: y, z: z)
         return boxNode
     }
 
-    private func createSlopePiece(sourceNode: SCNNode, x: Int, y: Float, z: Int, rotation: SCNVector4) -> SCNNode {
-        let boxNode = sourceNode.copy() as! SCNNode
-        boxNode.position = calculatePosition(x: x, y: y, z: z)
-        boxNode.rotation = rotation
-        return boxNode
+    private func createSlopePiece(x: Int, y: Float, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
+        let clone = slopeNode.clone()
+        clone.position = calculatePosition(x: x, y: y, z: z)
+        if let rotation = rotation {
+            clone.rotation = rotation
+        }
+        return clone
     }
 
     private func calculatePosition(x: Int, y: Float, z: Int) -> SCNVector3 {

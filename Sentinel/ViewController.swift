@@ -23,7 +23,7 @@ class ViewController: UIViewController {
         solidMaterial.shininess = 0.25
 
         let grid = createGrid()
-        let terrainNode = TerrainNode(grid: grid, sideLength: 10.0)
+        let terrainNode = TerrainNode(grid: grid, sideLength: 10.0, thickness: 0.1)
         terrainNode.position = SCNVector3Make(0, 0, 0)
         scene.rootNode.addChildNode(terrainNode)
 
