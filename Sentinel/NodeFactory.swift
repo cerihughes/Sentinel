@@ -1,6 +1,8 @@
 import GLKit
 import SceneKit
 
+fileprivate let slopeColour = UIColor.darkGray
+
 class NodeFactory: NSObject {
     let sideLength: Float
 
@@ -8,6 +10,7 @@ class NodeFactory: NSObject {
     let flatNode1: SCNNode
     let flatNode2: SCNNode
     let wedgeNode: SCNNode
+    var wallNodeCache: [Int:SCNNode] = [:]
 
     init(sideLength: Float) {
         self.sideLength = sideLength
@@ -36,7 +39,7 @@ class NodeFactory: NSObject {
 
         // Grey wedge
         material = material.copy() as! SCNMaterial
-        material.diffuse.contents = UIColor.darkGray
+        material.diffuse.contents = slopeColour
 
         let wedge = geometryFactory.createWedge(size: sideLength)
         wedge.firstMaterial = material
@@ -75,7 +78,36 @@ class NodeFactory: NSObject {
                 }
             }
         }
+
+        addWallNodes(to: terrainNode, grid: grid)
+
         return terrainNode
+    }
+
+    private func addWallNodes(to terrainNode: SCNNode, grid: Grid) {
+        for x in 0 ..< grid.width {
+            addWallNodes(to: terrainNode, grid: grid, x: x, z: 0)
+            addWallNodes(to: terrainNode, grid: grid, x: x, z: grid.depth - 1)
+        }
+        for z in 0 ..< grid.depth {
+            addWallNodes(to: terrainNode, grid: grid, x: 0, z: z)
+            addWallNodes(to: terrainNode, grid: grid, x: grid.width - 1, z: z)
+        }
+    }
+
+    private func addWallNodes(to terrainNode: SCNNode, grid: Grid, x: Int, z: Int) {
+        if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
+            var height = gridPiece.level
+            if !gridPiece.isFlat {
+                height += 0.5
+            }
+
+            if height <= 0 {
+                return
+            }
+            let node = createWallPiece(grid: grid, x: x, z: z, height: Int(height))
+            terrainNode.addChildNode(node)
+        }
     }
 
     private func rotation(for direction: GridDirection) -> SCNVector4? {
@@ -114,6 +146,42 @@ extension NodeFactory {
         let depth = Float(grid.depth)
         return SCNVector3Make((Float(x) - (width / 2.0)) * Float(sideLength),
                               y * Float(sideLength),
+                              (Float(z) - (depth / 2.0)) * Float(sideLength))
+    }
+
+
+    private func createWallPiece(grid: Grid, x: Int, z: Int, height: Int) -> SCNNode {
+        let wallNode = getOrCreateWallNode(height: height)
+        wallNode.position = calculateWallPosition(grid: grid, x: x, z: z, height: height)
+        return wallNode
+    }
+
+    private func getOrCreateWallNode(height: Int) -> SCNNode {
+        if let existingNode = wallNodeCache[height] {
+            return existingNode.clone()
+        }
+
+        let material = SCNMaterial()
+        material.diffuse.contents = slopeColour
+        material.locksAmbientWithDiffuse = true
+
+        let wall = SCNBox(width: CGFloat(sideLength),
+                          height: CGFloat(height) * CGFloat(sideLength),
+                          length: CGFloat(sideLength),
+                          chamferRadius: 0.0)
+        wall.firstMaterial = material
+
+        let wallNode = SCNNode(geometry: wall)
+        wallNodeCache[height] = wallNode
+        return wallNode
+    }
+
+    private func calculateWallPosition(grid: Grid, x: Int, z: Int, height: Int) -> SCNVector3 {
+        let width = Float(grid.width)
+        let depth = Float(grid.depth)
+        let centerPoint = Float(height - 3) / 2.0
+        return SCNVector3Make((Float(x) - (width / 2.0)) * Float(sideLength),
+                              centerPoint * Float(sideLength),
                               (Float(z) - (depth / 2.0)) * Float(sideLength))
     }
 }
