@@ -61,13 +61,15 @@ class NodeFactory: NSObject {
                                                    z: z)
                         terrainNode.addChildNode(node)
                     } else {
-                        for slope in gridPiece.slopes {
-                            let node = createWedgePiece(grid: grid,
-                                                        x: x,
-                                                        y: gridPiece.level - 0.5,
-                                                        z: z,
-                                                        rotation: rotation(for: slope))
-                            terrainNode.addChildNode(node)
+                        for direction in GridDirection.allValues() {
+                            if gridPiece.has(slopeDirection: direction) {
+                                let node = createWedgePiece(grid: grid,
+                                                            x: x,
+                                                            y: gridPiece.level - 0.5,
+                                                            z: z,
+                                                            rotation: rotation(for: direction))
+                                terrainNode.addChildNode(node)
+                            }
                         }
                     }
                 }

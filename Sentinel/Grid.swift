@@ -9,8 +9,11 @@ struct GridPoint {
     }
 }
 
-enum GridDirection {
-    case north, east, south, west
+enum GridDirection: Int {
+    case north = 1
+    case east = 2
+    case south = 4
+    case west = 8
 
     // TODO: Replace when Swift 4.2 is out of beta
     static func allValues() -> [GridDirection] {
@@ -55,7 +58,7 @@ enum GridDirection {
 class GridPiece: NSObject {
     var isFlat = true
     var level: Float = 0.0
-    var slopes: [GridDirection] = []
+    private var slopes: Int = 0
 
     func buildFlat() -> Float {
         if isFlat {
@@ -77,27 +80,17 @@ class GridPiece: NSObject {
         return level
     }
 
-    override var description: String {
-        let slopes = slopeValue()
-        let hex = String(slopes, radix: 16, uppercase: false)
-        return "\(hex):\(level)"
+    func add(slopeDirection: GridDirection) {
+        slopes |= slopeDirection.rawValue
     }
 
-    private func slopeValue() -> UInt8 {
-        var value: UInt8 = 0
-        for slope in slopes {
-            switch slope {
-            case .north:
-                value |= 1 << 0
-            case .east:
-                value |= 1 << 1
-            case .south:
-                value |= 1 << 2
-            case .west:
-                value |= 1 << 3
-            }
-        }
-        return value
+    func has(slopeDirection: GridDirection) -> Bool {
+        return slopes | slopeDirection.rawValue != 0
+    }
+
+    override var description: String {
+        let hex = String(slopes, radix: 16, uppercase: false)
+        return "\(hex):\(level)"
     }
 }
 
@@ -207,7 +200,7 @@ extension Grid {
             return
         }
 
-        var slopeLevel = firstPiece.level - 0.5
+        var slopeLevel = firstPiece.isFlat ? firstPiece.level - 0.5 : firstPiece.level - 1.0
 
         var nextPoint = neighbour(of: point, direction: direction)
         var next = get(point: nextPoint)
@@ -217,8 +210,10 @@ extension Grid {
                 slopeLevel = nextExists.level - 0.5
             } else {
                 if nextExists.level == slopeLevel {
-                    nextExists.slopes.append(direction)
+                    nextExists.add(slopeDirection: direction)
                     slopeLevel -= 1.0
+                } else {
+                    slopeLevel = nextExists.level - 1.0
                 }
             }
 
