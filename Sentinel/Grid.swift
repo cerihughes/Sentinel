@@ -85,7 +85,8 @@ class GridPiece: NSObject {
     }
 
     func has(slopeDirection: GridDirection) -> Bool {
-        return slopes | slopeDirection.rawValue != 0
+        let rawValue = slopeDirection.rawValue
+        return slopes & rawValue == rawValue
     }
 
     override var description: String {
