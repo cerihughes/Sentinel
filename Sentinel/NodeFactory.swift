@@ -3,16 +3,14 @@ import SceneKit
 
 class NodeFactory: NSObject {
     let sideLength: Float
-    let thickness: Float
 
     let geometryFactory = GeometryFactory()
     let flatNode1: SCNNode
     let flatNode2: SCNNode
     let wedgeNode: SCNNode
 
-    init(sideLength: Float, thickness: Float) {
+    init(sideLength: Float) {
         self.sideLength = sideLength
-        self.thickness = thickness
 
         // Red box
         var material = SCNMaterial()
@@ -20,7 +18,7 @@ class NodeFactory: NSObject {
         material.locksAmbientWithDiffuse = true
 
         var flatBox = SCNBox(width: CGFloat(sideLength),
-                             height: CGFloat(thickness),
+                             height: CGFloat(sideLength),
                              length: CGFloat(sideLength),
                              chamferRadius: 0.0)
         flatBox.firstMaterial = material
@@ -55,47 +53,40 @@ class NodeFactory: NSObject {
 
         for z in 0 ..< depth {
             for x in 0 ..< width {
-                let gridPiece = grid.get(point: GridPoint(x: x, z: z))
-                for gridShape in gridPiece.shapes {
-                    switch gridShape {
-                    case .flat:
+                if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
+                    if gridPiece.isFlat {
                         let node = createFlatPiece(grid: grid,
                                                    x: x,
-                                                   y: Float(gridPiece.level),
+                                                   y: gridPiece.level - 1.0,
                                                    z: z)
                         terrainNode.addChildNode(node)
-                    case .slopeUpX:
-                        let node = createWedgePiece(grid: grid,
-                                                    x: x,
-                                                    y: Float(gridPiece.level) + 0.5,
-                                                    z: z,
-                                                    rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi))
-                        terrainNode.addChildNode(node)
-                    case .slopeDownX:
-                        let node = createWedgePiece(grid: grid,
-                                                    x: x,
-                                                    y: Float(gridPiece.level) + 0.5,
-                                                    z: z)
-                        terrainNode.addChildNode(node)
-                    case .slopeUpZ:
-                        let node = createWedgePiece(grid: grid,
-                                                    x: x,
-                                                    y: Float(gridPiece.level) + 0.5,
-                                                    z: z,
-                                                    rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi / 2.0))
-                        terrainNode.addChildNode(node)
-                    case .slopeDownZ:
-                        let node = createWedgePiece(grid: grid,
-                                                    x: x,
-                                                    y: Float(gridPiece.level) + 0.5,
-                                                    z: z,
-                                                    rotation: SCNVector4Make(0.0, 1.0, 0.0, Float.pi / -2.0))
-                        terrainNode.addChildNode(node)
+                    } else {
+                        for slope in gridPiece.slopes {
+                            let node = createWedgePiece(grid: grid,
+                                                        x: x,
+                                                        y: gridPiece.level - 0.5,
+                                                        z: z,
+                                                        rotation: rotation(for: slope))
+                            terrainNode.addChildNode(node)
+                        }
                     }
                 }
             }
         }
         return terrainNode
+    }
+
+    private func rotation(for direction: GridDirection) -> SCNVector4? {
+        switch direction {
+        case .north:
+            return SCNVector4Make(0.0, 1.0, 0.0, Float.pi / 2.0)
+        case .east:
+            return nil
+        case .south:
+            return SCNVector4Make(0.0, 1.0, 0.0, Float.pi / -2.0)
+        case .west:
+            return SCNVector4Make(0.0, 1.0, 0.0, Float.pi)
+        }
     }
 }
 

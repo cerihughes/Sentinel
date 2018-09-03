@@ -24,7 +24,7 @@ class ViewController: UIViewController {
 
         let tg = TerrainGenerator(width: 24, depth: 18)
         let grid = tg.generate(level: 1)
-        let nodeFactory = NodeFactory(sideLength: 10.0, thickness: 0.1)
+        let nodeFactory = NodeFactory(sideLength: 10.0)
         let terrainNode = nodeFactory.createTerrainNode(grid: grid)
         terrainNode.position = SCNVector3Make(0, 0, 0)
         scene.rootNode.addChildNode(terrainNode)
