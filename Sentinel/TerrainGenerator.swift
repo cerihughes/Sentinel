@@ -37,6 +37,8 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen4)
         generateSmallPeaks(gen: gen5)
 
+        grid.processSlopes()
+
         return grid
     }
 }

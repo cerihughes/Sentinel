@@ -9,56 +9,89 @@ struct GridPoint {
     }
 }
 
-enum GridShape {
-    case flat, slopeUpX, slopeDownX, slopeUpZ, slopeDownZ
+enum GridDirection: Int {
+    case north = 1
+    case east = 2
+    case south = 4
+    case west = 8
+
+    // TODO: Replace when Swift 4.2 is out of beta
+    static func allValues() -> [GridDirection] {
+        return [.north, .east, .south, .west]
+    }
+
+    func toDeltas() -> (x: Int, z: Int) {
+        switch self {
+        case .north:
+            return (x: 0, z: -1)
+        case .east:
+            return (x: 1, z: 0)
+        case .south:
+            return (x: 0, z: 1)
+        case .west:
+            return (x: -1, z: 0)
+        }
+    }
+
+    static func allValues(except direction: GridDirection) -> [GridDirection] {
+        var directions = allValues()
+        if let index = directions.index(of:direction) {
+            directions.remove(at: index)
+        }
+        return directions
+    }
+
+    var opposite: GridDirection {
+        switch self {
+        case .north:
+            return .south
+        case .east:
+            return .west
+        case .south:
+            return .north
+        case .west:
+            return .east
+        }
+    }
 }
 
 class GridPiece: NSObject {
-    var shapes: [GridShape] = [.flat]
-    var level: Int = 0
+    var isFlat = true
+    var level: Float = 0.0
+    private var slopes: Int = 0
 
-    var isFlat: Bool {
-        return shapes == [.flat]
+    func buildFlat() -> Float {
+        if isFlat {
+            level += 1.0
+        } else {
+            isFlat = true
+            level += 0.5
+        }
+        return level
     }
 
-    func set(level: Int, with shape: GridShape) {
-        if shape == .flat || isFlat {
-            shapes.removeAll()
+    func buildSlope() -> Float {
+        if isFlat {
+            level += 0.5
+            isFlat = false
+        } else {
+            level += 1.0
         }
+        return level
+    }
 
-        if (level > self.level) {
-            self.level = level
-            shapes.removeAll()
-        }
+    func add(slopeDirection: GridDirection) {
+        slopes |= slopeDirection.rawValue
+    }
 
-        if !shapes.contains(shape) {
-            shapes.append(shape)
-        }
+    func has(slopeDirection: GridDirection) -> Bool {
+        let rawValue = slopeDirection.rawValue
+        return slopes & rawValue == rawValue
     }
 
     override var description: String {
-        let shapes = shapeValue()
-        let hex = String(shapes, radix: 16, uppercase: false)
+        let hex = String(slopes, radix: 16, uppercase: false)
         return "\(hex):\(level)"
-    }
-
-    private func shapeValue() -> UInt8 {
-        var value: UInt8 = 0
-        for shape in shapes {
-            switch shape {
-            case .flat:
-                value |= 0
-            case .slopeUpZ:
-                value |= 1 << 0
-            case .slopeDownX:
-                value |= 1 << 1
-            case .slopeDownZ:
-                value |= 1 << 2
-            case .slopeUpX:
-                value |= 1 << 3
-            }
-        }
-        return value
     }
 }
 
@@ -82,22 +115,46 @@ class Grid: NSObject {
     }
 
     func build(at point: GridPoint) {
-        let piece = get(point: point)
-        let level = piece.level + 1
-
-        raise(point: point, level: level, shape: .flat)
+        buildFlat(point: point)
     }
 
-    func get(point: GridPoint) -> GridPiece {
-        return grid[point.z][point.x]
+    func processSlopes() {
+        for z in 0 ..< depth {
+            var startPoint = GridPoint(x: 0, z: z)
+            processSlopes(from: startPoint, direction: .east)
+
+            startPoint = GridPoint(x: width - 1, z: z)
+            processSlopes(from: startPoint, direction: .west)
+        }
+
+        for x in 0 ..< width {
+            var startPoint = GridPoint(x: x, z: 0)
+            processSlopes(from: startPoint, direction: .south)
+
+            startPoint = GridPoint(x: x, z: depth - 1)
+            processSlopes(from: startPoint, direction: .north)
+        }
+    }
+
+    func get(point: GridPoint) -> GridPiece? {
+        let x = point.x, z = point.z
+        guard
+            0 ..< width ~= x,
+            0 ..< depth ~= z
+            else {
+                return nil
+        }
+
+        return grid[z][x]
     }
 
     override var description: String {
         var desc = ""
         for z in 0 ..< depth {
             for x in 0 ..< width {
-                let piece = get(point: GridPoint(x: x, z: z))
-                desc += "\(piece) "
+                if let piece = get(point: GridPoint(x: x, z: z)) {
+                    desc += "\(piece) "
+                }
             }
             desc += "\n"
         }
@@ -106,105 +163,70 @@ class Grid: NSObject {
 }
 
 extension Grid {
-    private enum GridDirection {
-        case north, east, south, west
-
-        // TODO: Replace when Swift 4.2 is out of beta
-        static func allValues() -> [GridDirection] {
-            return [.north, .east, .south, .west]
+    private func buildFlat(point: GridPoint) {
+        guard let piece = get(point: point) else {
+            return
         }
 
-        static func allValues(except direction: GridDirection) -> [GridDirection] {
-            var directions = allValues()
-            if let index = directions.index(of:direction) {
-                directions.remove(at: index)
-            }
-            return directions
-        }
+        let slopeLevel = piece.buildFlat() - 0.5
 
-        var opposite: GridDirection {
-            switch self {
-            case .north:
-                return .south
-            case .east:
-                return .west
-            case .south:
-                return .north
-            case .west:
-                return .east
-            }
-        }
-
-        func toDeltas() -> (x: Int, z: Int) {
-            switch self {
-            case .north:
-                return (x: 0, z: -1)
-            case .east:
-                return (x: 1, z: 0)
-            case .south:
-                return (x: 0, z: 1)
-            case .west:
-                return (x: -1, z: 0)
-            }
-        }
-
-        func toShape() -> GridShape {
-            switch self {
-            case .north:
-                return .slopeUpZ
-            case .east:
-                return .slopeDownX
-            case .south:
-                return .slopeDownZ
-            case .west:
-                return .slopeUpX
-
-            }
+        for direction in GridDirection.allValues() {
+            buildSlope(from: point, level: slopeLevel, direction: direction)
         }
     }
 
-    private func raise(point: GridPoint,
-                       level: Int,
-                       shape: GridShape,
-                       processDirections: [GridDirection] = GridDirection.allValues()) {
-        let piece = get(point: point)
-        piece.set(level: level, with: shape)
+    private func buildSlope(from point: GridPoint, level: Float, direction: GridDirection) {
+        let nextPoint = neighbour(of: point, direction: direction)
+        if let next = get(point: nextPoint) {
+            let nextLevel = next.level
 
-        for direction in processDirections {
-            processNeighbour(of: point,
-                             direction: direction,
-                             level: level)
-        }
-    }
-
-    private func processNeighbour(of point: GridPoint, direction: GridDirection, level: Int) {
-        let deltas = direction.toDeltas()
-        if let neighbourPoint = neighbour(of: point, deltaX: deltas.x, deltaZ: deltas.z) {
-            let neighbour = get(point: neighbourPoint)
-            let neighbourLevel = neighbour.level
-
-            if level == 0 || level < neighbourLevel || (level == neighbourLevel && neighbour.isFlat) {
+            if level <= nextLevel {
                 return
             }
 
-            let shape = direction.toShape()
-            if level != neighbourLevel && !neighbour.isFlat {
-                let directions = GridDirection.allValues(except: direction.opposite)
-                raise(point: neighbourPoint, level: level - 1, shape: shape, processDirections: directions)
+            if (level - nextLevel == 1.0) {
+                buildFlat(point: nextPoint)
             }
-            
-            raise(point: neighbourPoint, level: level - 1, shape: shape, processDirections: [])
+
+            let nextSlopeLevel = next.buildSlope() - 1.0
+
+            for direction in GridDirection.allValues(except: direction.opposite) {
+                buildSlope(from: nextPoint, level: nextSlopeLevel, direction: direction)
+            }
         }
     }
 
-    private func neighbour(of point: GridPoint, deltaX: Int, deltaZ: Int) -> GridPoint? {
-        let newPoint = point.transform(deltaX: deltaX, deltaZ: deltaZ)
-        guard
-            0 ..< width ~= newPoint.x,
-            0 ..< depth ~= newPoint.z
-            else {
-                return nil
+    private func processSlopes(from point: GridPoint, direction: GridDirection) {
+        guard let firstPiece = get(point: point) else {
+            return
         }
-        return newPoint
+
+        var slopeLevel = firstPiece.isFlat ? firstPiece.level - 0.5 : firstPiece.level - 1.0
+
+        var nextPoint = neighbour(of: point, direction: direction)
+        var next = get(point: nextPoint)
+        while next != nil {
+            let nextExists = next!
+            if nextExists.isFlat {
+                slopeLevel = nextExists.level - 0.5
+            } else {
+                if nextExists.level == slopeLevel {
+                    nextExists.add(slopeDirection: direction)
+                    slopeLevel -= 1.0
+                } else {
+                    slopeLevel = nextExists.level - 1.0
+                }
+            }
+
+            nextPoint = neighbour(of: nextPoint, direction: direction)
+            next = get(point: nextPoint)
+        }
+    }
+
+    private func neighbour(of point: GridPoint, direction: GridDirection) -> GridPoint {
+        let deltas = direction.toDeltas()
+        return point.transform(deltaX: deltas.x, deltaZ: deltas.z)
     }
 }
+
+
