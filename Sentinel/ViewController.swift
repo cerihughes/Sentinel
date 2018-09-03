@@ -22,7 +22,8 @@ class ViewController: UIViewController {
         solidMaterial.specular.contents = UIColor.darkGray
         solidMaterial.shininess = 0.25
 
-        let grid = createGrid()
+        let tg = TerrainGenerator(width: 24, depth: 18)
+        let grid = tg.generate(level: 1)
         let nodeFactory = NodeFactory(sideLength: 10.0, thickness: 0.1)
         let terrainNode = nodeFactory.createTerrainNode(grid: grid)
         terrainNode.position = SCNVector3Make(0, 0, 0)
