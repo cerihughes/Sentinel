@@ -3,6 +3,9 @@ import UIKit
 class TerrainGenerator: NSObject {
     let grid: Grid
 
+    var sentinelPosition: GridPoint?
+    var guardianPositions: [GridPoint] = []
+
     init(width: Int, depth: Int) {
         grid = Grid(width: width, depth: depth)
 
@@ -10,8 +13,11 @@ class TerrainGenerator: NSObject {
     }
 
     func generate(level: Int) -> Grid {
+        let difficultyAdjustment = level / 10
         let inc = (level + 1) * (level + 1)
-        let seed = inc * 67
+        let cosine = cos(Float(level) / Float(1 + level))
+        let seedFloat = Float(inc * 67) / cosine
+        let seed = Int(seedFloat)
 
         let s1 = seed << 1
         let s2 = seed << 2
@@ -37,60 +43,113 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen4)
         generateSmallPeaks(gen: gen5)
 
-        ensureMaxPeak(gen: gen1)
+        let sentinel = generateSentinel(gen: gen2, difficultyAdjustment: difficultyAdjustment)
+        let guardians = generateGuardians(gen: gen1, sentinelPosition: sentinel, difficultyAdjustment: difficultyAdjustment)
 
         grid.processSlopes()
+
+        sentinelPosition = sentinel
+        guardianPositions = guardians
 
         return grid
     }
 
     private func generateLargePlateaus(gen: ValueGenerator) {
-        generatePlateaus(minSize: 7,
-                         maxSize: 11,
-                         minCount: 3,
-                         maxCount: 6,
+        generatePlateaus(minSize: 8,
+                         maxSize: 12,
+                         minCount: 4,
+                         maxCount: 7,
                          gen: gen)
     }
 
     private func generateSmallPlateaus(gen: ValueGenerator) {
-        generatePlateaus(minSize: 4,
-                         maxSize: 6,
-                         minCount: 3,
-                         maxCount: 7,
+        generatePlateaus(minSize: 5,
+                         maxSize: 7,
+                         minCount: 6,
+                         maxCount: 8,
                          gen: gen)
     }
 
     private func generateLargePeaks(gen: ValueGenerator) {
         generatePeaks(summitSize: 3,
-                      minCount: 1,
-                      maxCount: 5,
+                      minCount: 2,
+                      maxCount: 6,
                       gen: gen)
     }
 
     private func generateMediumPeaks(gen: ValueGenerator) {
         generatePeaks(summitSize: 2,
-                      minCount: 2,
-                      maxCount: 6,
+                      minCount: 3,
+                      maxCount: 8,
                       gen: gen)
     }
 
     private func generateSmallPeaks(gen: ValueGenerator) {
         generatePeaks(summitSize: 1,
                       minCount: 10,
-                      maxCount: 20,
+                      maxCount: 30,
                       gen: gen)
     }
 
-    private func ensureMaxPeak(gen: ValueGenerator) {
+    private func generateSentinel(gen: ValueGenerator, difficultyAdjustment: Int) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
-        let highestPoints = gridIndex.highestFlatPieces()
-        if highestPoints.count == 1 {
-            return
+        let sentinelPieces = gridIndex.highestFlatPieces()
+        if sentinelPieces.count == 1 {
+            return sentinelPieces[0].point
         }
 
-        let index = gen.next(min: 0, max: highestPoints.count - 1)
-        let peak = highestPoints[index]
-        grid.build(at: peak.point)
+        let index = gen.next(min: 0, max: sentinelPieces.count - 1)
+        let sentinelPosition = sentinelPieces[index].point
+        for _ in 0 ..< difficultyAdjustment + 1 {
+            grid.build(at: sentinelPosition)
+        }
+        return sentinelPosition
+    }
+
+    private func generateGuardians(gen: ValueGenerator, sentinelPosition: GridPoint, difficultyAdjustment: Int) -> [GridPoint] {
+        guard difficultyAdjustment > 0 else {
+            return []
+        }
+
+        var guardianPositions: [GridPoint] = []
+        let gridIndex = GridIndex(grid: grid)
+        var attempts = difficultyAdjustment * 3
+        while guardianPositions.count < difficultyAdjustment && attempts > 0 {
+            if let position = calculatePotentialGuardianPosition(gen: gen, gridIndex: gridIndex, guardianIndex: guardianPositions.count) {
+                if ensure(guardianPosition: position, isFarEnoughFrom: sentinelPosition, otherGuardianPositions: guardianPositions) {
+                    guardianPositions.append(position)
+                }
+            }
+
+            attempts -= 1
+        }
+
+        return guardianPositions
+    }
+
+    private func calculatePotentialGuardianPosition(gen: ValueGenerator, gridIndex: GridIndex, guardianIndex: Int) -> GridPoint? {
+        let levels = gridIndex.flatLevels()
+        let guardianLevelIndex = levels.count - (guardianIndex + 2)
+        if guardianLevelIndex < 1 { // No guardians on the ground level
+            return nil
+        }
+
+        let guardianLevel = levels[guardianLevelIndex]
+        if guardianLevelIndex < 4 { // No guardians on the 1st 4 levels
+            return nil
+        }
+
+        let guardianPieces = gridIndex.pieces(at: guardianLevel)
+        if guardianPieces.count == 1 {
+            return guardianPieces[0].point
+        }
+
+        let index = gen.next(min: 0, max: guardianPieces.count - 1)
+        return guardianPieces[index].point
+    }
+
+    private func ensure(guardianPosition: GridPoint, isFarEnoughFrom sentinelPosition: GridPoint, otherGuardianPositions: [GridPoint]) -> Bool {
+        return true
     }
 
     private func generatePlateaus(minSize: Int,
