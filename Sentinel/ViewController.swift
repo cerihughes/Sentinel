@@ -109,7 +109,7 @@ class ViewController: UIViewController {
         terrainNode.position = SCNVector3Make(0, 0, 0)
         scene.rootNode.addChildNode(terrainNode)
 
-        if let sentinelPosition = tg.sentinelPosition, let sentinelPiece = grid.get(point: sentinelPosition) {
+        if let sentinelPiece = grid.get(point: tg.sentinelPosition) {
             let sentinelNode = nodeFactory.createSentinelNode(grid: grid, piece: sentinelPiece)
             terrainNode.addChildNode(sentinelNode)
         }
@@ -119,6 +119,11 @@ class ViewController: UIViewController {
                 let guardianNode = nodeFactory.createGuardianNode(grid: grid, piece: guardianPiece)
                 terrainNode.addChildNode(guardianNode)
             }
+        }
+
+        if let playerPiece = grid.get(point: tg.playerPosition) {
+            let playerNode = nodeFactory.createPlayerNode(grid: grid, piece: playerPiece)
+            terrainNode.addChildNode(playerNode)
         }
 
         terrainIndex += 1
