@@ -12,6 +12,9 @@ class NodeFactory: NSObject {
     let wedgeNode: SCNNode
     var wallNodeCache: [Int:SCNNode] = [:]
 
+    let sentinelNode: SCNNode
+    let guardianNode: SCNNode
+
     init(sideLength: Float) {
         self.sideLength = sideLength
 
@@ -45,10 +48,28 @@ class NodeFactory: NSObject {
         wedge.firstMaterial = material
         self.wedgeNode = SCNNode(geometry: wedge)
 
+        // Sentinel
+        material = material.copy() as! SCNMaterial
+        material.diffuse.contents = UIColor.blue
+
+        var sphere = SCNSphere(radius: CGFloat(sideLength / 3.0))
+        sphere.firstMaterial = material
+
+        self.sentinelNode = SCNNode(geometry: sphere)
+
+        // Guardian
+        material = material.copy() as! SCNMaterial
+        material.diffuse.contents = UIColor.green
+
+        sphere = sphere.copy() as! SCNSphere
+        sphere.firstMaterial = material
+
+        self.guardianNode = SCNNode(geometry: sphere)
+
         super.init()
     }
 
-    public func createTerrainNode(grid: Grid) -> SCNNode {
+    func createTerrainNode(grid: Grid) -> SCNNode {
         let terrainNode = SCNNode()
 
         let width = grid.width
@@ -82,6 +103,22 @@ class NodeFactory: NSObject {
         addWallNodes(to: terrainNode, grid: grid)
 
         return terrainNode
+    }
+
+    func createSentinelNode(grid: Grid, piece: GridPiece) -> SCNNode {
+        let clone = sentinelNode.clone()
+        let point = piece.point
+        let level = piece.level
+        clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)
+        return clone
+    }
+
+    func createGuardianNode(grid: Grid, piece: GridPiece) -> SCNNode {
+        let clone = guardianNode.clone()
+        let point = piece.point
+        let level = piece.level
+        clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)
+        return clone
     }
 
     private func addWallNodes(to terrainNode: SCNNode, grid: Grid) {
@@ -122,9 +159,7 @@ class NodeFactory: NSObject {
             return SCNVector4Make(0.0, 1.0, 0.0, Float.pi)
         }
     }
-}
 
-extension NodeFactory {
     private func createFlatPiece(grid: Grid, x: Int, y: Float, z: Int) -> SCNNode {
         let source = (x + z) % 2 == 0 ? flatNode1 : flatNode2
         let boxNode = source.clone()

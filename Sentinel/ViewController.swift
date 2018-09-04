@@ -43,6 +43,18 @@ class ViewController: UIViewController {
         terrainNode.position = SCNVector3Make(0, 0, 0)
         scene.rootNode.addChildNode(terrainNode)
 
+        if let sentinelPosition = tg.sentinelPosition, let sentinelPiece = grid.get(point: sentinelPosition) {
+            let sentinelNode = nodeFactory.createSentinelNode(grid: grid, piece: sentinelPiece)
+            terrainNode.addChildNode(sentinelNode)
+        }
+
+        for guardianPosition in tg.guardianPositions {
+            if let guardianPiece = grid.get(point: guardianPosition) {
+                let guardianNode = nodeFactory.createGuardianNode(grid: grid, piece: guardianPiece)
+                terrainNode.addChildNode(guardianNode)
+            }
+        }
+
         terrainIndex += 1
     }
 
