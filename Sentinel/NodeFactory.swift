@@ -14,6 +14,7 @@ class NodeFactory: NSObject {
 
     let sentinelNode: SCNNode
     let guardianNode: SCNNode
+    let playerNode: SCNNode
 
     init(sideLength: Float) {
         self.sideLength = sideLength
@@ -66,6 +67,15 @@ class NodeFactory: NSObject {
 
         self.guardianNode = SCNNode(geometry: sphere)
 
+        // Player
+        material = material.copy() as! SCNMaterial
+        material.diffuse.contents = UIColor.purple
+
+        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
+        capsule.firstMaterial = material
+
+        self.playerNode = SCNNode(geometry: capsule)
+
         super.init()
     }
 
@@ -115,6 +125,14 @@ class NodeFactory: NSObject {
 
     func createGuardianNode(grid: Grid, piece: GridPiece) -> SCNNode {
         let clone = guardianNode.clone()
+        let point = piece.point
+        let level = piece.level
+        clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)
+        return clone
+    }
+
+    func createPlayerNode(grid: Grid, piece: GridPiece) -> SCNNode {
+        let clone = playerNode.clone()
         let point = piece.point
         let level = piece.level
         clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)

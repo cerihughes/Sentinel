@@ -3,11 +3,14 @@ import UIKit
 class TerrainGenerator: NSObject {
     let grid: Grid
 
-    var sentinelPosition: GridPoint?
+    var sentinelPosition: GridPoint
     var guardianPositions: [GridPoint] = []
+    var playerPosition: GridPoint
 
     init(width: Int, depth: Int) {
         grid = Grid(width: width, depth: depth)
+        sentinelPosition = GridPoint(x: 0, z: 0)
+        playerPosition = GridPoint(x: 0, z: 0)
 
         super.init()
     }
@@ -43,13 +46,12 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen4)
         generateSmallPeaks(gen: gen5)
 
-        let sentinel = generateSentinel(gen: gen2, difficultyAdjustment: difficultyAdjustment)
-        let guardians = generateGuardians(gen: gen1, sentinelPosition: sentinel, difficultyAdjustment: difficultyAdjustment)
-
+        sentinelPosition = generateSentinel(gen: gen1, difficultyAdjustment: difficultyAdjustment)
         grid.processSlopes()
 
-        sentinelPosition = sentinel
-        guardianPositions = guardians
+        let gridIndex = GridIndex(grid: grid)
+        guardianPositions = generateGuardians(gen: gen2, gridIndex: gridIndex, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
+        playerPosition = generatePlayer(gen: gen3, gridIndex: gridIndex)
 
         return grid
     }
@@ -106,13 +108,12 @@ class TerrainGenerator: NSObject {
         return sentinelPosition
     }
 
-    private func generateGuardians(gen: ValueGenerator, sentinelPosition: GridPoint, difficultyAdjustment: Int) -> [GridPoint] {
+    private func generateGuardians(gen: ValueGenerator, gridIndex: GridIndex, sentinelPosition: GridPoint, difficultyAdjustment: Int) -> [GridPoint] {
         guard difficultyAdjustment > 0 else {
             return []
         }
 
         var guardianPositions: [GridPoint] = []
-        let gridIndex = GridIndex(grid: grid)
         var attempts = difficultyAdjustment * 3
         while guardianPositions.count < difficultyAdjustment && attempts > 0 {
             if let position = calculatePotentialGuardianPosition(gen: gen, gridIndex: gridIndex, guardianIndex: guardianPositions.count) {
@@ -150,6 +151,16 @@ class TerrainGenerator: NSObject {
 
     private func ensure(guardianPosition: GridPoint, isFarEnoughFrom sentinelPosition: GridPoint, otherGuardianPositions: [GridPoint]) -> Bool {
         return true
+    }
+
+    private func generatePlayer(gen: ValueGenerator, gridIndex: GridIndex) -> GridPoint {
+        let playerPieces = gridIndex.lowestFlatPieces()
+        if playerPieces.count == 1 {
+            return playerPieces[0].point
+        }
+
+        let index = gen.next(min: 0, max: playerPieces.count - 1)
+        return playerPieces[index].point
     }
 
     private func generatePlateaus(minSize: Int,
