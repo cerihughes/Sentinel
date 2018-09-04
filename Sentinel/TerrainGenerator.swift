@@ -17,41 +17,20 @@ class TerrainGenerator: NSObject {
 
     func generate(level: Int) -> Grid {
         let difficultyAdjustment = level / 10
-        let inc = (level + 1) * (level + 1)
-        let cosine = cos(Float(level) / Float(1 + level))
-        let seedFloat = Float(inc * 67) / cosine
-        let seed = Int(seedFloat)
 
-        let s1 = seed << 1
-        let s2 = seed << 2
-        let s3 = seed << 3
-        let s4 = seed << 4
-        let s5 = seed << 5
+        let gen = ValueGenerator(input: level)
+        generateLargePlateaus(gen: gen)
+        generateSmallPlateaus(gen: gen)
+        generateLargePeaks(gen: gen)
+        generateMediumPeaks(gen: gen)
+        generateSmallPeaks(gen: gen)
 
-        let d1 = s1 + (s2 / s3) + (s4 / s5)
-        let d2 = s2 + (s3 / s4) + (s5 / s1)
-        let d3 = s3 + (s4 / s5) + (s1 / s2)
-        let d4 = s4 + (s5 / s1) + (s2 / s3)
-        let d5 = s5 + (s1 / s2) + (s3 / s4)
-
-        let gen1 = ValueGenerator(seed1: d1, seed2: d2)
-        let gen2 = ValueGenerator(seed1: d2, seed2: d3)
-        let gen3 = ValueGenerator(seed1: d3, seed2: d4)
-        let gen4 = ValueGenerator(seed1: d4, seed2: d5)
-        let gen5 = ValueGenerator(seed1: d5, seed2: d1)
-
-        generateLargePlateaus(gen: gen1)
-        generateSmallPlateaus(gen: gen2)
-        generateLargePeaks(gen: gen3)
-        generateMediumPeaks(gen: gen4)
-        generateSmallPeaks(gen: gen5)
-
-        sentinelPosition = generateSentinel(gen: gen1, difficultyAdjustment: difficultyAdjustment)
+        sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
         grid.processSlopes()
 
         let gridIndex = GridIndex(grid: grid)
-        guardianPositions = generateGuardians(gen: gen2, gridIndex: gridIndex, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
-        playerPosition = generatePlayer(gen: gen3, gridIndex: gridIndex)
+        guardianPositions = generateGuardians(gen: gen, gridIndex: gridIndex, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
+        playerPosition = generatePlayer(gen: gen, gridIndex: gridIndex)
 
         return grid
     }
@@ -226,35 +205,4 @@ class TerrainGenerator: NSObject {
         }
         return maxZ
     }
-}
-
-class ValueGenerator: NSObject {
-    var seed1: Int
-    var seed2: Int
-    var genCount = 0
-
-    init(seed1: Int, seed2: Int) {
-        self.seed1 = seed1
-        self.seed2 = seed2
-
-        super.init()
-    }
-
-    func next(min: Int, max: Int) -> Int {
-        genCount += 1
-
-        let value = max - min + 1
-        let mod = seed() % value
-        let result = min + mod
-
-        seed1 = seed1 - (result - genCount)
-        seed2 = seed2 - (result - genCount)
-
-        return result
-    }
-
-    private func seed() -> Int {
-        return genCount % 2 == 0 ? seed1 : seed2
-    }
-
 }

@@ -20,6 +20,7 @@
 		65B83F83213C08E400515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65B83F84213C09A000515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65B83F8E213C6FDD00515915 /* GeometryFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F8D213C6FDD00515915 /* GeometryFactory.swift */; };
+		65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		65B83F80213C08C600515915 /* NodeFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFactory.swift; sourceTree = "<group>"; };
 		65B83F82213C08E400515915 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		65B83F8D213C6FDD00515915 /* GeometryFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryFactory.swift; sourceTree = "<group>"; };
+		65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 				65B83F80213C08C600515915 /* NodeFactory.swift */,
 				65B83F82213C08E400515915 /* Grid.swift */,
 				659395F0213D46B700302665 /* TerrainGenerator.swift */,
+				65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */,
 				6546A845213C0651009F0650 /* Main.storyboard */,
 				6546A848213C0652009F0650 /* Assets.xcassets */,
 				6546A84A213C0652009F0650 /* LaunchScreen.storyboard */,
@@ -218,6 +221,7 @@
 				6546A842213C0651009F0650 /* AppDelegate.swift in Sources */,
 				65B83F81213C08C600515915 /* NodeFactory.swift in Sources */,
 				65B83F83213C08E400515915 /* Grid.swift in Sources */,
+				65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */,
 				659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
