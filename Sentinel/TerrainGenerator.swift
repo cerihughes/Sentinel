@@ -37,13 +37,13 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen4)
         generateSmallPeaks(gen: gen5)
 
+        ensureMaxPeak(gen: gen1)
+
         grid.processSlopes()
 
         return grid
     }
-}
 
-extension TerrainGenerator {
     private func generateLargePlateaus(gen: ValueGenerator) {
         generatePlateaus(minSize: 7,
                          maxSize: 11,
@@ -79,6 +79,18 @@ extension TerrainGenerator {
                       minCount: 10,
                       maxCount: 20,
                       gen: gen)
+    }
+
+    private func ensureMaxPeak(gen: ValueGenerator) {
+        let gridIndex = GridIndex(grid: grid)
+        let highestPoints = gridIndex.highestFlatPieces()
+        if highestPoints.count == 1 {
+            return
+        }
+
+        let index = gen.next(min: 0, max: highestPoints.count - 1)
+        let peak = highestPoints[index]
+        grid.build(at: peak.point)
     }
 
     private func generatePlateaus(minSize: Int,

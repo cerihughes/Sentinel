@@ -56,9 +56,17 @@ enum GridDirection: Int {
 }
 
 class GridPiece: NSObject {
+    let point: GridPoint
+
     var isFlat = true
     var level: Float = 0.0
     private var slopes: Int = 0
+
+    init(x: Int, z: Int) {
+        point = GridPoint(x: x, z: z)
+
+        super.init()
+    }
 
     func buildFlat() -> Float {
         if isFlat {
@@ -95,19 +103,75 @@ class GridPiece: NSObject {
     }
 }
 
+class GridIndex: NSObject {
+    private let index: [Int:[GridPiece]]
+
+    init(grid: Grid) {
+        var i: [Int:[GridPiece]] = [:]
+        for z in 0 ..< grid.depth {
+            for x in 0 ..< grid.width {
+                if let piece = grid.get(point: GridPoint(x: x, z: z)) {
+                    if piece.isFlat {
+                        let level = Int(piece.level)
+
+                        var array = i[level]
+                        if array == nil {
+                            i[level] = [piece]
+                        } else {
+                            array!.append(piece)
+                            i[level] = array! // Not sure why I have to do this??
+                        }
+                    }
+                }
+            }
+        }
+
+        index = i
+
+        super.init()
+    }
+
+    func flatLevels() -> [Int] {
+        return index.keys.sorted()
+    }
+
+    func pieces(at level: Int) -> [GridPiece] {
+        if let array = index[level] {
+            return array
+        }
+
+        return []
+    }
+
+    func highestFlatPieces() -> [GridPiece] {
+        if let level = flatLevels().last {
+            return pieces(at: level)
+        }
+        return []
+    }
+
+    func lowestFlatPieces() -> [GridPiece] {
+        if let level = flatLevels().first {
+            return pieces(at: level)
+        }
+        return []
+    }
+}
+
 class Grid: NSObject {
     let width: Int
     let depth: Int
+
     private var grid: [[GridPiece]] = []
 
     init(width: Int, depth: Int) {
         self.width = width
         self.depth = depth
 
-        for _ in 0..<depth {
+        for z in 0 ..< depth {
             var row: [GridPiece] = []
-            for _ in 0..<width {
-                row.append(GridPiece())
+            for x in 0 ..< width {
+                row.append(GridPiece(x: x, z: z))
             }
             grid.append(row)
         }
@@ -160,9 +224,7 @@ class Grid: NSObject {
         }
         return desc
     }
-}
 
-extension Grid {
     private func buildFlat(point: GridPoint) {
         guard let piece = get(point: point) else {
             return
@@ -228,5 +290,3 @@ extension Grid {
         return point.transform(deltaX: deltas.x, deltaZ: deltas.z)
     }
 }
-
-
