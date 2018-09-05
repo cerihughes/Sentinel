@@ -2,63 +2,37 @@ import SceneKit
 
 class GeometryFactory: NSObject {
 
-    func createWedge(size: Float) -> SCNGeometry {
-        let halfSide = size / 2.0
+    func createCube(size: Float, colour: UIColor) -> SCNGeometry {
+        let material = SCNMaterial()
+        material.diffuse.contents = colour
+        material.locksAmbientWithDiffuse = true
 
-        let vertices: [SCNVector3] = [
-            // Front
-            SCNVector3Make(-halfSide,  halfSide,  halfSide), //  0
-            SCNVector3Make(-halfSide, -halfSide,  halfSide), //  1
-            SCNVector3Make( halfSide, -halfSide,  halfSide), //  2
+        let sideLength = CGFloat(size)
+        let box = SCNBox(width: CGFloat(sideLength),
+                         height: CGFloat(sideLength),
+                         length: CGFloat(sideLength),
+                         chamferRadius: 0.0)
+        box.firstMaterial = material
 
-            // Back
-            SCNVector3Make(-halfSide,  halfSide, -halfSide), //  3
-            SCNVector3Make(-halfSide, -halfSide, -halfSide), //  4
-            SCNVector3Make( halfSide, -halfSide, -halfSide), //  5
+        return box
+    }
 
-            // Diagonal
-            SCNVector3Make(-halfSide,  halfSide,  halfSide), // 6 = 0'
-            SCNVector3Make(-halfSide,  halfSide, -halfSide), // 7 = 3'
-            SCNVector3Make( halfSide, -halfSide,  halfSide), // 8 = 2'
-            SCNVector3Make( halfSide, -halfSide, -halfSide), // 9 = 5'
-        ]
+    func createWedge(size: Float, colour: UIColor) -> SCNGeometry {
+        let halfSide = CGFloat(size / 2.0)
 
-        let triangleIndices: [UInt8] = [
-            // Front
-            0, 1, 2,
+        let material = SCNMaterial()
+        material.diffuse.contents = colour
+        material.locksAmbientWithDiffuse = true
 
-            // Back
-            3, 5, 4,
+        let bezierPath = UIBezierPath()
+        bezierPath.move(to: CGPoint(x: -halfSide, y: -halfSide))
+        bezierPath.addLine(to: CGPoint(x: -halfSide, y: halfSide))
+        bezierPath.addLine(to: CGPoint(x: halfSide, y: -halfSide))
+        bezierPath.close()
+        let wedge = SCNShape(path: bezierPath, extrusionDepth: CGFloat(size))
+        wedge.firstMaterial = material
 
-            // Diagonal
-            6, 8, 7, // 0, 2, 3,
-            7, 8, 9, // 3, 2, 5,
-        ]
-
-        let normals: [SCNVector3] = [
-            // Front
-            SCNVector3Make(0, 0, -1),
-            SCNVector3Make(0, 0, -1),
-            SCNVector3Make(0, 0, -1),
-
-            // Back
-            SCNVector3Make(0, 0, 1),
-            SCNVector3Make(0, 0, 1),
-            SCNVector3Make(0, 0, 1),
-
-            // Diagonal ???
-            SCNVector3Make(-1, -0.5, 0),
-            SCNVector3Make(-1, -0.5, 0),
-            SCNVector3Make(-1, -0.5, 0),
-            SCNVector3Make(-1, -0.5, 0),
-            ]
-
-        let vertexSource = SCNGeometrySource(vertices: vertices)
-        let normalSource = SCNGeometrySource(normals: normals)
-
-        let triangleElement = SCNGeometryElement(indices: triangleIndices, primitiveType: .triangles)
-
-        return SCNGeometry(sources: [vertexSource, normalSource],
-                           elements: [triangleElement])
+        return wedge
     }
 }
+

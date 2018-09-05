@@ -7,56 +7,35 @@ class NodeFactory: NSObject {
     let sideLength: Float
 
     let geometryFactory = GeometryFactory()
-    let flatNode1: SCNNode
-    let flatNode2: SCNNode
-    let wedgeNode: SCNNode
-    var wallNodeCache: [Int:SCNNode] = [:]
+    let cube1: SCNNode
+    let cube2: SCNNode
+    let wedge: SCNNode
+    var wallCache: [Int:SCNNode] = [:]
 
-    let sentinelNode: SCNNode
-    let guardianNode: SCNNode
-    let playerNode: SCNNode
+    let sentinel: SCNNode
+    let guardian: SCNNode
+    let player: SCNNode
 
     init(sideLength: Float) {
         self.sideLength = sideLength
 
-        // Red box
-        var material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
-        material.locksAmbientWithDiffuse = true
+        let redCube = geometryFactory.createCube(size: sideLength, colour: .red)
+        cube1 = SCNNode(geometry: redCube)
 
-        var flatBox = SCNBox(width: CGFloat(sideLength),
-                             height: CGFloat(sideLength),
-                             length: CGFloat(sideLength),
-                             chamferRadius: 0.0)
-        flatBox.firstMaterial = material
+        let yellowCube = geometryFactory.createCube(size: sideLength, colour: .yellow)
+        cube2 = SCNNode(geometry: yellowCube)
 
-        self.flatNode1 = SCNNode(geometry: flatBox)
-
-        // Yellow box
-        material = material.copy() as! SCNMaterial
-        material.diffuse.contents = UIColor.yellow
-
-        flatBox = flatBox.copy() as! SCNBox
-        flatBox.firstMaterial = material
-
-        self.flatNode2 = SCNNode(geometry: flatBox)
-
-        // Grey wedge
-        material = material.copy() as! SCNMaterial
-        material.diffuse.contents = slopeColour
-
-        let wedge = geometryFactory.createWedge(size: sideLength)
-        wedge.firstMaterial = material
-        self.wedgeNode = SCNNode(geometry: wedge)
+        let greyWedge = geometryFactory.createWedge(size: sideLength, colour: slopeColour)
+        wedge = SCNNode(geometry: greyWedge)
 
         // Sentinel
-        material = material.copy() as! SCNMaterial
+        var material = SCNMaterial()
         material.diffuse.contents = UIColor.blue
 
         var sphere = SCNSphere(radius: CGFloat(sideLength / 3.0))
         sphere.firstMaterial = material
 
-        self.sentinelNode = SCNNode(geometry: sphere)
+        sentinel = SCNNode(geometry: sphere)
 
         // Guardian
         material = material.copy() as! SCNMaterial
@@ -65,7 +44,7 @@ class NodeFactory: NSObject {
         sphere = sphere.copy() as! SCNSphere
         sphere.firstMaterial = material
 
-        self.guardianNode = SCNNode(geometry: sphere)
+        guardian = SCNNode(geometry: sphere)
 
         // Player
         material = material.copy() as! SCNMaterial
@@ -74,7 +53,7 @@ class NodeFactory: NSObject {
         let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
         capsule.firstMaterial = material
 
-        self.playerNode = SCNNode(geometry: capsule)
+        player = SCNNode(geometry: capsule)
 
         super.init()
     }
@@ -116,7 +95,7 @@ class NodeFactory: NSObject {
     }
 
     func createSentinelNode(grid: Grid, piece: GridPiece) -> SCNNode {
-        let clone = sentinelNode.clone()
+        let clone = sentinel.clone()
         let point = piece.point
         let level = piece.level
         clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)
@@ -124,7 +103,7 @@ class NodeFactory: NSObject {
     }
 
     func createGuardianNode(grid: Grid, piece: GridPiece) -> SCNNode {
-        let clone = guardianNode.clone()
+        let clone = guardian.clone()
         let point = piece.point
         let level = piece.level
         clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)
@@ -132,7 +111,7 @@ class NodeFactory: NSObject {
     }
 
     func createPlayerNode(grid: Grid, piece: GridPiece) -> SCNNode {
-        let clone = playerNode.clone()
+        let clone = player.clone()
         let point = piece.point
         let level = piece.level
         clone.position = calculatePosition(grid: grid, x: point.x, y: level, z: point.z)
@@ -179,14 +158,14 @@ class NodeFactory: NSObject {
     }
 
     private func createFlatPiece(grid: Grid, x: Int, y: Float, z: Int) -> SCNNode {
-        let source = (x + z) % 2 == 0 ? flatNode1 : flatNode2
+        let source = (x + z + Int(y)) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
         boxNode.position = calculatePosition(grid: grid, x: x, y: y, z: z)
         return boxNode
     }
 
     private func createWedgePiece(grid: Grid, x: Int, y: Float, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
-        let clone = wedgeNode.clone()
+        let clone = wedge.clone()
         clone.position = calculatePosition(grid: grid, x: x, y: y, z: z)
         if let rotation = rotation {
             clone.rotation = rotation
@@ -210,7 +189,7 @@ class NodeFactory: NSObject {
     }
 
     private func getOrCreateWallNode(height: Int) -> SCNNode {
-        if let existingNode = wallNodeCache[height] {
+        if let existingNode = wallCache[height] {
             return existingNode.clone()
         }
 
@@ -225,7 +204,7 @@ class NodeFactory: NSObject {
         wall.firstMaterial = material
 
         let wallNode = SCNNode(geometry: wall)
-        wallNodeCache[height] = wallNode
+        wallCache[height] = wallNode
         return wallNode
     }
 
