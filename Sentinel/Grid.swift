@@ -103,61 +103,6 @@ class GridPiece: NSObject {
     }
 }
 
-class GridIndex: NSObject {
-    private let index: [Int:[GridPiece]]
-
-    init(grid: Grid) {
-        var i: [Int:[GridPiece]] = [:]
-        for z in 0 ..< grid.depth {
-            for x in 0 ..< grid.width {
-                if let piece = grid.get(point: GridPoint(x: x, z: z)) {
-                    if piece.isFlat {
-                        let level = Int(piece.level)
-
-                        var array = i[level]
-                        if array == nil {
-                            i[level] = [piece]
-                        } else {
-                            array!.append(piece)
-                            i[level] = array! // Not sure why I have to do this??
-                        }
-                    }
-                }
-            }
-        }
-
-        index = i
-
-        super.init()
-    }
-
-    func flatLevels() -> [Int] {
-        return index.keys.sorted()
-    }
-
-    func pieces(at level: Int) -> [GridPiece] {
-        if let array = index[level] {
-            return array
-        }
-
-        return []
-    }
-
-    func highestFlatPieces() -> [GridPiece] {
-        if let level = flatLevels().last {
-            return pieces(at: level)
-        }
-        return []
-    }
-
-    func lowestFlatPieces() -> [GridPiece] {
-        if let level = flatLevels().first {
-            return pieces(at: level)
-        }
-        return []
-    }
-}
-
 class Grid: NSObject {
     let width: Int
     let depth: Int

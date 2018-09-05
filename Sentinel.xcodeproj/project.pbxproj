@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6515594E213FFD0000F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
+		6515594F213FFD4400F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
+		65155950213FFD7000F35776 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
 		652B39C2213EB76B006D9AB0 /* GridIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652B39C1213EB76B006D9AB0 /* GridIndexTests.swift */; };
 		6546A842213C0651009F0650 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A841213C0651009F0650 /* AppDelegate.swift */; };
 		6546A844213C0651009F0650 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A843213C0651009F0650 /* ViewController.swift */; };
@@ -34,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6515594D213FFD0000F35776 /* GridIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridIndex.swift; sourceTree = "<group>"; };
 		652B39C1213EB76B006D9AB0 /* GridIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridIndexTests.swift; sourceTree = "<group>"; };
 		6546A83E213C0651009F0650 /* Sentinel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sentinel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6546A841213C0651009F0650 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 				65B83F8D213C6FDD00515915 /* GeometryFactory.swift */,
 				65B83F80213C08C600515915 /* NodeFactory.swift */,
 				65B83F82213C08E400515915 /* Grid.swift */,
+				6515594D213FFD0000F35776 /* GridIndex.swift */,
 				659395F0213D46B700302665 /* TerrainGenerator.swift */,
 				65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */,
 				6546A845213C0651009F0650 /* Main.storyboard */,
@@ -216,6 +221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				65B83F8E213C6FDD00515915 /* GeometryFactory.swift in Sources */,
 				6546A844213C0651009F0650 /* ViewController.swift in Sources */,
 				6546A842213C0651009F0650 /* AppDelegate.swift in Sources */,
@@ -230,10 +236,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6515594F213FFD4400F35776 /* GridIndex.swift in Sources */,
 				652B39C2213EB76B006D9AB0 /* GridIndexTests.swift in Sources */,
 				659395F4213D511A00302665 /* TerrainGenerator.swift in Sources */,
 				6546A857213C0652009F0650 /* GridTests.swift in Sources */,
 				65B83F84213C09A000515915 /* Grid.swift in Sources */,
+				65155950213FFD7000F35776 /* ValueGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
