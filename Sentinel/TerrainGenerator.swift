@@ -1,22 +1,26 @@
 import UIKit
 
 class TerrainGenerator: NSObject {
-    let grid: Grid
-
+    var grid: Grid!
     var sentinelPosition: GridPoint
     var guardianPositions: [GridPoint] = []
     var playerPosition: GridPoint
 
-    init(width: Int, depth: Int) {
-        grid = Grid(width: width, depth: depth)
+    override init() {
         sentinelPosition = GridPoint(x: 0, z: 0)
         playerPosition = GridPoint(x: 0, z: 0)
 
         super.init()
     }
 
-    func generate(level: Int) -> Grid {
-        let difficultyAdjustment = level / 10
+    func generate(level: Int, maxLevel: Int, minWidth: Int, maxWidth: Int, minDepth: Int, maxDepth: Int) -> Grid {
+        let progression = Float(level) / Float(maxLevel)
+        let widthAdjustment = progression * Float(maxWidth - minWidth)
+        let depthAdjustment = progression * Float(maxDepth - minDepth)
+        let width = maxWidth - Int(widthAdjustment)
+        let depth = maxDepth - Int(depthAdjustment)
+
+        grid = Grid(width: width, depth: depth)
 
         let gen = ValueGenerator(input: level)
         generateLargePlateaus(gen: gen)
@@ -25,12 +29,15 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen)
         generateSmallPeaks(gen: gen)
 
+        var difficultyAdjustment = level / 10
+        if difficultyAdjustment > 3 {
+            difficultyAdjustment = 3
+        }
         sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
-        grid.processSlopes()
+        guardianPositions = generateGuardians(gen: gen, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
+        playerPosition = generatePlayer(gen: gen, sentinelPosition: sentinelPosition)
 
-        let gridIndex = GridIndex(grid: grid)
-        guardianPositions = generateGuardians(gen: gen, gridIndex: gridIndex, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
-        playerPosition = generatePlayer(gen: gen, gridIndex: gridIndex)
+        grid.processSlopes()
 
         return grid
     }
@@ -74,65 +81,52 @@ class TerrainGenerator: NSObject {
 
     private func generateSentinel(gen: ValueGenerator, difficultyAdjustment: Int) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
-        let sentinelPieces = gridIndex.highestFlatPieces()
-        if sentinelPieces.count == 1 {
-            return sentinelPieces[0].point
-        }
-
-        let index = gen.next(min: 0, max: sentinelPieces.count - 1)
-        let sentinelPosition = sentinelPieces[index].point
+        let sentinelPosition = highestPiece(in: gridIndex, gen: gen).point
         for _ in 0 ..< difficultyAdjustment + 1 {
             grid.build(at: sentinelPosition)
         }
         return sentinelPosition
     }
 
-    private func generateGuardians(gen: ValueGenerator, gridIndex: GridIndex, sentinelPosition: GridPoint, difficultyAdjustment: Int) -> [GridPoint] {
-        guard difficultyAdjustment > 0 else {
+    private func highestPiece(in gridIndex: GridIndex, gen: ValueGenerator) -> GridPiece {
+        let pieces = gridIndex.highestFlatPieces()
+        if pieces.count == 1 {
+            return pieces[0]
+        }
+
+        let index = gen.next(min: 0, max: pieces.count - 1)
+        return pieces[index]
+    }
+
+    private func generateGuardians(gen: ValueGenerator, sentinelPosition: GridPoint, difficultyAdjustment: Int) -> [GridPoint] {
+        guard 1 ... 3 ~= difficultyAdjustment else {
             return []
         }
 
-        var guardianPositions: [GridPoint] = []
-        var attempts = difficultyAdjustment * 3
-        while guardianPositions.count < difficultyAdjustment && attempts > 0 {
-            if let position = calculatePotentialGuardianPosition(gen: gen, gridIndex: gridIndex, guardianIndex: guardianPositions.count) {
-                if ensure(guardianPosition: position, isFarEnoughFrom: sentinelPosition, otherGuardianPositions: guardianPositions) {
-                    guardianPositions.append(position)
-                }
+        var guardianPieces: [GridPiece] = []
+        for quadrant in GridQuadrant.allValues() {
+            if !quadrant.contains(point: sentinelPosition, grid: grid) {
+                let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
+                guardianPieces.append(highestPiece(in: gridIndex, gen: gen))
             }
-
-            attempts -= 1
         }
 
-        return guardianPositions
+        // Sort by level
+        guardianPieces = guardianPieces.sorted { return $0.level < $1.level }
+
+        let points = guardianPieces.map { return $0.point }
+        return Array(points.prefix(difficultyAdjustment))
     }
 
-    private func calculatePotentialGuardianPosition(gen: ValueGenerator, gridIndex: GridIndex, guardianIndex: Int) -> GridPoint? {
-        let levels = gridIndex.flatLevels()
-        let guardianLevelIndex = levels.count - (guardianIndex + 2)
-        if guardianLevelIndex < 1 { // No guardians on the ground level
-            return nil
+    private func generatePlayer(gen: ValueGenerator, sentinelPosition: GridPoint) -> GridPoint {
+        let gridIndex: GridIndex
+        if let opposite = quadrantOpposite(point: sentinelPosition) {
+            gridIndex = GridIndex(grid: grid, quadrant: opposite)
+        } else {
+            // Fallback, although this should never happen unless my maths is off :O
+            gridIndex = GridIndex(grid: grid)
         }
 
-        let guardianLevel = levels[guardianLevelIndex]
-        if guardianLevelIndex < 4 { // No guardians on the 1st 4 levels
-            return nil
-        }
-
-        let guardianPieces = gridIndex.pieces(at: guardianLevel)
-        if guardianPieces.count == 1 {
-            return guardianPieces[0].point
-        }
-
-        let index = gen.next(min: 0, max: guardianPieces.count - 1)
-        return guardianPieces[index].point
-    }
-
-    private func ensure(guardianPosition: GridPoint, isFarEnoughFrom sentinelPosition: GridPoint, otherGuardianPositions: [GridPoint]) -> Bool {
-        return true
-    }
-
-    private func generatePlayer(gen: ValueGenerator, gridIndex: GridIndex) -> GridPoint {
         let playerPieces = gridIndex.lowestFlatPieces()
         if playerPieces.count == 1 {
             return playerPieces[0].point
@@ -140,6 +134,15 @@ class TerrainGenerator: NSObject {
 
         let index = gen.next(min: 0, max: playerPieces.count - 1)
         return playerPieces[index].point
+    }
+
+    private func quadrantOpposite(point: GridPoint) -> GridQuadrant? {
+        for quadrant in GridQuadrant.allValues() {
+            if quadrant.contains(point: sentinelPosition, grid: grid) {
+                return quadrant.opposite
+            }
+        }
+        return nil
     }
 
     private func generatePlateaus(minSize: Int,

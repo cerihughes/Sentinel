@@ -2,6 +2,7 @@ import SceneKit
 
 class ViewController: UIViewController {
 
+    let tg = TerrainGenerator()
     var terrainIndex = 0
     var terrainNode = SCNNode()
 
@@ -101,8 +102,12 @@ class ViewController: UIViewController {
     }
 
     private func createTerrain(in scene: SCNScene) {
-        let tg = TerrainGenerator(width: 32, depth: 25)
-        let grid = tg.generate(level: terrainIndex)
+        let grid = tg.generate(level: terrainIndex,
+                               maxLevel: 99,
+                               minWidth: 24,
+                               maxWidth: 32,
+                               minDepth: 16,
+                               maxDepth: 24)
         let nodeFactory = NodeFactory(sideLength: 10.0)
 
         terrainNode = nodeFactory.createTerrainNode(grid: grid)
