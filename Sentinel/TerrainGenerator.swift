@@ -37,6 +37,8 @@ class TerrainGenerator: NSObject {
         guardianPositions = generateGuardians(gen: gen, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
         playerPosition = generatePlayer(gen: gen, sentinelPosition: sentinelPosition)
 
+        normalise()
+        
         grid.processSlopes()
 
         return grid
@@ -143,6 +145,19 @@ class TerrainGenerator: NSObject {
             }
         }
         return nil
+    }
+
+    private func normalise() {
+        let gridIndex = GridIndex(grid: grid)
+        if let lowestLevel = gridIndex.flatLevels().first, lowestLevel > 0 {
+            for z in 0 ..< grid.depth {
+                for x in 0 ..< grid.width {
+                    if let piece = grid.get(point: GridPoint(x: x, z: z)) {
+                        piece.level -= Float(lowestLevel)
+                    }
+                }
+            }
+        }
     }
 
     private func generatePlateaus(minSize: Int,
