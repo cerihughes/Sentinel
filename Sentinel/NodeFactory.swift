@@ -10,7 +10,6 @@ class NodeFactory: NSObject {
     let cube1: SCNNode
     let cube2: SCNNode
     let wedge: SCNNode
-    var wallCache: [Int:SCNNode] = [:]
 
     let sentinel: SCNNode
     let guardian: SCNNode
@@ -139,8 +138,10 @@ class NodeFactory: NSObject {
             if height <= 0 {
                 return
             }
-            let node = createWallPiece(grid: grid, x: x, z: z, height: Int(height))
-            terrainNode.addChildNode(node)
+            let wallNodes = createWallPiece(grid: grid, x: x, z: z, height: Int(height))
+            for wallNode in wallNodes {
+                terrainNode.addChildNode(wallNode)
+            }
         }
     }
 
@@ -182,38 +183,12 @@ class NodeFactory: NSObject {
     }
 
 
-    private func createWallPiece(grid: Grid, x: Int, z: Int, height: Int) -> SCNNode {
-        let wallNode = getOrCreateWallNode(height: height)
-        wallNode.position = calculateWallPosition(grid: grid, x: x, z: z, height: height)
-        return wallNode
-    }
-
-    private func getOrCreateWallNode(height: Int) -> SCNNode {
-        if let existingNode = wallCache[height] {
-            return existingNode.clone()
+    private func createWallPiece(grid: Grid, x: Int, z: Int, height: Int) -> [SCNNode] {
+        var wallNodes: [SCNNode] = []
+        for y in 0 ..< height {
+            let wallNode = createFlatPiece(grid: grid, x: x, y: Float(y - 1), z: z)
+            wallNodes.append(wallNode)
         }
-
-        let material = SCNMaterial()
-        material.diffuse.contents = slopeColour
-        material.locksAmbientWithDiffuse = true
-
-        let wall = SCNBox(width: CGFloat(sideLength),
-                          height: CGFloat(height) * CGFloat(sideLength),
-                          length: CGFloat(sideLength),
-                          chamferRadius: 0.0)
-        wall.firstMaterial = material
-
-        let wallNode = SCNNode(geometry: wall)
-        wallCache[height] = wallNode
-        return wallNode
-    }
-
-    private func calculateWallPosition(grid: Grid, x: Int, z: Int, height: Int) -> SCNVector3 {
-        let width = Float(grid.width)
-        let depth = Float(grid.depth)
-        let centerPoint = Float(height - 3) / 2.0
-        return SCNVector3Make((Float(x) - (width / 2.0)) * Float(sideLength),
-                              centerPoint * Float(sideLength),
-                              (Float(z) - (depth / 2.0)) * Float(sideLength))
+        return wallNodes
     }
 }
