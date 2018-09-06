@@ -1,10 +1,17 @@
 import SceneKit
 
 class ViewController: UIViewController {
+    let viewModel: ViewModel
 
-    let tg = TerrainGenerator()
-    var terrainIndex = 0
-    var terrainNode = SCNNode()
+    init(viewModel: ViewModel) {
+        self.viewModel = viewModel
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func loadView() {
         view = SCNView()
@@ -23,7 +30,7 @@ class ViewController: UIViewController {
         let scene = SCNScene()
         sceneView.scene = scene
 
-        createTerrain(in: scene)
+        let terrainNode = createTerrain(in: scene)
 
         let camera = SCNCamera()
         let cameraNode = SCNNode()
@@ -105,50 +112,49 @@ class ViewController: UIViewController {
         sceneView.addGestureRecognizer(tapGesture)
     }
 
-    private func createTerrain(in scene: SCNScene) {
-        let grid = tg.generate(level: terrainIndex,
-                               maxLevel: 99,
-                               minWidth: 24,
-                               maxWidth: 32,
-                               minDepth: 16,
-                               maxDepth: 24)
-        let nodeFactory = NodeFactory(sideLength: 10.0)
-
-        terrainNode = nodeFactory.createTerrainNode(grid: grid)
+    private func createTerrain(in scene: SCNScene) -> SCNNode {
+        let nodeFactory = viewModel.nodeFactory!
+        let terrainNode = nodeFactory.createTerrainNode()
         terrainNode.position = SCNVector3Make(0, 0, 0)
         scene.rootNode.addChildNode(terrainNode)
 
+        let grid = nodeFactory.grid
+        let tg = viewModel.tg
+
         if let sentinelPiece = grid.get(point: tg.sentinelPosition) {
-            let sentinelNode = nodeFactory.createSentinelNode(grid: grid, piece: sentinelPiece)
+            let sentinelNode = nodeFactory.createSentinelNode(piece: sentinelPiece)
             terrainNode.addChildNode(sentinelNode)
         }
 
         for guardianPosition in tg.guardianPositions {
             if let guardianPiece = grid.get(point: guardianPosition) {
-                let guardianNode = nodeFactory.createGuardianNode(grid: grid, piece: guardianPiece)
+                let guardianNode = nodeFactory.createGuardianNode(piece: guardianPiece)
                 terrainNode.addChildNode(guardianNode)
             }
         }
 
         if let playerPiece = grid.get(point: tg.playerPosition) {
-            let playerNode = nodeFactory.createPlayerNode(grid: grid, piece: playerPiece)
+            let playerNode = nodeFactory.createPlayerNode(piece: playerPiece)
             terrainNode.addChildNode(playerNode)
         }
 
-        terrainIndex += 1
+        return terrainNode
     }
 
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         guard
             let sceneView = self.view as? SCNView,
-            let scene = sceneView.scene
+            let scene = sceneView.scene,
+            let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true)
         else {
             return
         }
 
+        viewModel.nextLevel()
+
         terrainNode.removeFromParentNode()
 
-        createTerrain(in: scene)
+        _ = createTerrain(in: scene)
     }
 }
