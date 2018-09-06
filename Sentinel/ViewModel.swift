@@ -1,29 +1,27 @@
 import Foundation
 
 class ViewModel: NSObject {
-    let tg = TerrainGenerator()
+    let terrainIndex: Int
+    let grid: Grid
+    let nodeFactory: NodeFactory
 
-    var grid: Grid!
-    var nodeFactory: NodeFactory!
+    init(terrainIndex: Int) {
+        self.terrainIndex = terrainIndex
 
-    private (set) var nextTerrainIndex = 0
+        let tg = TerrainGenerator()
+        self.grid = tg.generate(level: terrainIndex,
+                                maxLevel: 99,
+                                minWidth: 24,
+                                maxWidth: 32,
+                                minDepth: 16,
+                                maxDepth: 24)
 
-    override init() {
+        let nodePositioning = NodePositioning(gridWidth: Float(grid.width),
+                                              gridDepth: Float(grid.depth),
+                                              sideLength: 10.0)
+
+        self.nodeFactory = NodeFactory(nodePositioning: nodePositioning)
+
         super.init()
-
-        nextLevel()
-    }
-
-    func nextLevel() {
-        grid = tg.generate(level: nextTerrainIndex,
-                               maxLevel: 99,
-                               minWidth: 24,
-                               maxWidth: 32,
-                               minDepth: 16,
-                               maxDepth: 24)
-
-        nodeFactory = NodeFactory(grid: grid, sideLength: 10.0)
-
-        nextTerrainIndex += 1
     }
 }

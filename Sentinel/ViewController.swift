@@ -113,48 +113,15 @@ class ViewController: UIViewController {
     }
 
     private func createTerrain(in scene: SCNScene) -> SCNNode {
-        let nodeFactory = viewModel.nodeFactory!
-        let terrainNode = nodeFactory.createTerrainNode()
+        let nodeFactory = viewModel.nodeFactory
+        let terrainNode = nodeFactory.createTerrainNode(grid: viewModel.grid)
         terrainNode.position = SCNVector3Make(0, 0, 0)
         scene.rootNode.addChildNode(terrainNode)
-
-        let grid = nodeFactory.grid
-        let tg = viewModel.tg
-
-        if let sentinelPiece = grid.get(point: tg.sentinelPosition) {
-            let sentinelNode = nodeFactory.createSentinelNode(piece: sentinelPiece)
-            terrainNode.addChildNode(sentinelNode)
-        }
-
-        for guardianPosition in tg.guardianPositions {
-            if let guardianPiece = grid.get(point: guardianPosition) {
-                let guardianNode = nodeFactory.createGuardianNode(piece: guardianPiece)
-                terrainNode.addChildNode(guardianNode)
-            }
-        }
-
-        if let playerPiece = grid.get(point: tg.playerPosition) {
-            let playerNode = nodeFactory.createPlayerNode(piece: playerPiece)
-            terrainNode.addChildNode(playerNode)
-        }
-
         return terrainNode
     }
 
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        guard
-            let sceneView = self.view as? SCNView,
-            let scene = sceneView.scene,
-            let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true)
-        else {
-            return
-        }
-
-        viewModel.nextLevel()
-
-        terrainNode.removeFromParentNode()
-
-        _ = createTerrain(in: scene)
+        // No op
     }
 }

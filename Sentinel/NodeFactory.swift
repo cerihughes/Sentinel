@@ -9,8 +9,8 @@ let guardianNodeName = "guardianNodeName"
 let playerNodeName = "playerNodeName"
 
 class NodeFactory: NSObject {
-    let grid: Grid
     let sideLength: Float
+    let nodePositioning: NodePositioning
 
     let geometryFactory = GeometryFactory()
     let cube1: SCNNode
@@ -21,9 +21,9 @@ class NodeFactory: NSObject {
     let guardian: SCNNode
     let player: SCNNode
 
-    init(grid: Grid, sideLength: Float) {
-        self.grid = grid
-        self.sideLength = sideLength
+    init(nodePositioning: NodePositioning) {
+        self.sideLength = nodePositioning.sideLength
+        self.nodePositioning = nodePositioning
 
         let redCube = geometryFactory.createCube(size: sideLength, colour: .red)
         cube1 = SCNNode(geometry: redCube)
@@ -70,7 +70,7 @@ class NodeFactory: NSObject {
         super.init()
     }
 
-    func createTerrainNode() -> SCNNode {
+    func createTerrainNode(grid: Grid) -> SCNNode {
         let terrainNode = SCNNode()
         terrainNode.name = terrainNodeName
 
@@ -100,7 +100,24 @@ class NodeFactory: NSObject {
             }
         }
 
-        addWallNodes(to: terrainNode)
+        addWallNodes(to: terrainNode, grid: grid)
+
+        if let sentinelPiece = grid.get(point: grid.sentinelPosition) {
+            let sentinelNode = createSentinelNode(piece: sentinelPiece)
+            terrainNode.addChildNode(sentinelNode)
+        }
+
+        for guardianPosition in grid.guardianPositions {
+            if let guardianPiece = grid.get(point: guardianPosition) {
+                let guardianNode = createGuardianNode(piece: guardianPiece)
+                terrainNode.addChildNode(guardianNode)
+            }
+        }
+
+        if let playerPiece = grid.get(point: grid.playerPosition) {
+            let playerNode = createPlayerNode(piece: playerPiece)
+            terrainNode.addChildNode(playerNode)
+        }
 
         return terrainNode
     }
@@ -109,7 +126,7 @@ class NodeFactory: NSObject {
         let clone = sentinel.clone()
         let point = piece.point
         let level = piece.level
-        clone.position = calculatePosition(x: point.x, y: level, z: point.z)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
         return clone
     }
 
@@ -117,7 +134,7 @@ class NodeFactory: NSObject {
         let clone = guardian.clone()
         let point = piece.point
         let level = piece.level
-        clone.position = calculatePosition(x: point.x, y: level, z: point.z)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
         return clone
     }
 
@@ -125,22 +142,22 @@ class NodeFactory: NSObject {
         let clone = player.clone()
         let point = piece.point
         let level = piece.level
-        clone.position = calculatePosition(x: point.x, y: level, z: point.z)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
         return clone
     }
 
-    private func addWallNodes(to terrainNode: SCNNode) {
+    private func addWallNodes(to terrainNode: SCNNode, grid: Grid) {
         for x in 0 ..< grid.width {
-            addWallNodes(to: terrainNode, x: x, z: 0)
-            addWallNodes(to: terrainNode, x: x, z: grid.depth - 1)
+            addWallNodes(to: terrainNode, grid: grid, x: x, z: 0)
+            addWallNodes(to: terrainNode, grid: grid, x: x, z: grid.depth - 1)
         }
         for z in 0 ..< grid.depth {
-            addWallNodes(to: terrainNode, x: 0, z: z)
-            addWallNodes(to: terrainNode, x: grid.width - 1, z: z)
+            addWallNodes(to: terrainNode, grid: grid, x: 0, z: z)
+            addWallNodes(to: terrainNode, grid: grid, x: grid.width - 1, z: z)
         }
     }
 
-    private func addWallNodes(to terrainNode: SCNNode, x: Int, z: Int) {
+    private func addWallNodes(to terrainNode: SCNNode, grid: Grid, x: Int, z: Int) {
         if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
             var height = gridPiece.level
             if !gridPiece.isFlat {
@@ -173,27 +190,18 @@ class NodeFactory: NSObject {
     private func createFlatPiece(x: Int, y: Float, z: Int) -> SCNNode {
         let source = (x + z + Int(y)) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
-        boxNode.position = calculatePosition(x: x, y: y, z: z)
+        boxNode.position = nodePositioning.calculatePosition(x: x, y: y, z: z)
         return boxNode
     }
 
     private func createWedgePiece(x: Int, y: Float, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
         let clone = wedge.clone()
-        clone.position = calculatePosition(x: x, y: y, z: z)
+        clone.position = nodePositioning.calculatePosition(x: x, y: y, z: z)
         if let rotation = rotation {
             clone.rotation = rotation
         }
         return clone
     }
-
-    private func calculatePosition(x: Int, y: Float, z: Int) -> SCNVector3 {
-        let width = Float(grid.width)
-        let depth = Float(grid.depth)
-        return SCNVector3Make((Float(x) - (width / 2.0)) * Float(sideLength),
-                              y * Float(sideLength),
-                              (Float(z) - (depth / 2.0)) * Float(sideLength))
-    }
-
 
     private func createWallPiece(x: Int, z: Int, height: Int) -> [SCNNode] {
         var wallNodes: [SCNNode] = []
