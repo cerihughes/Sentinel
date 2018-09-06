@@ -20,6 +20,7 @@
 		656635DB2141483D00C264EA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656635DA2141483D00C264EA /* ViewModel.swift */; };
 		659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
 		659395F4213D511A00302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
+		65A9E07421417013009011C8 /* GridPointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07321417013009011C8 /* GridPointTests.swift */; };
 		65B83F81213C08C600515915 /* NodeFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F80213C08C600515915 /* NodeFactory.swift */; };
 		65B83F83213C08E400515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65B83F84213C09A000515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
@@ -53,6 +54,7 @@
 		6546A858213C0652009F0650 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		656635DA2141483D00C264EA /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		659395F0213D46B700302665 /* TerrainGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainGenerator.swift; sourceTree = "<group>"; };
+		65A9E07321417013009011C8 /* GridPointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPointTests.swift; sourceTree = "<group>"; };
 		65B83F80213C08C600515915 /* NodeFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFactory.swift; sourceTree = "<group>"; };
 		65B83F82213C08E400515915 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		65B83F8D213C6FDD00515915 /* GeometryFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryFactory.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 			children = (
 				6546A856213C0652009F0650 /* GridTests.swift */,
 				652B39C1213EB76B006D9AB0 /* GridIndexTests.swift */,
+				65A9E07321417013009011C8 /* GridPointTests.swift */,
 				6546A858213C0652009F0650 /* Info.plist */,
 			);
 			path = SentinelTests;
@@ -250,6 +253,7 @@
 				6546A857213C0652009F0650 /* GridTests.swift in Sources */,
 				65B83F84213C09A000515915 /* Grid.swift in Sources */,
 				65155950213FFD7000F35776 /* ValueGenerator.swift in Sources */,
+				65A9E07421417013009011C8 /* GridPointTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

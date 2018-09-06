@@ -130,8 +130,8 @@ class NodeFactory: NSObject {
             }
         }
 
-        if let playerPiece = grid.get(point: grid.playerPosition) {
-            let playerNode = createPlayerNode(piece: playerPiece)
+        if let startPiece = grid.get(point: grid.startPosition) {
+            let playerNode = createPlayerNode(piece: startPiece)
             terrainNode.addChildNode(playerNode)
         }
 

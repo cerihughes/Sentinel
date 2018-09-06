@@ -3,6 +3,10 @@ import SceneKit
 class ViewController: UIViewController {
     let viewModel: ViewModel
 
+    var tapRecogniser: UITapGestureRecognizer?
+    var panRecogniser: UIPanGestureRecognizer?
+
+    var currentPosition = GridPoint(x: 0, z: 0)
     var currentAngle: Float = 0.0
 
     init(viewModel: ViewModel) {
@@ -112,7 +116,11 @@ class ViewController: UIViewController {
         sceneView.addGestureRecognizer(tapRecogniser)
 
         let panRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panGesture(sender:)))
+        panRecogniser.isEnabled = false
         sceneView.addGestureRecognizer(panRecogniser)
+
+        self.tapRecogniser = tapRecogniser
+        self.panRecogniser = panRecogniser
     }
 
     private func createTerrain(in scene: SCNScene) -> SCNNode {
@@ -134,6 +142,15 @@ class ViewController: UIViewController {
                 return
         }
 
+        if let panRecogniser = panRecogniser, !panRecogniser.isEnabled {
+            let grid = viewModel.grid
+            if let startPiece = grid.get(point: grid.startPosition) {
+                let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
+                moveCamera(to: startPiece, facing: angleToSentinel, scene: scene, animationDuration: 3.0)
+            }
+            return
+        }
+
         let point = gestureRecognizer.location(in: sceneView)
         let options: [SCNHitTestOption:SCNNode] = [.rootNode:terrainNode]
         let hitResults = sceneView.hitTest(point, options: options)
@@ -141,7 +158,8 @@ class ViewController: UIViewController {
         if hitResults.count > 0 {
             let node = hitResults[0].node
             if let piece = nodeMap.getPiece(for: node) {
-                moveCamera(to: piece, scene: scene)
+                let angle = piece.point.angle(to: currentPosition)
+                moveCamera(to: piece, facing: angle, scene: scene)
             }
         }
     }
@@ -160,19 +178,20 @@ class ViewController: UIViewController {
         let translation = sender.translation(in: sender.view!)
         let angleDeltaDegrees = Float(translation.x) / 10.0
         let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
-        let newRadians = currentAngle + angleDeltaRadians
-        print("Δx: \(translation.x) Δ degrees: \(angleDeltaDegrees) Δ radians: \(angleDeltaRadians) radians: \(newRadians)")
+        var newRadians = currentAngle + angleDeltaRadians
 
-        cameraNode.constraints = nil
         cameraNode.transform = SCNMatrix4MakeRotation(newRadians, 0, 1, 0)
         cameraNode.position = position
 
         if sender.state == .ended {
+            while newRadians < 0 {
+                newRadians += (2.0 * Float.pi)
+            }
             currentAngle = newRadians
         }
     }
 
-    private func moveCamera(to piece:GridPiece, scene: SCNScene, animationDuration: CFTimeInterval = 1.0, lookAt: SCNNode? = nil) {
+    private func moveCamera(to piece:GridPiece, facing: Float, scene: SCNScene, animationDuration: CFTimeInterval = 1.0) {
         guard
             let cameraNode = scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
              else  {
@@ -183,13 +202,22 @@ class ViewController: UIViewController {
         let nodePositioning = viewModel.nodeFactory.nodePositioning
         let newPosition = nodePositioning.calculatePosition(x: point.x, y: piece.level + 1.0, z: point.z)
 
+        tapRecogniser?.isEnabled = false
+        panRecogniser?.isEnabled = false
+
         SCNTransaction.begin()
         SCNTransaction.animationDuration = animationDuration
+        SCNTransaction.completionBlock = {
+            self.tapRecogniser?.isEnabled = true
+            self.panRecogniser?.isEnabled = true
+        }
 
-        let constraint = SCNLookAtConstraint(target: lookAt)
-        constraint.isGimbalLockEnabled = true
-        cameraNode.constraints = [constraint]
+        cameraNode.constraints = nil
+        cameraNode.transform = SCNMatrix4MakeRotation(facing, 0, 1, 0)
         cameraNode.position = newPosition
+
+        self.currentAngle = facing
+        self.currentPosition = point
 
         SCNTransaction.commit()
     }
