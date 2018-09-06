@@ -3,6 +3,8 @@ import SceneKit
 class ViewController: UIViewController {
     let viewModel: ViewModel
 
+    var currentAngle: Float = 0.0
+
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
 
@@ -32,13 +34,11 @@ class ViewController: UIViewController {
 
         let terrainNode = createTerrain(in: scene)
 
-        let camera = SCNCamera()
-        let cameraNode = SCNNode()
-        cameraNode.camera = camera
+        let cameraNode = viewModel.nodeFactory.createCameraNode()
         cameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
-        camera.zNear = 100.0
-        camera.zFar = 500.0
-        cameraNode.constraints = [SCNLookAtConstraint(target: terrainNode)]
+        let lookAt = SCNLookAtConstraint(target: terrainNode)
+        lookAt.isGimbalLockEnabled = true
+        cameraNode.constraints = [lookAt]
         scene.rootNode.addChildNode(cameraNode)
 
         let omni = SCNLight()
@@ -108,8 +108,11 @@ class ViewController: UIViewController {
         scene.rootNode.addChildNode(sunOrbitNode)
         scene.rootNode.addChildNode(moonOrbitNode)
 
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        sceneView.addGestureRecognizer(tapGesture)
+        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tapGesture(_:)))
+        sceneView.addGestureRecognizer(tapRecogniser)
+
+        let panRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panGesture(sender:)))
+        sceneView.addGestureRecognizer(panRecogniser)
     }
 
     private func createTerrain(in scene: SCNScene) -> SCNNode {
@@ -121,7 +124,73 @@ class ViewController: UIViewController {
     }
 
     @objc
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // No op
+    func tapGesture(_ gestureRecognizer: UIGestureRecognizer) {
+        let nodeFactory = viewModel.nodeFactory
+        guard
+            let sceneView = self.view as? SCNView,
+            let scene = sceneView.scene,
+            let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true),
+            let nodeMap = nodeFactory.nodeMap else {
+                return
+        }
+
+        let point = gestureRecognizer.location(in: sceneView)
+        let options: [SCNHitTestOption:SCNNode] = [.rootNode:terrainNode]
+        let hitResults = sceneView.hitTest(point, options: options)
+
+        if hitResults.count > 0 {
+            let node = hitResults[0].node
+            if let piece = nodeMap.getPiece(for: node) {
+                moveCamera(to: piece, scene: scene)
+            }
+        }
+    }
+
+    @objc
+    func panGesture(sender: UIPanGestureRecognizer) {
+        guard
+            let sceneView = self.view as? SCNView,
+            let scene = sceneView.scene,
+            let cameraNode = scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
+            else  {
+                return
+        }
+
+        let position = cameraNode.position
+        let translation = sender.translation(in: sender.view!)
+        let angleDeltaDegrees = Float(translation.x) / 10.0
+        let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
+        let newRadians = currentAngle + angleDeltaRadians
+        print("Δx: \(translation.x) Δ degrees: \(angleDeltaDegrees) Δ radians: \(angleDeltaRadians) radians: \(newRadians)")
+
+        cameraNode.constraints = nil
+        cameraNode.transform = SCNMatrix4MakeRotation(newRadians, 0, 1, 0)
+        cameraNode.position = position
+
+        if sender.state == .ended {
+            currentAngle = newRadians
+        }
+    }
+
+    private func moveCamera(to piece:GridPiece, scene: SCNScene, animationDuration: CFTimeInterval = 1.0, lookAt: SCNNode? = nil) {
+        guard
+            let cameraNode = scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
+             else  {
+                return
+        }
+
+        let point = piece.point
+        let nodePositioning = viewModel.nodeFactory.nodePositioning
+        let newPosition = nodePositioning.calculatePosition(x: point.x, y: piece.level + 1.0, z: point.z)
+
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = animationDuration
+
+        let constraint = SCNLookAtConstraint(target: lookAt)
+        constraint.isGimbalLockEnabled = true
+        cameraNode.constraints = [constraint]
+        cameraNode.position = newPosition
+
+        SCNTransaction.commit()
     }
 }
