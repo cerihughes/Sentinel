@@ -1,6 +1,6 @@
 import Foundation
 
-struct GridPoint {
+struct GridPoint: Equatable {
     let x: Int
     let z: Int
 
@@ -124,6 +124,7 @@ class Grid: NSObject {
     var sentinelPosition: GridPoint
     var guardianPositions: [GridPoint] = []
     var startPosition: GridPoint
+    var treePositions: [GridPoint] = []
 
     init(width: Int, depth: Int) {
         self.width = width
