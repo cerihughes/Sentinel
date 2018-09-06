@@ -109,6 +109,10 @@ class Grid: NSObject {
 
     private var grid: [[GridPiece]] = []
 
+    var sentinelPosition: GridPoint
+    var guardianPositions: [GridPoint] = []
+    var playerPosition: GridPoint
+
     init(width: Int, depth: Int) {
         self.width = width
         self.depth = depth
@@ -120,6 +124,10 @@ class Grid: NSObject {
             }
             grid.append(row)
         }
+
+        sentinelPosition = GridPoint(x: -1, z: -1)
+        playerPosition = GridPoint(x: -1, z: -1)
+
         super.init()
     }
 

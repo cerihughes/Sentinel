@@ -2,16 +2,6 @@ import UIKit
 
 class TerrainGenerator: NSObject {
     var grid: Grid!
-    var sentinelPosition: GridPoint
-    var guardianPositions: [GridPoint] = []
-    var playerPosition: GridPoint
-
-    override init() {
-        sentinelPosition = GridPoint(x: 0, z: 0)
-        playerPosition = GridPoint(x: 0, z: 0)
-
-        super.init()
-    }
 
     func generate(level: Int, maxLevel: Int, minWidth: Int, maxWidth: Int, minDepth: Int, maxDepth: Int) -> Grid {
         let progression = Float(level) / Float(maxLevel)
@@ -33,9 +23,13 @@ class TerrainGenerator: NSObject {
         if difficultyAdjustment > 3 {
             difficultyAdjustment = 3
         }
-        sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
-        guardianPositions = generateGuardians(gen: gen, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
-        playerPosition = generatePlayer(gen: gen, sentinelPosition: sentinelPosition)
+        let sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        let guardianPositions = generateGuardians(gen: gen, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
+        let playerPosition = generatePlayer(gen: gen, sentinelPosition: sentinelPosition)
+
+        grid.sentinelPosition = sentinelPosition
+        grid.guardianPositions = guardianPositions
+        grid.playerPosition = playerPosition
 
         normalise()
         
@@ -122,7 +116,7 @@ class TerrainGenerator: NSObject {
 
     private func generatePlayer(gen: ValueGenerator, sentinelPosition: GridPoint) -> GridPoint {
         let gridIndex: GridIndex
-        if let opposite = quadrantOpposite(point: sentinelPosition) {
+        if let opposite = quadrantOpposite(point: sentinelPosition, sentinelPosition: sentinelPosition) {
             gridIndex = GridIndex(grid: grid, quadrant: opposite)
         } else {
             // Fallback, although this should never happen unless my maths is off :O
@@ -138,7 +132,7 @@ class TerrainGenerator: NSObject {
         return playerPieces[index].point
     }
 
-    private func quadrantOpposite(point: GridPoint) -> GridQuadrant? {
+    private func quadrantOpposite(point: GridPoint, sentinelPosition: GridPoint) -> GridQuadrant? {
         for quadrant in GridQuadrant.allValues() {
             if quadrant.contains(point: sentinelPosition, grid: grid) {
                 return quadrant.opposite
