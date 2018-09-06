@@ -25,11 +25,11 @@ class TerrainGenerator: NSObject {
         }
         let sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
         let guardianPositions = generateGuardians(gen: gen, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
-        let playerPosition = generatePlayer(gen: gen, sentinelPosition: sentinelPosition)
+        let startPosition = generateStartPosition(gen: gen, sentinelPosition: sentinelPosition)
 
         grid.sentinelPosition = sentinelPosition
         grid.guardianPositions = guardianPositions
-        grid.playerPosition = playerPosition
+        grid.startPosition = startPosition
 
         normalise()
         
@@ -114,7 +114,7 @@ class TerrainGenerator: NSObject {
         return Array(points.prefix(difficultyAdjustment))
     }
 
-    private func generatePlayer(gen: ValueGenerator, sentinelPosition: GridPoint) -> GridPoint {
+    private func generateStartPosition(gen: ValueGenerator, sentinelPosition: GridPoint) -> GridPoint {
         let gridIndex: GridIndex
         if let opposite = quadrantOpposite(point: sentinelPosition, sentinelPosition: sentinelPosition) {
             gridIndex = GridIndex(grid: grid, quadrant: opposite)
@@ -123,13 +123,13 @@ class TerrainGenerator: NSObject {
             gridIndex = GridIndex(grid: grid)
         }
 
-        let playerPieces = gridIndex.lowestFlatPieces()
-        if playerPieces.count == 1 {
-            return playerPieces[0].point
+        let startPieces = gridIndex.lowestFlatPieces()
+        if startPieces.count == 1 {
+            return startPieces[0].point
         }
 
-        let index = gen.next(min: 0, max: playerPieces.count - 1)
-        return playerPieces[index].point
+        let index = gen.next(min: 0, max: startPieces.count - 1)
+        return startPieces[index].point
     }
 
     private func quadrantOpposite(point: GridPoint, sentinelPosition: GridPoint) -> GridQuadrant? {

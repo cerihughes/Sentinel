@@ -7,6 +7,18 @@ struct GridPoint {
     func transform(deltaX: Int, deltaZ: Int) -> GridPoint {
         return GridPoint(x: x + deltaX, z: z + deltaZ)
     }
+
+    func angle(to point: GridPoint) -> Float {
+        let ax = Float(x)
+        let az = Float(z)
+        let bx = Float(point.x)
+        let bz = Float(point.z)
+        var angle = atan2f(ax - bx, az - bz)
+        while angle < 0 {
+            angle += (2.0 * Float.pi)
+        }
+        return angle
+    }
 }
 
 enum GridDirection: Int {
@@ -111,7 +123,7 @@ class Grid: NSObject {
 
     var sentinelPosition: GridPoint
     var guardianPositions: [GridPoint] = []
-    var playerPosition: GridPoint
+    var startPosition: GridPoint
 
     init(width: Int, depth: Int) {
         self.width = width
@@ -126,7 +138,7 @@ class Grid: NSObject {
         }
 
         sentinelPosition = GridPoint(x: -1, z: -1)
-        playerPosition = GridPoint(x: -1, z: -1)
+        startPosition = GridPoint(x: -1, z: -1)
 
         super.init()
     }

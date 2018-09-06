@@ -1,6 +1,7 @@
 import GLKit
 import SceneKit
 
+let cameraNodeName = "cameraNodeName"
 let terrainNodeName = "terrainNodeName"
 let flatNodeName = "flatNodeName"
 let slopeNodeName = "slopeNodeName"
@@ -20,6 +21,8 @@ class NodeFactory: NSObject {
     let sentinel: SCNNode
     let guardian: SCNNode
     let player: SCNNode
+
+    var nodeMap: NodeMap?
 
     init(nodePositioning: NodePositioning) {
         self.sideLength = nodePositioning.sideLength
@@ -70,7 +73,17 @@ class NodeFactory: NSObject {
         super.init()
     }
 
+    func createCameraNode() -> SCNNode {
+        let camera = SCNCamera()
+        camera.automaticallyAdjustsZRange = true
+        let cameraNode = SCNNode()
+        cameraNode.name = cameraNodeName
+        cameraNode.camera = camera
+        return cameraNode
+    }
+
     func createTerrainNode(grid: Grid) -> SCNNode {
+        let nodeMap = NodeMap()
         let terrainNode = SCNNode()
         terrainNode.name = terrainNodeName
 
@@ -85,6 +98,7 @@ class NodeFactory: NSObject {
                                                    y: gridPiece.level - 1.0,
                                                    z: z)
                         terrainNode.addChildNode(node)
+                        nodeMap.add(node: node, for: gridPiece)
                     } else {
                         for direction in GridDirection.allValues() {
                             if gridPiece.has(slopeDirection: direction) {
@@ -102,6 +116,8 @@ class NodeFactory: NSObject {
 
         addWallNodes(to: terrainNode, grid: grid)
 
+        self.nodeMap = nodeMap
+
         if let sentinelPiece = grid.get(point: grid.sentinelPosition) {
             let sentinelNode = createSentinelNode(piece: sentinelPiece)
             terrainNode.addChildNode(sentinelNode)
@@ -114,8 +130,8 @@ class NodeFactory: NSObject {
             }
         }
 
-        if let playerPiece = grid.get(point: grid.playerPosition) {
-            let playerNode = createPlayerNode(piece: playerPiece)
+        if let startPiece = grid.get(point: grid.startPosition) {
+            let playerNode = createPlayerNode(piece: startPiece)
             terrainNode.addChildNode(playerNode)
         }
 
