@@ -6,6 +6,10 @@ class ViewController: UIViewController {
     var terrainIndex = 0
     var terrainNode = SCNNode()
 
+    override func loadView() {
+        view = SCNView()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
