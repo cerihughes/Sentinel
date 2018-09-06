@@ -69,7 +69,7 @@ class GridIndex: NSObject {
         for z in minZ ..< maxZ {
             for x in minX ..< maxX {
                 if let piece = grid.get(point: GridPoint(x: x, z: z)) {
-                    if piece.isFlat {
+                    if GridIndex.isValid(piece: piece, in: grid) {
                         let level = Int(piece.level)
 
                         var array = i[level]
@@ -113,5 +113,36 @@ class GridIndex: NSObject {
             return pieces(at: level)
         }
         return []
+    }
+
+    func allPieces() -> [GridPiece] {
+        var allPieces: [GridPiece] = []
+        for level in flatLevels() {
+            allPieces.append(contentsOf: pieces(at: level))
+        }
+        
+        return allPieces
+    }
+
+    private static func isValid(piece: GridPiece, in grid: Grid) -> Bool {
+        if !piece.isFlat {
+            return false
+        }
+
+        let point = piece.point
+
+        if grid.sentinelPosition == point {
+            return false
+        }
+
+        if grid.guardianPositions.contains(point) {
+            return false
+        }
+
+        if grid.startPosition == point {
+            return false
+        }
+
+        return true
     }
 }

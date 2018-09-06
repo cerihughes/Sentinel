@@ -23,13 +23,11 @@ class TerrainGenerator: NSObject {
         if difficultyAdjustment > 3 {
             difficultyAdjustment = 3
         }
-        let sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
-        let guardianPositions = generateGuardians(gen: gen, sentinelPosition: sentinelPosition, difficultyAdjustment: difficultyAdjustment)
-        let startPosition = generateStartPosition(gen: gen, sentinelPosition: sentinelPosition)
-
-        grid.sentinelPosition = sentinelPosition
-        grid.guardianPositions = guardianPositions
-        grid.startPosition = startPosition
+        
+        grid.sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        grid.guardianPositions = generateGuardians(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        grid.startPosition = generateStartPosition(gen: gen)
+        grid.treePositions = generateTrees(gen: gen, difficultyAdjustment: difficultyAdjustment)
 
         normalise()
         
@@ -75,6 +73,22 @@ class TerrainGenerator: NSObject {
                       gen: gen)
     }
 
+    private func generateTrees(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
+        let minCount = (16 - (difficultyAdjustment * 2)) / 4
+        let maxCount = (24 - (difficultyAdjustment * 2)) / 4
+
+        var trees: [GridPoint] = []
+        for quadrant in GridQuadrant.allValues() {
+            let treesInQuadrant = generateTrees(minCount: minCount,
+                                                maxCount: maxCount,
+                                                quadrant: quadrant,
+                                                gen: gen)
+            trees.append(contentsOf: treesInQuadrant)
+        }
+
+        return trees
+    }
+
     private func generateSentinel(gen: ValueGenerator, difficultyAdjustment: Int) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
         let sentinelPosition = highestPiece(in: gridIndex, gen: gen).point
@@ -94,14 +108,14 @@ class TerrainGenerator: NSObject {
         return pieces[index]
     }
 
-    private func generateGuardians(gen: ValueGenerator, sentinelPosition: GridPoint, difficultyAdjustment: Int) -> [GridPoint] {
+    private func generateGuardians(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
         guard 1 ... 3 ~= difficultyAdjustment else {
             return []
         }
 
         var guardianPieces: [GridPiece] = []
         for quadrant in GridQuadrant.allValues() {
-            if !quadrant.contains(point: sentinelPosition, grid: grid) {
+            if !quadrant.contains(point: grid.sentinelPosition, grid: grid) {
                 let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
                 guardianPieces.append(highestPiece(in: gridIndex, gen: gen))
             }
@@ -114,9 +128,9 @@ class TerrainGenerator: NSObject {
         return Array(points.prefix(difficultyAdjustment))
     }
 
-    private func generateStartPosition(gen: ValueGenerator, sentinelPosition: GridPoint) -> GridPoint {
+    private func generateStartPosition(gen: ValueGenerator) -> GridPoint {
         let gridIndex: GridIndex
-        if let opposite = quadrantOpposite(point: sentinelPosition, sentinelPosition: sentinelPosition) {
+        if let opposite = quadrantOppositeSentinel() {
             gridIndex = GridIndex(grid: grid, quadrant: opposite)
         } else {
             // Fallback, although this should never happen unless my maths is off :O
@@ -132,9 +146,9 @@ class TerrainGenerator: NSObject {
         return startPieces[index].point
     }
 
-    private func quadrantOpposite(point: GridPoint, sentinelPosition: GridPoint) -> GridQuadrant? {
+    private func quadrantOppositeSentinel() -> GridQuadrant? {
         for quadrant in GridQuadrant.allValues() {
-            if quadrant.contains(point: sentinelPosition, grid: grid) {
+            if quadrant.contains(point: grid.sentinelPosition, grid: grid) {
                 return quadrant.opposite
             }
         }
@@ -189,6 +203,28 @@ class TerrainGenerator: NSObject {
                 grid.build(at: GridPoint(x:i, z: j))
             }
         }
+    }
+
+    private func generateTrees(minCount: Int,
+                               maxCount: Int,
+                               quadrant: GridQuadrant,
+                               gen: ValueGenerator) -> [GridPoint] {
+        let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
+        var allPieces = gridIndex.allPieces()
+        var treePoints: [GridPoint] = []
+
+        var count = gen.next(min: minCount, max: maxCount)
+        if (count > allPieces.count) {
+            count = allPieces.count
+        }
+
+        for _ in 0 ..< count {
+            let index = gen.next(min: 0, max: allPieces.count - 1)
+            let piece = allPieces.remove(at: index)
+            treePoints.append(piece.point)
+        }
+
+        return treePoints
     }
 
     private func generatePeak(x: Int, z: Int, summitSize: Int) {

@@ -200,7 +200,7 @@ class ViewController: UIViewController {
 
         let point = piece.point
         let nodePositioning = viewModel.nodeFactory.nodePositioning
-        let newPosition = nodePositioning.calculatePosition(x: point.x, y: piece.level + 1.0, z: point.z)
+        let newPosition = nodePositioning.calculatePosition(x: point.x, y: Int(piece.level + 1.0), z: point.z)
 
         tapRecogniser?.isEnabled = false
         panRecogniser?.isEnabled = false

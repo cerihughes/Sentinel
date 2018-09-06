@@ -8,12 +8,11 @@ let slopeNodeName = "slopeNodeName"
 let sentinelNodeName = "sentinelNodeName"
 let guardianNodeName = "guardianNodeName"
 let playerNodeName = "playerNodeName"
+let treeNodeName = "treeNodeName"
 
 class NodeFactory: NSObject {
-    let sideLength: Float
     let nodePositioning: NodePositioning
 
-    let geometryFactory = GeometryFactory()
     let cube1: SCNNode
     let cube2: SCNNode
     let wedge: SCNNode
@@ -21,54 +20,23 @@ class NodeFactory: NSObject {
     let sentinel: SCNNode
     let guardian: SCNNode
     let player: SCNNode
+    let tree: SCNNode
 
     var nodeMap: NodeMap?
 
     init(nodePositioning: NodePositioning) {
-        self.sideLength = nodePositioning.sideLength
         self.nodePositioning = nodePositioning
 
-        let redCube = geometryFactory.createCube(size: sideLength, colour: .red)
-        cube1 = SCNNode(geometry: redCube)
-        cube1.name = flatNodeName
+        let sideLength = nodePositioning.sideLength
+        let prototypes = NodePrototypes(sideLength: sideLength)
 
-        let yellowCube = geometryFactory.createCube(size: sideLength, colour: .yellow)
-        cube2 = SCNNode(geometry: yellowCube)
-        cube2.name = flatNodeName
-
-        let greyWedge = geometryFactory.createWedge(size: sideLength, colour: .darkGray)
-        wedge = SCNNode(geometry: greyWedge)
-        wedge.name = slopeNodeName
-
-        // Sentinel
-        var material = SCNMaterial()
-        material.diffuse.contents = UIColor.blue
-
-        var sphere = SCNSphere(radius: CGFloat(sideLength / 3.0))
-        sphere.firstMaterial = material
-
-        sentinel = SCNNode(geometry: sphere)
-        sentinel.name = sentinelNodeName
-
-        // Guardian
-        material = material.copy() as! SCNMaterial
-        material.diffuse.contents = UIColor.green
-
-        sphere = sphere.copy() as! SCNSphere
-        sphere.firstMaterial = material
-
-        guardian = SCNNode(geometry: sphere)
-        guardian.name = guardianNodeName
-
-        // Player
-        material = material.copy() as! SCNMaterial
-        material.diffuse.contents = UIColor.purple
-
-        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
-        capsule.firstMaterial = material
-
-        player = SCNNode(geometry: capsule)
-        player.name = playerNodeName
+        cube1 = prototypes.createCube(colour: .red)
+        cube2 = prototypes.createCube(colour: .yellow)
+        wedge = prototypes.createWedge()
+        sentinel = prototypes.createSentinel()
+        guardian = prototypes.createGuardian()
+        player = prototypes.createPlayer()
+        tree = prototypes.createTree()
 
         super.init()
     }
@@ -95,7 +63,7 @@ class NodeFactory: NSObject {
                 if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
                     if gridPiece.isFlat {
                         let node = createFlatPiece(x: x,
-                                                   y: gridPiece.level - 1.0,
+                                                   y: Int(gridPiece.level - 1.0),
                                                    z: z)
                         terrainNode.addChildNode(node)
                         nodeMap.add(node: node, for: gridPiece)
@@ -103,7 +71,7 @@ class NodeFactory: NSObject {
                         for direction in GridDirection.allValues() {
                             if gridPiece.has(slopeDirection: direction) {
                                 let node = createWedgePiece(x: x,
-                                                            y: gridPiece.level - 0.5,
+                                                            y: Int(gridPiece.level - 0.5),
                                                             z: z,
                                                             rotation: rotation(for: direction))
                                 terrainNode.addChildNode(node)
@@ -135,13 +103,20 @@ class NodeFactory: NSObject {
             terrainNode.addChildNode(playerNode)
         }
 
+        for treePosition in grid.treePositions {
+            if let treePiece = grid.get(point: treePosition) {
+                let treeNode = createTreeNode(piece: treePiece)
+                terrainNode.addChildNode(treeNode)
+            }
+        }
+
         return terrainNode
     }
 
     func createSentinelNode(piece: GridPiece) -> SCNNode {
         let clone = sentinel.clone()
         let point = piece.point
-        let level = piece.level
+        let level = Int(piece.level)
         clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
         return clone
     }
@@ -149,7 +124,7 @@ class NodeFactory: NSObject {
     func createGuardianNode(piece: GridPiece) -> SCNNode {
         let clone = guardian.clone()
         let point = piece.point
-        let level = piece.level
+        let level = Int(piece.level)
         clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
         return clone
     }
@@ -157,8 +132,16 @@ class NodeFactory: NSObject {
     func createPlayerNode(piece: GridPiece) -> SCNNode {
         let clone = player.clone()
         let point = piece.point
-        let level = piece.level
+        let level = Int(piece.level)
         clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
+        return clone
+    }
+
+    func createTreeNode(piece: GridPiece) -> SCNNode {
+        let clone = tree.clone()
+        let point = piece.point
+        let level = Int(piece.level)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
         return clone
     }
 
@@ -203,14 +186,14 @@ class NodeFactory: NSObject {
         }
     }
 
-    private func createFlatPiece(x: Int, y: Float, z: Int) -> SCNNode {
+    private func createFlatPiece(x: Int, y: Int, z: Int) -> SCNNode {
         let source = (x + z + Int(y)) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
         boxNode.position = nodePositioning.calculatePosition(x: x, y: y, z: z)
         return boxNode
     }
 
-    private func createWedgePiece(x: Int, y: Float, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
+    private func createWedgePiece(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
         let clone = wedge.clone()
         clone.position = nodePositioning.calculatePosition(x: x, y: y, z: z)
         if let rotation = rotation {
@@ -222,9 +205,102 @@ class NodeFactory: NSObject {
     private func createWallPiece(x: Int, z: Int, height: Int) -> [SCNNode] {
         var wallNodes: [SCNNode] = []
         for y in 0 ..< height {
-            let wallNode = createFlatPiece(x: x, y: Float(y - 1), z: z)
+            let wallNode = createFlatPiece(x: x, y: y - 1, z: z)
             wallNodes.append(wallNode)
         }
         return wallNodes
+    }
+}
+
+fileprivate class NodePrototypes: NSObject {
+    let sideLength: Float
+
+    let geometryFactory = GeometryFactory()
+
+    init(sideLength: Float) {
+        self.sideLength = sideLength
+
+        super.init()
+    }
+
+    func createCube(colour: UIColor) -> SCNNode {
+        let cube = geometryFactory.createCube(size: sideLength, colour: colour)
+        let cubeNode = SCNNode(geometry: cube)
+        cubeNode.name = flatNodeName
+        return cubeNode
+    }
+
+    func createWedge() -> SCNNode {
+        let wedge = geometryFactory.createWedge(size: sideLength, colour: .darkGray)
+        let wedgeNode = SCNNode(geometry: wedge)
+        wedgeNode.name = slopeNodeName
+        return wedgeNode
+    }
+
+    func createSentinel() -> SCNNode {
+        let sentinelNode = createSphere(colour: .blue)
+        sentinelNode.name = sentinelNodeName
+        return sentinelNode
+    }
+
+    func createGuardian() -> SCNNode {
+        let guardianNode = createSphere(colour: .green)
+        guardianNode.name = guardianNodeName
+        return guardianNode
+    }
+
+    func createSphere(colour: UIColor) -> SCNNode {
+        let material = SCNMaterial()
+        material.diffuse.contents = colour
+        let sphere = SCNSphere(radius: CGFloat(sideLength / 3.0))
+        sphere.firstMaterial = material
+        return SCNNode(geometry: sphere)
+    }
+
+    func createPlayer() -> SCNNode {
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.purple
+        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
+        capsule.firstMaterial = material
+        let playerNode = SCNNode(geometry: capsule)
+        playerNode.name = playerNodeName
+        return playerNode
+    }
+
+    func createTree() -> SCNNode {
+        let width = CGFloat(sideLength)
+        let height = width * 2.0
+        let maxRadius = width / 2.0
+
+        let trunkHeight: CGFloat = height * 3.0 / 10.0
+        let trunkRadius: CGFloat = maxRadius * 0.2
+
+        let treeNode = SCNNode()
+        let trunkNode = SCNNode(geometry: SCNCylinder(radius: trunkRadius, height: trunkHeight))
+        trunkNode.geometry?.firstMaterial?.diffuse.contents = UIColor.brown
+        trunkNode.position.y = Float(trunkHeight / 2.0)
+        treeNode.addChildNode(trunkNode)
+
+        let initialLeafRadius = maxRadius
+        let leafHeight: CGFloat = height - trunkHeight
+        let numberOfLevels = 4
+        let sectionHeight = leafHeight / CGFloat(numberOfLevels)
+        var y = Float(trunkHeight + (sectionHeight / 2.0))
+
+        let radiusDelta = initialLeafRadius / CGFloat(numberOfLevels + 1)
+        for i in 0 ..< numberOfLevels {
+            let bottomRadius = initialLeafRadius - (radiusDelta * CGFloat(i))
+            let topRadius = bottomRadius - (radiusDelta * 2.0)
+            let leavesNode = SCNNode(geometry: SCNCone(topRadius: topRadius, bottomRadius: bottomRadius, height: sectionHeight))
+            leavesNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
+            leavesNode.position.y = y
+
+            y += Float(sectionHeight)
+
+            treeNode.addChildNode(leavesNode)
+        }
+
+        treeNode.name = treeNodeName
+        return treeNode
     }
 }
