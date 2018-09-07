@@ -77,7 +77,7 @@ class GridIndex: NSObject {
                             i[level] = [piece]
                         } else {
                             array!.append(piece)
-                            i[level] = array! // Not sure why I have to do this??
+                            i[level] = array! // Need to reassign as arrays (structs) are passed by value
                         }
                     }
                 }
