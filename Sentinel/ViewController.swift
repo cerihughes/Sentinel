@@ -50,7 +50,7 @@ class ViewController: UIViewController {
         let lookAt = SCNLookAtConstraint(target: terrainNode)
         cameraNode.constraints = [lookAt]
 
-        let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 100)
+        let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
         let sunNode = nodeFactory.createSunNode()
         sunNode.position = SCNVector3Make(-500.0, 275.0, -250.0)
         sunNode.constraints = [SCNLookAtConstraint(target: terrainNode)]
@@ -59,7 +59,7 @@ class ViewController: UIViewController {
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
         let orbit = CABasicAnimation(keyPath: "rotation.w")
         orbit.byValue = Float.pi * -2.0
-        orbit.duration = 120.0
+        orbit.duration = 100.0
         orbit.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         orbit.repeatCount = Float.infinity
         orbitNode.addAnimation(orbit, forKey: "orbit")

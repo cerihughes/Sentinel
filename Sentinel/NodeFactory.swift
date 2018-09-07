@@ -74,7 +74,7 @@ class NodeFactory: NSObject {
     func createAmbientLightNode() -> SCNNode {
         let omni = SCNLight()
         omni.type = .omni
-        omni.color = UIColor(red: 0.3, green: 0.2, blue: 0.2, alpha: 1.0)
+        omni.color = UIColor(red: 0.21, green: 0.17, blue: 0.17, alpha: 1.0)
         let omniNode = SCNNode()
         omniNode.light = omni
         return omniNode
