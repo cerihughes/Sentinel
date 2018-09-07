@@ -50,6 +50,52 @@ class NodeFactory: NSObject {
         return cameraNode
     }
 
+    func createAmbientLightNodes(distance: Float) -> [SCNNode] {
+        var ambientLightNodes: [SCNNode] = []
+        var ambientLightNode = createAmbientLightNode()
+        for x in -1 ... 1 {
+            for z in -1 ... 1 {
+                if abs(x + z) == 1 {
+                    continue
+                }
+
+                let xf = Float(x) * distance
+                let yf = distance
+                let zf = Float(z) * distance
+                ambientLightNode.position = SCNVector3Make(xf, yf, zf)
+                ambientLightNodes.append(ambientLightNode)
+
+                ambientLightNode = ambientLightNode.clone()
+            }
+        }
+        return ambientLightNodes
+    }
+
+    func createAmbientLightNode() -> SCNNode {
+        let omni = SCNLight()
+        omni.type = .omni
+        omni.color = UIColor(red: 0.21, green: 0.17, blue: 0.17, alpha: 1.0)
+        let omniNode = SCNNode()
+        omniNode.light = omni
+        return omniNode
+    }
+
+    func createSunNode() -> SCNNode {
+        let sun = SCNLight()
+        sun.type = .spot
+        sun.color = UIColor(white: 0.9, alpha: 1.0)
+        sun.castsShadow = true
+        sun.shadowRadius = 50.0
+        sun.shadowColor = UIColor(white: 0.0, alpha: 0.75)
+        sun.zNear = 300.0
+        sun.zFar = 700.0
+        sun.attenuationStartDistance = 300.0
+        sun.attenuationEndDistance = 700.0
+        let sunNode = SCNNode()
+        sunNode.light = sun
+        return sunNode
+    }
+
     func createTerrainNode(grid: Grid) -> SCNNode {
         let nodeMap = NodeMap()
         let terrainNode = SCNNode()
