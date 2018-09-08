@@ -2,15 +2,18 @@ import SceneKit
 
 fileprivate let undefinedPosition = GridPoint(x: -1, z: -1)
 
-class ViewModel: NSObject {
+class ViewModel: NSObject, SCNSceneRendererDelegate {
     let terrainIndex: Int
     let scene: SCNScene
     let grid: Grid
     let nodeFactory: NodeFactory
     let nodeMap: NodeMap
 
-    var currentPosition = undefinedPosition
-    var currentAngle: Float = 0.0
+    private var currentPosition = undefinedPosition
+    private var currentAngle: Float = 0.0
+
+    private var playerNode: SCNNode?
+    private var oppositionCameraNodes: [SCNNode] = []
 
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
@@ -77,6 +80,21 @@ class ViewModel: NSObject {
 
         scene.rootNode.addChildNode(orbitNode)
         scene.rootNode.addChildNode(sunNode)
+
+        playerNode = terrainNode.childNode(withName: playerNodeName, recursively: true)
+        let oppositionNodeNames = [sentinelNodeName, guardianNodeName]
+        let oppositionNodes = terrainNode.childNodes(passingTest: { (node, stop) -> Bool in
+            if let name = node.name {
+                return oppositionNodeNames.contains(name)
+            }
+            return false
+        })
+
+        for oppositionNode in oppositionNodes {
+            if let cameraNode = oppositionNode.childNode(withName: cameraNodeName, recursively: true) {
+                oppositionCameraNodes.append(cameraNode)
+            }
+        }
     }
 
     func process(hitTestResults: [SCNHitTestResult]) {
@@ -158,5 +176,26 @@ class ViewModel: NSObject {
 
         currentAngle = facing
         currentPosition = point
+    }
+
+    // MARK: SCNSceneRendererDelegate
+
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        guard let playerNode = playerNode else {
+            return
+        }
+
+        let playerPresentationNode = playerNode.presentation
+
+        for cameraNode in oppositionCameraNodes {
+            let cameraPresentationNode = cameraNode.presentation
+            if can(camera: cameraPresentationNode, see: playerPresentationNode, renderer: renderer) {
+                print("SEEN")
+            }
+        }
+    }
+
+    private func can(camera: SCNNode, see player: SCNNode, renderer: SCNSceneRenderer) -> Bool {
+        return renderer.isNode(player, insideFrustumOf: camera)
     }
 }

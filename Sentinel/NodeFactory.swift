@@ -12,23 +12,27 @@ let treeNodeName = "treeNodeName"
 let sunNodeName = "sunNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
+let playerNodeBitMask = 0x1 << 2
+
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
 
-    let cube1: SCNNode
-    let cube2: SCNNode
-    let wedge: SCNNode
+    private let prototypes: NodePrototypes
 
-    let sentinel: SCNNode
-    let guardian: SCNNode
-    let player: SCNNode
-    let tree: SCNNode
+    private let cube1: SCNNode
+    private let cube2: SCNNode
+    private let wedge: SCNNode
+
+    private let sentinel: SCNNode
+    private let guardian: SCNNode
+    private let player: SCNNode
+    private let tree: SCNNode
 
     init(nodePositioning: NodePositioning) {
         self.nodePositioning = nodePositioning
 
         let sideLength = nodePositioning.sideLength
-        let prototypes = NodePrototypes(sideLength: sideLength)
+        self.prototypes = NodePrototypes(sideLength: sideLength)
 
         cube1 = prototypes.createCube(colour: .red)
         cube2 = prototypes.createCube(colour: .yellow)
@@ -191,7 +195,7 @@ class NodeFactory: NSObject {
         let clone = player.clone()
         let point = piece.point
         let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
         return clone
     }
 
@@ -336,7 +340,15 @@ fileprivate class NodePrototypes: NSObject {
         let boxNode = SCNNode(geometry: box)
         boxNode.position.z = sideLength / 5.0
         boxNode.position.y = y
+        let camera = SCNCamera()
+        camera.zFar = 200.0
+        camera.categoryBitMask = playerNodeBitMask
+        let cameraNode = SCNNode()
+        cameraNode.name = cameraNodeName
+        cameraNode.camera = camera
+        cameraNode.rotation = SCNVector4Make(0.0, 1.0, 0.25, Float.pi)
 
+        boxNode.addChildNode(cameraNode)
         oppositionNode.addChildNode(boxNode)
 
         return oppositionNode
@@ -345,10 +357,11 @@ fileprivate class NodePrototypes: NSObject {
     func createPlayer() -> SCNNode {
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.purple
-        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
+        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength * 2.0))
         capsule.firstMaterial = material
         let playerNode = SCNNode(geometry: capsule)
         playerNode.name = playerNodeName
+        playerNode.categoryBitMask = playerNodeBitMask
         return playerNode
     }
 
