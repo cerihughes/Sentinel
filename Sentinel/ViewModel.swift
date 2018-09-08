@@ -2,7 +2,7 @@ import SceneKit
 
 fileprivate let undefinedPosition = GridPoint(x: -1, z: -1)
 
-class ViewModel: NSObject, SCNSceneRendererDelegate {
+class ViewModel: NSObject {
     let terrainIndex: Int
     let scene: SCNScene
     let grid: Grid
@@ -158,11 +158,5 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         currentAngle = facing
         currentPosition = point
-    }
-
-    // MARK: SCNSceneRendererDelegate
-
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-
     }
 }
