@@ -1,6 +1,6 @@
 import Foundation
 
-struct GridPoint: Equatable {
+struct GridPoint: Equatable, Hashable {
     let x: Int
     let z: Int
 
@@ -115,16 +115,21 @@ class GridPiece: NSObject {
     }
 }
 
+let undefinedPosition = GridPoint(x: -1, z: -1)
+
 class Grid: NSObject {
     let width: Int
     let depth: Int
 
     private var grid: [[GridPiece]] = []
 
-    var sentinelPosition: GridPoint
+    var sentinelPosition: GridPoint = undefinedPosition
     var guardianPositions: [GridPoint] = []
-    var startPosition: GridPoint
+    var startPosition: GridPoint = undefinedPosition
     var treePositions: [GridPoint] = []
+    var rockPositions: [GridPoint] = []
+    var playerPositions: [GridPoint] = []
+    var currentPosition = undefinedPosition
 
     init(width: Int, depth: Int) {
         self.width = width
@@ -137,9 +142,6 @@ class Grid: NSObject {
             }
             grid.append(row)
         }
-
-        sentinelPosition = GridPoint(x: -1, z: -1)
-        startPosition = GridPoint(x: -1, z: -1)
 
         super.init()
     }
@@ -176,6 +178,10 @@ class Grid: NSObject {
         }
 
         return grid[z][x]
+    }
+
+    var currentPiece: GridPiece? {
+        return get(point: currentPosition)
     }
 
     override var description: String {

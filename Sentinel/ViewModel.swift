@@ -1,6 +1,8 @@
 import SceneKit
 
-fileprivate let undefinedPosition = GridPoint(x: -1, z: -1)
+enum UserInteraction {
+    case tap, longPress
+}
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
     let terrainIndex: Int
@@ -9,9 +11,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     let nodeFactory: NodeFactory
     let nodeMap: NodeMap
 
-    private var currentPosition = undefinedPosition
     private var currentAngle: Float = 0.0
 
+    private var terrainNode: SCNNode?
     private var playerNode: SCNNode?
     private var oppositionCameraNodes: [SCNNode] = []
 
@@ -51,6 +53,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
         terrainNode.position = SCNVector3Make(0, 0, 0)
+        self.terrainNode = terrainNode
 
         let cameraNode = nodeFactory.createCameraNode()
         cameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
@@ -97,14 +100,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    func process(hitTestResults: [SCNHitTestResult]) {
+    func process(interaction: UserInteraction, hitTestResults: [SCNHitTestResult]) {
         if hasEnteredScene() {
             if hitTestResults.count > 0 {
-                let node = hitTestResults[0].node
-                if let piece = nodeMap.getPiece(for: node) {
-                    let angle = piece.point.angle(to: currentPosition)
-                    moveCamera(to: piece, facing: angle, animationDuration: 1.0)
-                }
+                process(interaction: interaction, node: hitTestResults[0].node)
             }
         } else {
             enterScene()
@@ -135,7 +134,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func hasEnteredScene() -> Bool {
-        return currentPosition != undefinedPosition
+        return grid.currentPosition != undefinedPosition
     }
 
     private func enterScene() {
@@ -145,7 +144,98 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    private func moveCamera(to piece:GridPiece, facing: Float, animationDuration: CFTimeInterval) {
+    private func process(interaction: UserInteraction, node: SCNNode) {
+        let bitmask = node.categoryBitMask
+        for interactableNodeType in InteractableNodeType.allValues() {
+            if bitmask & interactableNodeType.rawValue == interactableNodeType.rawValue {
+                process(interaction: interaction, node: node, interactableNodeType: interactableNodeType)
+                return
+            }
+        }
+        print("Not processing \(interaction) on \(bitmask)")
+    }
+
+    private func process(interaction: UserInteraction, node: SCNNode, interactableNodeType: InteractableNodeType) {
+        switch (interaction, interactableNodeType) {
+        case (.tap, .flat):
+            if let piece = nodeMap.getPiece(for: node) {
+                processTapFlat(node: node, piece: piece)
+            }
+        case (.longPress, .flat):
+            if let piece = nodeMap.getPiece(for: node) {
+                processLongPressFlat(node: node, piece: piece)
+            }
+        default:
+            print("Not processing \(interactableNodeType)")
+        }
+    }
+
+    private func processTapFlat(node: SCNNode, piece: GridPiece) {
+        let point = piece.point
+
+        if grid.sentinelPosition == point || grid.guardianPositions.contains(point) {
+            // No op
+        } else if grid.treePositions.contains(point) {
+            // Build a rock
+        } else if grid.rockPositions.contains(point) {
+            // Build another rock on top
+        } else if grid.playerPositions.contains(point) {
+            move(to: piece)
+        } else {
+            // Empty space - build a tree
+            attemptBuildTree(at: piece)
+        }
+    }
+
+    private func processLongPressFlat(node: SCNNode, piece: GridPiece) {
+        let point = piece.point
+
+        if grid.sentinelPosition == point || grid.guardianPositions.contains(point) {
+            // Absorb
+        } else if grid.treePositions.contains(point) {
+            attemptAbsorbTreeFromFlat(node: node, piece: piece)
+        } else if grid.rockPositions.contains(point) {
+            // Build another rock on top
+        } else if grid.playerPositions.contains(point) {
+            move(to: piece)
+        } else {
+            // build a rock
+        }
+    }
+
+    private func move(to piece: GridPiece) {
+        let point = piece.point
+        let angle = point.angle(to: grid.currentPosition)
+        moveCamera(to: piece, facing: angle, animationDuration: 1.0)
+        grid.currentPosition = point
+    }
+
+    private func attemptBuildTree(at piece: GridPiece) {
+        guard let flatNode = nodeMap.getNode(for: piece.point) else {
+            return
+        }
+
+        let point = piece.point
+        grid.treePositions.append(point)
+
+        let treeNode = nodeFactory.createTreeNode()
+        flatNode.addChildNode(treeNode)
+    }
+
+    private func attemptAbsorbTreeFromFlat(node: SCNNode, piece: GridPiece) {
+        let point = piece.point
+        guard
+            let index = grid.treePositions.index(of: point),
+            let treeNode = node.childNode(withName: treeNodeName, recursively: true)
+        else {
+            return
+        }
+
+        grid.treePositions.remove(at: index)
+        treeNode.removeFromParentNode()
+    }
+
+    private func moveCamera(to piece: GridPiece, facing: Float, animationDuration: CFTimeInterval) {
         guard
             let cameraNode = scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
             else  {
@@ -154,7 +244,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let point = piece.point
         let nodePositioning = nodeFactory.nodePositioning
-        let newPosition = nodePositioning.calculatePosition(x: point.x, y: Int(piece.level + 1.0), z: point.z)
+        let newPosition = nodePositioning.calculateTerrainPosition(x: point.x, y: Int(piece.level + 1.0), z: point.z) // TODO: Need to add camera to player
 
         if let preAnimationBlock = preAnimationBlock {
             preAnimationBlock()
@@ -175,7 +265,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         SCNTransaction.commit()
 
         currentAngle = facing
-        currentPosition = point
+        grid.currentPosition = point
     }
 
     // MARK: SCNSceneRendererDelegate

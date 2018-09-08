@@ -9,10 +9,23 @@ let sentinelNodeName = "sentinelNodeName"
 let guardianNodeName = "guardianNodeName"
 let playerNodeName = "playerNodeName"
 let treeNodeName = "treeNodeName"
+let rockNodeName = "rockNodeName"
 let sunNodeName = "sunNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
-let playerNodeBitMask = 0x1 << 2
+enum InteractableNodeType: Int {
+    case flat = 2
+    case tree = 4
+    case rock = 8
+    case player = 16
+    case guardian = 32
+    case sentinel = 64
+
+    // TODO: Replace when Swift 4.2 is out of beta
+    static func allValues() -> [InteractableNodeType] {
+        return [.flat, .tree, .rock, .player, .guardian, .sentinel]
+    }
+}
 
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
@@ -135,48 +148,44 @@ class NodeFactory: NSObject {
 
         addWallNodes(to: terrainNode, grid: grid)
 
-        if let sentinelPiece = grid.get(point: grid.sentinelPosition) {
-            let sentinelNode = createSentinelNode(piece: sentinelPiece)
-            terrainNode.addChildNode(sentinelNode)
+        if let _ = grid.get(point: grid.sentinelPosition), let flatNode = nodeMap.getNode(for: grid.sentinelPosition) {
+            let sentinelNode = createSentinelNode()
+            flatNode.addChildNode(sentinelNode)
         }
 
         for guardianPosition in grid.guardianPositions {
-            if let guardianPiece = grid.get(point: guardianPosition) {
-                let guardianNode = createGuardianNode(piece: guardianPiece)
-                terrainNode.addChildNode(guardianNode)
+            if let _ = grid.get(point: guardianPosition), let flatNode = nodeMap.getNode(for: guardianPosition) {
+                let guardianNode = createGuardianNode()
+                flatNode.addChildNode(guardianNode)
             }
         }
 
-        if let startPiece = grid.get(point: grid.startPosition) {
-            let playerNode = createPlayerNode(piece: startPiece)
-            terrainNode.addChildNode(playerNode)
+        if let _ = grid.get(point: grid.startPosition), let flatNode = nodeMap.getNode(for: grid.startPosition) {
+            let playerNode = createPlayerNode()
+            flatNode.addChildNode(playerNode)
         }
 
         for treePosition in grid.treePositions {
-            if let treePiece = grid.get(point: treePosition) {
-                let treeNode = createTreeNode(piece: treePiece)
-                terrainNode.addChildNode(treeNode)
+            if let _ = grid.get(point: treePosition), let flatNode = nodeMap.getNode(for: treePosition) {
+                let treeNode = createTreeNode()
+                flatNode.addChildNode(treeNode)
             }
         }
 
         return terrainNode
     }
 
-    func createSentinelNode(piece: GridPiece, startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+    func createSentinelNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
         let clone = sentinel.clone()
-        let point = piece.point
-        let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
+        clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
         clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
         return clone
     }
 
-    func createGuardianNode(piece: GridPiece, startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+    func createGuardianNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
         let clone = guardian.clone()
-        let point = piece.point
-        let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
+        clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
         clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
         return clone
@@ -191,19 +200,15 @@ class NodeFactory: NSObject {
         return rotate
     }
 
-    func createPlayerNode(piece: GridPiece) -> SCNNode {
+    func createPlayerNode() -> SCNNode {
         let clone = player.clone()
-        let point = piece.point
-        let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
+        clone.position = nodePositioning.calculateObjectPosition(height: 1)
         return clone
     }
 
-    func createTreeNode(piece: GridPiece) -> SCNNode {
+    func createTreeNode() -> SCNNode {
         let clone = tree.clone()
-        let point = piece.point
-        let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
+        clone.position = nodePositioning.calculateObjectPosition()
         return clone
     }
 
@@ -251,13 +256,13 @@ class NodeFactory: NSObject {
     private func createFlatPiece(x: Int, y: Int, z: Int) -> SCNNode {
         let source = (x + z + Int(y)) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
-        boxNode.position = nodePositioning.calculatePosition(x: x, y: y, z: z)
+        boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: y, z: z)
         return boxNode
     }
 
     private func createWedgePiece(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
         let clone = wedge.clone()
-        clone.position = nodePositioning.calculatePosition(x: x, y: y, z: z)
+        clone.position = nodePositioning.calculateTerrainPosition(x: x, y: y, z: z)
         if let rotation = rotation {
             clone.rotation = rotation
         }
@@ -289,6 +294,7 @@ fileprivate class NodePrototypes: NSObject {
         let cube = geometryFactory.createCube(size: sideLength, colour: colour)
         let cubeNode = SCNNode(geometry: cube)
         cubeNode.name = flatNodeName
+        cubeNode.categoryBitMask = InteractableNodeType.flat.rawValue
         return cubeNode
     }
 
@@ -302,12 +308,14 @@ fileprivate class NodePrototypes: NSObject {
     func createSentinel() -> SCNNode {
         let sentinelNode = createOpposition(colour: .blue)
         sentinelNode.name = sentinelNodeName
+        sentinelNode.categoryBitMask = InteractableNodeType.sentinel.rawValue
         return sentinelNode
     }
 
     func createGuardian() -> SCNNode {
         let guardianNode = createOpposition(colour: .green)
         guardianNode.name = guardianNodeName
+        guardianNode.categoryBitMask = InteractableNodeType.guardian.rawValue
         return guardianNode
     }
 
@@ -342,7 +350,7 @@ fileprivate class NodePrototypes: NSObject {
         boxNode.position.y = y
         let camera = SCNCamera()
         camera.zFar = 200.0
-        camera.categoryBitMask = playerNodeBitMask
+        camera.categoryBitMask = InteractableNodeType.player.rawValue
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
@@ -361,7 +369,7 @@ fileprivate class NodePrototypes: NSObject {
         capsule.firstMaterial = material
         let playerNode = SCNNode(geometry: capsule)
         playerNode.name = playerNodeName
-        playerNode.categoryBitMask = playerNodeBitMask
+        playerNode.categoryBitMask = InteractableNodeType.player.rawValue
         return playerNode
     }
 
@@ -374,6 +382,9 @@ fileprivate class NodePrototypes: NSObject {
         let trunkRadius: CGFloat = maxRadius * 0.2
 
         let treeNode = SCNNode()
+        treeNode.name = treeNodeName
+        treeNode.categoryBitMask = InteractableNodeType.tree.rawValue
+
         let trunkNode = SCNNode(geometry: SCNCylinder(radius: trunkRadius, height: trunkHeight))
         trunkNode.geometry?.firstMaterial?.diffuse.contents = UIColor.brown
         trunkNode.position.y = Float(trunkHeight / 2.0)
@@ -398,7 +409,6 @@ fileprivate class NodePrototypes: NSObject {
             treeNode.addChildNode(leavesNode)
         }
 
-        treeNode.name = treeNodeName
         return treeNode
     }
 }
