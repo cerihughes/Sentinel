@@ -158,20 +158,33 @@ class NodeFactory: NSObject {
         return terrainNode
     }
 
-    func createSentinelNode(piece: GridPiece) -> SCNNode {
+    func createSentinelNode(piece: GridPiece, startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
         let clone = sentinel.clone()
         let point = piece.point
         let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
+        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
+        clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
         return clone
     }
 
-    func createGuardianNode(piece: GridPiece) -> SCNNode {
+    func createGuardianNode(piece: GridPiece, startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
         let clone = guardian.clone()
         let point = piece.point
         let level = Int(piece.level)
-        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z)
+        clone.position = nodePositioning.calculatePosition(x: point.x, y: level, z: point.z, height: 2)
+        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
+        clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
         return clone
+    }
+
+    private func createRotationAnimation(rotationTime: TimeInterval) -> CABasicAnimation {
+        let rotate = CABasicAnimation(keyPath: "rotation.w")
+        rotate.byValue = Float.pi * -2.0
+        rotate.duration = rotationTime
+        rotate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        rotate.repeatCount = Float.infinity
+        return rotate
     }
 
     func createPlayerNode(piece: GridPiece) -> SCNNode {
@@ -283,23 +296,50 @@ fileprivate class NodePrototypes: NSObject {
     }
 
     func createSentinel() -> SCNNode {
-        let sentinelNode = createSphere(colour: .blue)
+        let sentinelNode = createOpposition(colour: .blue)
         sentinelNode.name = sentinelNodeName
         return sentinelNode
     }
 
     func createGuardian() -> SCNNode {
-        let guardianNode = createSphere(colour: .green)
+        let guardianNode = createOpposition(colour: .green)
         guardianNode.name = guardianNodeName
         return guardianNode
     }
 
-    func createSphere(colour: UIColor) -> SCNNode {
-        let material = SCNMaterial()
+    func createOpposition(colour: UIColor) -> SCNNode {
+        let oppositionNode = SCNNode()
+
+        var material = SCNMaterial()
         material.diffuse.contents = colour
-        let sphere = SCNSphere(radius: CGFloat(sideLength / 3.0))
-        sphere.firstMaterial = material
-        return SCNNode(geometry: sphere)
+
+        let segments = 3
+        var y: Float = 0.0
+        for i in 0 ..< segments {
+            let fi = Float(i)
+            let radius = (sideLength / 2.0) - fi
+            let sphere = SCNSphere(radius: CGFloat(radius))
+            sphere.firstMaterial = material
+            let sphereNode = SCNNode(geometry: sphere)
+            y += radius
+            sphereNode.position.y = y
+            y += 5.0 / Float(segments - 1)
+            oppositionNode.addChildNode(sphereNode)
+        }
+
+        material = SCNMaterial()
+        material.diffuse.contents = UIColor.red
+        let width = CGFloat(sideLength / 3.0)
+        let height = CGFloat(sideLength / 10.0)
+        let box = SCNBox(width: width, height: height, length: height, chamferRadius: 0.2)
+        box.firstMaterial = material
+        let boxNode = SCNNode(geometry: box)
+        boxNode.position.z = sideLength / 5.0
+        boxNode.position.y = y
+
+        oppositionNode.addChildNode(boxNode)
+
+        return oppositionNode
     }
 
     func createPlayer() -> SCNNode {
