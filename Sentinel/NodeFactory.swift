@@ -9,6 +9,8 @@ let sentinelNodeName = "sentinelNodeName"
 let guardianNodeName = "guardianNodeName"
 let playerNodeName = "playerNodeName"
 let treeNodeName = "treeNodeName"
+let sunNodeName = "sunNodeName"
+let ambientLightNodeName = "ambientLightNodeName"
 
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
@@ -21,8 +23,6 @@ class NodeFactory: NSObject {
     let guardian: SCNNode
     let player: SCNNode
     let tree: SCNNode
-
-    var nodeMap: NodeMap?
 
     init(nodePositioning: NodePositioning) {
         self.nodePositioning = nodePositioning
@@ -72,12 +72,13 @@ class NodeFactory: NSObject {
     }
 
     func createAmbientLightNode() -> SCNNode {
-        let omni = SCNLight()
-        omni.type = .omni
-        omni.color = UIColor(red: 0.21, green: 0.17, blue: 0.17, alpha: 1.0)
-        let omniNode = SCNNode()
-        omniNode.light = omni
-        return omniNode
+        let ambient = SCNLight()
+        ambient.type = .omni
+        ambient.color = UIColor(red: 0.21, green: 0.17, blue: 0.17, alpha: 1.0)
+        let ambientNode = SCNNode()
+        ambientNode.name = ambientLightNodeName
+        ambientNode.light = ambient
+        return ambientNode
     }
 
     func createSunNode() -> SCNNode {
@@ -92,12 +93,12 @@ class NodeFactory: NSObject {
         sun.attenuationStartDistance = 300.0
         sun.attenuationEndDistance = 700.0
         let sunNode = SCNNode()
+        sunNode.name = sunNodeName
         sunNode.light = sun
         return sunNode
     }
 
-    func createTerrainNode(grid: Grid) -> SCNNode {
-        let nodeMap = NodeMap()
+    func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> SCNNode {
         let terrainNode = SCNNode()
         terrainNode.name = terrainNodeName
 
@@ -129,8 +130,6 @@ class NodeFactory: NSObject {
         }
 
         addWallNodes(to: terrainNode, grid: grid)
-
-        self.nodeMap = nodeMap
 
         if let sentinelPiece = grid.get(point: grid.sentinelPosition) {
             let sentinelNode = createSentinelNode(piece: sentinelPiece)
