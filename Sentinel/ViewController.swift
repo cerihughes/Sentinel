@@ -27,6 +27,7 @@ class ViewController: UIViewController {
         sceneView.showsStatistics = true
         sceneView.backgroundColor = UIColor(white: 0.7, alpha: 1.0)
         sceneView.scene = viewModel.scene
+        sceneView.delegate = viewModel
 
         let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tapGesture(_:)))
         sceneView.addGestureRecognizer(tapRecogniser)
