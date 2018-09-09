@@ -3,7 +3,7 @@ import SceneKit
 
 let cameraNodeName = "cameraNodeName"
 let terrainNodeName = "terrainNodeName"
-let flatNodeName = "flatNodeName"
+let floorNodeName = "floorNodeName"
 let slopeNodeName = "slopeNodeName"
 let sentinelNodeName = "sentinelNodeName"
 let guardianNodeName = "guardianNodeName"
@@ -14,7 +14,7 @@ let sunNodeName = "sunNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
 enum InteractableNodeType: Int {
-    case flat = 2
+    case floor = 2
     case tree = 4
     case rock = 8
     case player = 16
@@ -23,7 +23,7 @@ enum InteractableNodeType: Int {
 
     // TODO: Replace when Swift 4.2 is out of beta
     static func allValues() -> [InteractableNodeType] {
-        return [.flat, .tree, .rock, .player, .guardian, .sentinel]
+        return [.floor, .tree, .rock, .player, .guardian, .sentinel]
     }
 }
 
@@ -125,8 +125,8 @@ class NodeFactory: NSObject {
         for z in 0 ..< depth {
             for x in 0 ..< width {
                 if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
-                    if gridPiece.isFlat {
-                        let node = createFlatPiece(x: x,
+                    if gridPiece.isFloor {
+                        let node = createFloorPiece(x: x,
                                                    y: Int(gridPiece.level - 1.0),
                                                    z: z)
                         terrainNode.addChildNode(node)
@@ -148,27 +148,27 @@ class NodeFactory: NSObject {
 
         addWallNodes(to: terrainNode, grid: grid)
 
-        if let _ = grid.get(point: grid.sentinelPosition), let flatNode = nodeMap.getNode(for: grid.sentinelPosition) {
+        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getNode(for: grid.sentinelPosition) {
             let sentinelNode = createSentinelNode()
-            flatNode.addChildNode(sentinelNode)
+            floorNode.addChildNode(sentinelNode)
         }
 
         for guardianPosition in grid.guardianPositions {
-            if let _ = grid.get(point: guardianPosition), let flatNode = nodeMap.getNode(for: guardianPosition) {
+            if let _ = grid.get(point: guardianPosition), let floorNode = nodeMap.getNode(for: guardianPosition) {
                 let guardianNode = createGuardianNode()
-                flatNode.addChildNode(guardianNode)
+                floorNode.addChildNode(guardianNode)
             }
         }
 
-        if let _ = grid.get(point: grid.startPosition), let flatNode = nodeMap.getNode(for: grid.startPosition) {
+        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getNode(for: grid.startPosition) {
             let playerNode = createPlayerNode()
-            flatNode.addChildNode(playerNode)
+            floorNode.addChildNode(playerNode)
         }
 
         for treePosition in grid.treePositions {
-            if let _ = grid.get(point: treePosition), let flatNode = nodeMap.getNode(for: treePosition) {
+            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getNode(for: treePosition) {
                 let treeNode = createTreeNode()
-                flatNode.addChildNode(treeNode)
+                floorNode.addChildNode(treeNode)
             }
         }
 
@@ -226,7 +226,7 @@ class NodeFactory: NSObject {
     private func addWallNodes(to terrainNode: SCNNode, grid: Grid, x: Int, z: Int) {
         if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
             var height = gridPiece.level
-            if !gridPiece.isFlat {
+            if !gridPiece.isFloor {
                 height += 0.5
             }
 
@@ -253,7 +253,7 @@ class NodeFactory: NSObject {
         }
     }
 
-    private func createFlatPiece(x: Int, y: Int, z: Int) -> SCNNode {
+    private func createFloorPiece(x: Int, y: Int, z: Int) -> SCNNode {
         let source = (x + z + Int(y)) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
         boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: y, z: z)
@@ -272,7 +272,7 @@ class NodeFactory: NSObject {
     private func createWallPiece(x: Int, z: Int, height: Int) -> [SCNNode] {
         var wallNodes: [SCNNode] = []
         for y in 0 ..< height {
-            let wallNode = createFlatPiece(x: x, y: y - 1, z: z)
+            let wallNode = createFloorPiece(x: x, y: y - 1, z: z)
             wallNodes.append(wallNode)
         }
         return wallNodes
@@ -293,8 +293,8 @@ fileprivate class NodePrototypes: NSObject {
     func createCube(colour: UIColor) -> SCNNode {
         let cube = geometryFactory.createCube(size: sideLength, colour: colour)
         let cubeNode = SCNNode(geometry: cube)
-        cubeNode.name = flatNodeName
-        cubeNode.categoryBitMask = InteractableNodeType.flat.rawValue
+        cubeNode.name = floorNodeName
+        cubeNode.categoryBitMask = InteractableNodeType.floor.rawValue
         return cubeNode
     }
 
