@@ -128,7 +128,7 @@ class Grid: NSObject {
     var startPosition: GridPoint = undefinedPosition
     var treePositions: [GridPoint] = []
     var rockPositions: [GridPoint] = []
-    var playerPositions: [GridPoint] = []
+    var synthoidPositions: [GridPoint] = []
     var currentPosition = undefinedPosition
 
     init(width: Int, depth: Int) {
