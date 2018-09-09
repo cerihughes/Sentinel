@@ -176,14 +176,14 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         if grid.sentinelPosition == point || grid.sentryPositions.contains(point) {
             // No op
         } else if grid.treePositions.contains(point) {
-            // Build a rock
+            buildRock(at: piece)
         } else if grid.rockPositions.contains(point) {
             // Build another rock on top
         } else if grid.synthoidPositions.contains(point) {
             move(to: piece)
         } else {
-            // Empty space - build a tree
-            attemptBuildTree(at: piece)
+            // Empty space - build a rock
+            buildRock(at: piece)
         }
     }
 
@@ -193,9 +193,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         if grid.sentinelPosition == point || grid.sentryPositions.contains(point) {
             // Absorb
         } else if grid.treePositions.contains(point) {
-            attemptAbsorbTreeFromFloor(node: node, piece: piece)
+            absorbTreeFromFloor(node: node, piece: piece)
         } else if grid.rockPositions.contains(point) {
-            // Build another rock on top
+            absorbRockFromFloor(node: node, piece: piece)
         } else if grid.synthoidPositions.contains(point) {
             move(to: piece)
         } else {
@@ -210,7 +210,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.currentPosition = point
     }
 
-    private func attemptBuildTree(at piece: GridPiece) {
+    private func buildTree(at piece: GridPiece) {
         guard let floorNode = nodeMap.getNode(for: piece.point) else {
             return
         }
@@ -222,7 +222,22 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         floorNode.addChildNode(treeNode)
     }
 
-    private func attemptAbsorbTreeFromFloor(node: SCNNode, piece: GridPiece) {
+    private func buildRock(at piece: GridPiece) {
+        guard let floorNode = nodeMap.getNode(for: piece.point) else {
+            return
+        }
+
+        let point = piece.point
+        if (grid.treePositions.contains(point)) {
+            absorbTreeFromFloor(node: floorNode, piece: piece)
+        }
+        grid.rockPositions.append(point)
+
+        let rockNode = nodeFactory.createRockNode()
+        floorNode.addChildNode(rockNode)
+    }
+
+    private func absorbTreeFromFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
         guard
             let index = grid.treePositions.index(of: point),
@@ -233,6 +248,19 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         grid.treePositions.remove(at: index)
         treeNode.removeFromParentNode()
+    }
+
+    private func absorbRockFromFloor(node: SCNNode, piece: GridPiece) {
+        let point = piece.point
+        guard
+            let index = grid.rockPositions.index(of: point),
+            let rockNode = node.childNode(withName: rockNodeName, recursively: true)
+            else {
+                return
+        }
+
+        grid.rockPositions.remove(at: index)
+        rockNode.removeFromParentNode()
     }
 
     private func moveCamera(to piece: GridPiece, facing: Float, animationDuration: CFTimeInterval) {
