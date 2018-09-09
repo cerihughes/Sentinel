@@ -170,7 +170,7 @@ class NodeFactory: NSObject {
         for treePosition in grid.treePositions {
             if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getNode(for: treePosition) {
                 let treeNode = createTreeNode()
-                floorNode.addChildNode(treeNode)
+                floorNode.setTreeNode(node: treeNode)
             }
         }
 
@@ -214,14 +214,13 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createRockNode() -> SCNNode {
+    func createRockNode(index: Int = 0) -> SCNNode {
         let clone = rock.clone()
-        let container = SCNNode()
-        container.addChildNode(clone)
-        container.position = nodePositioning.calculateObjectPosition()
+        clone.position = nodePositioning.calculateObjectPosition()
+        clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
         let rotation = Float.pi * 2.0 * Float(drand48())
-        container.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
-        return container
+        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
+        return clone
     }
 
     private func addWallNodes(to terrainNode: SCNNode, grid: Grid) {
@@ -427,9 +426,6 @@ fileprivate class NodePrototypes: NSObject {
 
     func createRock() -> SCNNode {
         let rockNode = SCNNode()
-        rockNode.name = rockNodeName
-        rockNode.categoryBitMask = InteractableNodeType.rock.rawValue
-
         let height = sideLength / 2.0
 
         let section = geometryFactory.createRockSegment(colour: .darkGray, extrusionDepth: sideLength / 3.0)
@@ -459,6 +455,12 @@ fileprivate class NodePrototypes: NSObject {
         rockNode.addChildNode(sectionNode)
 
         rockNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -2.0)
-        return rockNode
+
+        let container = SCNNode()
+        container.name = rockNodeName
+        container.categoryBitMask = InteractableNodeType.rock.rawValue
+        container.addChildNode(rockNode)
+
+        return container
     }
 }

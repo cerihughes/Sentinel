@@ -178,7 +178,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         } else if grid.treePositions.contains(point) {
             buildRock(at: piece)
         } else if grid.rockPositions.contains(point) {
-            // Build another rock on top
+            buildRock(at: piece)
         } else if grid.synthoidPositions.contains(point) {
             move(to: piece)
         } else {
@@ -228,39 +228,49 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         let point = piece.point
+        let startRockCount = piece.rockCount
+        if piece.rockCount == 0 {
+            grid.rockPositions.append(point)
+        }
+
+        piece.rockCount += 1
+
         if (grid.treePositions.contains(point)) {
             absorbTreeFromFloor(node: floorNode, piece: piece)
         }
-        grid.rockPositions.append(point)
 
-        let rockNode = nodeFactory.createRockNode()
-        floorNode.addChildNode(rockNode)
+        let rockNode = nodeFactory.createRockNode(index: startRockCount)
+        floorNode.addRockNode(node: rockNode)
+    }
+
+    private func firstRockChild(in node: SCNNode) -> SCNNode? {
+        return node.childNode(withName: rockNodeName, recursively: false)
     }
 
     private func absorbTreeFromFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
         guard
             let index = grid.treePositions.index(of: point),
-            let treeNode = node.childNode(withName: treeNodeName, recursively: true)
-        else {
-            return
-        }
-
-        grid.treePositions.remove(at: index)
-        treeNode.removeFromParentNode()
-    }
-
-    private func absorbRockFromFloor(node: SCNNode, piece: GridPiece) {
-        let point = piece.point
-        guard
-            let index = grid.rockPositions.index(of: point),
-            let rockNode = node.childNode(withName: rockNodeName, recursively: true)
+            let _ = node.removeTreeNode()
             else {
                 return
         }
 
-        grid.rockPositions.remove(at: index)
-        rockNode.removeFromParentNode()
+        grid.treePositions.remove(at: index)
+    }
+
+    private func absorbRockFromFloor(node: SCNNode, piece: GridPiece) {
+        let point = piece.point
+        guard let _ = node.removeLastRockNode() else {
+            return
+        }
+
+        piece.rockCount -= 1
+        if piece.rockCount == 0 {
+            if let index = grid.rockPositions.index(of: point) {
+                grid.rockPositions.remove(at: index)
+            }
+        }
     }
 
     private func moveCamera(to piece: GridPiece, facing: Float, animationDuration: CFTimeInterval) {
