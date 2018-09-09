@@ -143,7 +143,10 @@ class TerrainGenerator: NSObject {
         }
 
         let index = gen.next(min: 0, max: startPieces.count - 1)
-        return startPieces[index].point
+        let point = startPieces[index].point
+        grid.synthoidPositions.append(point)
+        
+        return point
     }
 
     private func quadrantOppositeSentinel() -> GridQuadrant? {

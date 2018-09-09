@@ -170,7 +170,7 @@ class NodeFactory: NSObject {
         for treePosition in grid.treePositions {
             if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getNode(for: treePosition) {
                 let treeNode = createTreeNode()
-                floorNode.setTreeNode(node: treeNode)
+                floorNode.addChildNode(treeNode)
             }
         }
 
@@ -202,9 +202,10 @@ class NodeFactory: NSObject {
         return rotate
     }
 
-    func createSynthoidNode() -> SCNNode {
+    func createSynthoidNode(index: Int = 0) -> SCNNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition()
+        clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
         return clone
     }
 
@@ -265,15 +266,15 @@ class NodeFactory: NSObject {
     }
 
     private func createFloorPiece(x: Int, y: Int, z: Int) -> SCNNode {
-        let source = (x + z + Int(y)) % 2 == 0 ? cube1 : cube2
+        let source = (x + z + y) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
-        boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: y, z: z)
+        boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         return boxNode
     }
 
     private func createWedgePiece(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
         let clone = wedge.clone()
-        clone.position = nodePositioning.calculateTerrainPosition(x: x, y: y, z: z)
+        clone.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         if let rotation = rotation {
             clone.rotation = rotation
         }
@@ -377,11 +378,13 @@ fileprivate class NodePrototypes: NSObject {
     func createSynthoid() -> SCNNode {
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.purple
-        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength * 2.0))
+        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
         capsule.firstMaterial = material
         let synthoidNode = SCNNode(geometry: capsule)
         synthoidNode.name = synthoidNodeName
         synthoidNode.categoryBitMask = InteractableNodeType.synthoid.rawValue
+        synthoidNode.pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * sideLength, 0.0)
+
         return synthoidNode
     }
 

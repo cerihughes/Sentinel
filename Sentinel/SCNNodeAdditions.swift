@@ -1,16 +1,6 @@
 import SceneKit
 
 extension SCNNode {
-    func setTreeNode(node:SCNNode) {
-        guard let parentName = name, parentName == floorNodeName,
-            let childName = node.name, childName == treeNodeName else {
-            return
-        }
-
-        _ = removeTreeNode()
-        addChildNode(node)
-    }
-
     func treeNode() -> SCNNode? {
         return childNode(withName: treeNodeName, recursively: false)
     }
@@ -24,17 +14,12 @@ extension SCNNode {
         return existing
     }
 
-    func addRockNode(node: SCNNode) {
-        guard let parentName = name, parentName == floorNodeName,
-            let childName = node.name, childName == rockNodeName else {
-            return
-        }
-
-        addChildNode(node)
-    }
-
     func rockNodes() -> [SCNNode] {
         return childNodes.filter( { $0.name != nil && $0.name! == rockNodeName } )
+    }
+
+    func synthoidNode() -> SCNNode? {
+        return childNode(withName: synthoidNodeName, recursively: false)
     }
 
     func removeLastRockNode() -> SCNNode? {
