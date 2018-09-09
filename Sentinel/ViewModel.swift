@@ -14,7 +14,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private var currentAngle: Float = 0.0
 
     private var terrainNode: SCNNode?
-    private var playerNode: SCNNode?
+    private var synthoidNode: SCNNode?
     private var oppositionCameraNodes: [SCNNode] = []
 
     var preAnimationBlock: (() -> Void)?
@@ -84,7 +84,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(orbitNode)
         scene.rootNode.addChildNode(sunNode)
 
-        playerNode = terrainNode.childNode(withName: playerNodeName, recursively: true)
+        synthoidNode = terrainNode.childNode(withName: synthoidNodeName, recursively: true)
         let oppositionNodeNames = [sentinelNodeName, sentryNodeName]
         let oppositionNodes = terrainNode.childNodes(passingTest: { (node, stop) -> Bool in
             if let name = node.name {
@@ -179,7 +179,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             // Build a rock
         } else if grid.rockPositions.contains(point) {
             // Build another rock on top
-        } else if grid.playerPositions.contains(point) {
+        } else if grid.synthoidPositions.contains(point) {
             move(to: piece)
         } else {
             // Empty space - build a tree
@@ -196,7 +196,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             attemptAbsorbTreeFromFloor(node: node, piece: piece)
         } else if grid.rockPositions.contains(point) {
             // Build another rock on top
-        } else if grid.playerPositions.contains(point) {
+        } else if grid.synthoidPositions.contains(point) {
             move(to: piece)
         } else {
             // build a rock
@@ -244,7 +244,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let point = piece.point
         let nodePositioning = nodeFactory.nodePositioning
-        let newPosition = nodePositioning.calculateTerrainPosition(x: point.x, y: Int(piece.level + 1.0), z: point.z) // TODO: Need to add camera to player
+        let newPosition = nodePositioning.calculateTerrainPosition(x: point.x, y: Int(piece.level + 1.0), z: point.z)
 
         if let preAnimationBlock = preAnimationBlock {
             preAnimationBlock()
@@ -271,21 +271,21 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let playerNode = playerNode else {
+        guard let synthoidNode = synthoidNode else {
             return
         }
 
-        let playerPresentationNode = playerNode.presentation
+        let synthoidPresentationNode = synthoidNode.presentation
 
         for cameraNode in oppositionCameraNodes {
             let cameraPresentationNode = cameraNode.presentation
-            if can(camera: cameraPresentationNode, see: playerPresentationNode, renderer: renderer) {
+            if can(camera: cameraPresentationNode, see: synthoidPresentationNode, renderer: renderer) {
                 print("SEEN")
             }
         }
     }
 
-    private func can(camera: SCNNode, see player: SCNNode, renderer: SCNSceneRenderer) -> Bool {
-        return renderer.isNode(player, insideFrustumOf: camera)
+    private func can(camera: SCNNode, see synthoid: SCNNode, renderer: SCNSceneRenderer) -> Bool {
+        return renderer.isNode(synthoid, insideFrustumOf: camera)
     }
 }

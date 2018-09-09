@@ -7,7 +7,7 @@ let floorNodeName = "floorNodeName"
 let slopeNodeName = "slopeNodeName"
 let sentinelNodeName = "sentinelNodeName"
 let sentryNodeName = "sentryNodeName"
-let playerNodeName = "playerNodeName"
+let synthoidNodeName = "synthoidNodeName"
 let treeNodeName = "treeNodeName"
 let rockNodeName = "rockNodeName"
 let sunNodeName = "sunNodeName"
@@ -17,13 +17,13 @@ enum InteractableNodeType: Int {
     case floor = 2
     case tree = 4
     case rock = 8
-    case player = 16
+    case synthoid = 16
     case sentry = 32
     case sentinel = 64
 
     // TODO: Replace when Swift 4.2 is out of beta
     static func allValues() -> [InteractableNodeType] {
-        return [.floor, .tree, .rock, .player, .sentry, .sentinel]
+        return [.floor, .tree, .rock, .synthoid, .sentry, .sentinel]
     }
 }
 
@@ -38,7 +38,7 @@ class NodeFactory: NSObject {
 
     private let sentinel: SCNNode
     private let sentry: SCNNode
-    private let player: SCNNode
+    private let synthoid: SCNNode
     private let tree: SCNNode
 
     init(nodePositioning: NodePositioning) {
@@ -52,7 +52,7 @@ class NodeFactory: NSObject {
         wedge = prototypes.createWedge()
         sentinel = prototypes.createSentinel()
         sentry = prototypes.createSentry()
-        player = prototypes.createPlayer()
+        synthoid = prototypes.createSynthoid()
         tree = prototypes.createTree()
 
         super.init()
@@ -161,8 +161,8 @@ class NodeFactory: NSObject {
         }
 
         if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getNode(for: grid.startPosition) {
-            let playerNode = createPlayerNode()
-            floorNode.addChildNode(playerNode)
+            let synthoidNode = createSynthoidNode()
+            floorNode.addChildNode(synthoidNode)
         }
 
         for treePosition in grid.treePositions {
@@ -200,8 +200,8 @@ class NodeFactory: NSObject {
         return rotate
     }
 
-    func createPlayerNode() -> SCNNode {
-        let clone = player.clone()
+    func createSynthoidNode() -> SCNNode {
+        let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition(height: 1)
         return clone
     }
@@ -350,7 +350,7 @@ fileprivate class NodePrototypes: NSObject {
         boxNode.position.y = y
         let camera = SCNCamera()
         camera.zFar = 200.0
-        camera.categoryBitMask = InteractableNodeType.player.rawValue
+        camera.categoryBitMask = InteractableNodeType.synthoid.rawValue
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
@@ -362,15 +362,15 @@ fileprivate class NodePrototypes: NSObject {
         return oppositionNode
     }
 
-    func createPlayer() -> SCNNode {
+    func createSynthoid() -> SCNNode {
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.purple
         let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength * 2.0))
         capsule.firstMaterial = material
-        let playerNode = SCNNode(geometry: capsule)
-        playerNode.name = playerNodeName
-        playerNode.categoryBitMask = InteractableNodeType.player.rawValue
-        return playerNode
+        let synthoidNode = SCNNode(geometry: capsule)
+        synthoidNode.name = synthoidNodeName
+        synthoidNode.categoryBitMask = InteractableNodeType.synthoid.rawValue
+        return synthoidNode
     }
 
     func createTree() -> SCNNode {
