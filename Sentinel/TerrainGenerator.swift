@@ -99,7 +99,7 @@ class TerrainGenerator: NSObject {
     }
 
     private func highestPiece(in gridIndex: GridIndex, gen: ValueGenerator) -> GridPiece {
-        let pieces = gridIndex.highestFlatPieces()
+        let pieces = gridIndex.highestFloorPieces()
         if pieces.count == 1 {
             return pieces[0]
         }
@@ -137,7 +137,7 @@ class TerrainGenerator: NSObject {
             gridIndex = GridIndex(grid: grid)
         }
 
-        let startPieces = gridIndex.lowestFlatPieces()
+        let startPieces = gridIndex.lowestFloorPieces()
         if startPieces.count == 1 {
             return startPieces[0].point
         }
@@ -157,7 +157,7 @@ class TerrainGenerator: NSObject {
 
     private func normalise() {
         let gridIndex = GridIndex(grid: grid)
-        if let lowestLevel = gridIndex.flatLevels().first, lowestLevel > 0 {
+        if let lowestLevel = gridIndex.floorLevels().first, lowestLevel > 0 {
             for z in 0 ..< grid.depth {
                 for x in 0 ..< grid.width {
                     if let piece = grid.get(point: GridPoint(x: x, z: z)) {

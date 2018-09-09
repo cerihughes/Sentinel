@@ -157,20 +157,20 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func process(interaction: UserInteraction, node: SCNNode, interactableNodeType: InteractableNodeType) {
         switch (interaction, interactableNodeType) {
-        case (.tap, .flat):
+        case (.tap, .floor):
             if let piece = nodeMap.getPiece(for: node) {
-                processTapFlat(node: node, piece: piece)
+                processTapFloor(node: node, piece: piece)
             }
-        case (.longPress, .flat):
+        case (.longPress, .floor):
             if let piece = nodeMap.getPiece(for: node) {
-                processLongPressFlat(node: node, piece: piece)
+                processLongPressFloor(node: node, piece: piece)
             }
         default:
             print("Not processing \(interactableNodeType)")
         }
     }
 
-    private func processTapFlat(node: SCNNode, piece: GridPiece) {
+    private func processTapFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
 
         if grid.sentinelPosition == point || grid.guardianPositions.contains(point) {
@@ -187,13 +187,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    private func processLongPressFlat(node: SCNNode, piece: GridPiece) {
+    private func processLongPressFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
 
         if grid.sentinelPosition == point || grid.guardianPositions.contains(point) {
             // Absorb
         } else if grid.treePositions.contains(point) {
-            attemptAbsorbTreeFromFlat(node: node, piece: piece)
+            attemptAbsorbTreeFromFloor(node: node, piece: piece)
         } else if grid.rockPositions.contains(point) {
             // Build another rock on top
         } else if grid.playerPositions.contains(point) {
@@ -211,7 +211,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func attemptBuildTree(at piece: GridPiece) {
-        guard let flatNode = nodeMap.getNode(for: piece.point) else {
+        guard let floorNode = nodeMap.getNode(for: piece.point) else {
             return
         }
 
@@ -219,10 +219,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.treePositions.append(point)
 
         let treeNode = nodeFactory.createTreeNode()
-        flatNode.addChildNode(treeNode)
+        floorNode.addChildNode(treeNode)
     }
 
-    private func attemptAbsorbTreeFromFlat(node: SCNNode, piece: GridPiece) {
+    private func attemptAbsorbTreeFromFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
         guard
             let index = grid.treePositions.index(of: point),

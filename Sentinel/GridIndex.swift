@@ -89,7 +89,7 @@ class GridIndex: NSObject {
         super.init()
     }
 
-    func flatLevels() -> [Int] {
+    func floorLevels() -> [Int] {
         return index.keys.sorted()
     }
 
@@ -101,15 +101,15 @@ class GridIndex: NSObject {
         return []
     }
 
-    func highestFlatPieces() -> [GridPiece] {
-        if let level = flatLevels().last {
+    func highestFloorPieces() -> [GridPiece] {
+        if let level = floorLevels().last {
             return pieces(at: level)
         }
         return []
     }
 
-    func lowestFlatPieces() -> [GridPiece] {
-        if let level = flatLevels().first {
+    func lowestFloorPieces() -> [GridPiece] {
+        if let level = floorLevels().first {
             return pieces(at: level)
         }
         return []
@@ -117,7 +117,7 @@ class GridIndex: NSObject {
 
     func allPieces() -> [GridPiece] {
         var allPieces: [GridPiece] = []
-        for level in flatLevels() {
+        for level in floorLevels() {
             allPieces.append(contentsOf: pieces(at: level))
         }
         
@@ -125,7 +125,7 @@ class GridIndex: NSObject {
     }
 
     private static func isValid(piece: GridPiece, in grid: Grid) -> Bool {
-        if !piece.isFlat {
+        if !piece.isFloor {
             return false
         }
 

@@ -70,7 +70,7 @@ enum GridDirection: Int {
 class GridPiece: NSObject {
     let point: GridPoint
 
-    var isFlat = true
+    var isFloor = true
     var level: Float = 0.0
     private var slopes: Int = 0
 
@@ -80,20 +80,20 @@ class GridPiece: NSObject {
         super.init()
     }
 
-    func buildFlat() -> Float {
-        if isFlat {
+    func buildFloor() -> Float {
+        if isFloor {
             level += 1.0
         } else {
-            isFlat = true
+            isFloor = true
             level += 0.5
         }
         return level
     }
 
     func buildSlope() -> Float {
-        if isFlat {
+        if isFloor {
             level += 0.5
-            isFlat = false
+            isFloor = false
         } else {
             level += 1.0
         }
@@ -147,7 +147,7 @@ class Grid: NSObject {
     }
 
     func build(at point: GridPoint) {
-        buildFlat(point: point)
+        buildFloor(point: point)
     }
 
     func processSlopes() {
@@ -197,12 +197,12 @@ class Grid: NSObject {
         return desc
     }
 
-    private func buildFlat(point: GridPoint) {
+    private func buildFloor(point: GridPoint) {
         guard let piece = get(point: point) else {
             return
         }
 
-        let slopeLevel = piece.buildFlat() - 0.5
+        let slopeLevel = piece.buildFloor() - 0.5
 
         for direction in GridDirection.allValues() {
             buildSlope(from: point, level: slopeLevel, direction: direction)
@@ -219,7 +219,7 @@ class Grid: NSObject {
             }
 
             if (level - nextLevel == 1.0) {
-                buildFlat(point: nextPoint)
+                buildFloor(point: nextPoint)
             }
 
             let nextSlopeLevel = next.buildSlope() - 1.0
@@ -235,13 +235,13 @@ class Grid: NSObject {
             return
         }
 
-        var slopeLevel = firstPiece.isFlat ? firstPiece.level - 0.5 : firstPiece.level - 1.0
+        var slopeLevel = firstPiece.isFloor ? firstPiece.level - 0.5 : firstPiece.level - 1.0
 
         var nextPoint = neighbour(of: point, direction: direction)
         var next = get(point: nextPoint)
         while next != nil {
             let nextExists = next!
-            if nextExists.isFlat {
+            if nextExists.isFloor {
                 slopeLevel = nextExists.level - 0.5
             } else {
                 if nextExists.level == slopeLevel {
