@@ -124,7 +124,7 @@ class Grid: NSObject {
     private var grid: [[GridPiece]] = []
 
     var sentinelPosition: GridPoint = undefinedPosition
-    var guardianPositions: [GridPoint] = []
+    var sentryPositions: [GridPoint] = []
     var startPosition: GridPoint = undefinedPosition
     var treePositions: [GridPoint] = []
     var rockPositions: [GridPoint] = []

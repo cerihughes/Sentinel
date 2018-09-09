@@ -135,7 +135,7 @@ class GridIndex: NSObject {
             return false
         }
 
-        if grid.guardianPositions.contains(point) {
+        if grid.sentryPositions.contains(point) {
             return false
         }
 

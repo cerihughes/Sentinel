@@ -85,7 +85,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(sunNode)
 
         playerNode = terrainNode.childNode(withName: playerNodeName, recursively: true)
-        let oppositionNodeNames = [sentinelNodeName, guardianNodeName]
+        let oppositionNodeNames = [sentinelNodeName, sentryNodeName]
         let oppositionNodes = terrainNode.childNodes(passingTest: { (node, stop) -> Bool in
             if let name = node.name {
                 return oppositionNodeNames.contains(name)
@@ -173,7 +173,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func processTapFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
 
-        if grid.sentinelPosition == point || grid.guardianPositions.contains(point) {
+        if grid.sentinelPosition == point || grid.sentryPositions.contains(point) {
             // No op
         } else if grid.treePositions.contains(point) {
             // Build a rock
@@ -190,7 +190,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func processLongPressFloor(node: SCNNode, piece: GridPiece) {
         let point = piece.point
 
-        if grid.sentinelPosition == point || grid.guardianPositions.contains(point) {
+        if grid.sentinelPosition == point || grid.sentryPositions.contains(point) {
             // Absorb
         } else if grid.treePositions.contains(point) {
             attemptAbsorbTreeFromFloor(node: node, piece: piece)

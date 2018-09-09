@@ -25,7 +25,7 @@ class TerrainGenerator: NSObject {
         }
         
         grid.sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
-        grid.guardianPositions = generateGuardians(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        grid.sentryPositions = generateSentries(gen: gen, difficultyAdjustment: difficultyAdjustment)
         grid.startPosition = generateStartPosition(gen: gen)
         grid.treePositions = generateTrees(gen: gen, difficultyAdjustment: difficultyAdjustment)
 
@@ -108,23 +108,23 @@ class TerrainGenerator: NSObject {
         return pieces[index]
     }
 
-    private func generateGuardians(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
+    private func generateSentries(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
         guard 1 ... 3 ~= difficultyAdjustment else {
             return []
         }
 
-        var guardianPieces: [GridPiece] = []
+        var sentryPieces: [GridPiece] = []
         for quadrant in GridQuadrant.allValues() {
             if !quadrant.contains(point: grid.sentinelPosition, grid: grid) {
                 let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
-                guardianPieces.append(highestPiece(in: gridIndex, gen: gen))
+                sentryPieces.append(highestPiece(in: gridIndex, gen: gen))
             }
         }
 
         // Sort by level
-        guardianPieces = guardianPieces.sorted { return $0.level < $1.level }
+        sentryPieces = sentryPieces.sorted { return $0.level < $1.level }
 
-        let points = guardianPieces.map { return $0.point }
+        let points = sentryPieces.map { return $0.point }
         return Array(points.prefix(difficultyAdjustment))
     }
 
