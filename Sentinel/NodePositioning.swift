@@ -20,10 +20,11 @@ class NodePositioning: NSObject {
                               (Float(z) - (gridDepth / 2.0)) * sideLength)
     }
 
-    func calculateObjectPosition(y: Int = 0, height: Int = 2) -> SCNVector3 {
-        let stackHeight = Float(y * height) - 0.5 // 0.5 is half of the cube
+    func calculateObjectPosition() -> SCNVector3 {
         return SCNVector3Make(0.0,
-                              (stackHeight + (Float(height) / 2.0)) * sideLength,
+                              0.5 * sideLength,
+//                              Float(height) / 2.0,
+//                              (Float(height - 1) / 2.0) * sideLength,
                               0.0)
     }
 }
