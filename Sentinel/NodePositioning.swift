@@ -13,10 +13,10 @@ class NodePositioning: NSObject {
         super.init()
     }
 
-    func calculateTerrainPosition(x: Int, y: Int, z: Int) -> SCNVector3 {
+    func calculateTerrainPosition(x: Int, y: Float, z: Int) -> SCNVector3 {
         let height: Float = 1.0
         return SCNVector3Make((Float(x) - (gridWidth / 2.0)) * sideLength,
-                              (Float(y) - (height / 2.0)) * sideLength,
+                              (y - (height / 2.0)) * sideLength,
                               (Float(z) - (gridDepth / 2.0)) * sideLength)
     }
 
