@@ -6,7 +6,7 @@ let terrainNodeName = "terrainNodeName"
 let floorNodeName = "floorNodeName"
 let slopeNodeName = "slopeNodeName"
 let sentinelNodeName = "sentinelNodeName"
-let guardianNodeName = "guardianNodeName"
+let sentryNodeName = "sentryNodeName"
 let playerNodeName = "playerNodeName"
 let treeNodeName = "treeNodeName"
 let rockNodeName = "rockNodeName"
@@ -18,12 +18,12 @@ enum InteractableNodeType: Int {
     case tree = 4
     case rock = 8
     case player = 16
-    case guardian = 32
+    case sentry = 32
     case sentinel = 64
 
     // TODO: Replace when Swift 4.2 is out of beta
     static func allValues() -> [InteractableNodeType] {
-        return [.floor, .tree, .rock, .player, .guardian, .sentinel]
+        return [.floor, .tree, .rock, .player, .sentry, .sentinel]
     }
 }
 
@@ -37,7 +37,7 @@ class NodeFactory: NSObject {
     private let wedge: SCNNode
 
     private let sentinel: SCNNode
-    private let guardian: SCNNode
+    private let sentry: SCNNode
     private let player: SCNNode
     private let tree: SCNNode
 
@@ -51,7 +51,7 @@ class NodeFactory: NSObject {
         cube2 = prototypes.createCube(colour: .yellow)
         wedge = prototypes.createWedge()
         sentinel = prototypes.createSentinel()
-        guardian = prototypes.createGuardian()
+        sentry = prototypes.createSentry()
         player = prototypes.createPlayer()
         tree = prototypes.createTree()
 
@@ -153,10 +153,10 @@ class NodeFactory: NSObject {
             floorNode.addChildNode(sentinelNode)
         }
 
-        for guardianPosition in grid.guardianPositions {
-            if let _ = grid.get(point: guardianPosition), let floorNode = nodeMap.getNode(for: guardianPosition) {
-                let guardianNode = createGuardianNode()
-                floorNode.addChildNode(guardianNode)
+        for sentryPosition in grid.sentryPositions {
+            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getNode(for: sentryPosition) {
+                let sentryNode = createSentryNode()
+                floorNode.addChildNode(sentryNode)
             }
         }
 
@@ -183,8 +183,8 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createGuardianNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
-        let clone = guardian.clone()
+    func createSentryNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+        let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
         clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
@@ -312,11 +312,11 @@ fileprivate class NodePrototypes: NSObject {
         return sentinelNode
     }
 
-    func createGuardian() -> SCNNode {
-        let guardianNode = createOpposition(colour: .green)
-        guardianNode.name = guardianNodeName
-        guardianNode.categoryBitMask = InteractableNodeType.guardian.rawValue
-        return guardianNode
+    func createSentry() -> SCNNode {
+        let sentryNode = createOpposition(colour: .green)
+        sentryNode.name = sentryNodeName
+        sentryNode.categoryBitMask = InteractableNodeType.sentry.rawValue
+        return sentryNode
     }
 
     func createOpposition(colour: UIColor) -> SCNNode {
