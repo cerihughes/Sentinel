@@ -1,33 +1,72 @@
 import UIKit
 
+struct LevelConfiguration {
+    let level: Int
+    let maxLevel = 99
+
+    var progression: Float {
+        return Float(level) / Float(maxLevel)
+    }
+
+    var difficultyAdjustment: Int {
+        var adjustment = level / 10
+        if adjustment > 3 {
+            adjustment = 3
+        }
+        return adjustment
+    }
+
+    private let gridWidthRange = 24 ..< 32
+    private let gridDepthRange = 16 ..< 24
+
+    var gridWidth: Int {
+        let adjustment = progression * Float(gridWidthRange.lowerBound - gridWidthRange.upperBound)
+        return gridWidthRange.upperBound - Int(adjustment)
+
+    }
+
+    var gridDepth: Int {
+        let adjustment = progression * Float(gridDepthRange.lowerBound - gridDepthRange.upperBound)
+        return gridDepthRange.upperBound - Int(adjustment)
+    }
+
+    let largePlateauSizeRange = 8 ..< 12
+    let largePlateauCountRange = 4 ..< 7
+    let smallPlateauSizeRange = 5 ..< 7
+    let smallPlateauCountRange = 6 ..< 8
+
+    let largePeakCountRange = 2 ..< 6
+    let mediumPeakCountRange = 3 ..< 8
+    let smallPeakCountRange = 10 ..< 30
+
+    var treeCountRange: CountableRange<Int> {
+        let minCount = (16 - (difficultyAdjustment * 2)) / 4
+        let maxCount = (24 - (difficultyAdjustment * 2)) / 4
+        return minCount..<maxCount
+    }
+}
+
 class TerrainGenerator: NSObject {
     var grid: Grid!
 
-    func generate(level: Int, maxLevel: Int, minWidth: Int, maxWidth: Int, minDepth: Int, maxDepth: Int) -> Grid {
-        let progression = Float(level) / Float(maxLevel)
-        let widthAdjustment = progression * Float(maxWidth - minWidth)
-        let depthAdjustment = progression * Float(maxDepth - minDepth)
-        let width = maxWidth - Int(widthAdjustment)
-        let depth = maxDepth - Int(depthAdjustment)
+    func generate(levelConfiguration: LevelConfiguration) -> Grid {
+        let width = levelConfiguration.gridWidth
+        let depth = levelConfiguration.gridDepth
 
         grid = Grid(width: width, depth: depth)
 
-        let gen = ValueGenerator(input: level)
-        generateLargePlateaus(gen: gen)
-        generateSmallPlateaus(gen: gen)
-        generateLargePeaks(gen: gen)
-        generateMediumPeaks(gen: gen)
-        generateSmallPeaks(gen: gen)
+        let gen = ValueGenerator(input: levelConfiguration.level)
+        generateLargePlateaus(gen: gen, levelConfiguration: levelConfiguration)
+        generateSmallPlateaus(gen: gen, levelConfiguration: levelConfiguration)
+        generateLargePeaks(gen: gen, levelConfiguration: levelConfiguration)
+        generateMediumPeaks(gen: gen, levelConfiguration: levelConfiguration)
+        generateSmallPeaks(gen: gen, levelConfiguration: levelConfiguration)
 
-        var difficultyAdjustment = level / 10
-        if difficultyAdjustment > 3 {
-            difficultyAdjustment = 3
-        }
-        
+        let difficultyAdjustment = levelConfiguration.difficultyAdjustment
         grid.sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
         grid.sentryPositions = generateSentries(gen: gen, difficultyAdjustment: difficultyAdjustment)
         grid.startPosition = generateStartPosition(gen: gen)
-        grid.treePositions = generateTrees(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        grid.treePositions = generateTrees(gen: gen, levelConfiguration: levelConfiguration)
 
         normalise()
         
@@ -36,51 +75,41 @@ class TerrainGenerator: NSObject {
         return grid
     }
 
-    private func generateLargePlateaus(gen: ValueGenerator) {
-        generatePlateaus(minSize: 8,
-                         maxSize: 12,
-                         minCount: 4,
-                         maxCount: 7,
+    private func generateLargePlateaus(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
+        generatePlateaus(sizeRange: levelConfiguration.largePlateauSizeRange,
+                         countRange: levelConfiguration.largePlateauCountRange,
                          gen: gen)
     }
 
-    private func generateSmallPlateaus(gen: ValueGenerator) {
-        generatePlateaus(minSize: 5,
-                         maxSize: 7,
-                         minCount: 6,
-                         maxCount: 8,
+    private func generateSmallPlateaus(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
+        generatePlateaus(sizeRange: levelConfiguration.smallPlateauSizeRange,
+                         countRange: levelConfiguration.smallPlateauCountRange,
                          gen: gen)
     }
 
-    private func generateLargePeaks(gen: ValueGenerator) {
+    private func generateLargePeaks(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
         generatePeaks(summitSize: 3,
-                      minCount: 2,
-                      maxCount: 6,
+                      countRange: levelConfiguration.largePeakCountRange,
                       gen: gen)
     }
 
-    private func generateMediumPeaks(gen: ValueGenerator) {
+    private func generateMediumPeaks(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
         generatePeaks(summitSize: 2,
-                      minCount: 3,
-                      maxCount: 8,
+                      countRange: levelConfiguration.mediumPeakCountRange,
                       gen: gen)
     }
 
-    private func generateSmallPeaks(gen: ValueGenerator) {
+    private func generateSmallPeaks(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
         generatePeaks(summitSize: 1,
-                      minCount: 10,
-                      maxCount: 30,
+                      countRange: levelConfiguration.smallPeakCountRange,
                       gen: gen)
     }
 
-    private func generateTrees(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
-        let minCount = (16 - (difficultyAdjustment * 2)) / 4
-        let maxCount = (24 - (difficultyAdjustment * 2)) / 4
-
+    private func generateTrees(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> [GridPoint] {
         var trees: [GridPoint] = []
+        let countRange = levelConfiguration.treeCountRange
         for quadrant in GridQuadrant.allValues() {
-            let treesInQuadrant = generateTrees(minCount: minCount,
-                                                maxCount: maxCount,
+            let treesInQuadrant = generateTrees(countRange: countRange,
                                                 quadrant: quadrant,
                                                 gen: gen)
             trees.append(contentsOf: treesInQuadrant)
@@ -104,7 +133,7 @@ class TerrainGenerator: NSObject {
             return pieces[0]
         }
 
-        let index = gen.next(min: 0, max: pieces.count - 1)
+        let index = gen.next(array: pieces)
         return pieces[index]
     }
 
@@ -142,7 +171,7 @@ class TerrainGenerator: NSObject {
             return startPieces[0].point
         }
 
-        let index = gen.next(min: 0, max: startPieces.count - 1)
+        let index = gen.next(range: 0 ..< startPieces.count - 1)
         let point = startPieces[index].point
         grid.synthoidPositions.append(point)
         
@@ -171,28 +200,25 @@ class TerrainGenerator: NSObject {
         }
     }
 
-    private func generatePlateaus(minSize: Int,
-                                  maxSize: Int,
-                                  minCount: Int,
-                                  maxCount: Int,
+    private func generatePlateaus(sizeRange: CountableRange<Int>,
+                                  countRange: CountableRange<Int>,
                                   gen: ValueGenerator) {
-        let count = gen.next(min: minCount, max: maxCount)
+        let count = gen.next(range: countRange)
         for _ in 0 ..< count {
-            let size = gen.next(min: minSize, max: maxSize)
-            let x = gen.next(min: 0, max: grid.width - 1)
-            let z = gen.next(min: 0, max: grid.depth - 1)
+            let size = gen.next(range: sizeRange)
+            let x = gen.next(range: 0 ..< grid.width - 1)
+            let z = gen.next(range: 0 ..< grid.depth - 1)
             generatePlateau(x: x, z: z, size: size)
         }
     }
 
     private func generatePeaks(summitSize: Int,
-                               minCount: Int,
-                               maxCount: Int,
+                               countRange: CountableRange<Int>,
                                gen: ValueGenerator) {
-        let count = gen.next(min: minCount, max: maxCount)
+        let count = gen.next(range: countRange)
         for _ in 0 ..< count {
-            let x = gen.next(min: 0, max: grid.width - 1)
-            let z = gen.next(min: 0, max: grid.depth - 1)
+            let x = gen.next(range: 0 ..< grid.width - 1)
+            let z = gen.next(range: 0 ..< grid.depth - 1)
             generatePeak(x: x, z: z, summitSize: summitSize)
         }
     }
@@ -208,21 +234,20 @@ class TerrainGenerator: NSObject {
         }
     }
 
-    private func generateTrees(minCount: Int,
-                               maxCount: Int,
+    private func generateTrees(countRange: CountableRange<Int>,
                                quadrant: GridQuadrant,
                                gen: ValueGenerator) -> [GridPoint] {
         let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
         var allPieces = gridIndex.allPieces()
         var treePoints: [GridPoint] = []
 
-        var count = gen.next(min: minCount, max: maxCount)
+        var count = gen.next(range: countRange)
         if (count > allPieces.count) {
             count = allPieces.count
         }
 
         for _ in 0 ..< count {
-            let index = gen.next(min: 0, max: allPieces.count - 1)
+            let index = gen.next(array: allPieces)
             let piece = allPieces.remove(at: index)
             treePoints.append(piece.point)
         }

@@ -25,13 +25,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         self.scene = SCNScene()
 
+        let configuration = LevelConfiguration(level: terrainIndex)
         let tg = TerrainGenerator()
-        self.grid = tg.generate(level: terrainIndex,
-                                maxLevel: 99,
-                                minWidth: 24,
-                                maxWidth: 32,
-                                minDepth: 16,
-                                maxDepth: 24)
+        self.grid = tg.generate(levelConfiguration: configuration)
 
         let nodePositioning = NodePositioning(gridWidth: Float(grid.width),
                                               gridDepth: Float(grid.depth),
