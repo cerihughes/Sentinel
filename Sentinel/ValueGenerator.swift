@@ -39,7 +39,15 @@ class ValueGenerator: NSObject {
         super.init()
     }
 
-    func next(min: Int, max: Int) -> Int {
+    func next(range: CountableRange<Int>) -> Int {
+        return next(min: range.lowerBound, max: range.upperBound)
+    }
+
+    func next(array: Array<Any>) -> Int {
+        return next(min: 0, max: array.count - 1)
+    }
+
+    private func next(min: Int, max: Int) -> Int {
         genCount += 1
 
         var seed = seeds.remove(at: 0)
