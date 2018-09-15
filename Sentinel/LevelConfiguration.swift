@@ -23,12 +23,26 @@ protocol LevelConfiguration {
 
 struct MainLevelConfiguration: LevelConfiguration {
     let level: Int
-    let maxLevel = 99
 
-    var progression: Float {
+    private let gridWidthRange = 24 ..< 32
+    private let gridDepthRange = 16 ..< 24
+
+    private let maxLevel = 99
+
+    private var progression: Float {
         return Float(level) / Float(maxLevel)
     }
 
+    var gridWidth: Int {
+        let adjustment = progression * Float(gridWidthRange.lowerBound - gridWidthRange.upperBound)
+        return gridWidthRange.upperBound - Int(adjustment)
+    }
+
+    var gridDepth: Int {
+        let adjustment = progression * Float(gridDepthRange.lowerBound - gridDepthRange.upperBound)
+        return gridDepthRange.upperBound - Int(adjustment)
+    }
+    
     var sentinelPlatformHeight: Int {
         var platformHeight = (level / 10) + 1
         if platformHeight > 4 {
@@ -43,19 +57,6 @@ struct MainLevelConfiguration: LevelConfiguration {
             sentries = 5
         }
         return sentries
-    }
-
-    private let gridWidthRange = 24 ..< 32
-    private let gridDepthRange = 16 ..< 24
-
-    var gridWidth: Int {
-        let adjustment = progression * Float(gridWidthRange.lowerBound - gridWidthRange.upperBound)
-        return gridWidthRange.upperBound - Int(adjustment)
-    }
-
-    var gridDepth: Int {
-        let adjustment = progression * Float(gridDepthRange.lowerBound - gridDepthRange.upperBound)
-        return gridDepthRange.upperBound - Int(adjustment)
     }
 
     let largePlateauSizeRange = 8 ..< 12
@@ -77,4 +78,25 @@ struct MainLevelConfiguration: LevelConfiguration {
         let maxCount = (24 - adjustment)
         return minCount..<maxCount
     }
+}
+
+struct TestLevelConfiguration: LevelConfiguration {
+    let level: Int
+
+    let gridWidth = 16
+    let gridDepth = 16
+
+    let sentinelPlatformHeight: Int
+    let sentryCount: Int
+
+    let largePlateauSizeRange = 8 ..< 12
+    let largePlateauCountRange = 0 ..< 0
+    let smallPlateauSizeRange = 5 ..< 7
+    let smallPlateauCountRange = 0 ..< 0
+
+    let largePeakCountRange = 0 ..< 0
+    let mediumPeakCountRange = 0 ..< 0
+    let smallPeakCountRange = 0 ..< 0
+
+    let treeCountRange = 10 ..< 10
 }
