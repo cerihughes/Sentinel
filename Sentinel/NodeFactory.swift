@@ -363,7 +363,6 @@ fileprivate class NodePrototypes: NSObject {
         boxNode.position.y = y
         let camera = SCNCamera()
         camera.zFar = 200.0
-        camera.categoryBitMask = InteractableNodeType.synthoid.rawValue
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera

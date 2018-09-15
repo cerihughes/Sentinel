@@ -14,7 +14,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private var currentAngle: Float = 0.0
 
     private var terrainNode: SCNNode?
-    private var synthoidNode: SCNNode?
     private var oppositionCameraNodes: [SCNNode] = []
 
     var preAnimationBlock: (() -> Void)?
@@ -80,7 +79,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(orbitNode)
         scene.rootNode.addChildNode(sunNode)
 
-        synthoidNode = terrainNode.childNode(withName: synthoidNodeName, recursively: true)
         let oppositionNodeNames = [sentinelNodeName, sentryNodeName]
         let oppositionNodes = terrainNode.childNodes(passingTest: { (node, stop) -> Bool in
             if let name = node.name {
@@ -93,6 +91,22 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             if let cameraNode = oppositionNode.childNode(withName: cameraNodeName, recursively: true) {
                 oppositionCameraNodes.append(cameraNode)
             }
+        }
+    }
+
+    func cameraNode(for viewer: Viewer) -> SCNNode? {
+        switch viewer {
+        case .player:
+            return scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
+        case .sentinel:
+            guard let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true),
+                let sentinelNode = terrainNode.childNode(withName: sentinelNodeName, recursively: true)
+                else {
+                    return nil
+            }
+            return sentinelNode.childNode(withName: cameraNodeName, recursively: true)
+        default:
+            return nil
         }
     }
 
@@ -401,8 +415,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let synthoidNode = synthoidNode else {
-            return
+        guard let synthoidNode = terrainNode?.childNode(withName: synthoidNodeName, recursively: true)
+            else {
+                return
         }
 
         let synthoidPresentationNode = synthoidNode.presentation
