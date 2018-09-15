@@ -31,6 +31,7 @@
 		65B83F84213C09A000515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65B83F8E213C6FDD00515915 /* GeometryFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F8D213C6FDD00515915 /* GeometryFactory.swift */; };
 		65BFF02021414F66000861F8 /* NodePositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BFF01F21414F66000861F8 /* NodePositioning.swift */; };
+		65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
 /* End PBXBuildFile section */
 
@@ -68,6 +69,7 @@
 		65B83F82213C08E400515915 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		65B83F8D213C6FDD00515915 /* GeometryFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryFactory.swift; sourceTree = "<group>"; };
 		65BFF01F21414F66000861F8 /* NodePositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePositioning.swift; sourceTree = "<group>"; };
+		65C003B82146BF3400EDB205 /* LevelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelConfiguration.swift; sourceTree = "<group>"; };
 		65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 				652778CD2145625E00643BE0 /* GridPiece.swift */,
 				6515594D213FFD0000F35776 /* GridIndex.swift */,
 				659395F0213D46B700302665 /* TerrainGenerator.swift */,
+				65C003B82146BF3400EDB205 /* LevelConfiguration.swift */,
 				65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */,
 				65A9E07721427795009011C8 /* SkyBox.swift */,
 				65A9E0752142712B009011C8 /* skybox.png */,
@@ -245,6 +248,7 @@
 			files = (
 				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				656635DB2141483D00C264EA /* ViewModel.swift in Sources */,
+				65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */,
 				65B83F8E213C6FDD00515915 /* GeometryFactory.swift in Sources */,
 				65A9E07821427795009011C8 /* SkyBox.swift in Sources */,
 				65BFF02021414F66000861F8 /* NodePositioning.swift in Sources */,
