@@ -2,9 +2,15 @@ import SceneKit
 
 class ViewController: UIViewController {
     let viewModel: ViewModel
+    let isMain: Bool
 
-    init(viewModel: ViewModel) {
+    convenience init(viewModel: ViewModel) {
+        self.init(viewModel: viewModel, isMain: true)
+    }
+
+    init(viewModel: ViewModel, isMain: Bool) {
         self.viewModel = viewModel
+        self.isMain = isMain
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -24,9 +30,14 @@ class ViewController: UIViewController {
             return
         }
 
-        sceneView.showsStatistics = true
-        sceneView.backgroundColor = UIColor(white: 0.7, alpha: 1.0)
         sceneView.scene = viewModel.scene
+        sceneView.backgroundColor = UIColor(white: 0.7, alpha: 1.0)
+
+        if !isMain {
+            return
+        }
+
+        sceneView.showsStatistics = true
         sceneView.delegate = viewModel
 
         let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tapGesture(sender:)))
