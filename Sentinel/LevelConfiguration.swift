@@ -8,12 +8,20 @@ struct LevelConfiguration {
         return Float(level) / Float(maxLevel)
     }
 
-    var difficultyAdjustment: Int {
-        var adjustment = level / 10
-        if adjustment > 3 {
-            adjustment = 3
+    var sentinelPlatformHeight: Int {
+        var platformHeight = (level / 10) + 1
+        if platformHeight > 4 {
+            platformHeight = 4
         }
-        return adjustment
+        return platformHeight
+    }
+
+    var sentryCount: Int {
+        var sentries = level / 10
+        if sentries > 5 {
+            sentries = 5
+        }
+        return sentries
     }
 
     private let gridWidthRange = 24 ..< 32
@@ -22,7 +30,6 @@ struct LevelConfiguration {
     var gridWidth: Int {
         let adjustment = progression * Float(gridWidthRange.lowerBound - gridWidthRange.upperBound)
         return gridWidthRange.upperBound - Int(adjustment)
-
     }
 
     var gridDepth: Int {
@@ -40,8 +47,13 @@ struct LevelConfiguration {
     let smallPeakCountRange = 10 ..< 30
 
     var treeCountRange: CountableRange<Int> {
-        let minCount = (16 - (difficultyAdjustment * 2)) / 4
-        let maxCount = (24 - (difficultyAdjustment * 2)) / 4
+        var adjustment = level / 5
+        if adjustment > 6 {
+            adjustment = 6
+        }
+
+        let minCount = (16 - adjustment)
+        let maxCount = (24 - adjustment)
         return minCount..<maxCount
     }
 }

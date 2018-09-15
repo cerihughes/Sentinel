@@ -16,9 +16,8 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen, levelConfiguration: levelConfiguration)
         generateSmallPeaks(gen: gen, levelConfiguration: levelConfiguration)
 
-        let difficultyAdjustment = levelConfiguration.difficultyAdjustment
-        grid.sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
-        grid.sentryPositions = generateSentries(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        grid.sentinelPosition = generateSentinel(gen: gen, levelConfiguration: levelConfiguration)
+        grid.sentryPositions = generateSentries(gen: gen, levelConfiguration: levelConfiguration)
         grid.startPosition = generateStartPosition(gen: gen)
         grid.treePositions = generateTrees(gen: gen, levelConfiguration: levelConfiguration)
 
@@ -72,10 +71,10 @@ class TerrainGenerator: NSObject {
         return trees
     }
 
-    private func generateSentinel(gen: ValueGenerator, difficultyAdjustment: Int) -> GridPoint {
+    private func generateSentinel(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
         let sentinelPosition = highestPiece(in: gridIndex, gen: gen).point
-        for _ in 0 ..< difficultyAdjustment + 1 {
+        for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
         }
         return sentinelPosition
@@ -91,8 +90,9 @@ class TerrainGenerator: NSObject {
         return pieces[index]
     }
 
-    private func generateSentries(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
-        guard 1 ... 3 ~= difficultyAdjustment else {
+    private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> [GridPoint] {
+        let sentries = levelConfiguration.sentryCount
+        guard 1 ... 3 ~= sentries else {
             return []
         }
 
@@ -108,7 +108,7 @@ class TerrainGenerator: NSObject {
         sentryPieces = sentryPieces.sorted { return $0.level < $1.level }
 
         let points = sentryPieces.map { return $0.point }
-        return Array(points.prefix(difficultyAdjustment))
+        return Array(points.prefix(sentries))
     }
 
     private func generateStartPosition(gen: ValueGenerator) -> GridPoint {
