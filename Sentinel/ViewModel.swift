@@ -25,7 +25,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         self.scene = SCNScene()
 
-        let configuration = LevelConfiguration(level: terrainIndex)
+        let configuration = MainLevelConfiguration(level: terrainIndex)
         let tg = TerrainGenerator()
         self.grid = tg.generate(levelConfiguration: configuration)
 

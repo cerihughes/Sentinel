@@ -1,6 +1,27 @@
 import Foundation
 
-struct LevelConfiguration {
+protocol LevelConfiguration {
+    var level: Int {get}
+
+    var gridWidth: Int {get}
+    var gridDepth: Int {get}
+
+    var sentinelPlatformHeight: Int {get}
+    var sentryCount: Int {get}
+
+    var largePlateauSizeRange: CountableRange<Int> {get}
+    var largePlateauCountRange: CountableRange<Int> {get}
+    var smallPlateauSizeRange: CountableRange<Int> {get}
+    var smallPlateauCountRange: CountableRange<Int> {get}
+
+    var largePeakCountRange: CountableRange<Int> {get}
+    var mediumPeakCountRange: CountableRange<Int> {get}
+    var smallPeakCountRange: CountableRange<Int> {get}
+
+    var treeCountRange: CountableRange<Int> {get}
+}
+
+struct MainLevelConfiguration: LevelConfiguration {
     let level: Int
     let maxLevel = 99
 
