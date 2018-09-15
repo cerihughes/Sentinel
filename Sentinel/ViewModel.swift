@@ -96,6 +96,22 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
     }
 
+    func cameraNode(for viewer: Viewer) -> SCNNode? {
+        switch viewer {
+        case .player:
+            return scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
+        case .sentinel:
+            guard let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true),
+                let sentinelNode = terrainNode.childNode(withName: sentinelNodeName, recursively: true)
+                else {
+                    return nil
+            }
+            return sentinelNode.childNode(withName: cameraNodeName, recursively: true)
+        default:
+            return nil
+        }
+    }
+
     func process(interaction: UserInteraction, hitTestResults: [SCNHitTestResult]) {
         if hasEnteredScene() {
             if let hitTestResult = hitTestResults.first {

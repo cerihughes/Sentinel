@@ -8,7 +8,7 @@ class ContainerViewController: UIViewController {
 
     init(viewModel: ViewModel) {
         mainViewController = ViewController(viewModel: viewModel)
-        sentinelViewController = ViewController(viewModel: viewModel, isMain: false)
+        sentinelViewController = ViewController(viewModel: viewModel, viewer: .sentinel)
         super.init(nibName: nil, bundle: nil)
     }
 

@@ -1,16 +1,20 @@
 import SceneKit
 
+enum Viewer {
+    case player, sentinel, sentry
+}
+
 class ViewController: UIViewController {
     let viewModel: ViewModel
-    let isMain: Bool
+    let viewer: Viewer
 
     convenience init(viewModel: ViewModel) {
-        self.init(viewModel: viewModel, isMain: true)
+        self.init(viewModel: viewModel, viewer: .player)
     }
 
-    init(viewModel: ViewModel, isMain: Bool) {
+    init(viewModel: ViewModel, viewer: Viewer) {
         self.viewModel = viewModel
-        self.isMain = isMain
+        self.viewer = viewer
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -32,8 +36,9 @@ class ViewController: UIViewController {
 
         sceneView.scene = viewModel.scene
         sceneView.backgroundColor = UIColor(white: 0.7, alpha: 1.0)
+        sceneView.pointOfView = viewModel.cameraNode(for: viewer)
 
-        if !isMain {
+        if viewer != .player {
             return
         }
 
