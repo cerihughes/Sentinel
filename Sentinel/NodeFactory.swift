@@ -362,7 +362,7 @@ fileprivate class NodePrototypes: NSObject {
         boxNode.position.z = sideLength / 5.0
         boxNode.position.y = y
         let camera = SCNCamera()
-        camera.zFar = 500.0
+        camera.zFar = 200.0
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
