@@ -14,7 +14,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private var currentAngle: Float = 0.0
 
     private var terrainNode: SCNNode?
-    private var synthoidNode: SCNNode?
     private var oppositionCameraNodes: [SCNNode] = []
 
     var preAnimationBlock: (() -> Void)?
@@ -80,7 +79,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(orbitNode)
         scene.rootNode.addChildNode(sunNode)
 
-        synthoidNode = terrainNode.childNode(withName: synthoidNodeName, recursively: true)
         let oppositionNodeNames = [sentinelNodeName, sentryNodeName]
         let oppositionNodes = terrainNode.childNodes(passingTest: { (node, stop) -> Bool in
             if let name = node.name {
@@ -417,8 +415,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let synthoidNode = synthoidNode else {
-            return
+        guard let synthoidNode = terrainNode?.childNode(withName: synthoidNodeName, recursively: true)
+            else {
+                return
         }
 
         let synthoidPresentationNode = synthoidNode.presentation
