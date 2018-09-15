@@ -1,50 +1,4 @@
-import UIKit
-
-struct LevelConfiguration {
-    let level: Int
-    let maxLevel = 99
-
-    var progression: Float {
-        return Float(level) / Float(maxLevel)
-    }
-
-    var difficultyAdjustment: Int {
-        var adjustment = level / 10
-        if adjustment > 3 {
-            adjustment = 3
-        }
-        return adjustment
-    }
-
-    private let gridWidthRange = 24 ..< 32
-    private let gridDepthRange = 16 ..< 24
-
-    var gridWidth: Int {
-        let adjustment = progression * Float(gridWidthRange.lowerBound - gridWidthRange.upperBound)
-        return gridWidthRange.upperBound - Int(adjustment)
-
-    }
-
-    var gridDepth: Int {
-        let adjustment = progression * Float(gridDepthRange.lowerBound - gridDepthRange.upperBound)
-        return gridDepthRange.upperBound - Int(adjustment)
-    }
-
-    let largePlateauSizeRange = 8 ..< 12
-    let largePlateauCountRange = 4 ..< 7
-    let smallPlateauSizeRange = 5 ..< 7
-    let smallPlateauCountRange = 6 ..< 8
-
-    let largePeakCountRange = 2 ..< 6
-    let mediumPeakCountRange = 3 ..< 8
-    let smallPeakCountRange = 10 ..< 30
-
-    var treeCountRange: CountableRange<Int> {
-        let minCount = (16 - (difficultyAdjustment * 2)) / 4
-        let maxCount = (24 - (difficultyAdjustment * 2)) / 4
-        return minCount..<maxCount
-    }
-}
+import Foundation
 
 class TerrainGenerator: NSObject {
     var grid: Grid!
@@ -62,9 +16,8 @@ class TerrainGenerator: NSObject {
         generateMediumPeaks(gen: gen, levelConfiguration: levelConfiguration)
         generateSmallPeaks(gen: gen, levelConfiguration: levelConfiguration)
 
-        let difficultyAdjustment = levelConfiguration.difficultyAdjustment
-        grid.sentinelPosition = generateSentinel(gen: gen, difficultyAdjustment: difficultyAdjustment)
-        grid.sentryPositions = generateSentries(gen: gen, difficultyAdjustment: difficultyAdjustment)
+        grid.sentinelPosition = generateSentinel(gen: gen, levelConfiguration: levelConfiguration)
+        grid.sentryPositions = generateSentries(gen: gen, levelConfiguration: levelConfiguration)
         grid.startPosition = generateStartPosition(gen: gen)
         grid.treePositions = generateTrees(gen: gen, levelConfiguration: levelConfiguration)
 
@@ -118,10 +71,10 @@ class TerrainGenerator: NSObject {
         return trees
     }
 
-    private func generateSentinel(gen: ValueGenerator, difficultyAdjustment: Int) -> GridPoint {
+    private func generateSentinel(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
         let sentinelPosition = highestPiece(in: gridIndex, gen: gen).point
-        for _ in 0 ..< difficultyAdjustment + 1 {
+        for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
         }
         return sentinelPosition
@@ -137,8 +90,9 @@ class TerrainGenerator: NSObject {
         return pieces[index]
     }
 
-    private func generateSentries(gen: ValueGenerator, difficultyAdjustment: Int) -> [GridPoint] {
-        guard 1 ... 3 ~= difficultyAdjustment else {
+    private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> [GridPoint] {
+        let sentries = levelConfiguration.sentryCount
+        guard 1 ... 3 ~= sentries else {
             return []
         }
 
@@ -154,7 +108,7 @@ class TerrainGenerator: NSObject {
         sentryPieces = sentryPieces.sorted { return $0.level < $1.level }
 
         let points = sentryPieces.map { return $0.point }
-        return Array(points.prefix(difficultyAdjustment))
+        return Array(points.prefix(sentries))
     }
 
     private func generateStartPosition(gen: ValueGenerator) -> GridPoint {
@@ -241,7 +195,7 @@ class TerrainGenerator: NSObject {
         var allPieces = gridIndex.allPieces()
         var treePoints: [GridPoint] = []
 
-        var count = gen.next(range: countRange)
+        var count = gen.next(range: countRange) / 4
         if (count > allPieces.count) {
             count = allPieces.count
         }
