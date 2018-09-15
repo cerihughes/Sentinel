@@ -20,6 +20,7 @@
 		6546A857213C0652009F0650 /* GridTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A856213C0652009F0650 /* GridTests.swift */; };
 		65473B1C21457F3A00AC4A2D /* SCNNodeAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65473B1B21457F3A00AC4A2D /* SCNNodeAdditions.swift */; };
 		65473B1D2145A23300AC4A2D /* GridPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652778CD2145625E00643BE0 /* GridPiece.swift */; };
+		654AB2C5214D486100E8851D /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		656635DB2141483D00C264EA /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656635DA2141483D00C264EA /* ViewModel.swift */; };
 		659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
 		659395F4213D511A00302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
@@ -270,6 +271,7 @@
 			files = (
 				6515594F213FFD4400F35776 /* GridIndex.swift in Sources */,
 				652B39C2213EB76B006D9AB0 /* GridIndexTests.swift in Sources */,
+				654AB2C5214D486100E8851D /* LevelConfiguration.swift in Sources */,
 				659395F4213D511A00302665 /* TerrainGenerator.swift in Sources */,
 				6546A857213C0652009F0650 /* GridTests.swift in Sources */,
 				65B83F84213C09A000515915 /* Grid.swift in Sources */,
