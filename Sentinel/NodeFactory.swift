@@ -30,32 +30,30 @@ enum InteractableNodeType: Int {
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
 
-    private let prototypes: NodePrototypes
+    private let cube1: FloorNode
+    private let cube2: FloorNode
+    private let slope: SlopeNode
 
-    private let cube1: SCNNode
-    private let cube2: SCNNode
-    private let wedge: SCNNode
+    private let sentinel: SentinelNode
+    private let sentry: SentryNode
 
-    private let sentinel: SCNNode
-    private let sentry: SCNNode
-    private let synthoid: SCNNode
-    private let tree: SCNNode
-    private let rock: SCNNode
+    private let synthoid: SynthoidNode
+    private let tree: TreeNode
+    private let rock: RockNode
 
     init(nodePositioning: NodePositioning) {
         self.nodePositioning = nodePositioning
 
-        let sideLength = nodePositioning.sideLength
-        self.prototypes = NodePrototypes(sideLength: sideLength)
+        let floorSize = nodePositioning.floorSize
 
-        cube1 = prototypes.createCube(colour: .red)
-        cube2 = prototypes.createCube(colour: .yellow)
-        wedge = prototypes.createWedge()
-        sentinel = prototypes.createSentinel()
-        sentry = prototypes.createSentry()
-        synthoid = prototypes.createSynthoid()
-        tree = prototypes.createTree()
-        rock = prototypes.createRock()
+        cube1 = FloorNode(floorSize: floorSize, colour: .red)
+        cube2 = FloorNode(floorSize: floorSize, colour: .yellow)
+        slope = SlopeNode(floorSize: floorSize)
+        sentinel = SentinelNode(floorSize: floorSize)
+        sentry = SentryNode(floorSize: floorSize)
+        synthoid = SynthoidNode(floorSize: floorSize)
+        tree = TreeNode(floorSize: floorSize)
+        rock = RockNode(floorSize: floorSize)
 
         super.init()
     }
@@ -117,9 +115,8 @@ class NodeFactory: NSObject {
         return sunNode
     }
 
-    func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> SCNNode {
-        let terrainNode = SCNNode()
-        terrainNode.name = terrainNodeName
+    func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> TerrainNode {
+        let terrainNode = TerrainNode()
 
         let width = grid.width
         let depth = grid.depth
@@ -128,18 +125,18 @@ class NodeFactory: NSObject {
             for x in 0 ..< width {
                 if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
                     if gridPiece.isFloor {
-                        let node = createFloorPiece(x: x,
+                        let node = createFloorNode(x: x,
                                                    y: Int(gridPiece.level - 1.0),
                                                    z: z)
                         terrainNode.addChildNode(node)
-                        nodeMap.add(node: node, for: gridPiece)
+                        nodeMap.add(floorNode: node, for: gridPiece)
                     } else {
                         for direction in GridDirection.allValues() {
                             if gridPiece.has(slopeDirection: direction) {
-                                let node = createWedgePiece(x: x,
-                                                            y: Int(gridPiece.level - 0.5),
-                                                            z: z,
-                                                            rotation: rotation(for: direction))
+                                let node = createSlopeNode(x: x,
+                                                           y: Int(gridPiece.level - 0.5),
+                                                           z: z,
+                                                           rotation: rotation(for: direction))
                                 terrainNode.addChildNode(node)
                             }
                         }
@@ -150,34 +147,30 @@ class NodeFactory: NSObject {
 
         addWallNodes(to: terrainNode, grid: grid)
 
-        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getNode(for: grid.sentinelPosition) {
-            let sentinelNode = createSentinelNode()
-            floorNode.addChildNode(sentinelNode)
+        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+            floorNode.sentinelNode = createSentinelNode()
         }
 
         for sentryPosition in grid.sentryPositions {
-            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getNode(for: sentryPosition) {
-                let sentryNode = createSentryNode()
-                floorNode.addChildNode(sentryNode)
+            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+                floorNode.sentryNode = createSentryNode()
             }
         }
 
-        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getNode(for: grid.startPosition) {
-            let synthoidNode = createSynthoidNode()
-            floorNode.addChildNode(synthoidNode)
+        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
+            floorNode.synthoidNode = createSynthoidNode()
         }
 
         for treePosition in grid.treePositions {
-            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getNode(for: treePosition) {
-                let treeNode = createTreeNode()
-                floorNode.addChildNode(treeNode)
+            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getFloorNode(for: treePosition) {
+                floorNode.treeNode = createTreeNode()
             }
         }
 
         return terrainNode
     }
 
-    func createSentinelNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+    func createSentinelNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
@@ -185,7 +178,7 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createSentryNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+    func createSentryNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SentryNode {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
@@ -202,23 +195,23 @@ class NodeFactory: NSObject {
         return rotate
     }
 
-    func createSynthoidNode(index: Int = 0) -> SCNNode {
+    func createSynthoidNode(index: Int = 0) -> SynthoidNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
+        clone.position.y += Float(index) * 0.5 * nodePositioning.floorSize
         return clone
     }
 
-    func createTreeNode() -> SCNNode {
+    func createTreeNode() -> TreeNode {
         let clone = tree.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         return clone
     }
 
-    func createRockNode(index: Int = 0) -> SCNNode {
+    func createRockNode(index: Int = 0) -> RockNode {
         let clone = rock.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
+        clone.position.y += Float(index) * 0.5 * nodePositioning.floorSize
         let rotation = Float.pi * 2.0 * Float(drand48())
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
         return clone
@@ -245,7 +238,7 @@ class NodeFactory: NSObject {
             if height <= 0 {
                 return
             }
-            let wallNodes = createWallPiece(x: x, z: z, height: Int(height))
+            let wallNodes = createWallNodes(x: x, z: z, height: Int(height))
             for wallNode in wallNodes {
                 terrainNode.addChildNode(wallNode)
             }
@@ -265,15 +258,15 @@ class NodeFactory: NSObject {
         }
     }
 
-    private func createFloorPiece(x: Int, y: Int, z: Int) -> SCNNode {
+    private func createFloorNode(x: Int, y: Int, z: Int) -> FloorNode {
         let source = (x + z + y) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
         boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         return boxNode
     }
 
-    private func createWedgePiece(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
-        let clone = wedge.clone()
+    private func createSlopeNode(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SlopeNode {
+        let clone = slope.clone()
         clone.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         if let rotation = rotation {
             clone.rotation = rotation
@@ -281,189 +274,12 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    private func createWallPiece(x: Int, z: Int, height: Int) -> [SCNNode] {
-        var wallNodes: [SCNNode] = []
+    private func createWallNodes(x: Int, z: Int, height: Int) -> [FloorNode] {
+        var wallNodes: [FloorNode] = []
         for y in 0 ..< height {
-            let wallNode = createFloorPiece(x: x, y: y - 1, z: z)
+            let wallNode = createFloorNode(x: x, y: y - 1, z: z)
             wallNodes.append(wallNode)
         }
         return wallNodes
-    }
-}
-
-fileprivate class NodePrototypes: NSObject {
-    let sideLength: Float
-
-    let geometryFactory: GeometryFactory
-
-    init(sideLength: Float) {
-        self.sideLength = sideLength
-        geometryFactory = GeometryFactory(size: sideLength)
-
-        super.init()
-    }
-
-    func createCube(colour: UIColor) -> SCNNode {
-        let cube = geometryFactory.createCube(colour: colour)
-        let cubeNode = SCNNode(geometry: cube)
-        cubeNode.name = floorNodeName
-        cubeNode.categoryBitMask = InteractableNodeType.floor.rawValue
-        return cubeNode
-    }
-
-    func createWedge() -> SCNNode {
-        let wedge = geometryFactory.createWedge(colour: .darkGray)
-        let wedgeNode = SCNNode(geometry: wedge)
-        wedgeNode.name = slopeNodeName
-        return wedgeNode
-    }
-
-    func createSentinel() -> SCNNode {
-        let sentinelNode = createOpposition(colour: .blue)
-        sentinelNode.name = sentinelNodeName
-        sentinelNode.categoryBitMask = InteractableNodeType.sentinel.rawValue
-        return sentinelNode
-    }
-
-    func createSentry() -> SCNNode {
-        let sentryNode = createOpposition(colour: .green)
-        sentryNode.name = sentryNodeName
-        sentryNode.categoryBitMask = InteractableNodeType.sentry.rawValue
-        return sentryNode
-    }
-
-    func createOpposition(colour: UIColor) -> SCNNode {
-        let oppositionNode = SCNNode()
-
-        var material = SCNMaterial()
-        material.diffuse.contents = colour
-
-        let segments = 3
-        var y: Float = 0.0
-        for i in 0 ..< segments {
-            let fi = Float(i)
-            let radius = (sideLength / 2.0) - fi
-            let sphere = SCNSphere(radius: CGFloat(radius))
-            sphere.firstMaterial = material
-            let sphereNode = SCNNode(geometry: sphere)
-            y += radius
-            sphereNode.position.y = y
-            y += 5.0 / Float(segments - 1)
-            oppositionNode.addChildNode(sphereNode)
-        }
-
-        material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
-        let width = CGFloat(sideLength / 3.0)
-        let height = CGFloat(sideLength / 10.0)
-        let box = SCNBox(width: width, height: height, length: height, chamferRadius: 0.2)
-        box.firstMaterial = material
-        let boxNode = SCNNode(geometry: box)
-        boxNode.position.z = sideLength / 5.0
-        boxNode.position.y = y
-        let camera = SCNCamera()
-        camera.zFar = 500.0
-        let cameraNode = SCNNode()
-        cameraNode.name = cameraNodeName
-        cameraNode.camera = camera
-        cameraNode.rotation = SCNVector4Make(0.0, 1.0, 0.25, Float.pi)
-        cameraNode.position = SCNVector3Make(0.0, 0.0, sideLength / 10.0)
-
-        boxNode.addChildNode(cameraNode)
-        oppositionNode.addChildNode(boxNode)
-
-        return oppositionNode
-    }
-
-    func createSynthoid() -> SCNNode {
-        let material = SCNMaterial()
-        material.diffuse.contents = UIColor.purple
-        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
-        capsule.firstMaterial = material
-        let synthoidNode = SCNNode(geometry: capsule)
-        synthoidNode.name = synthoidNodeName
-        synthoidNode.categoryBitMask = InteractableNodeType.synthoid.rawValue
-        synthoidNode.pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * sideLength, 0.0)
-
-        return synthoidNode
-    }
-
-    func createTree() -> SCNNode {
-        let width = CGFloat(sideLength)
-        let height = width * 1.5
-        let maxRadius = width / 3.0
-
-        let trunkHeight: CGFloat = height * 3.0 / 10.0
-        let trunkRadius: CGFloat = maxRadius * 0.2
-
-        let treeNode = SCNNode()
-        treeNode.name = treeNodeName
-        treeNode.categoryBitMask = InteractableNodeType.tree.rawValue
-
-        let trunkNode = SCNNode(geometry: SCNCylinder(radius: trunkRadius, height: trunkHeight))
-        trunkNode.geometry?.firstMaterial?.diffuse.contents = UIColor.brown
-        trunkNode.position.y = Float(trunkHeight / 2.0)
-        treeNode.addChildNode(trunkNode)
-
-        let initialLeafRadius = maxRadius
-        let leafHeight: CGFloat = height - trunkHeight
-        let numberOfLevels = 4
-        let sectionHeight = leafHeight / CGFloat(numberOfLevels)
-        var y = Float(trunkHeight + (sectionHeight / 2.0))
-
-        let radiusDelta = initialLeafRadius / CGFloat(numberOfLevels + 1)
-        for i in 0 ..< numberOfLevels {
-            let bottomRadius = initialLeafRadius - (radiusDelta * CGFloat(i))
-            let topRadius = bottomRadius - (radiusDelta * 2.0)
-            let leavesNode = SCNNode(geometry: SCNCone(topRadius: topRadius, bottomRadius: bottomRadius, height: sectionHeight))
-            leavesNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
-            leavesNode.position.y = y
-
-            y += Float(sectionHeight)
-
-            treeNode.addChildNode(leavesNode)
-        }
-
-        return treeNode
-    }
-
-    func createRock() -> SCNNode {
-        let rockNode = SCNNode()
-        let height = sideLength / 2.0
-
-        let section = geometryFactory.createRockSegment(colour: .darkGray, extrusionDepth: sideLength / 3.0)
-        var sectionNode = SCNNode(geometry: section)
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0)
-        sectionNode.rotation = SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 1.14)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 2.0)
-        sectionNode.rotation = SCNVector4Make(0.2, 0.4, 0.4, -0.28)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 3.0)
-        sectionNode.rotation = SCNVector4Make(0.1, 0.1, 0.9, 0.18)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 4.0)
-        sectionNode.rotation = SCNVector4Make(0.6, 0.8, 0.0, -0.12)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 5.0)
-        sectionNode.rotation = SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 1.54)
-        rockNode.addChildNode(sectionNode)
-
-        rockNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -2.0)
-
-        let container = SCNNode()
-        container.name = rockNodeName
-        container.categoryBitMask = InteractableNodeType.rock.rawValue
-        container.addChildNode(rockNode)
-
-        return container
     }
 }
