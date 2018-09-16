@@ -23,7 +23,7 @@ class SynthoidNode: SCNNode, InteractiveNode {
         pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * floorSize, 0.0)
     }
 
-    func floorNode() -> FloorNode? {
+    var floorNode: FloorNode? {
         return parent as? FloorNode
     }
 }
