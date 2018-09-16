@@ -32,8 +32,8 @@ class NodeFactory: NSObject {
 
     private let prototypes: NodePrototypes
 
-    private let cube1: SCNNode
-    private let cube2: SCNNode
+    private let cube1: FloorNode
+    private let cube2: FloorNode
     private let wedge: SCNNode
 
     private let sentinel: SCNNode
@@ -48,8 +48,8 @@ class NodeFactory: NSObject {
         let sideLength = nodePositioning.sideLength
         self.prototypes = NodePrototypes(sideLength: sideLength)
 
-        cube1 = prototypes.createCube(colour: .red)
-        cube2 = prototypes.createCube(colour: .yellow)
+        cube1 = FloorNode(size: sideLength, colour: .red)
+        cube2 = FloorNode(size: sideLength, colour: .yellow)
         wedge = prototypes.createWedge()
         sentinel = prototypes.createSentinel()
         sentry = prototypes.createSentry()
@@ -128,18 +128,18 @@ class NodeFactory: NSObject {
             for x in 0 ..< width {
                 if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
                     if gridPiece.isFloor {
-                        let node = createFloorPiece(x: x,
+                        let node = createFloorNode(x: x,
                                                    y: Int(gridPiece.level - 1.0),
                                                    z: z)
                         terrainNode.addChildNode(node)
-                        nodeMap.add(node: node, for: gridPiece)
+                        nodeMap.add(floorNode: node, for: gridPiece)
                     } else {
                         for direction in GridDirection.allValues() {
                             if gridPiece.has(slopeDirection: direction) {
-                                let node = createWedgePiece(x: x,
-                                                            y: Int(gridPiece.level - 0.5),
-                                                            z: z,
-                                                            rotation: rotation(for: direction))
+                                let node = createWedgeNode(x: x,
+                                                           y: Int(gridPiece.level - 0.5),
+                                                           z: z,
+                                                           rotation: rotation(for: direction))
                                 terrainNode.addChildNode(node)
                             }
                         }
@@ -150,27 +150,23 @@ class NodeFactory: NSObject {
 
         addWallNodes(to: terrainNode, grid: grid)
 
-        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getNode(for: grid.sentinelPosition) {
-            let sentinelNode = createSentinelNode()
-            floorNode.addChildNode(sentinelNode)
+        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+            floorNode.sentinelNode = createSentinelNode()
         }
 
         for sentryPosition in grid.sentryPositions {
-            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getNode(for: sentryPosition) {
-                let sentryNode = createSentryNode()
-                floorNode.addChildNode(sentryNode)
+            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+                floorNode.sentryNode = createSentryNode()
             }
         }
 
-        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getNode(for: grid.startPosition) {
-            let synthoidNode = createSynthoidNode()
-            floorNode.addChildNode(synthoidNode)
+        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
+            floorNode.synthoidNode = createSynthoidNode()
         }
 
         for treePosition in grid.treePositions {
-            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getNode(for: treePosition) {
-                let treeNode = createTreeNode()
-                floorNode.addChildNode(treeNode)
+            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getFloorNode(for: treePosition) {
+                floorNode.treeNode = createTreeNode()
             }
         }
 
@@ -245,7 +241,7 @@ class NodeFactory: NSObject {
             if height <= 0 {
                 return
             }
-            let wallNodes = createWallPiece(x: x, z: z, height: Int(height))
+            let wallNodes = createWallNodes(x: x, z: z, height: Int(height))
             for wallNode in wallNodes {
                 terrainNode.addChildNode(wallNode)
             }
@@ -265,14 +261,14 @@ class NodeFactory: NSObject {
         }
     }
 
-    private func createFloorPiece(x: Int, y: Int, z: Int) -> SCNNode {
+    private func createFloorNode(x: Int, y: Int, z: Int) -> FloorNode {
         let source = (x + z + y) % 2 == 0 ? cube1 : cube2
         let boxNode = source.clone()
         boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         return boxNode
     }
 
-    private func createWedgePiece(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
+    private func createWedgeNode(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
         let clone = wedge.clone()
         clone.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         if let rotation = rotation {
@@ -281,10 +277,10 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    private func createWallPiece(x: Int, z: Int, height: Int) -> [SCNNode] {
-        var wallNodes: [SCNNode] = []
+    private func createWallNodes(x: Int, z: Int, height: Int) -> [FloorNode] {
+        var wallNodes: [FloorNode] = []
         for y in 0 ..< height {
-            let wallNode = createFloorPiece(x: x, y: y - 1, z: z)
+            let wallNode = createFloorNode(x: x, y: y - 1, z: z)
             wallNodes.append(wallNode)
         }
         return wallNodes
@@ -301,14 +297,6 @@ fileprivate class NodePrototypes: NSObject {
         geometryFactory = GeometryFactory(size: sideLength)
 
         super.init()
-    }
-
-    func createCube(colour: UIColor) -> SCNNode {
-        let cube = geometryFactory.createCube(colour: colour)
-        let cubeNode = SCNNode(geometry: cube)
-        cubeNode.name = floorNodeName
-        cubeNode.categoryBitMask = InteractableNodeType.floor.rawValue
-        return cubeNode
     }
 
     func createWedge() -> SCNNode {

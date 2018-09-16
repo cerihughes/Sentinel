@@ -1,19 +1,19 @@
 import SceneKit
 
 class NodeMap: NSObject {
-    private var nodeMap: [SCNNode:GridPiece] = [:]
-    private var pointMap: [GridPoint:SCNNode] = [:]
+    private var nodeMap: [FloorNode:GridPiece] = [:]
+    private var pointMap: [GridPoint:FloorNode] = [:]
 
-    func add(node: SCNNode, for piece: GridPiece) {
-        nodeMap[node] = piece
-        pointMap[piece.point] = node
+    func add(floorNode: FloorNode, for piece: GridPiece) {
+        nodeMap[floorNode] = piece
+        pointMap[piece.point] = floorNode
     }
 
-    func getPiece(for node: SCNNode) -> GridPiece? {
-        return nodeMap[node]
+    func getPiece(for floorNode: FloorNode) -> GridPiece? {
+        return nodeMap[floorNode]
     }
 
-    func getNode(for point: GridPoint) -> SCNNode? {
+    func getFloorNode(for point: GridPoint) -> FloorNode? {
         return pointMap[point]
     }
 }

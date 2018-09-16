@@ -184,16 +184,12 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func process(interaction: UserInteraction, node: SCNNode, interactableNodeType: InteractableNodeType) {
         var piece: GridPiece? = nil
-        if let nodeName = node.name {
-            if nodeName == floorNodeName {
-                piece = nodeMap.getPiece(for: node)
-            } else {
-                if let floorNode = node.parent,
-                    let floorName = floorNode.name,
-                    floorName == floorNodeName {
-                    piece = nodeMap.getPiece(for: floorNode)
-                }
-            }
+        if let floorNode = node as? FloorNode {
+            piece = nodeMap.getPiece(for: floorNode)
+        } else if let floorNode = node.parent as? FloorNode,
+            let floorName = floorNode.name,
+            floorName == floorNodeName {
+            piece = nodeMap.getPiece(for: floorNode)
         }
 
         switch (interaction, interactableNodeType) {
@@ -272,7 +268,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func buildTree(at piece: GridPiece) {
-        guard let floorNode = nodeMap.getNode(for: piece.point) else {
+        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
@@ -280,11 +276,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.treePositions.append(point)
 
         let treeNode = nodeFactory.createTreeNode()
-        floorNode.addChildNode(treeNode)
+        floorNode.treeNode = treeNode
     }
 
     private func buildRock(at piece: GridPiece) {
-        guard let floorNode = nodeMap.getNode(for: piece.point) else {
+        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
@@ -301,11 +297,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         let rockNode = nodeFactory.createRockNode(index: startRockCount)
-        floorNode.addChildNode(rockNode)
+        floorNode.add(rockNode: rockNode)
     }
 
     private func buildSynthoid(at piece: GridPiece) {
-        guard let floorNode = nodeMap.getNode(for: piece.point) else {
+        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
@@ -313,18 +309,16 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.synthoidPositions.append(point)
 
         let synthoidNode = nodeFactory.createSynthoidNode(index: piece.rockCount)
-        floorNode.addChildNode(synthoidNode)
+        floorNode.synthoidNode = synthoidNode
     }
 
-    private func absorbTree(from floorNode: SCNNode, piece: GridPiece) {
+    private func absorbTree(from floorNode: FloorNode, piece: GridPiece) {
         let point = piece.point
-        guard
-            let index = grid.treePositions.index(of: point),
-            let _ = floorNode.removeTreeNode()
-            else {
-                return
+        guard let index = grid.treePositions.index(of: point) else {
+            return
         }
 
+        floorNode.treeNode = nil
         grid.treePositions.remove(at: index)
     }
 
@@ -340,12 +334,12 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func absorb(rockNode: SCNNode, piece: GridPiece) {
         let point = piece.point
-        guard let floorNode = nodeMap.getNode(for: piece.point) else {
+        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
         if grid.synthoidPositions.contains(point) {
-            if let synthoidNode = floorNode.synthoidNode() {
+            if let synthoidNode = floorNode.synthoidNode {
                 absorb(synthoidNode: synthoidNode, piece: piece)
             }
         }
@@ -415,8 +409,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let floorNode = nodeMap.getNode(for: grid.currentPosition),
-            let synthoidNode = floorNode.synthoidNode() else {
+        guard let floorNode = nodeMap.getFloorNode(for: grid.currentPosition),
+            let synthoidNode = floorNode.synthoidNode else {
                 return
         }
 
