@@ -115,23 +115,14 @@
 		6546A840213C0651009F0650 /* Sentinel */ = {
 			isa = PBXGroup;
 			children = (
+				656AAEE3214EA3FB00991151 /* View Controller */,
+				656AAEE2214EA3EF00991151 /* View Model */,
+				656AAEE1214EA3DD00991151 /* UI */,
+				656AAEE0214EA3BF00991151 /* Level Configuration */,
+				656AAEDF214EA3AE00991151 /* Grid */,
+				656AAEDE214EA39A00991151 /* Geometry */,
+				656AAEDD214EA38200991151 /* Node */,
 				6546A841213C0651009F0650 /* AppDelegate.swift */,
-				6546A843213C0651009F0650 /* ViewController.swift */,
-				656635DA2141483D00C264EA /* ViewModel.swift */,
-				65473B1B21457F3A00AC4A2D /* SCNNodeAdditions.swift */,
-				65B83F8D213C6FDD00515915 /* GeometryFactory.swift */,
-				65B83F80213C08C600515915 /* NodeFactory.swift */,
-				65BFF01F21414F66000861F8 /* NodePositioning.swift */,
-				6515595121403AD500F35776 /* NodeMap.swift */,
-				65B83F82213C08E400515915 /* Grid.swift */,
-				652778CD2145625E00643BE0 /* GridPiece.swift */,
-				6515594D213FFD0000F35776 /* GridIndex.swift */,
-				659395F0213D46B700302665 /* TerrainGenerator.swift */,
-				65C003B82146BF3400EDB205 /* LevelConfiguration.swift */,
-				65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */,
-				65A9E07721427795009011C8 /* SkyBox.swift */,
-				654AB2C6214D4B0400E8851D /* ContainerViewController.swift */,
-				65A9E0752142712B009011C8 /* skybox.png */,
 				6546A848213C0652009F0650 /* Assets.xcassets */,
 				6546A84A213C0652009F0650 /* LaunchScreen.storyboard */,
 				6546A84D213C0652009F0650 /* Info.plist */,
@@ -148,6 +139,71 @@
 				6546A858213C0652009F0650 /* Info.plist */,
 			);
 			path = SentinelTests;
+			sourceTree = "<group>";
+		};
+		656AAEDD214EA38200991151 /* Node */ = {
+			isa = PBXGroup;
+			children = (
+				65473B1B21457F3A00AC4A2D /* SCNNodeAdditions.swift */,
+				65B83F80213C08C600515915 /* NodeFactory.swift */,
+				65BFF01F21414F66000861F8 /* NodePositioning.swift */,
+				6515595121403AD500F35776 /* NodeMap.swift */,
+			);
+			name = Node;
+			sourceTree = "<group>";
+		};
+		656AAEDE214EA39A00991151 /* Geometry */ = {
+			isa = PBXGroup;
+			children = (
+				65B83F8D213C6FDD00515915 /* GeometryFactory.swift */,
+			);
+			name = Geometry;
+			sourceTree = "<group>";
+		};
+		656AAEDF214EA3AE00991151 /* Grid */ = {
+			isa = PBXGroup;
+			children = (
+				65B83F82213C08E400515915 /* Grid.swift */,
+				652778CD2145625E00643BE0 /* GridPiece.swift */,
+				6515594D213FFD0000F35776 /* GridIndex.swift */,
+			);
+			name = Grid;
+			sourceTree = "<group>";
+		};
+		656AAEE0214EA3BF00991151 /* Level Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				659395F0213D46B700302665 /* TerrainGenerator.swift */,
+				65C003B82146BF3400EDB205 /* LevelConfiguration.swift */,
+				65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */,
+			);
+			name = "Level Configuration";
+			sourceTree = "<group>";
+		};
+		656AAEE1214EA3DD00991151 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				65A9E07721427795009011C8 /* SkyBox.swift */,
+				65A9E0752142712B009011C8 /* skybox.png */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		656AAEE2214EA3EF00991151 /* View Model */ = {
+			isa = PBXGroup;
+			children = (
+				656635DA2141483D00C264EA /* ViewModel.swift */,
+			);
+			name = "View Model";
+			sourceTree = "<group>";
+		};
+		656AAEE3214EA3FB00991151 /* View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6546A843213C0651009F0650 /* ViewController.swift */,
+				654AB2C6214D4B0400E8851D /* ContainerViewController.swift */,
+			);
+			name = "View Controller";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
