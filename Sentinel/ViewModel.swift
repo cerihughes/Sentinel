@@ -256,7 +256,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 absorb(treeNode: treeNode, piece: piece)
             }
         } else if grid.rockPositions.contains(point) && interactableNodeType == .rock {
-            absorb(rockNode: node, piece: piece)
+            if let rockNode = node as? RockNode {
+                absorb(rockNode: rockNode, piece: piece)
+            }
         } else if grid.synthoidPositions.contains(point) && interactableNodeType == .synthoid {
             absorb(synthoidNode: node, piece: piece)
         }
@@ -334,7 +336,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.treePositions.remove(at: index)
     }
 
-    private func absorb(rockNode: SCNNode, piece: GridPiece) {
+    private func absorb(rockNode: RockNode, piece: GridPiece) {
         let point = piece.point
         guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
@@ -346,7 +348,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             }
         }
 
-        var absorbedRockNode: SCNNode?
+        var absorbedRockNode: RockNode?
         repeat {
             absorbedRockNode = floorNode.removeLastRockNode()
             if absorbedRockNode != nil {

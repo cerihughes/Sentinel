@@ -84,15 +84,16 @@ class FloorNode: SCNNode {
         return existing
     }
 
-    func rockNodes() -> [SCNNode] {
-        return childNodes.filter( { $0.name != nil && $0.name! == rockNodeName } )
+    func rockNodes() -> [RockNode] {
+        let filtered = childNodes.filter( { $0.name != nil && $0.name! == rockNodeName } )
+        return filtered.compactMap( { $0 as? RockNode } )
     }
 
-    func add(rockNode: SCNNode) {
+    func add(rockNode: RockNode) {
         addChildNode(rockNode)
     }
 
-    func removeLastRockNode() -> SCNNode? {
+    func removeLastRockNode() -> RockNode? {
         guard let last = rockNodes().last else {
             return nil
         }

@@ -40,7 +40,7 @@ class NodeFactory: NSObject {
     private let sentry: SCNNode
     private let synthoid: SCNNode
     private let tree: TreeNode
-    private let rock: SCNNode
+    private let rock: RockNode
 
     init(nodePositioning: NodePositioning) {
         self.nodePositioning = nodePositioning
@@ -55,7 +55,7 @@ class NodeFactory: NSObject {
         sentry = prototypes.createSentry()
         synthoid = prototypes.createSynthoid()
         tree = TreeNode(floorSize: sideLength)
-        rock = prototypes.createRock()
+        rock = RockNode(floorSize: sideLength)
 
         super.init()
     }
@@ -211,7 +211,7 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createRockNode(index: Int = 0) -> SCNNode {
+    func createRockNode(index: Int = 0) -> RockNode {
         let clone = rock.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
@@ -374,45 +374,5 @@ fileprivate class NodePrototypes: NSObject {
         synthoidNode.pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * sideLength, 0.0)
 
         return synthoidNode
-    }
-
-    func createRock() -> SCNNode {
-        let rockNode = SCNNode()
-        let height = sideLength / 2.0
-
-        let section = geometryFactory.createRockSegment(colour: .darkGray, extrusionDepth: sideLength / 3.0)
-        var sectionNode = SCNNode(geometry: section)
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0)
-        sectionNode.rotation = SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 1.14)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 2.0)
-        sectionNode.rotation = SCNVector4Make(0.2, 0.4, 0.4, -0.28)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 3.0)
-        sectionNode.rotation = SCNVector4Make(0.1, 0.1, 0.9, 0.18)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 4.0)
-        sectionNode.rotation = SCNVector4Make(0.6, 0.8, 0.0, -0.12)
-        rockNode.addChildNode(sectionNode)
-
-        sectionNode = sectionNode.clone()
-        sectionNode.position = SCNVector3Make(0, 0, height / 6.0 * 5.0)
-        sectionNode.rotation = SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 1.54)
-        rockNode.addChildNode(sectionNode)
-
-        rockNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -2.0)
-
-        let container = SCNNode()
-        container.name = rockNodeName
-        container.categoryBitMask = InteractableNodeType.rock.rawValue
-        container.addChildNode(rockNode)
-
-        return container
     }
 }
