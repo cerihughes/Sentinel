@@ -34,7 +34,7 @@ class NodeFactory: NSObject {
 
     private let cube1: FloorNode
     private let cube2: FloorNode
-    private let wedge: SCNNode
+    private let slope: SlopeNode
 
     private let sentinel: SCNNode
     private let sentry: SCNNode
@@ -48,9 +48,9 @@ class NodeFactory: NSObject {
         let sideLength = nodePositioning.sideLength
         self.prototypes = NodePrototypes(sideLength: sideLength)
 
-        cube1 = FloorNode(size: sideLength, colour: .red)
-        cube2 = FloorNode(size: sideLength, colour: .yellow)
-        wedge = prototypes.createWedge()
+        cube1 = FloorNode(floorSize: sideLength, colour: .red)
+        cube2 = FloorNode(floorSize: sideLength, colour: .yellow)
+        slope = SlopeNode(floorSize: sideLength)
         sentinel = prototypes.createSentinel()
         sentry = prototypes.createSentry()
         synthoid = prototypes.createSynthoid()
@@ -136,7 +136,7 @@ class NodeFactory: NSObject {
                     } else {
                         for direction in GridDirection.allValues() {
                             if gridPiece.has(slopeDirection: direction) {
-                                let node = createWedgeNode(x: x,
+                                let node = createSlopeNode(x: x,
                                                            y: Int(gridPiece.level - 0.5),
                                                            z: z,
                                                            rotation: rotation(for: direction))
@@ -268,8 +268,8 @@ class NodeFactory: NSObject {
         return boxNode
     }
 
-    private func createWedgeNode(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SCNNode {
-        let clone = wedge.clone()
+    private func createSlopeNode(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SlopeNode {
+        let clone = slope.clone()
         clone.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         if let rotation = rotation {
             clone.rotation = rotation
@@ -290,20 +290,10 @@ class NodeFactory: NSObject {
 fileprivate class NodePrototypes: NSObject {
     let sideLength: Float
 
-    let geometryFactory: GeometryFactory
-
     init(sideLength: Float) {
         self.sideLength = sideLength
-        geometryFactory = GeometryFactory(size: sideLength)
 
         super.init()
-    }
-
-    func createWedge() -> SCNNode {
-        let wedge = geometryFactory.createWedge(colour: .darkGray)
-        let wedgeNode = SCNNode(geometry: wedge)
-        wedgeNode.name = slopeNodeName
-        return wedgeNode
     }
 
     func createSentinel() -> SCNNode {

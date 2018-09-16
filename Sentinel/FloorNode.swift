@@ -9,14 +9,14 @@ class FloorNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
-    init(size: Float, colour: UIColor) {
+    init(floorSize: Float, colour: UIColor) {
         super.init()
 
         let material = SCNMaterial()
         material.diffuse.contents = colour
         material.locksAmbientWithDiffuse = true
 
-        let sideLength = CGFloat(size)
+        let sideLength = CGFloat(floorSize)
         let box = SCNBox(width: CGFloat(sideLength),
                          height: CGFloat(sideLength),
                          length: CGFloat(sideLength),
