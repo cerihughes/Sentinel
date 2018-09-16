@@ -1,6 +1,6 @@
 import SceneKit
 
-class TreeNode: SCNNode {
+class TreeNode: SCNNode, InteractiveNode {
     override init() {
         super.init()
     }
@@ -44,6 +44,10 @@ class TreeNode: SCNNode {
         }
 
         name = treeNodeName
-        categoryBitMask = InteractableNodeType.tree.rawValue
+        categoryBitMask = interactiveNodeType.tree.rawValue
+    }
+
+    func floorNode() -> FloorNode? {
+        return parent as? FloorNode
     }
 }

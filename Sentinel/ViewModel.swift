@@ -101,8 +101,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         if hasEnteredScene() {
             if let hitTestResult = hitTestResults.first {
                 let node = hitTestResult.node
-                if let interactableNode = firstInteractableParent(of: node) {
-                    process(interaction: interaction, node: interactableNode)
+                if let interactiveNode = firstInteractiveParent(of: node) {
+                    process(interaction: interaction, node: interactiveNode)
                     return
                 }
             }
@@ -111,17 +111,17 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    private func firstInteractableParent(of node: SCNNode) -> SCNNode? {
-        var interactableNode = node
-        while interactableNode.categoryBitMask < InteractableNodeType.floor.rawValue {
-            let parent = interactableNode.parent
+    private func firstInteractiveParent(of node: SCNNode) -> SCNNode? {
+        var interactiveNode = node
+        while interactiveNode.categoryBitMask < interactiveNodeType.floor.rawValue {
+            let parent = interactiveNode.parent
             if (parent != nil) {
-                interactableNode = parent!
+                interactiveNode = parent!
             } else {
                 return nil
             }
         }
-        return interactableNode
+        return interactiveNode
     }
 
     func processPan(by x: Float, finished: Bool) {
@@ -160,16 +160,16 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func process(interaction: UserInteraction, node: SCNNode) {
         let bitmask = node.categoryBitMask
-        for interactableNodeType in InteractableNodeType.allValues() {
-            if bitmask & interactableNodeType.rawValue == interactableNodeType.rawValue {
-                process(interaction: interaction, node: node, interactableNodeType: interactableNodeType)
+        for interactiveNodeType in interactiveNodeType.allValues() {
+            if bitmask & interactiveNodeType.rawValue == interactiveNodeType.rawValue {
+                process(interaction: interaction, node: node, interactiveNodeType: interactiveNodeType)
                 return
             }
         }
         print("Not processing \(interaction) on \(bitmask)")
     }
 
-    private func process(interaction: UserInteraction, node: SCNNode, interactableNodeType: InteractableNodeType) {
+    private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: interactiveNodeType) {
         var piece: GridPiece? = nil
         if let floorNode = node as? FloorNode {
             piece = nodeMap.getPiece(for: floorNode)
@@ -179,7 +179,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             piece = nodeMap.getPiece(for: floorNode)
         }
 
-        switch (interaction, interactableNodeType) {
+        switch (interaction, interactiveNodeType) {
         case (.tap, .floor):
             if let piece = piece {
                 processTapFloor(node: node, piece: piece)
@@ -194,10 +194,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             }
         case (.longPress, _):
             if let piece = piece {
-                processLongPressObject(node: node, piece: piece, interactableNodeType: interactableNodeType)
+                processLongPressObject(node: node, piece: piece, interactiveNodeType: interactiveNodeType)
             }
         default:
-            print("Not processing \(interactableNodeType)")
+            print("Not processing \(interactiveNodeType)")
         }
     }
 
@@ -231,22 +231,22 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         buildSynthoid(at: piece)
     }
 
-    private func processLongPressObject(node: SCNNode, piece: GridPiece, interactableNodeType: InteractableNodeType) {
+    private func processLongPressObject(node: SCNNode, piece: GridPiece, interactiveNodeType: interactiveNodeType) {
         let point = piece.point
 
-        if grid.sentinelPosition == point && interactableNodeType == .sentinel {
+        if grid.sentinelPosition == point && interactiveNodeType == .sentinel {
             // Absorb
-        } else if grid.sentryPositions.contains(point) && interactableNodeType == .sentry {
+        } else if grid.sentryPositions.contains(point) && interactiveNodeType == .sentry {
             // Absorb
-        } else if grid.treePositions.contains(point) && interactableNodeType == .tree {
+        } else if grid.treePositions.contains(point) && interactiveNodeType == .tree {
             if let treeNode = node as? TreeNode {
                 absorb(treeNode: treeNode, piece: piece)
             }
-        } else if grid.rockPositions.contains(point) && interactableNodeType == .rock {
+        } else if grid.rockPositions.contains(point) && interactiveNodeType == .rock {
             if let rockNode = node as? RockNode {
                 absorb(rockNode: rockNode, piece: piece)
             }
-        } else if grid.synthoidPositions.contains(point) && interactableNodeType == .synthoid {
+        } else if grid.synthoidPositions.contains(point) && interactiveNodeType == .synthoid {
             absorb(synthoidNode: node, piece: piece)
         }
     }

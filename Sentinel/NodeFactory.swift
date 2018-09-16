@@ -13,7 +13,7 @@ let rockNodeName = "rockNodeName"
 let sunNodeName = "sunNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
-enum InteractableNodeType: Int {
+enum interactiveNodeType: Int {
     case floor = 2
     case tree = 4
     case rock = 8
@@ -22,7 +22,7 @@ enum InteractableNodeType: Int {
     case sentinel = 64
 
     // TODO: Replace when Swift 4.2 is out of beta
-    static func allValues() -> [InteractableNodeType] {
+    static func allValues() -> [interactiveNodeType] {
         return [.floor, .tree, .rock, .synthoid, .sentry, .sentinel]
     }
 }

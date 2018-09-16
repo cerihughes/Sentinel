@@ -1,6 +1,6 @@
 import SceneKit
 
-class SynthoidNode: SCNNode {
+class SynthoidNode: SCNNode, InteractiveNode {
     override init() {
         super.init()
     }
@@ -19,7 +19,11 @@ class SynthoidNode: SCNNode {
 
         geometry = capsule
         name = synthoidNodeName
-        categoryBitMask = InteractableNodeType.synthoid.rawValue
+        categoryBitMask = interactiveNodeType.synthoid.rawValue
         pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * floorSize, 0.0)
+    }
+
+    func floorNode() -> FloorNode? {
+        return parent as? FloorNode
     }
 }
