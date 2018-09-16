@@ -1,5 +1,5 @@
 import SceneKit
 
 protocol InteractiveNode {
-    func floorNode() -> FloorNode?
+    var floorNode: FloorNode? {get}
 }

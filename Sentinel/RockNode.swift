@@ -47,7 +47,7 @@ class RockNode: SCNNode, InteractiveNode {
         addChildNode(rockNode)
     }
 
-    func floorNode() -> FloorNode? {
+    var floorNode: FloorNode? {
         return parent as? FloorNode
     }
 

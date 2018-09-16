@@ -50,7 +50,7 @@ class OppositionNode: SCNNode, InteractiveNode {
         addChildNode(boxNode)
     }
 
-    func floorNode() -> FloorNode? {
+    var floorNode: FloorNode? {
         return parent as? FloorNode
     }
 

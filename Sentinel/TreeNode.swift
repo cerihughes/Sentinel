@@ -47,7 +47,7 @@ class TreeNode: SCNNode, InteractiveNode {
         categoryBitMask = interactiveNodeType.tree.rawValue
     }
 
-    func floorNode() -> FloorNode? {
+    var floorNode: FloorNode? {
         return parent as? FloorNode
     }
 }
