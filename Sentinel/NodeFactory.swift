@@ -36,8 +36,9 @@ class NodeFactory: NSObject {
     private let cube2: FloorNode
     private let slope: SlopeNode
 
-    private let sentinel: SCNNode
-    private let sentry: SCNNode
+    private let sentinel: SentinelNode
+    private let sentry: SentryNode
+    
     private let synthoid: SCNNode
     private let tree: TreeNode
     private let rock: RockNode
@@ -51,8 +52,8 @@ class NodeFactory: NSObject {
         cube1 = FloorNode(floorSize: sideLength, colour: .red)
         cube2 = FloorNode(floorSize: sideLength, colour: .yellow)
         slope = SlopeNode(floorSize: sideLength)
-        sentinel = prototypes.createSentinel()
-        sentry = prototypes.createSentry()
+        sentinel = SentinelNode(floorSize: sideLength)
+        sentry = SentryNode(floorSize: sideLength)
         synthoid = prototypes.createSynthoid()
         tree = TreeNode(floorSize: sideLength)
         rock = RockNode(floorSize: sideLength)
@@ -173,7 +174,7 @@ class NodeFactory: NSObject {
         return terrainNode
     }
 
-    func createSentinelNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+    func createSentinelNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
@@ -181,7 +182,7 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createSentryNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SCNNode {
+    func createSentryNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SentryNode {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
@@ -294,63 +295,6 @@ fileprivate class NodePrototypes: NSObject {
         self.sideLength = sideLength
 
         super.init()
-    }
-
-    func createSentinel() -> SCNNode {
-        let sentinelNode = createOpposition(colour: .blue)
-        sentinelNode.name = sentinelNodeName
-        sentinelNode.categoryBitMask = InteractableNodeType.sentinel.rawValue
-        return sentinelNode
-    }
-
-    func createSentry() -> SCNNode {
-        let sentryNode = createOpposition(colour: .green)
-        sentryNode.name = sentryNodeName
-        sentryNode.categoryBitMask = InteractableNodeType.sentry.rawValue
-        return sentryNode
-    }
-
-    func createOpposition(colour: UIColor) -> SCNNode {
-        let oppositionNode = SCNNode()
-
-        var material = SCNMaterial()
-        material.diffuse.contents = colour
-
-        let segments = 3
-        var y: Float = 0.0
-        for i in 0 ..< segments {
-            let fi = Float(i)
-            let radius = (sideLength / 2.0) - fi
-            let sphere = SCNSphere(radius: CGFloat(radius))
-            sphere.firstMaterial = material
-            let sphereNode = SCNNode(geometry: sphere)
-            y += radius
-            sphereNode.position.y = y
-            y += 5.0 / Float(segments - 1)
-            oppositionNode.addChildNode(sphereNode)
-        }
-
-        material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
-        let width = CGFloat(sideLength / 3.0)
-        let height = CGFloat(sideLength / 10.0)
-        let box = SCNBox(width: width, height: height, length: height, chamferRadius: 0.2)
-        box.firstMaterial = material
-        let boxNode = SCNNode(geometry: box)
-        boxNode.position.z = sideLength / 5.0
-        boxNode.position.y = y
-        let camera = SCNCamera()
-        camera.zFar = 500.0
-        let cameraNode = SCNNode()
-        cameraNode.name = cameraNodeName
-        cameraNode.camera = camera
-        cameraNode.rotation = SCNVector4Make(0.0, 1.0, 0.25, Float.pi)
-        cameraNode.position = SCNVector3Make(0.0, 0.0, sideLength / 10.0)
-
-        boxNode.addChildNode(cameraNode)
-        oppositionNode.addChildNode(boxNode)
-
-        return oppositionNode
     }
 
     func createSynthoid() -> SCNNode {

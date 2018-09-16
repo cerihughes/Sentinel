@@ -100,11 +100,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
         case .sentinel:
             guard let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true),
-                let sentinelNode = terrainNode.childNode(withName: sentinelNodeName, recursively: true)
+                let sentinelNode = terrainNode.childNode(withName: sentinelNodeName, recursively: true) as? SentinelNode
                 else {
                     return nil
             }
-            return sentinelNode.childNode(withName: cameraNodeName, recursively: true)
+            return sentinelNode.cameraNode
         default:
             return nil
         }

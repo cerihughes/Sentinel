@@ -46,18 +46,18 @@ class FloorNode: SCNNode {
         }
     }
 
-    var sentinelNode: SCNNode? {
+    var sentinelNode: SentinelNode? {
         get {
-            return get(name: sentinelNodeName)
+            return get(name: sentinelNodeName) as? SentinelNode
         }
         set {
             set(instance: newValue, name: sentinelNodeName)
         }
     }
 
-    var sentryNode: SCNNode? {
+    var sentryNode: SentryNode? {
         get {
-            return get(name: sentryNodeName)
+            return get(name: sentryNodeName) as? SentryNode
         }
         set {
             set(instance: newValue, name: sentryNodeName)
