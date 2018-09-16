@@ -415,22 +415,29 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let synthoidNode = terrainNode?.childNode(withName: synthoidNodeName, recursively: true)
-            else {
+        guard let floorNode = nodeMap.getNode(for: grid.currentPosition),
+            let synthoidNode = floorNode.synthoidNode() else {
                 return
         }
 
-        let synthoidPresentationNode = synthoidNode.presentation
-
         for cameraNode in oppositionCameraNodes {
-            let cameraPresentationNode = cameraNode.presentation
-            if can(camera: cameraPresentationNode, see: synthoidPresentationNode, renderer: renderer) {
+            if can(cameraNode: cameraNode, see: synthoidNode, renderer: renderer) {
                 print("SEEN")
             }
         }
     }
 
-    private func can(camera: SCNNode, see synthoid: SCNNode, renderer: SCNSceneRenderer) -> Bool {
-        return renderer.isNode(synthoid, insideFrustumOf: camera)
+    private func can(cameraNode: SCNNode, see synthoidNode: SCNNode, renderer: SCNSceneRenderer) -> Bool {
+        let synthoidPresentationNode = synthoidNode.presentation
+        let cameraPresentationNode = cameraNode.presentation
+        if renderer.isNode(synthoidPresentationNode, insideFrustumOf: cameraPresentationNode) {
+            let worldNode = scene.rootNode
+            let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
+            let endPosition = worldNode.convertPosition(synthoidPresentationNode.worldPosition, to: nil)
+
+            let hits = worldNode.hitTestWithSegment(from: endPosition, to: startPosition, options: [:])
+            return hits.count == 0 // Assumption - no nodes = clear line of sight.
+        }
+        return false
     }
 }
