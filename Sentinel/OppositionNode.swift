@@ -53,6 +53,38 @@ class OppositionNode: SCNNode {
     var cameraNode: SCNNode? {
         return childNode(withName: cameraNodeName, recursively: true)
     }
+
+    func visibleSynthoids(in sceneRenderer: SCNSceneRenderer) -> [SynthoidNode] {
+        return visibleNodes(in: sceneRenderer, type: SynthoidNode.self)
+    }
+
+    func visibleRocks(in sceneRenderer: SCNSceneRenderer) -> [RockNode] {
+        return visibleNodes(in: sceneRenderer, type: RockNode.self)
+    }
+
+    private func visibleNodes<T: SCNNode>(in sceneRenderer: SCNSceneRenderer, type: T.Type) -> Array<T> {
+        guard let scene = sceneRenderer.scene, let cameraNode = cameraNode else {
+            return []
+        }
+
+        let cameraPresentation = cameraNode.presentation
+        let frustrumNodes = sceneRenderer.nodesInsideFrustum(of: cameraPresentation)
+        let compacted = frustrumNodes.compactMap { $0 as? T }
+        return compacted.filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
+    }
+
+    private func hasLineOfSight(from cameraPresentationNode: SCNNode, to otherNode: SCNNode, in scene: SCNScene) -> Bool {
+        let worldNode = scene.rootNode
+        let otherPresentationNode = otherNode.presentation
+        let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
+        let endPosition = worldNode.convertPosition(otherPresentationNode.worldPosition, to: nil)
+
+        let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: [:])
+        if let first = hits.first {
+            return first.node == otherNode
+        }
+        return false
+    }
 }
 
 class SentinelNode: OppositionNode {

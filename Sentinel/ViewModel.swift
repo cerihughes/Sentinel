@@ -14,7 +14,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private var currentAngle: Float = 0.0
 
     private var terrainNode: TerrainNode
-    private var oppositionCameraNodes: [SCNNode] = []
 
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
@@ -75,20 +74,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         scene.rootNode.addChildNode(orbitNode)
         scene.rootNode.addChildNode(sunNode)
-
-        let oppositionNodeNames = [sentinelNodeName, sentryNodeName]
-        let oppositionNodes = terrainNode.childNodes(passingTest: { (node, stop) -> Bool in
-            if let name = node.name {
-                return oppositionNodeNames.contains(name)
-            }
-            return false
-        })
-
-        for oppositionNode in oppositionNodes {
-            if let cameraNode = oppositionNode.childNode(withName: cameraNodeName, recursively: true) {
-                oppositionCameraNodes.append(cameraNode)
-            }
-        }
     }
 
     func cameraNode(for viewer: Viewer) -> SCNNode? {
@@ -413,24 +398,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 return
         }
 
-        for cameraNode in oppositionCameraNodes {
-            if can(cameraNode: cameraNode, see: synthoidNode, renderer: renderer) {
+        for oppositionNode in terrainNode.oppositionNodes {
+            if oppositionNode.visibleSynthoids(in: renderer).contains(synthoidNode) {
                 print("SEEN")
             }
         }
-    }
-
-    private func can(cameraNode: SCNNode, see synthoidNode: SCNNode, renderer: SCNSceneRenderer) -> Bool {
-        let synthoidPresentationNode = synthoidNode.presentation
-        let cameraPresentationNode = cameraNode.presentation
-        if renderer.isNode(synthoidPresentationNode, insideFrustumOf: cameraPresentationNode) {
-            let worldNode = scene.rootNode
-            let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
-            let endPosition = worldNode.convertPosition(synthoidPresentationNode.worldPosition, to: nil)
-
-            let hits = worldNode.hitTestWithSegment(from: endPosition, to: startPosition, options: [:])
-            return hits.count == 0 // Assumption - no nodes = clear line of sight.
-        }
-        return false
     }
 }
