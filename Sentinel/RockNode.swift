@@ -1,6 +1,6 @@
 import SceneKit
 
-class RockNode: SCNNode {
+class RockNode: SCNNode, InteractiveNode {
     override init() {
         super.init()
     }
@@ -43,8 +43,12 @@ class RockNode: SCNNode {
         rockNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -2.0)
 
         name = rockNodeName
-        categoryBitMask = InteractableNodeType.rock.rawValue
+        categoryBitMask = interactiveNodeType.rock.rawValue
         addChildNode(rockNode)
+    }
+
+    func floorNode() -> FloorNode? {
+        return parent as? FloorNode
     }
 
     private class RockSectionNode: SCNNode {

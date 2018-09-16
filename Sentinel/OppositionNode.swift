@@ -1,6 +1,6 @@
 import SceneKit
 
-class OppositionNode: SCNNode {
+class OppositionNode: SCNNode, InteractiveNode {
     fileprivate override init() {
         super.init()
     }
@@ -48,6 +48,10 @@ class OppositionNode: SCNNode {
 
         boxNode.addChildNode(cameraNode)
         addChildNode(boxNode)
+    }
+
+    func floorNode() -> FloorNode? {
+        return parent as? FloorNode
     }
 
     var cameraNode: SCNNode? {
@@ -100,7 +104,7 @@ class SentinelNode: OppositionNode {
         super.init(floorSize: floorSize, colour: .blue)
 
         name = sentinelNodeName
-        categoryBitMask = InteractableNodeType.sentinel.rawValue
+        categoryBitMask = interactiveNodeType.sentinel.rawValue
     }
 }
 
@@ -117,6 +121,6 @@ class SentryNode: OppositionNode {
         super.init(floorSize: floorSize, colour: .green)
 
         name = sentryNodeName
-        categoryBitMask = InteractableNodeType.sentry.rawValue
+        categoryBitMask = interactiveNodeType.sentry.rawValue
     }
 }
