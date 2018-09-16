@@ -252,7 +252,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         } else if grid.sentryPositions.contains(point) && interactableNodeType == .sentry {
             // Absorb
         } else if grid.treePositions.contains(point) && interactableNodeType == .tree {
-            absorb(treeNode: node, piece: piece)
+            if let treeNode = node as? TreeNode {
+                absorb(treeNode: treeNode, piece: piece)
+            }
         } else if grid.rockPositions.contains(point) && interactableNodeType == .rock {
             absorb(rockNode: node, piece: piece)
         } else if grid.synthoidPositions.contains(point) && interactableNodeType == .synthoid {
@@ -322,7 +324,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.treePositions.remove(at: index)
     }
 
-    private func absorb(treeNode: SCNNode, piece: GridPiece) {
+    private func absorb(treeNode: TreeNode, piece: GridPiece) {
         let point = piece.point
         guard let index = grid.treePositions.index(of: point) else {
             return

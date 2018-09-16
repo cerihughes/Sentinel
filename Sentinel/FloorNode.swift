@@ -1,7 +1,6 @@
 import SceneKit
 
 class FloorNode: SCNNode {
-
     override init() {
         super.init()
     }
@@ -29,9 +28,9 @@ class FloorNode: SCNNode {
         categoryBitMask = InteractableNodeType.floor.rawValue
     }
 
-    var treeNode: SCNNode? {
+    var treeNode: TreeNode? {
         get {
-            return get(name: treeNodeName)
+            return get(name: treeNodeName) as? TreeNode
         }
         set {
             set(instance: newValue, name: treeNodeName)

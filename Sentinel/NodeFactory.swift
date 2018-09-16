@@ -39,7 +39,7 @@ class NodeFactory: NSObject {
     private let sentinel: SCNNode
     private let sentry: SCNNode
     private let synthoid: SCNNode
-    private let tree: SCNNode
+    private let tree: TreeNode
     private let rock: SCNNode
 
     init(nodePositioning: NodePositioning) {
@@ -54,7 +54,7 @@ class NodeFactory: NSObject {
         sentinel = prototypes.createSentinel()
         sentry = prototypes.createSentry()
         synthoid = prototypes.createSynthoid()
-        tree = prototypes.createTree()
+        tree = TreeNode(floorSize: sideLength)
         rock = prototypes.createRock()
 
         super.init()
@@ -205,7 +205,7 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createTreeNode() -> SCNNode {
+    func createTreeNode() -> TreeNode {
         let clone = tree.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         return clone
@@ -374,45 +374,6 @@ fileprivate class NodePrototypes: NSObject {
         synthoidNode.pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * sideLength, 0.0)
 
         return synthoidNode
-    }
-
-    func createTree() -> SCNNode {
-        let width = CGFloat(sideLength)
-        let height = width * 1.5
-        let maxRadius = width / 3.0
-
-        let trunkHeight: CGFloat = height * 3.0 / 10.0
-        let trunkRadius: CGFloat = maxRadius * 0.2
-
-        let treeNode = SCNNode()
-        treeNode.name = treeNodeName
-        treeNode.categoryBitMask = InteractableNodeType.tree.rawValue
-
-        let trunkNode = SCNNode(geometry: SCNCylinder(radius: trunkRadius, height: trunkHeight))
-        trunkNode.geometry?.firstMaterial?.diffuse.contents = UIColor.brown
-        trunkNode.position.y = Float(trunkHeight / 2.0)
-        treeNode.addChildNode(trunkNode)
-
-        let initialLeafRadius = maxRadius
-        let leafHeight: CGFloat = height - trunkHeight
-        let numberOfLevels = 4
-        let sectionHeight = leafHeight / CGFloat(numberOfLevels)
-        var y = Float(trunkHeight + (sectionHeight / 2.0))
-
-        let radiusDelta = initialLeafRadius / CGFloat(numberOfLevels + 1)
-        for i in 0 ..< numberOfLevels {
-            let bottomRadius = initialLeafRadius - (radiusDelta * CGFloat(i))
-            let topRadius = bottomRadius - (radiusDelta * 2.0)
-            let leavesNode = SCNNode(geometry: SCNCone(topRadius: topRadius, bottomRadius: bottomRadius, height: sectionHeight))
-            leavesNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
-            leavesNode.position.y = y
-
-            y += Float(sectionHeight)
-
-            treeNode.addChildNode(leavesNode)
-        }
-
-        return treeNode
     }
 
     func createRock() -> SCNNode {
