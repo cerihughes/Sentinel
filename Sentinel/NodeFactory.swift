@@ -115,9 +115,8 @@ class NodeFactory: NSObject {
         return sunNode
     }
 
-    func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> SCNNode {
-        let terrainNode = SCNNode()
-        terrainNode.name = terrainNodeName
+    func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> TerrainNode {
+        let terrainNode = TerrainNode()
 
         let width = grid.width
         let depth = grid.depth

@@ -28,6 +28,7 @@
 		656AAEEB214ECBD500991151 /* SlopeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEA214ECBD500991151 /* SlopeNode.swift */; };
 		656AAEED214ECE3100991151 /* OppositionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEC214ECE3100991151 /* OppositionNode.swift */; };
 		656AAEEF214ED18D00991151 /* SynthoidNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEE214ED18D00991151 /* SynthoidNode.swift */; };
+		656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEF0214ED76600991151 /* TerrainNode.swift */; };
 		659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
 		659395F4213D511A00302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
 		65A9E07421417013009011C8 /* GridPointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07321417013009011C8 /* GridPointTests.swift */; };
@@ -73,6 +74,7 @@
 		656AAEEA214ECBD500991151 /* SlopeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlopeNode.swift; sourceTree = "<group>"; };
 		656AAEEC214ECE3100991151 /* OppositionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OppositionNode.swift; sourceTree = "<group>"; };
 		656AAEEE214ED18D00991151 /* SynthoidNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynthoidNode.swift; sourceTree = "<group>"; };
+		656AAEF0214ED76600991151 /* TerrainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainNode.swift; sourceTree = "<group>"; };
 		659395F0213D46B700302665 /* TerrainGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainGenerator.swift; sourceTree = "<group>"; };
 		65A9E07321417013009011C8 /* GridPointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPointTests.swift; sourceTree = "<group>"; };
 		65A9E0752142712B009011C8 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				65B83F80213C08C600515915 /* NodeFactory.swift */,
 				65BFF01F21414F66000861F8 /* NodePositioning.swift */,
 				6515595121403AD500F35776 /* NodeMap.swift */,
+				656AAEF0214ED76600991151 /* TerrainNode.swift */,
 				656AAEE4214EA4C600991151 /* FloorNode.swift */,
 				656AAEEA214ECBD500991151 /* SlopeNode.swift */,
 				656AAEE8214EBAAA00991151 /* RockNode.swift */,
@@ -312,6 +315,7 @@
 			files = (
 				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				656635DB2141483D00C264EA /* ViewModel.swift in Sources */,
+				656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */,
 				656AAEE7214EB82100991151 /* TreeNode.swift in Sources */,
 				65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */,
 				656AAEEB214ECBD500991151 /* SlopeNode.swift in Sources */,

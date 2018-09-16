@@ -13,7 +13,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private var currentAngle: Float = 0.0
 
-    private var terrainNode: SCNNode?
+    private var terrainNode: TerrainNode
     private var oppositionCameraNodes: [SCNNode] = []
 
     var preAnimationBlock: (() -> Void)?
@@ -34,6 +34,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         self.nodeFactory = NodeFactory(nodePositioning: nodePositioning)
         self.nodeMap = NodeMap()
+        self.terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
 
         super.init()
 
@@ -45,10 +46,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         if let components = skyBox.componentImages() {
             scene.background.contents = components
         }
-
-        let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-        terrainNode.position = SCNVector3Make(0, 0, 0)
-        self.terrainNode = terrainNode
 
         let cameraNode = nodeFactory.createCameraNode()
         cameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
@@ -99,10 +96,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         case .player:
             return scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
         case .sentinel:
-            guard let terrainNode = scene.rootNode.childNode(withName: terrainNodeName, recursively: true),
-                let sentinelNode = terrainNode.childNode(withName: sentinelNodeName, recursively: true) as? SentinelNode
-                else {
-                    return nil
+            guard let sentinelNode = terrainNode.sentinelNode else {
+                return nil
             }
             return sentinelNode.cameraNode
         default:
