@@ -4,6 +4,12 @@ enum UserInteraction {
     case tap, longPress
 }
 
+let treeEnergyValue = 1
+let rockEnergyValue = 2
+let synthoidEnergyValue = 3
+let sentryEnergyValue = 3
+let sentinelEnergyValue = 4
+
 class ViewModel: NSObject, SCNSceneRendererDelegate {
     let terrainIndex: Int
     let scene: SCNScene
@@ -12,6 +18,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     let nodeMap: NodeMap
 
     private var currentAngle: Float = 0.0
+    private var energy: Int = 10
 
     private var terrainNode: TerrainNode
 
@@ -252,7 +259,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func buildTree(at piece: GridPiece) {
-        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
+        guard energy > treeEnergyValue,
+            let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
@@ -261,14 +269,25 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let treeNode = nodeFactory.createTreeNode()
         floorNode.treeNode = treeNode
+
+        energy -= treeEnergyValue
     }
 
     private func buildRock(at piece: GridPiece) {
-        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
+        guard energy > treeEnergyValue,
+            let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
         let point = piece.point
+        if (grid.treePositions.contains(point)) {
+            absorbTree(from: floorNode, piece: piece)
+        }
+
+        guard energy > rockEnergyValue else {
+            return
+        }
+
         let startRockCount = piece.rockCount
         if piece.rockCount == 0 {
             grid.rockPositions.append(point)
@@ -276,16 +295,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         piece.rockCount += 1
 
-        if (grid.treePositions.contains(point)) {
-            absorbTree(from: floorNode, piece: piece)
-        }
-
         let rockNode = nodeFactory.createRockNode(index: startRockCount)
         floorNode.add(rockNode: rockNode)
+
+        energy -= rockEnergyValue
     }
 
     private func buildSynthoid(at piece: GridPiece) {
-        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
+        guard energy > synthoidEnergyValue,
+            let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
         }
 
@@ -294,6 +312,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let synthoidNode = nodeFactory.createSynthoidNode(index: piece.rockCount)
         floorNode.synthoidNode = synthoidNode
+
+        energy -= synthoidEnergyValue
     }
 
     private func absorbTree(from floorNode: FloorNode, piece: GridPiece) {
@@ -304,6 +324,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         floorNode.treeNode = nil
         grid.treePositions.remove(at: index)
+
+        energy += treeEnergyValue
     }
 
     private func absorb(treeNode: TreeNode, piece: GridPiece) {
@@ -314,6 +336,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         treeNode.removeFromParentNode()
         grid.treePositions.remove(at: index)
+
+        energy += treeEnergyValue
     }
 
     private func absorb(rockNode: RockNode, piece: GridPiece) {
@@ -332,6 +356,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         repeat {
             absorbedRockNode = floorNode.removeLastRockNode()
             if absorbedRockNode != nil {
+                energy += rockEnergyValue
                 piece.rockCount -= 1
                 if piece.rockCount == 0 {
                     if let index = grid.rockPositions.index(of: point) {
@@ -354,6 +379,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         synthoidNode.removeFromParentNode()
         grid.synthoidPositions.remove(at: index)
+
+        energy += synthoidEnergyValue
     }
 
     private func moveCamera(to piece: GridPiece, facing: Float, animationDuration: CFTimeInterval) {
