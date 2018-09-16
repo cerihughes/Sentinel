@@ -30,16 +30,14 @@ enum InteractableNodeType: Int {
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
 
-    private let prototypes: NodePrototypes
-
     private let cube1: FloorNode
     private let cube2: FloorNode
     private let slope: SlopeNode
 
     private let sentinel: SentinelNode
     private let sentry: SentryNode
-    
-    private let synthoid: SCNNode
+
+    private let synthoid: SynthoidNode
     private let tree: TreeNode
     private let rock: RockNode
 
@@ -47,14 +45,13 @@ class NodeFactory: NSObject {
         self.nodePositioning = nodePositioning
 
         let sideLength = nodePositioning.sideLength
-        self.prototypes = NodePrototypes(sideLength: sideLength)
 
         cube1 = FloorNode(floorSize: sideLength, colour: .red)
         cube2 = FloorNode(floorSize: sideLength, colour: .yellow)
         slope = SlopeNode(floorSize: sideLength)
         sentinel = SentinelNode(floorSize: sideLength)
         sentry = SentryNode(floorSize: sideLength)
-        synthoid = prototypes.createSynthoid()
+        synthoid = SynthoidNode(floorSize: sideLength)
         tree = TreeNode(floorSize: sideLength)
         rock = RockNode(floorSize: sideLength)
 
@@ -199,7 +196,7 @@ class NodeFactory: NSObject {
         return rotate
     }
 
-    func createSynthoidNode(index: Int = 0) -> SCNNode {
+    func createSynthoidNode(index: Int = 0) -> SynthoidNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
@@ -285,28 +282,5 @@ class NodeFactory: NSObject {
             wallNodes.append(wallNode)
         }
         return wallNodes
-    }
-}
-
-fileprivate class NodePrototypes: NSObject {
-    let sideLength: Float
-
-    init(sideLength: Float) {
-        self.sideLength = sideLength
-
-        super.init()
-    }
-
-    func createSynthoid() -> SCNNode {
-        let material = SCNMaterial()
-        material.diffuse.contents = UIColor.purple
-        let capsule = SCNCapsule(capRadius: CGFloat(sideLength / 3.0), height: CGFloat(sideLength))
-        capsule.firstMaterial = material
-        let synthoidNode = SCNNode(geometry: capsule)
-        synthoidNode.name = synthoidNodeName
-        synthoidNode.categoryBitMask = InteractableNodeType.synthoid.rawValue
-        synthoidNode.pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * sideLength, 0.0)
-
-        return synthoidNode
     }
 }

@@ -37,9 +37,9 @@ class FloorNode: SCNNode {
         }
     }
 
-    var synthoidNode: SCNNode? {
+    var synthoidNode: SynthoidNode? {
         get {
-            return get(name: synthoidNodeName)
+            return get(name: synthoidNodeName) as? SynthoidNode
         }
         set {
             set(instance: newValue, name: synthoidNodeName)
