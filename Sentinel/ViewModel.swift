@@ -30,7 +30,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let nodePositioning = NodePositioning(gridWidth: Float(grid.width),
                                               gridDepth: Float(grid.depth),
-                                              sideLength: 10.0)
+                                              floorSize: 10.0)
 
         self.nodeFactory = NodeFactory(nodePositioning: nodePositioning)
         self.nodeMap = NodeMap()

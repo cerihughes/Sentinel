@@ -44,16 +44,16 @@ class NodeFactory: NSObject {
     init(nodePositioning: NodePositioning) {
         self.nodePositioning = nodePositioning
 
-        let sideLength = nodePositioning.sideLength
+        let floorSize = nodePositioning.floorSize
 
-        cube1 = FloorNode(floorSize: sideLength, colour: .red)
-        cube2 = FloorNode(floorSize: sideLength, colour: .yellow)
-        slope = SlopeNode(floorSize: sideLength)
-        sentinel = SentinelNode(floorSize: sideLength)
-        sentry = SentryNode(floorSize: sideLength)
-        synthoid = SynthoidNode(floorSize: sideLength)
-        tree = TreeNode(floorSize: sideLength)
-        rock = RockNode(floorSize: sideLength)
+        cube1 = FloorNode(floorSize: floorSize, colour: .red)
+        cube2 = FloorNode(floorSize: floorSize, colour: .yellow)
+        slope = SlopeNode(floorSize: floorSize)
+        sentinel = SentinelNode(floorSize: floorSize)
+        sentry = SentryNode(floorSize: floorSize)
+        synthoid = SynthoidNode(floorSize: floorSize)
+        tree = TreeNode(floorSize: floorSize)
+        rock = RockNode(floorSize: floorSize)
 
         super.init()
     }
@@ -199,7 +199,7 @@ class NodeFactory: NSObject {
     func createSynthoidNode(index: Int = 0) -> SynthoidNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
+        clone.position.y += Float(index) * 0.5 * nodePositioning.floorSize
         return clone
     }
 
@@ -212,7 +212,7 @@ class NodeFactory: NSObject {
     func createRockNode(index: Int = 0) -> RockNode {
         let clone = rock.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(index) * 0.5 * nodePositioning.sideLength
+        clone.position.y += Float(index) * 0.5 * nodePositioning.floorSize
         let rotation = Float.pi * 2.0 * Float(drand48())
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
         return clone
