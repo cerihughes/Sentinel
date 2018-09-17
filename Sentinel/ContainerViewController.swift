@@ -1,14 +1,13 @@
 import UIKit
 
 class ContainerViewController: UIViewController {
-
+    private let viewModel: ViewModel
     private let oppositionContainer = OppositionViewContainer()
     private let mainViewController: ViewController
-    private let sentinelViewController: ViewController
 
     init(viewModel: ViewModel) {
+        self.viewModel = viewModel
         mainViewController = ViewController(viewModel: viewModel)
-        sentinelViewController = ViewController(viewModel: viewModel, viewer: .sentinel)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -47,7 +46,16 @@ class ContainerViewController: UIViewController {
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
                                      containerRight, containerTop, containerWidth, containerHeight])
 
+        let sentinelViewController = ViewController(viewModel: viewModel, viewer: .sentinel)
         add(oppositionController: sentinelViewController)
+
+        let rawValueOffset = Viewer.sentry1.rawValue
+        for i in 0 ..< viewModel.levelConfiguration.sentryCount {
+            if let viewer = Viewer(rawValue: i + rawValueOffset) {
+                let sentryViewController = ViewController(viewModel: viewModel, viewer: viewer)
+                add(oppositionController: sentryViewController)
+            }
+        }
     }
 
     private func add(oppositionController: UIViewController) {
@@ -78,9 +86,9 @@ class OppositionViewContainer: UIView {
         let heightPlusSpacing = height + spacing
         let x: CGFloat = 0.0
         var y = topBottomSpacing
-        for (index, item) in subviews.enumerated() {
-            y += heightPlusSpacing * CGFloat(index)
-            item.frame = CGRect(x: x, y: y, width: width, height: height)
+        for subview in subviews {
+            subview.frame = CGRect(x: x, y: y, width: width, height: height)
+            y += heightPlusSpacing
         }
     }
 }

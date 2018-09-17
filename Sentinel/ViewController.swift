@@ -1,7 +1,7 @@
 import SceneKit
 
-enum Viewer {
-    case player, sentinel, sentry
+enum Viewer: Int {
+    case player = 0, sentinel, sentry1, sentry2, sentry3
 }
 
 class ViewController: UIViewController {
