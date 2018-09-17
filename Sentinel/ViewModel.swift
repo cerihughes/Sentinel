@@ -11,20 +11,18 @@ let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
-    let terrainIndex: Int
     let scene: SCNScene
-    let grid: Grid
-    let nodeFactory: NodeFactory
-    let nodeMap: NodeMap
-
-    private var currentAngle: Float = 0.0
-    private var energy: Int = 10
-    private var lastOppositionScan: TimeInterval?
-
-    private var terrainNode: TerrainNode
-
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
+
+    private let terrainIndex: Int
+    private let grid: Grid
+    private let nodeFactory: NodeFactory
+    private let nodeMap: NodeMap
+    private let timeEngine = TimeEngine()
+    private var currentAngle: Float = 0.0
+    private var energy: Int = 10
+    private var terrainNode: TerrainNode
 
     init(terrainIndex: Int) {
         self.terrainIndex = terrainIndex
@@ -46,6 +44,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         super.init()
 
         setupScene()
+        setupTimingFunctions()
     }
 
     private func setupScene() {
@@ -82,6 +81,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         scene.rootNode.addChildNode(orbitNode)
         scene.rootNode.addChildNode(sunNode)
+    }
+
+    private func setupTimingFunctions() {
+        _ = timeEngine.add(timeInterval: 2.0) { (timeInterval, renderer) -> Bool in
+            self.oppositionScan(in: renderer)
+            return true
+        }
     }
 
     func cameraNode(for viewer: Viewer) -> SCNNode? {
@@ -434,14 +440,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        if let lastOppositionScan = lastOppositionScan {
-            if (time - lastOppositionScan > 2.0) {
-                oppositionScan(in: renderer)
-                self.lastOppositionScan = time
-            }
-        } else {
-            lastOppositionScan = time
-        }
+        timeEngine.handle(currentTimeInterval: time, renderer: renderer)
     }
 
     private func oppositionScan(in renderer: SCNSceneRenderer) {
