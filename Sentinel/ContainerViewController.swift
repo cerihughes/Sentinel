@@ -1,3 +1,4 @@
+import SceneKit
 import UIKit
 
 class ContainerViewController: UIViewController {
@@ -66,7 +67,7 @@ class ContainerViewController: UIViewController {
 class OppositionViewContainer: UIView {
     private let maxViews: Int = 4
     private let topBottomSpacing: CGFloat = 20.0
-    private let aspectRatio: CGFloat = 9.0 / 9.0
+    private let aspectRatio: CGFloat = 4.0 / 3.0
 
     override func layoutSubviews() {
         let availableVerticalSpace = self.frame.height - (topBottomSpacing * 2.0)

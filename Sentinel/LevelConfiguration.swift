@@ -27,8 +27,8 @@ protocol LevelConfiguration {
 struct MainLevelConfiguration: LevelConfiguration {
     let level: Int
     let rotationSteps: Int = 12
+    let rotationTime: TimeInterval = 0.3
 
-    private let rotationTimeRange = 1.0 ..< 2.0
     private let rotationPauseRange = 5.0 ..< 8.0
     private let gridWidthRange = 24 ..< 32
     private let gridDepthRange = 16 ..< 24
@@ -37,11 +37,6 @@ struct MainLevelConfiguration: LevelConfiguration {
 
     private var progression: Float {
         return Float(level) / Float(maxLevel)
-    }
-
-    var rotationTime: TimeInterval {
-        let adjustment = TimeInterval(progression) * rotationTimeRange.lowerBound - rotationTimeRange.upperBound
-        return rotationTimeRange.upperBound - adjustment
     }
 
     var rotationPause: TimeInterval {
