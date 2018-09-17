@@ -64,6 +64,10 @@ class FloorNode: SCNNode {
         }
     }
 
+    var rockNodes: [RockNode] {
+        return childNodes.compactMap { $0 as? RockNode }
+    }
+
     private func get(name: String) -> SCNNode? {
         return childNode(withName: name, recursively: false)
     }
@@ -84,21 +88,20 @@ class FloorNode: SCNNode {
         return existing
     }
 
-    func rockNodes() -> [RockNode] {
-        let filtered = childNodes.filter( { $0.name != nil && $0.name! == rockNodeName } )
-        return filtered.compactMap { $0 as? RockNode }
-    }
-
     func add(rockNode: RockNode) {
         addChildNode(rockNode)
     }
 
     func removeLastRockNode() -> RockNode? {
-        guard let last = rockNodes().last else {
+        guard let last = rockNodes.last else {
             return nil
         }
 
         last.removeFromParentNode()
         return last
+    }
+
+    var topmostNode: (SCNNode&PlaceableNode)? {
+        return treeNode ?? sentinelNode ?? sentryNode ?? synthoidNode ?? rockNodes.last
     }
 }

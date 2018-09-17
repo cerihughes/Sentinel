@@ -1,6 +1,6 @@
 import SceneKit
 
-class SynthoidNode: SCNNode, InteractiveNode {
+class SynthoidNode: SCNNode, PlaceableNode, DetectableNode {
     override init() {
         super.init()
     }
@@ -25,5 +25,9 @@ class SynthoidNode: SCNNode, InteractiveNode {
 
     var floorNode: FloorNode? {
         return parent as? FloorNode
+    }
+
+    var detectionNodes: [SCNNode] {
+        return [self]
     }
 }

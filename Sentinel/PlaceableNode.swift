@@ -1,5 +1,5 @@
 import SceneKit
 
-protocol InteractiveNode {
+protocol PlaceableNode {
     var floorNode: FloorNode? {get}
 }

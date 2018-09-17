@@ -1,6 +1,6 @@
 import SceneKit
 
-class RockNode: SCNNode, InteractiveNode {
+class RockNode: SCNNode, PlaceableNode, DetectableNode {
     override init() {
         super.init()
     }
@@ -49,6 +49,10 @@ class RockNode: SCNNode, InteractiveNode {
 
     var floorNode: FloorNode? {
         return parent as? FloorNode
+    }
+
+    var detectionNodes: [SCNNode] {
+        return [self]
     }
 
     private class RockSectionNode: SCNNode {

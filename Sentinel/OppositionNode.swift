@@ -1,6 +1,6 @@
 import SceneKit
 
-class OppositionNode: SCNNode, InteractiveNode {
+class OppositionNode: SCNNode, PlaceableNode {
     fileprivate override init() {
         super.init()
     }
@@ -58,34 +58,50 @@ class OppositionNode: SCNNode, InteractiveNode {
         return childNode(withName: cameraNodeName, recursively: true)
     }
 
-    func visibleSynthoids(in sceneRenderer: SCNSceneRenderer) -> [SynthoidNode] {
-        return visibleNodes(in: sceneRenderer, type: SynthoidNode.self)
+    func visibleSynthoids(in renderer: SCNSceneRenderer) -> [SynthoidNode] {
+        return visibleNodes(in: renderer, type: SynthoidNode.self)
     }
 
-    func visibleRocks(in sceneRenderer: SCNSceneRenderer) -> [RockNode] {
-        return visibleNodes(in: sceneRenderer, type: RockNode.self)
+    func visibleRocks(in renderer: SCNSceneRenderer) -> [RockNode] {
+        let allRocks = visibleNodes(in: renderer, type: RockNode.self)
+        return allRocks.filter { $0.floorNode?.topmostNode == $0 } // only return rocks that have nothing on top of them
     }
 
-    private func visibleNodes<T: SCNNode>(in sceneRenderer: SCNSceneRenderer, type: T.Type) -> Array<T> {
-        guard let scene = sceneRenderer.scene, let cameraNode = cameraNode else {
+    func visibleTreesOnRocks(in renderer: SCNSceneRenderer) -> [TreeNode] {
+        let allTrees = visibleNodes(in: renderer, type: TreeNode.self)
+        return allTrees.filter { $0.floorNode != nil && $0.floorNode!.rockNodes.count > 0 } // only return trees that have rocks under them
+    }
+
+    private func visibleNodes<T: SCNNode>(in renderer: SCNSceneRenderer, type: T.Type) -> [T] {
+        guard let scene = renderer.scene, let cameraNode = cameraNode else {
             return []
         }
 
         let cameraPresentation = cameraNode.presentation
-        let frustrumNodes = sceneRenderer.nodesInsideFrustum(of: cameraPresentation)
-        let compacted = frustrumNodes.compactMap { $0 as? T }
+        let frustrumNodes = renderer.nodesInsideFrustum(of: cameraPresentation)
+        let interactiveNodes = Set(frustrumNodes.compactMap { $0.firstInteractiveParent() })
+        let compacted = interactiveNodes.compactMap { $0 as? T }
         return compacted.filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
     }
 
     private func hasLineOfSight(from cameraPresentationNode: SCNNode, to otherNode: SCNNode, in scene: SCNScene) -> Bool {
-        let worldNode = scene.rootNode
-        let otherPresentationNode = otherNode.presentation
-        let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
-        let endPosition = worldNode.convertPosition(otherPresentationNode.worldPosition, to: nil)
+        guard let otherDetectableNode = otherNode as? DetectableNode else {
+            return false
+        }
 
-        let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: [:])
-        if let first = hits.first {
-            return first.node == otherNode
+        let worldNode = scene.rootNode
+        for otherDetectionNode in otherDetectableNode.detectionNodes {
+            let detectionPresentationNode = otherDetectionNode.presentation
+            let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
+            let endPosition = worldNode.convertPosition(detectionPresentationNode.worldPosition, to: nil)
+
+            let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: [:])
+            if let first = hits.first,
+                let placeableHit = first.node.firstPlaceableParent() as? SCNNode {
+                if placeableHit == otherNode {
+                    return true
+                }
+            }
         }
         return false
     }

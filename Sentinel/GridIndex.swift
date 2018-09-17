@@ -131,18 +131,14 @@ class GridIndex: NSObject {
 
         let point = piece.point
 
-        if grid.sentinelPosition == point {
-            return false
-        }
+        var invalidPositions: [GridPoint] = [grid.currentPosition]
+        invalidPositions.append(grid.startPosition)
+        invalidPositions.append(grid.sentinelPosition)
+        invalidPositions.append(contentsOf: grid.sentryPositions)
+        invalidPositions.append(contentsOf: grid.synthoidPositions)
+        invalidPositions.append(contentsOf: grid.rockPositions)
+        invalidPositions.append(contentsOf: grid.treePositions)
 
-        if grid.sentryPositions.contains(point) {
-            return false
-        }
-
-        if grid.startPosition == point {
-            return false
-        }
-
-        return true
+        return !invalidPositions.contains(point)
     }
 }
