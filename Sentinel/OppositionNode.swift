@@ -39,6 +39,7 @@ class OppositionNode: SCNNode, PlaceableNode {
         boxNode.position.z = floorSize / 5.0
         boxNode.position.y = y
         let camera = SCNCamera()
+        camera.fieldOfView = 45.0
         camera.zFar = 500.0
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
