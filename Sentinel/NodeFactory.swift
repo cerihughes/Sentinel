@@ -158,12 +158,12 @@ class NodeFactory: NSObject {
         }
 
         if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            floorNode.synthoidNode = createSynthoidNode()
+            floorNode.synthoidNode = createSynthoidNode(rockCount: 0)
         }
 
         for treePosition in grid.treePositions {
             if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getFloorNode(for: treePosition) {
-                floorNode.treeNode = createTreeNode()
+                floorNode.treeNode = createTreeNode(rockCount: 0)
             }
         }
 
@@ -195,23 +195,24 @@ class NodeFactory: NSObject {
         return rotate
     }
 
-    func createSynthoidNode(index: Int = 0) -> SynthoidNode {
+    func createSynthoidNode(rockCount: Int) -> SynthoidNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(index) * 0.5 * nodePositioning.floorSize
+        clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
         return clone
     }
 
-    func createTreeNode() -> TreeNode {
+    func createTreeNode(rockCount: Int) -> TreeNode {
         let clone = tree.clone()
         clone.position = nodePositioning.calculateObjectPosition()
+        clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
         return clone
     }
 
-    func createRockNode(index: Int = 0) -> RockNode {
+    func createRockNode(rockCount: Int) -> RockNode {
         let clone = rock.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(index) * 0.5 * nodePositioning.floorSize
+        clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
         let rotation = Float.pi * 2.0 * Float(drand48())
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
         return clone

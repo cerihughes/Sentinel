@@ -267,7 +267,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         let point = piece.point
         grid.treePositions.append(point)
 
-        let treeNode = nodeFactory.createTreeNode()
+        let treeNode = nodeFactory.createTreeNode(rockCount: piece.rockCount)
         floorNode.treeNode = treeNode
 
         energy -= treeEnergyValue
@@ -295,7 +295,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         piece.rockCount += 1
 
-        let rockNode = nodeFactory.createRockNode(index: startRockCount)
+        let rockNode = nodeFactory.createRockNode(rockCount: startRockCount)
         floorNode.add(rockNode: rockNode)
 
         energy -= rockEnergyValue
@@ -310,7 +310,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         let point = piece.point
         grid.synthoidPositions.append(point)
 
-        let synthoidNode = nodeFactory.createSynthoidNode(index: piece.rockCount)
+        let synthoidNode = nodeFactory.createSynthoidNode(rockCount: piece.rockCount)
         floorNode.synthoidNode = synthoidNode
 
         energy -= synthoidEnergyValue
