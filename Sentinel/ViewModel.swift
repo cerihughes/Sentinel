@@ -58,10 +58,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         cameraNode.constraints = [lookAt]
 
         let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
-        let sunNode = nodeFactory.createSunNode()
-        sunNode.position = SCNVector3Make(-500.0, 275.0, -250.0)
-        sunNode.constraints = [SCNLookAtConstraint(target: terrainNode)]
-
         let orbitNode = SCNNode()
         orbitNode.name = "orbitNodeName"
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
@@ -79,7 +75,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         scene.rootNode.addChildNode(orbitNode)
-        scene.rootNode.addChildNode(sunNode)
     }
 
     private func setupTimingFunctions() {

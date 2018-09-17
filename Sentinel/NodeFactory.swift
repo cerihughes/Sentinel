@@ -10,7 +10,6 @@ let sentryNodeName = "sentryNodeName"
 let synthoidNodeName = "synthoidNodeName"
 let treeNodeName = "treeNodeName"
 let rockNodeName = "rockNodeName"
-let sunNodeName = "sunNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
 enum interactiveNodeType: Int {
@@ -96,23 +95,6 @@ class NodeFactory: NSObject {
         ambientNode.name = ambientLightNodeName
         ambientNode.light = ambient
         return ambientNode
-    }
-
-    func createSunNode() -> SCNNode {
-        let sun = SCNLight()
-        sun.type = .spot
-        sun.color = UIColor(white: 0.9, alpha: 1.0)
-        sun.castsShadow = true
-        sun.shadowRadius = 50.0
-        sun.shadowColor = UIColor(white: 0.0, alpha: 0.75)
-        sun.zNear = 300.0
-        sun.zFar = 700.0
-        sun.attenuationStartDistance = 300.0
-        sun.attenuationEndDistance = 700.0
-        let sunNode = SCNNode()
-        sunNode.name = sunNodeName
-        sunNode.light = sun
-        return sunNode
     }
 
     func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> TerrainNode {
