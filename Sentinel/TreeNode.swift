@@ -1,6 +1,6 @@
 import SceneKit
 
-class TreeNode: SCNNode, InteractiveNode {
+class TreeNode: SCNNode, PlaceableNode, DetectableNode {
     override init() {
         super.init()
     }
@@ -49,5 +49,9 @@ class TreeNode: SCNNode, InteractiveNode {
 
     var floorNode: FloorNode? {
         return parent as? FloorNode
+    }
+
+    var detectionNodes: [SCNNode] {
+        return childNodes.compactMap { $0.geometry is SCNCone ? $0 : nil }
     }
 }
