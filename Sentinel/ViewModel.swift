@@ -340,9 +340,14 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
+        // TODO: Tidy this up - can use topmost now?
         if grid.synthoidPositions.contains(point) {
             if let synthoidNode = floorNode.synthoidNode {
                 absorb(synthoidNode: synthoidNode, piece: piece, isPlayer: isPlayer)
+            }
+        } else if grid.treePositions.contains(point) {
+            if let treeNode = floorNode.treeNode {
+                absorb(treeNode: treeNode, piece: piece, isPlayer: isPlayer)
             }
         }
 
