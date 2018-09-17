@@ -64,8 +64,8 @@ struct MainLevelConfiguration: LevelConfiguration {
 
     var sentryCount: Int {
         var sentries = level / 10
-        if sentries > 5 {
-            sentries = 5
+        if sentries > 3 {
+            sentries = 3
         }
         return sentries
     }

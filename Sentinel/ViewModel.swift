@@ -11,11 +11,11 @@ let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
+    let levelConfiguration: LevelConfiguration
     let scene: SCNScene
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
 
-    private let levelConfiguration: LevelConfiguration
     private let grid: Grid
     private let nodeFactory: NodeFactory
     private let nodeMap: NodeMap
@@ -103,6 +103,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             }
             return sentinelNode.cameraNode
         default:
+            let rawValueOffset = Viewer.sentry1.rawValue
+            let index = viewer.rawValue - rawValueOffset
+            if index < terrainNode.sentryNodes.count {
+                return terrainNode.sentryNodes[index].cameraNode
+            }
             return nil
         }
     }

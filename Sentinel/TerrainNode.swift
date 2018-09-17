@@ -15,7 +15,8 @@ class TerrainNode: SCNNode {
     }
 
     var sentryNodes: [SentryNode] {
-        return childNodes.compactMap { $0 as? SentryNode }
+        let floorNodes = childNodes.compactMap { $0 as? FloorNode }
+        return floorNodes.compactMap { $0.sentryNode }
     }
 
     var oppositionNodes: [OppositionNode] {
