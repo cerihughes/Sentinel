@@ -2,6 +2,9 @@ import Foundation
 
 protocol LevelConfiguration {
     var level: Int {get}
+    var rotationSteps: Int {get}
+    var rotationTime: TimeInterval {get}
+    var rotationPause: TimeInterval {get}
 
     var gridWidth: Int {get}
     var gridDepth: Int {get}
@@ -23,7 +26,10 @@ protocol LevelConfiguration {
 
 struct MainLevelConfiguration: LevelConfiguration {
     let level: Int
+    let rotationSteps: Int = 12
 
+    private let rotationTimeRange = 1.0 ..< 2.0
+    private let rotationPauseRange = 5.0 ..< 8.0
     private let gridWidthRange = 24 ..< 32
     private let gridDepthRange = 16 ..< 24
 
@@ -31,6 +37,16 @@ struct MainLevelConfiguration: LevelConfiguration {
 
     private var progression: Float {
         return Float(level) / Float(maxLevel)
+    }
+
+    var rotationTime: TimeInterval {
+        let adjustment = TimeInterval(progression) * rotationTimeRange.lowerBound - rotationTimeRange.upperBound
+        return rotationTimeRange.upperBound - adjustment
+    }
+
+    var rotationPause: TimeInterval {
+        let adjustment = TimeInterval(progression) * rotationPauseRange.lowerBound - rotationPauseRange.upperBound
+        return rotationPauseRange.upperBound - adjustment
     }
 
     var gridWidth: Int {
@@ -82,6 +98,9 @@ struct MainLevelConfiguration: LevelConfiguration {
 
 struct TestLevelConfiguration: LevelConfiguration {
     let level: Int
+    let rotationSteps: Int = 12
+    let rotationTime: TimeInterval = 1.0
+    let rotationPause: TimeInterval = 8.0
 
     let gridWidth = 16
     let gridDepth = 16

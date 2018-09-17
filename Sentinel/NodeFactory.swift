@@ -170,29 +170,18 @@ class NodeFactory: NSObject {
         return terrainNode
     }
 
-    func createSentinelNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SentinelNode {
+    func createSentinelNode(startAngle: Float = 0.0) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
-        clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
         return clone
     }
 
-    func createSentryNode(startAngle: Float = 0.0, rotationTime: TimeInterval = 30.0) -> SentryNode {
+    func createSentryNode(startAngle: Float = 0.0) -> SentryNode {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
-        clone.addAnimation(createRotationAnimation(rotationTime: rotationTime), forKey: "rotate")
         return clone
-    }
-
-    private func createRotationAnimation(rotationTime: TimeInterval) -> CABasicAnimation {
-        let rotate = CABasicAnimation(keyPath: "rotation.w")
-        rotate.byValue = Float.pi * -2.0
-        rotate.duration = rotationTime
-        rotate.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
-        rotate.repeatCount = Float.infinity
-        return rotate
     }
 
     func createSynthoidNode(rockCount: Int) -> SynthoidNode {

@@ -7,7 +7,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        let viewModel = ViewModel(terrainIndex: 0)
+        let levelConfiguration = MainLevelConfiguration(level: 0)
+        let viewModel = ViewModel(levelConfiguration: levelConfiguration)
         let viewController = ContainerViewController(viewModel: viewModel)
         window!.rootViewController = viewController
         window!.makeKeyAndVisible()

@@ -72,6 +72,15 @@ class OppositionNode: SCNNode, PlaceableNode {
         return allTrees.filter { $0.floorNode != nil && $0.floorNode!.rockNodes.count > 0 } // only return trees that have rocks under them
     }
 
+    func rotate(by radians: Float, duration: TimeInterval) {
+        let fromValue = rotation.w
+        let toValue = fromValue + radians
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = duration
+        rotation.w = toValue        
+        SCNTransaction.commit()
+    }
+
     private func visibleNodes<T: SCNNode>(in renderer: SCNSceneRenderer, type: T.Type) -> [T] {
         guard let scene = renderer.scene, let cameraNode = cameraNode else {
             return []
