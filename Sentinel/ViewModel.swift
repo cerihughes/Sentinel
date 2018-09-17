@@ -15,7 +15,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
 
-    private let terrainIndex: Int
+    private let levelConfiguration: LevelConfiguration
     private let grid: Grid
     private let nodeFactory: NodeFactory
     private let nodeMap: NodeMap
@@ -24,14 +24,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private var energy: Int = 10
     private var terrainNode: TerrainNode
 
-    init(terrainIndex: Int) {
-        self.terrainIndex = terrainIndex
+    init(levelConfiguration: LevelConfiguration) {
+        self.levelConfiguration = levelConfiguration
 
         self.scene = SCNScene()
 
-        let configuration = MainLevelConfiguration(level: terrainIndex)
         let tg = TerrainGenerator()
-        self.grid = tg.generate(levelConfiguration: configuration)
+        self.grid = tg.generate(levelConfiguration: levelConfiguration)
 
         let nodePositioning = NodePositioning(gridWidth: Float(grid.width),
                                               gridDepth: Float(grid.depth),
@@ -86,6 +85,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func setupTimingFunctions() {
         _ = timeEngine.add(timeInterval: 2.0) { (timeInterval, renderer) -> Bool in
             self.oppositionScan(in: renderer)
+            return true
+        }
+
+        let radians = 2.0 * Float.pi / Float(levelConfiguration.rotationSteps)
+        let duration = levelConfiguration.rotationTime
+        _ = timeEngine.add(timeInterval: levelConfiguration.rotationPause) { (timeInterval, renderer) -> Bool in
+            for oppositionNode in self.terrainNode.oppositionNodes {
+                oppositionNode.rotate(by: radians, duration: duration)
+            }
             return true
         }
     }
