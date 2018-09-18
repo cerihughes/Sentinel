@@ -12,18 +12,13 @@ let treeNodeName = "treeNodeName"
 let rockNodeName = "rockNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
-enum interactiveNodeType: Int {
+enum interactiveNodeType: Int, CaseIterable {
     case floor = 2
     case tree = 4
     case rock = 8
     case synthoid = 16
     case sentry = 32
     case sentinel = 64
-
-    // TODO: Replace when Swift 4.2 is out of beta
-    static func allValues() -> [interactiveNodeType] {
-        return [.floor, .tree, .rock, .synthoid, .sentry, .sentinel]
-    }
 }
 
 class NodeFactory: NSObject {
@@ -113,7 +108,7 @@ class NodeFactory: NSObject {
                         terrainNode.addChildNode(node)
                         nodeMap.add(floorNode: node, for: gridPiece)
                     } else {
-                        for direction in GridDirection.allValues() {
+                        for direction in GridDirection.allCases {
                             if gridPiece.has(slopeDirection: direction) {
                                 let node = createSlopeNode(x: x,
                                                            y: Int(gridPiece.level - 0.5),

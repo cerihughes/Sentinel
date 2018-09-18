@@ -61,7 +61,7 @@ class TerrainGenerator: NSObject {
     private func generateTrees(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> [GridPoint] {
         var trees: [GridPoint] = []
         let countRange = levelConfiguration.treeCountRange
-        for quadrant in GridQuadrant.allValues() {
+        for quadrant in GridQuadrant.allCases {
             let treesInQuadrant = generateTrees(countRange: countRange,
                                                 quadrant: quadrant,
                                                 gen: gen)
@@ -97,7 +97,7 @@ class TerrainGenerator: NSObject {
         }
 
         var sentryPieces: [GridPiece] = []
-        for quadrant in GridQuadrant.allValues() {
+        for quadrant in GridQuadrant.allCases {
             if !quadrant.contains(point: grid.sentinelPosition, grid: grid) {
                 let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
                 sentryPieces.append(highestPiece(in: gridIndex, gen: gen))
@@ -133,7 +133,7 @@ class TerrainGenerator: NSObject {
     }
 
     private func quadrantOppositeSentinel() -> GridQuadrant? {
-        for quadrant in GridQuadrant.allValues() {
+        for quadrant in GridQuadrant.allCases {
             if quadrant.contains(point: grid.sentinelPosition, grid: grid) {
                 return quadrant.opposite
             }

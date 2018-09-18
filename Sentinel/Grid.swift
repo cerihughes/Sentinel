@@ -21,16 +21,11 @@ struct GridPoint: Equatable, Hashable {
     }
 }
 
-enum GridDirection: Int {
+enum GridDirection: Int, CaseIterable {
     case north = 1
     case east = 2
     case south = 4
     case west = 8
-
-    // TODO: Replace when Swift 4.2 is out of beta
-    static func allValues() -> [GridDirection] {
-        return [.north, .east, .south, .west]
-    }
 
     func toDeltas() -> (x: Int, z: Int) {
         switch self {
@@ -46,7 +41,7 @@ enum GridDirection: Int {
     }
 
     static func allValues(except direction: GridDirection) -> [GridDirection] {
-        var directions = allValues()
+        var directions = allCases
         if let index = directions.index(of:direction) {
             directions.remove(at: index)
         }
@@ -156,7 +151,7 @@ class Grid: NSObject {
 
         let slopeLevel = piece.buildFloor() - 0.5
 
-        for direction in GridDirection.allValues() {
+        for direction in GridDirection.allCases {
             buildSlope(from: point, level: slopeLevel, direction: direction)
         }
     }

@@ -1,12 +1,7 @@
 import Foundation
 
-enum GridQuadrant {
+enum GridQuadrant: CaseIterable {
     case northWest, northEast, southWest, southEast
-
-    // TODO: Replace when Swift 4.2 is out of beta
-    static func allValues() -> [GridQuadrant] {
-        return [.northWest, .northEast, .southWest, .southEast]
-    }
 
     func xRange(grid: Grid) -> Range<Int> {
         switch self {
