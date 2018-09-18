@@ -162,7 +162,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func process(interaction: UserInteraction, node: SCNNode) {
         let bitmask = node.categoryBitMask
-        for interactiveNodeType in interactiveNodeType.allValues() {
+        for interactiveNodeType in interactiveNodeType.allCases {
             if bitmask & interactiveNodeType.rawValue == interactiveNodeType.rawValue {
                 process(interaction: interaction, node: node, interactiveNodeType: interactiveNodeType)
                 return
@@ -404,11 +404,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        // TODO: Replace when Swift 4.2 is out of beta
-        let randomIndex = Int(arc4random_uniform(UInt32(emptyPieces.count)))
-        let randomPiece = emptyPieces[randomIndex]
-
-        buildTree(at: randomPiece, isPlayer: false)
+        if let randomPiece = emptyPieces.randomElement() {
+            buildTree(at: randomPiece, isPlayer: false)
+        }
     }
 
     private func moveCamera(to piece: GridPiece, facing: Float, animationDuration: CFTimeInterval) {
@@ -458,7 +456,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         for oppositionNode in terrainNode.oppositionNodes {
-            if let visibleSynthoid = oppositionNode.visibleSynthoids(in: renderer).first { // Maybe random in Swift 4.2?
+            if let visibleSynthoid = oppositionNode.visibleSynthoids(in: renderer).randomElement() {
                 if visibleSynthoid == synthoidNode {
                     print("SEEN")
                 } else {
@@ -469,13 +467,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                         oppositionBuildRandomTree()
                     }
                 }
-            } else if let visibleRock = oppositionNode.visibleRocks(in: renderer).first, // Maybe random in Swift 4.2?
+            } else if let visibleRock = oppositionNode.visibleRocks(in: renderer).randomElement(),
                 let floorNode = visibleRock.floorNode,
                 let piece = nodeMap.getPiece(for: floorNode) {
                 absorb(rockNode: visibleRock, piece: piece, isPlayer: false)
                 buildTree(at: piece, isPlayer: false)
                 oppositionBuildRandomTree()
-            } else if let visibleTree = oppositionNode.visibleTreesOnRocks(in: renderer).first, // Maybe random in Swift 4.2?
+            } else if let visibleTree = oppositionNode.visibleTreesOnRocks(in: renderer).randomElement(),
                 let floorNode = visibleTree.floorNode,
                 let piece = nodeMap.getPiece(for: floorNode) {
                 absorb(treeNode: visibleTree, piece: piece, isPlayer: false)
