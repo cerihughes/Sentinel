@@ -74,7 +74,11 @@ class ViewController: UIViewController {
         if let sceneView = self.view as? SCNView, let interaction = interaction(for: sender) {
             let point = sender.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(point, options: [:])
-            viewModel.process(interaction: interaction, hitTestResults: hitTestResults)
+            if viewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
+                // Toggle the state to "complete" the gesture
+                sender.isEnabled = false
+                sender.isEnabled = true
+            }
         }
     }
 
