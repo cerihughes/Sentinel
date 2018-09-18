@@ -18,9 +18,9 @@ class ContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        addChildViewController(mainViewController)
+        addChild(mainViewController)
         view.addSubview(mainViewController.view)
-        mainViewController.didMove(toParentViewController: self)
+        mainViewController.didMove(toParent: self)
 
         let mainView: UIView = mainViewController.view
         mainView.translatesAutoresizingMaskIntoConstraints = false
@@ -59,15 +59,15 @@ class ContainerViewController: UIViewController {
     }
 
     private func add(oppositionController: UIViewController) {
-        addChildViewController(oppositionController)
+        addChild(oppositionController)
         oppositionContainer.addSubview(oppositionController.view)
-        oppositionController.didMove(toParentViewController: self)
+        oppositionController.didMove(toParent: self)
     }
 
     private func remove(oppositionController: UIViewController) {
-        oppositionController.willMove(toParentViewController: nil)
+        oppositionController.willMove(toParent: nil)
         oppositionController.view.removeFromSuperview()
-        oppositionController.removeFromParentViewController()
+        oppositionController.removeFromParent()
     }
 }
 

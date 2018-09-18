@@ -64,7 +64,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         let orbit = CABasicAnimation(keyPath: "rotation.w")
         orbit.byValue = Float.pi * -2.0
         orbit.duration = 100.0
-        orbit.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        orbit.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         orbit.repeatCount = Float.infinity
         orbitNode.addAnimation(orbit, forKey: "orbit")
 
