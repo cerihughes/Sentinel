@@ -58,6 +58,11 @@ class ContainerViewController: UIViewController {
         }
     }
 
+    override func viewWillLayoutSubviews() {
+        let size = view.frame.size
+        oppositionContainer.aspectRatio = size.width / size.height
+    }
+
     private func add(oppositionController: UIViewController) {
         addChild(oppositionController)
         oppositionContainer.addSubview(oppositionController.view)
@@ -74,7 +79,12 @@ class ContainerViewController: UIViewController {
 class OppositionViewContainer: UIView {
     private let maxViews: Int = 4
     private let topBottomSpacing: CGFloat = 20.0
-    private let aspectRatio: CGFloat = 4.0 / 3.0
+
+    var aspectRatio: CGFloat = 4.0 / 3.0 {
+        didSet {
+            setNeedsLayout()
+        }
+    }
 
     override func layoutSubviews() {
         let availableVerticalSpace = self.frame.height - (topBottomSpacing * 2.0)
