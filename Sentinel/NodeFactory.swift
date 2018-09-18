@@ -12,6 +12,8 @@ let treeNodeName = "treeNodeName"
 let rockNodeName = "rockNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
+fileprivate let radiansInCircle = Float.pi * 2.0
+
 enum interactiveNodeType: Int, CaseIterable {
     case floor = 2
     case tree = 4
@@ -125,12 +127,24 @@ class NodeFactory: NSObject {
         addWallNodes(to: terrainNode, grid: grid)
 
         if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
-            floorNode.sentinelNode = createSentinelNode()
+            var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition) + Float.pi
+            if initialAngle > radiansInCircle {
+                initialAngle -= radiansInCircle
+            }
+
+            let rightAngle = closestRightAngle(to: initialAngle)
+            floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
         }
 
         for sentryPosition in grid.sentryPositions {
             if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
-                floorNode.sentryNode = createSentryNode()
+                var initialAngle = grid.startPosition.angle(to: sentryPosition) + Float.pi
+                if initialAngle > radiansInCircle {
+                    initialAngle -= radiansInCircle
+                }
+
+                let rightAngle = closestRightAngle(to: initialAngle)
+                floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
             }
         }
 
@@ -147,17 +161,31 @@ class NodeFactory: NSObject {
         return terrainNode
     }
 
-    func createSentinelNode(startAngle: Float = 0.0) -> SentinelNode {
+    private func closestRightAngle(to angle: Float) -> Float {
+        var closest = radiansInCircle
+        var smallestDelta = radiansInCircle
+        for i in 1 ... 4 {
+            let candidate = Float.pi / 2.0 * Float(i)
+            let delta = fabsf(candidate - angle)
+            if delta < smallestDelta {
+                closest = candidate
+                smallestDelta = delta
+            }
+        }
+        return closest
+    }
+
+    func createSentinelNode(initialAngle: Float) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
+        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
         return clone
     }
 
-    func createSentryNode(startAngle: Float = 0.0) -> SentryNode {
+    func createSentryNode(initialAngle: Float) -> SentryNode {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
-        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, startAngle)
+        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
         return clone
     }
 
@@ -179,7 +207,7 @@ class NodeFactory: NSObject {
         let clone = rock.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
-        let rotation = Float.pi * 2.0 * Float(drand48())
+        let rotation = radiansInCircle * Float(drand48())
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
         return clone
     }
