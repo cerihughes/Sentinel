@@ -7,8 +7,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
+
         let levelConfiguration = MainLevelConfiguration(level: 40)
-        let viewModel = ViewModel(levelConfiguration: levelConfiguration)
+        let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
+                                              gridDepth: levelConfiguration.gridDepth,
+                                              floorSize: 10.0)
+        let nodeFactory = NodeFactory(nodePositioning: nodePositioning)
+
+        let world = SpaceWorld(nodeFactory: nodeFactory)
+        let viewModel = ViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
         let viewController = ContainerViewController(viewModel: viewModel)
         window!.rootViewController = viewController
         window!.makeKeyAndVisible()

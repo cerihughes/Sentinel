@@ -1,20 +1,11 @@
 import SceneKit
+import UIKit
 
-enum Viewer: Int {
-    case player = 0, sentinel, sentry1, sentry2, sentry3
-}
+class PlayerViewController: UIViewController {
+    private let viewModel: ViewModel
 
-class ViewController: UIViewController, ViewModelDelegate {
-    let viewModel: ViewModel
-    let viewer: Viewer
-
-    convenience init(viewModel: ViewModel) {
-        self.init(viewModel: viewModel, viewer: .player)
-    }
-
-    init(viewModel: ViewModel, viewer: Viewer) {
+    init(viewModel: ViewModel) {
         self.viewModel = viewModel
-        self.viewer = viewer
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -34,15 +25,10 @@ class ViewController: UIViewController, ViewModelDelegate {
             return
         }
 
-        sceneView.scene = viewModel.scene
+        sceneView.scene = viewModel.playerScene
         sceneView.backgroundColor = UIColor(white: 0.7, alpha: 1.0)
-        sceneView.pointOfView = viewModel.cameraNode(for: viewer)
+        sceneView.pointOfView = viewModel.initialCameraNode
 
-        if viewer != .player {
-            return
-        }
-
-        viewModel.delegate = self
         sceneView.showsStatistics = true
         sceneView.delegate = viewModel
 
@@ -100,15 +86,5 @@ class ViewController: UIViewController, ViewModelDelegate {
         }
 
         return nil
-    }
-
-    // MARK: ViewModelDelegate
-
-    func viewModel(_: ViewModel, didChange cameraNode: SCNNode) {
-        guard let sceneView = self.view as? SCNView else {
-            return
-        }
-
-        sceneView.pointOfView = cameraNode
     }
 }

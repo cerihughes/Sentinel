@@ -1,13 +1,18 @@
+import SceneKit
 import UIKit
 
-class ContainerViewController: UIViewController {
+enum Viewer: Int {
+    case player = 0, sentinel, sentry1, sentry2, sentry3
+}
+
+class ContainerViewController: UIViewController, ViewModelDelegate {
     private let viewModel: ViewModel
     private let oppositionContainer = OppositionViewContainer()
-    private let mainViewController: ViewController
+    private let playerViewController: PlayerViewController
 
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
-        mainViewController = ViewController(viewModel: viewModel)
+        playerViewController = PlayerViewController(viewModel: viewModel)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -18,11 +23,13 @@ class ContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        addChild(mainViewController)
-        view.addSubview(mainViewController.view)
-        mainViewController.didMove(toParent: self)
+        viewModel.delegate = self
 
-        let mainView: UIView = mainViewController.view
+        addChild(playerViewController)
+        view.addSubview(playerViewController.view)
+        playerViewController.didMove(toParent: self)
+
+        let mainView: UIView = playerViewController.view
         mainView.translatesAutoresizingMaskIntoConstraints = false
         let mainCenterX = mainView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         let mainCenterY = mainView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
@@ -46,13 +53,15 @@ class ContainerViewController: UIViewController {
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
                                      containerRight, containerTop, containerWidth, containerHeight])
 
-        let sentinelViewController = ViewController(viewModel: viewModel, viewer: .sentinel)
+        let cameraNode = viewModel.cameraNode(for: .sentinel)
+        let sentinelViewController = OpponentViewController(scene: viewModel.opponentScene, cameraNode: cameraNode)
         add(oppositionController: sentinelViewController)
 
         let rawValueOffset = Viewer.sentry1.rawValue
         for i in 0 ..< viewModel.levelConfiguration.sentryCount {
             if let viewer = Viewer(rawValue: i + rawValueOffset) {
-                let sentryViewController = ViewController(viewModel: viewModel, viewer: viewer)
+                let cameraNode = viewModel.cameraNode(for: viewer)
+                let sentryViewController = OpponentViewController(scene: viewModel.opponentScene, cameraNode: cameraNode)
                 add(oppositionController: sentryViewController)
             }
         }
@@ -73,6 +82,16 @@ class ContainerViewController: UIViewController {
         oppositionController.willMove(toParent: nil)
         oppositionController.view.removeFromSuperview()
         oppositionController.removeFromParent()
+    }
+
+    // MARK: ViewModelDelegate
+
+    func viewModel(_: ViewModel, didChange cameraNode: SCNNode) {
+        guard let sceneView = playerViewController.view as? SCNView else {
+            return
+        }
+
+        sceneView.pointOfView = cameraNode
     }
 }
 

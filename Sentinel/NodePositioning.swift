@@ -1,13 +1,13 @@
 import SceneKit
 
 class NodePositioning: NSObject {
-    let gridWidth: Float
-    let gridDepth: Float
+    private let gridWidth: Float
+    private let gridDepth: Float
     let floorSize: Float
 
-    init(gridWidth: Float, gridDepth: Float, floorSize: Float) {
-        self.gridWidth = gridWidth
-        self.gridDepth = gridDepth
+    init(gridWidth: Int, gridDepth: Int, floorSize: Float) {
+        self.gridWidth = Float(gridWidth)
+        self.gridDepth = Float(gridDepth)
         self.floorSize = floorSize
         
         super.init()
