@@ -16,9 +16,7 @@ protocol ViewModelDelegate: class {
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
     let levelConfiguration: LevelConfiguration
-    let playerScene: SCNScene
-    let opponentScene: SCNScene
-    let initialCameraNode: SCNNode
+    let world: World
     weak var delegate: ViewModelDelegate?
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
@@ -32,10 +30,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.levelConfiguration = levelConfiguration
-
-        self.playerScene = world.playerScene
-        self.opponentScene = world.opponentScene
-        self.initialCameraNode = world.initialCameraNode
+        self.world = world
 
         let tg = TerrainGenerator()
         self.grid = tg.generate(levelConfiguration: levelConfiguration)
@@ -140,7 +135,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func enterScene() -> Bool {
         if let floorNode = nodeMap.getFloorNode(for: grid.startPosition),
             let synthoidNode = floorNode.synthoidNode {
-            moveCamera(from: initialCameraNode,
+            moveCamera(from: world.initialCameraNode,
                        to: synthoidNode.cameraNode,
                        animationDuration: 3.0)
             grid.currentPosition = grid.startPosition

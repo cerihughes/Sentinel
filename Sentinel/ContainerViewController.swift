@@ -12,7 +12,11 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
 
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
-        playerViewController = PlayerViewController(viewModel: viewModel)
+
+        let scene = viewModel.world.playerScene
+        let cameraNode = viewModel.world.initialCameraNode
+        playerViewController = PlayerViewController(scene: scene, cameraNode: cameraNode)
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -23,6 +27,11 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        guard let sceneView = playerViewController.view as? SCNView else {
+            return
+        }
+
+        sceneView.delegate = viewModel
         viewModel.delegate = self
 
         addChild(playerViewController)
@@ -53,15 +62,39 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
                                      containerRight, containerTop, containerWidth, containerHeight])
 
+        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tapGesture(sender:)))
+        sceneView.addGestureRecognizer(tapRecogniser)
+
+        let longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(tapGesture(sender:)))
+        longPressRecogniser.isEnabled = false
+        sceneView.addGestureRecognizer(longPressRecogniser)
+
+        let panRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panGesture(sender:)))
+        panRecogniser.isEnabled = false
+        sceneView.addGestureRecognizer(panRecogniser)
+
+        viewModel.preAnimationBlock = {
+            tapRecogniser.isEnabled = false
+            longPressRecogniser.isEnabled = false
+            panRecogniser.isEnabled = false
+        }
+
+        viewModel.postAnimationBlock = {
+            tapRecogniser.isEnabled = true
+            longPressRecogniser.isEnabled = true
+            panRecogniser.isEnabled = true
+        }
+
+        let scene = viewModel.world.opponentScene
         let cameraNode = viewModel.cameraNode(for: .sentinel)
-        let sentinelViewController = OpponentViewController(scene: viewModel.opponentScene, cameraNode: cameraNode)
+        let sentinelViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
         add(oppositionController: sentinelViewController)
 
         let rawValueOffset = Viewer.sentry1.rawValue
         for i in 0 ..< viewModel.levelConfiguration.sentryCount {
             if let viewer = Viewer(rawValue: i + rawValueOffset) {
                 let cameraNode = viewModel.cameraNode(for: viewer)
-                let sentryViewController = OpponentViewController(scene: viewModel.opponentScene, cameraNode: cameraNode)
+                let sentryViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
                 add(oppositionController: sentryViewController)
             }
         }
@@ -70,6 +103,38 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
     override func viewWillLayoutSubviews() {
         let size = view.frame.size
         oppositionContainer.aspectRatio = size.width / size.height
+    }
+
+    @objc
+    func tapGesture(sender: UIGestureRecognizer) {
+        if let sceneView = playerViewController.view as? SCNView, let interaction = interaction(for: sender) {
+            let point = sender.location(in: sceneView)
+            let hitTestResults = sceneView.hitTest(point, options: [:])
+            if viewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
+                // Toggle the state to "complete" the gesture
+                sender.isEnabled = false
+                sender.isEnabled = true
+            }
+        }
+    }
+
+    @objc
+    func panGesture(sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: sender.view!)
+        let deltaX = Float(translation.x)
+        viewModel.processPan(by: deltaX, finished: sender.state == .ended)
+    }
+
+    private func interaction(for sender: UIGestureRecognizer) -> UserInteraction? {
+        if sender.isKind(of: UITapGestureRecognizer.self) {
+            return .tap
+        }
+
+        if sender.isKind(of: UILongPressGestureRecognizer.self) {
+            return .longPress
+        }
+
+        return nil
     }
 
     private func add(oppositionController: UIViewController) {
@@ -121,4 +186,3 @@ class OppositionViewContainer: UIView {
         }
     }
 }
-
