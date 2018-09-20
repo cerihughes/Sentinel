@@ -102,7 +102,7 @@ class ViewController: UIViewController, ViewModelDelegate {
         return nil
     }
 
-    // MARK: ViewControllerDelegate
+    // MARK: ViewModelDelegate
 
     func viewModel(_: ViewModel, didChange cameraNode: SCNNode) {
         guard let sceneView = self.view as? SCNView else {

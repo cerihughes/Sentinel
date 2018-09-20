@@ -1,6 +1,6 @@
 import SceneKit
 
-class OppositionNode: SCNNode, PlaceableNode {
+class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
     fileprivate override init() {
         super.init()
     }
@@ -55,8 +55,8 @@ class OppositionNode: SCNNode, PlaceableNode {
         return parent as? FloorNode
     }
 
-    var cameraNode: SCNNode? {
-        return childNode(withName: cameraNodeName, recursively: true)
+    var cameraNode: SCNNode {
+        return childNode(withName: cameraNodeName, recursively: true)!
     }
 
     func visibleSynthoids(in renderer: SCNSceneRenderer) -> [SynthoidNode] {
@@ -83,7 +83,7 @@ class OppositionNode: SCNNode, PlaceableNode {
     }
 
     private func visibleNodes<T: SCNNode>(in renderer: SCNSceneRenderer, type: T.Type) -> [T] {
-        guard let scene = renderer.scene, let cameraNode = cameraNode else {
+        guard let scene = renderer.scene else {
             return []
         }
 
