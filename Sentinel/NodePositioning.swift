@@ -20,9 +20,10 @@ class NodePositioning: NSObject {
                               (Float(z) - (gridDepth / 2.0)) * floorSize)
     }
 
-    func calculateObjectPosition() -> SCNVector3 {
+    func calculateObjectPosition(height: Int = 0) -> SCNVector3 {
+        let heightOffset = Float(height) * 0.5 * floorSize
         return SCNVector3Make(0.0,
-                              0.5 * floorSize,
+                              (0.5 * floorSize) + heightOffset,
                               0.0)
     }
 }
