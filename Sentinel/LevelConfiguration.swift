@@ -2,9 +2,9 @@ import Foundation
 
 protocol LevelConfiguration {
     var level: Int {get}
-    var rotationSteps: Int {get}
-    var rotationTime: TimeInterval {get}
-    var rotationPause: TimeInterval {get}
+    var opponentRotationSteps: Int {get}
+    var opponentRotationTime: TimeInterval {get}
+    var opponentRotationPause: TimeInterval {get}
 
     var gridWidth: Int {get}
     var gridDepth: Int {get}
@@ -26,10 +26,10 @@ protocol LevelConfiguration {
 
 struct MainLevelConfiguration: LevelConfiguration {
     let level: Int
-    let rotationSteps: Int = 12
-    let rotationTime: TimeInterval = 0.3
+    let opponentRotationSteps: Int = 12
+    let opponentRotationTime: TimeInterval = 0.3
 
-    private let rotationPauseRange = 5.0 ..< 8.0
+    private let opponentRotationPauseRange = 5.0 ..< 8.0
     private let gridWidthRange = 24 ..< 32
     private let gridDepthRange = 16 ..< 24
 
@@ -39,9 +39,9 @@ struct MainLevelConfiguration: LevelConfiguration {
         return Float(level) / Float(maxLevel)
     }
 
-    var rotationPause: TimeInterval {
-        let adjustment = TimeInterval(progression) * rotationPauseRange.lowerBound - rotationPauseRange.upperBound
-        return rotationPauseRange.upperBound - adjustment
+    var opponentRotationPause: TimeInterval {
+        let adjustment = TimeInterval(progression) * opponentRotationPauseRange.lowerBound - opponentRotationPauseRange.upperBound
+        return opponentRotationPauseRange.upperBound - adjustment
     }
 
     var gridWidth: Int {
@@ -53,7 +53,7 @@ struct MainLevelConfiguration: LevelConfiguration {
         let adjustment = progression * Float(gridDepthRange.lowerBound - gridDepthRange.upperBound)
         return gridDepthRange.upperBound - Int(adjustment)
     }
-    
+
     var sentinelPlatformHeight: Int {
         var platformHeight = (level / 10) + 1
         if platformHeight > 4 {
@@ -93,9 +93,9 @@ struct MainLevelConfiguration: LevelConfiguration {
 
 struct TestLevelConfiguration: LevelConfiguration {
     let level: Int
-    let rotationSteps: Int = 12
-    let rotationTime: TimeInterval = 1.0
-    let rotationPause: TimeInterval = 8.0
+    let opponentRotationSteps: Int = 12
+    let opponentRotationTime: TimeInterval = 1.0
+    let opponentRotationPause: TimeInterval = 8.0
 
     let gridWidth = 16
     let gridDepth = 16

@@ -86,9 +86,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return true
         }
 
-        let radians = 2.0 * Float.pi / Float(levelConfiguration.rotationSteps)
-        let duration = levelConfiguration.rotationTime
-        _ = timeEngine.add(timeInterval: levelConfiguration.rotationPause) { (timeInterval, renderer) -> Bool in
+        let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
+        let duration = levelConfiguration.opponentRotationTime
+        _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause) { (timeInterval, renderer) -> Bool in
             for oppositionNode in self.terrainNode.oppositionNodes {
                 oppositionNode.rotate(by: radians, duration: duration)
             }
