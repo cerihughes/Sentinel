@@ -192,23 +192,20 @@ class NodeFactory: NSObject {
 
     func createSynthoidNode(height: Int, viewingAngle: Float) -> SynthoidNode {
         let clone = synthoid.clone()
-        clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(height) * 0.5 * nodePositioning.floorSize
+        clone.position = nodePositioning.calculateObjectPosition(height: height)
         clone.viewingAngle = viewingAngle
         return clone
     }
 
     func createTreeNode(height: Int) -> TreeNode {
         let clone = tree.clone()
-        clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(height) * 0.5 * nodePositioning.floorSize
+        clone.position = nodePositioning.calculateObjectPosition(height: height)
         return clone
     }
 
     func createRockNode(height: Int) -> RockNode {
         let clone = rock.clone()
-        clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(height) * 0.5 * nodePositioning.floorSize
+        clone.position = nodePositioning.calculateObjectPosition(height: height)
         let rotation = radiansInCircle * Float(drand48())
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
         return clone

@@ -3,7 +3,9 @@ import SceneKit
 class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
     var viewingAngle: Float = 0.0 {
         didSet {
+            let oldPosition = position
             transform = SCNMatrix4MakeRotation(viewingAngle, 0, 1, 0)
+            position = oldPosition
         }
     }
 
@@ -28,13 +30,14 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         let camera = SCNCamera()
         camera.automaticallyAdjustsZRange = true
         let cameraNode = SCNNode()
+        cameraNode.position.y += floorSize / 4.0
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
         addChildNode(cameraNode)
 
         name = synthoidNodeName
         categoryBitMask = interactiveNodeType.synthoid.rawValue
-        pivot = SCNMatrix4MakeTranslation(0.0, -1.0 * floorSize, 0.0)
+        pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * floorSize, 0.0)
     }
 
     var floorNode: FloorNode? {
@@ -51,6 +54,8 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
 
     func apply(rotationDelta radians: Float) {
         let newRadians = viewingAngle + radians
+        let oldPosition = position
         transform = SCNMatrix4MakeRotation(newRadians, 0, 1, 0)
+        position = oldPosition
     }
 }
