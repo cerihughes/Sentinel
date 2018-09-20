@@ -97,6 +97,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     func cameraNode(for viewer: Viewer) -> SCNNode? {
+        if let viewingNode = viewingNode(for: viewer) {
+            return viewingNode.cameraNode
+        }
+        return nil
+    }
+
+    private func viewingNode(for viewer: Viewer) -> ViewingNode? {
         switch viewer {
         case .player:
             guard
@@ -105,17 +112,17 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 else {
                     return nil
             }
-            return synthoidNode.cameraNode
+            return synthoidNode
         case .sentinel:
             guard let sentinelNode = terrainNode.sentinelNode else {
                 return nil
             }
-            return sentinelNode.cameraNode
+            return sentinelNode
         default:
             let rawValueOffset = Viewer.sentry1.rawValue
             let index = viewer.rawValue - rawValueOffset
             if index < terrainNode.sentryNodes.count {
-                return terrainNode.sentryNodes[index].cameraNode
+                return terrainNode.sentryNodes[index]
             }
             return nil
         }

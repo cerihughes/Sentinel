@@ -1,6 +1,6 @@
 import SceneKit
 
-class SynthoidNode: SCNNode, PlaceableNode, DetectableNode {
+class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
     var viewingAngle: Float = 0.0 {
         didSet {
             transform = SCNMatrix4MakeRotation(viewingAngle, 0, 1, 0)
