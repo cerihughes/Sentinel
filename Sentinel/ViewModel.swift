@@ -54,8 +54,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let cameraNode = nodeFactory.createCameraNode()
         cameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
-        let lookAt = SCNLookAtConstraint(target: terrainNode)
-        cameraNode.constraints = [lookAt]
+        cameraNode.look(at: terrainNode.worldPosition)
 
         let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
         let orbitNode = SCNNode()
