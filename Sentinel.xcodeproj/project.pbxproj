@@ -14,7 +14,7 @@
 		652778CE2145625E00643BE0 /* GridPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652778CD2145625E00643BE0 /* GridPiece.swift */; };
 		652B39C2213EB76B006D9AB0 /* GridIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652B39C1213EB76B006D9AB0 /* GridIndexTests.swift */; };
 		6546A842213C0651009F0650 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A841213C0651009F0650 /* AppDelegate.swift */; };
-		6546A844213C0651009F0650 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A843213C0651009F0650 /* ViewController.swift */; };
+		6546A844213C0651009F0650 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A843213C0651009F0650 /* PlayerViewController.swift */; };
 		6546A849213C0652009F0650 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6546A848213C0652009F0650 /* Assets.xcassets */; };
 		6546A84C213C0652009F0650 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6546A84A213C0652009F0650 /* LaunchScreen.storyboard */; };
 		6546A857213C0652009F0650 /* GridTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6546A856213C0652009F0650 /* GridTests.swift */; };
@@ -44,6 +44,9 @@
 		65B83F84213C09A000515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65BFF02021414F66000861F8 /* NodePositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BFF01F21414F66000861F8 /* NodePositioning.swift */; };
 		65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
+		65DCBC5F2154047A00F5D2FB /* SpaceWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */; };
+		65DCBC61215407D000F5D2FB /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DCBC60215407D000F5D2FB /* World.swift */; };
+		65DCBC6321540C2900F5D2FB /* OpponentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DCBC6221540C2900F5D2FB /* OpponentViewController.swift */; };
 		65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
 /* End PBXBuildFile section */
 
@@ -64,7 +67,7 @@
 		652B39C1213EB76B006D9AB0 /* GridIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridIndexTests.swift; sourceTree = "<group>"; };
 		6546A83E213C0651009F0650 /* Sentinel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sentinel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6546A841213C0651009F0650 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6546A843213C0651009F0650 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6546A843213C0651009F0650 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 		6546A848213C0652009F0650 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6546A84B213C0652009F0650 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6546A84D213C0652009F0650 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -93,6 +96,9 @@
 		65B83F82213C08E400515915 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		65BFF01F21414F66000861F8 /* NodePositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePositioning.swift; sourceTree = "<group>"; };
 		65C003B82146BF3400EDB205 /* LevelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelConfiguration.swift; sourceTree = "<group>"; };
+		65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceWorld.swift; sourceTree = "<group>"; };
+		65DCBC60215407D000F5D2FB /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
+		65DCBC6221540C2900F5D2FB /* OpponentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentViewController.swift; sourceTree = "<group>"; };
 		65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,6 +147,7 @@
 				656AAEE0214EA3BF00991151 /* Level Configuration */,
 				656AAEDF214EA3AE00991151 /* Grid */,
 				656AAEDD214EA38200991151 /* Node */,
+				65DCBC592154043700F5D2FB /* World */,
 				6546A841213C0651009F0650 /* AppDelegate.swift */,
 				6546A848213C0652009F0650 /* Assets.xcassets */,
 				6546A84A213C0652009F0650 /* LaunchScreen.storyboard */,
@@ -222,10 +229,20 @@
 		656AAEE3214EA3FB00991151 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				6546A843213C0651009F0650 /* ViewController.swift */,
+				6546A843213C0651009F0650 /* PlayerViewController.swift */,
+				65DCBC6221540C2900F5D2FB /* OpponentViewController.swift */,
 				654AB2C6214D4B0400E8851D /* ContainerViewController.swift */,
 			);
 			name = "View Controller";
+			sourceTree = "<group>";
+		};
+		65DCBC592154043700F5D2FB /* World */ = {
+			isa = PBXGroup;
+			children = (
+				65DCBC60215407D000F5D2FB /* World.swift */,
+				65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */,
+			);
+			name = World;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -332,6 +349,7 @@
 				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				6586ACA521500CEE008727D9 /* TimeEngine.swift in Sources */,
 				656635DB2141483D00C264EA /* ViewModel.swift in Sources */,
+				65DCBC61215407D000F5D2FB /* World.swift in Sources */,
 				6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */,
 				656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */,
 				656AAEE7214EB82100991151 /* TreeNode.swift in Sources */,
@@ -340,10 +358,12 @@
 				656AAEEF214ED18D00991151 /* SynthoidNode.swift in Sources */,
 				65A9E07821427795009011C8 /* SkyBox.swift in Sources */,
 				65BFF02021414F66000861F8 /* NodePositioning.swift in Sources */,
-				6546A844213C0651009F0650 /* ViewController.swift in Sources */,
+				6546A844213C0651009F0650 /* PlayerViewController.swift in Sources */,
+				65DCBC6321540C2900F5D2FB /* OpponentViewController.swift in Sources */,
 				652778CE2145625E00643BE0 /* GridPiece.swift in Sources */,
 				6515595221403AD500F35776 /* NodeMap.swift in Sources */,
 				6546A842213C0651009F0650 /* AppDelegate.swift in Sources */,
+				65DCBC5F2154047A00F5D2FB /* SpaceWorld.swift in Sources */,
 				654AB2C7214D4B0400E8851D /* ContainerViewController.swift in Sources */,
 				657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */,
 				656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */,

@@ -16,7 +16,9 @@ protocol ViewModelDelegate: class {
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
     let levelConfiguration: LevelConfiguration
-    let scene: SCNScene
+    let playerScene: SCNScene
+    let opponentScene: SCNScene
+    let initialCameraNode: SCNNode
     weak var delegate: ViewModelDelegate?
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
@@ -28,56 +30,23 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private var energy: Int = 10
     private let terrainNode: TerrainNode
 
-    init(levelConfiguration: LevelConfiguration) {
+    init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.levelConfiguration = levelConfiguration
 
-        self.scene = SCNScene()
+        self.playerScene = world.playerScene
+        self.opponentScene = world.opponentScene
+        self.initialCameraNode = world.initialCameraNode
 
         let tg = TerrainGenerator()
         self.grid = tg.generate(levelConfiguration: levelConfiguration)
-
-        let nodePositioning = NodePositioning(gridWidth: Float(grid.width),
-                                              gridDepth: Float(grid.depth),
-                                              floorSize: 10.0)
-
-        self.nodeFactory = NodeFactory(nodePositioning: nodePositioning)
+        self.nodeFactory = nodeFactory
         self.nodeMap = NodeMap()
         self.terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
+        world.set(terrainNode: self.terrainNode)
 
         super.init()
 
-        setupScene()
         setupTimingFunctions()
-    }
-
-    private func setupScene() {
-        let skyBox = SkyBox(sourceImage: #imageLiteral(resourceName: "skybox.png"))
-        if let components = skyBox.componentImages() {
-            scene.background.contents = components
-        }
-
-        let cameraNode = nodeFactory.createCameraNode()
-        cameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
-        cameraNode.look(at: terrainNode.worldPosition)
-
-        let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
-        let orbitNode = SCNNode()
-        orbitNode.name = "orbitNodeName"
-        orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
-        let orbit = CABasicAnimation(keyPath: "rotation.w")
-        orbit.byValue = Float.pi * -2.0
-        orbit.duration = 100.0
-        orbit.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
-        orbit.repeatCount = Float.infinity
-        orbitNode.addAnimation(orbit, forKey: "orbit")
-
-        orbitNode.addChildNode(cameraNode)
-        orbitNode.addChildNode(terrainNode)
-        for ambientLightNode in ambientLightNodes {
-            orbitNode.addChildNode(ambientLightNode)
-        }
-
-        scene.rootNode.addChildNode(orbitNode)
     }
 
     private func setupTimingFunctions() {
@@ -169,10 +138,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func enterScene() -> Bool {
-        if let orbitCamera = scene.rootNode.childNode(withName: cameraNodeName, recursively: true),
-            let floorNode = nodeMap.getFloorNode(for: grid.startPosition),
+        if let floorNode = nodeMap.getFloorNode(for: grid.startPosition),
             let synthoidNode = floorNode.synthoidNode {
-            moveCamera(from: orbitCamera,
+            moveCamera(from: initialCameraNode,
                        to: synthoidNode.cameraNode,
                        animationDuration: 3.0)
             grid.currentPosition = grid.startPosition
