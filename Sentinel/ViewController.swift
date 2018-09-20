@@ -4,7 +4,7 @@ enum Viewer: Int {
     case player = 0, sentinel, sentry1, sentry2, sentry3
 }
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, ViewModelDelegate {
     let viewModel: ViewModel
     let viewer: Viewer
 
@@ -42,6 +42,7 @@ class ViewController: UIViewController {
             return
         }
 
+        viewModel.delegate = self
         sceneView.showsStatistics = true
         sceneView.delegate = viewModel
 
@@ -99,5 +100,15 @@ class ViewController: UIViewController {
         }
 
         return nil
+    }
+
+    // MARK: ViewControllerDelegate
+
+    func viewModel(_: ViewModel, didChange cameraNode: SCNNode) {
+        guard let sceneView = self.view as? SCNView else {
+            return
+        }
+
+        sceneView.pointOfView = cameraNode
     }
 }

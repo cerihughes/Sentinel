@@ -10,9 +10,14 @@ let synthoidEnergyValue = 3
 let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
+protocol ViewModelDelegate: class {
+    func viewModel(_: ViewModel, didChange cameraNode: SCNNode)
+}
+
 class ViewModel: NSObject, SCNSceneRendererDelegate {
     let levelConfiguration: LevelConfiguration
     let scene: SCNScene
+    weak var delegate: ViewModelDelegate?
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
 
@@ -20,7 +25,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private let nodeFactory: NodeFactory
     private let nodeMap: NodeMap
     private let timeEngine = TimeEngine()
-    private var currentAngle: Float = 0.0
     private var energy: Int = 10
     private var terrainNode: TerrainNode
 
@@ -95,7 +99,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     func cameraNode(for viewer: Viewer) -> SCNNode? {
         switch viewer {
         case .player:
-            return scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
+            guard
+                let currentFloorNode = nodeMap.getFloorNode(for: grid.currentPosition),
+                let synthoidNode = currentFloorNode.synthoidNode
+                else {
+                    return nil
+            }
+            return synthoidNode.cameraNode
         case .sentinel:
             guard let sentinelNode = terrainNode.sentinelNode else {
                 return nil
@@ -127,24 +137,23 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     func processPan(by x: Float, finished: Bool) {
         guard
-            let cameraNode = scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
-            else  {
+            let currentFloorNode = nodeMap.getFloorNode(for: grid.currentPosition),
+            let synthoidNode = currentFloorNode.synthoidNode
+            else {
                 return
         }
 
-        let position = cameraNode.position
+        let currentAngle = synthoidNode.viewingAngle
         let angleDeltaDegrees = x / 10.0
         let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
-        var newRadians = currentAngle + angleDeltaRadians
-
-        cameraNode.transform = SCNMatrix4MakeRotation(newRadians, 0, 1, 0)
-        cameraNode.position = position
+        synthoidNode.apply(rotationDelta: angleDeltaRadians)
 
         if finished {
+            var newRadians = currentAngle + angleDeltaRadians
             while newRadians < 0 {
                 newRadians += (2.0 * Float.pi)
             }
-            currentAngle = newRadians
+            synthoidNode.viewingAngle = newRadians
         }
     }
 
@@ -153,9 +162,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func enterScene() -> Bool {
-        if let startPiece = grid.get(point: grid.startPosition) {
-            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
-            moveCamera(to: startPiece, facing: angleToSentinel, animationDuration: 3.0)
+        if let orbitCamera = scene.rootNode.childNode(withName: cameraNodeName, recursively: true),
+            let floorNode = nodeMap.getFloorNode(for: grid.startPosition),
+            let synthoidNode = floorNode.synthoidNode {
+            moveCamera(from: orbitCamera,
+                       to: synthoidNode.cameraNode,
+                       animationDuration: 3.0)
+            grid.currentPosition = grid.startPosition
             return true
         }
         return false
@@ -188,8 +201,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 return processTapFloor(node: node, piece: piece)
             }
         case (.tap, .synthoid):
-            if let piece = piece {
-                move(to: piece)
+            if let synthoidNode = node as? SynthoidNode {
+                move(to: synthoidNode)
                 return true
             }
         case (.longPress, .floor):
@@ -216,7 +229,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         } else if grid.rockPositions.contains(point) && !grid.synthoidPositions.contains(point) {
             buildRock(at: piece)
         } else if grid.synthoidPositions.contains(point) {
-            move(to: piece)
+            if let floorNode = node as? FloorNode,
+                let synthoidNode = floorNode.synthoidNode {
+                move(to: synthoidNode)
+            }
         } else {
             // Empty space - build a rock
             buildRock(at: piece)
@@ -234,7 +250,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 return false
         }
 
-        buildSynthoid(at: piece)
+        let viewingAngle = point.angle(to: grid.currentPosition)
+        buildSynthoid(at: piece, viewingAngle: viewingAngle)
         return true
     }
 
@@ -262,10 +279,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         return false
     }
 
-    private func move(to piece: GridPiece) {
+    private func move(to synthoidNode: SynthoidNode) {
+        guard
+            let floorNode = synthoidNode.floorNode,
+            let piece = nodeMap.getPiece(for: floorNode)
+            else {
+                return
+        }
         let point = piece.point
-        let angle = point.angle(to: grid.currentPosition)
-        moveCamera(to: piece, facing: angle, animationDuration: 1.0)
+        moveCamera(to: synthoidNode, animationDuration: 1.0)
         grid.currentPosition = point
     }
 
@@ -330,7 +352,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         adjustEnergy(delta: -rockEnergyValue, isPlayer: isPlayer)
     }
 
-    private func buildSynthoid(at piece: GridPiece) {
+    private func buildSynthoid(at piece: GridPiece, viewingAngle: Float) {
         guard hasEnergy(required: synthoidEnergyValue, isPlayer: true),
             let floorNode = nodeMap.getFloorNode(for: piece.point) else {
             return
@@ -339,7 +361,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         let point = piece.point
         grid.synthoidPositions.append(point)
 
-        let synthoidNode = nodeFactory.createSynthoidNode(height: piece.rockCount)
+        let synthoidNode = nodeFactory.createSynthoidNode(height: piece.rockCount, viewingAngle: viewingAngle)
         floorNode.synthoidNode = synthoidNode
 
         adjustEnergy(delta: -synthoidEnergyValue, isPlayer: true)
@@ -418,38 +440,48 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    private func moveCamera(to piece: GridPiece, facing: Float, animationDuration: CFTimeInterval) {
+    private func moveCamera(to nextSynthoidNode: SynthoidNode, animationDuration: CFTimeInterval) {
         guard
-            let cameraNode = scene.rootNode.childNode(withName: cameraNodeName, recursively: true)
-            else  {
+            let currentFloorNode = nodeMap.getFloorNode(for: grid.currentPosition),
+            let currentSynthoidNode = currentFloorNode.synthoidNode
+            else {
                 return
         }
 
-        let point = piece.point
-        let nodePositioning = nodeFactory.nodePositioning
-        let height = piece.rockLevel + 0.25
-        let newPosition = nodePositioning.calculateTerrainPosition(x: point.x, y: height, z: point.z)
+        moveCamera(from: currentSynthoidNode.cameraNode,
+                   to: nextSynthoidNode.cameraNode,
+                   animationDuration: animationDuration)
+    }
+
+    private func moveCamera(from: SCNNode, to: SCNNode, animationDuration: CFTimeInterval) {
+        guard
+            let delegate = delegate,
+            let parent = from.parent
+            else {
+                return
+        }
 
         if let preAnimationBlock = preAnimationBlock {
             preAnimationBlock()
         }
 
+        let transitionCameraNode = from.clone()
+        parent.addChildNode(transitionCameraNode)
+        delegate.viewModel(self, didChange: transitionCameraNode)
+
         SCNTransaction.begin()
         SCNTransaction.animationDuration = animationDuration
         SCNTransaction.completionBlock = {
+            delegate.viewModel(self, didChange: to)
+            transitionCameraNode.removeFromParentNode()
             if let postAnimationBlock = self.postAnimationBlock {
                 postAnimationBlock()
             }
         }
 
-        cameraNode.constraints = nil
-        cameraNode.transform = SCNMatrix4MakeRotation(facing, 0, 1, 0)
-        cameraNode.position = newPosition
+        transitionCameraNode.setWorldTransform(to.worldTransform)
 
         SCNTransaction.commit()
-
-        currentAngle = facing
-        grid.currentPosition = point
     }
 
     // MARK: SCNSceneRendererDelegate

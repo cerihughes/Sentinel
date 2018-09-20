@@ -149,7 +149,8 @@ class NodeFactory: NSObject {
         }
 
         if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            floorNode.synthoidNode = createSynthoidNode(height: 0)
+            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
+            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
         }
 
         for treePosition in grid.treePositions {
@@ -189,10 +190,11 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createSynthoidNode(height: Int) -> SynthoidNode {
+    func createSynthoidNode(height: Int, viewingAngle: Float) -> SynthoidNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.position.y += Float(height) * 0.5 * nodePositioning.floorSize
+        clone.viewingAngle = viewingAngle
         return clone
     }
 
