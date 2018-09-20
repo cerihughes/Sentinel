@@ -26,7 +26,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private let nodeMap: NodeMap
     private let timeEngine = TimeEngine()
     private var energy: Int = 10
-    private var terrainNode: TerrainNode
+    private let terrainNode: TerrainNode
 
     init(levelConfiguration: LevelConfiguration) {
         self.levelConfiguration = levelConfiguration
