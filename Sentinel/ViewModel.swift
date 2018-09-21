@@ -22,11 +22,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     var postAnimationBlock: (() -> Void)?
 
     private let grid: Grid
-    private let nodeFactory: NodeFactory
-    private let nodeMap: NodeMap
     private let timeEngine = TimeEngine()
     private var energy: Int = 10
-    private let terrainNode: TerrainNode
+    private let playerNodeManipulator: NodeManipulator
+    private let opponentNodeManipulator: NodeManipulator
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.levelConfiguration = levelConfiguration
@@ -34,10 +33,17 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let tg = TerrainGenerator()
         self.grid = tg.generate(levelConfiguration: levelConfiguration)
-        self.nodeFactory = nodeFactory
-        self.nodeMap = NodeMap()
-        self.terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-        world.set(terrainNode: self.terrainNode)
+
+        let playerNodeMap = NodeMap()
+        let playerTerrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: playerNodeMap)
+
+        let opponentNodeMap = NodeMap()
+        let opponentTerrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: opponentNodeMap)
+
+        world.set(playerTerrainNode: playerTerrainNode, opponentTerrainNode: opponentTerrainNode)
+
+        playerNodeManipulator = NodeManipulator(terrainNode: playerTerrainNode, nodeMap: playerNodeMap, nodeFactory: nodeFactory)
+        opponentNodeManipulator = NodeManipulator(terrainNode: opponentTerrainNode, nodeMap: opponentNodeMap, nodeFactory: nodeFactory)
 
         super.init()
 
@@ -45,17 +51,16 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func setupTimingFunctions() {
-        _ = timeEngine.add(timeInterval: 2.0) { (timeInterval, renderer) -> Bool in
-            self.oppositionScan(in: renderer)
+        _ = timeEngine.add(timeInterval: 2.0) { (timeInterval, playerRenderer) -> Bool in
+            self.oppositionScan(in: playerRenderer)
             return true
         }
 
         let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
         let duration = levelConfiguration.opponentRotationTime
-        _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause) { (timeInterval, renderer) -> Bool in
-            for oppositionNode in self.terrainNode.oppositionNodes {
-                oppositionNode.rotate(by: radians, duration: duration)
-            }
+        _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause) { (timeInterval, playerRenderer) -> Bool in
+            self.playerNodeManipulator.rotateOpposition(by: radians, duration: duration)
+            self.opponentNodeManipulator.rotateOpposition(by: radians, duration: duration)
             return true
         }
     }
@@ -70,23 +75,21 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func viewingNode(for viewer: Viewer) -> ViewingNode? {
         switch viewer {
         case .player:
-            guard
-                let currentFloorNode = nodeMap.getFloorNode(for: grid.currentPosition),
-                let synthoidNode = currentFloorNode.synthoidNode
-                else {
-                    return nil
+            guard let synthoidNode = playerNodeManipulator.synthoidNode(at: grid.currentPosition) else {
+                return nil
             }
             return synthoidNode
         case .sentinel:
-            guard let sentinelNode = terrainNode.sentinelNode else {
+            guard let sentinelNode = opponentNodeManipulator.terrainNode.sentinelNode else {
                 return nil
             }
             return sentinelNode
         default:
+            let sentryNodes = opponentNodeManipulator.terrainNode.sentryNodes
             let rawValueOffset = Viewer.sentry1.rawValue
             let index = viewer.rawValue - rawValueOffset
-            if index < terrainNode.sentryNodes.count {
-                return terrainNode.sentryNodes[index]
+            if index < sentryNodes.count {
+                return sentryNodes[index]
             }
             return nil
         }
@@ -107,11 +110,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     func processPan(by x: Float, finished: Bool) {
-        guard
-            let currentFloorNode = nodeMap.getFloorNode(for: grid.currentPosition),
-            let synthoidNode = currentFloorNode.synthoidNode
-            else {
-                return
+        guard let synthoidNode = playerNodeManipulator.synthoidNode(at: grid.currentPosition) else {
+            return
         }
 
         let currentAngle = synthoidNode.viewingAngle
@@ -133,15 +133,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func enterScene() -> Bool {
-        if let floorNode = nodeMap.getFloorNode(for: grid.startPosition),
-            let synthoidNode = floorNode.synthoidNode {
-            moveCamera(from: world.initialCameraNode,
-                       to: synthoidNode.cameraNode,
-                       animationDuration: 3.0)
-            grid.currentPosition = grid.startPosition
-            return true
+        guard let synthoidNode = playerNodeManipulator.synthoidNode(at: grid.startPosition) else {
+            return false
         }
-        return false
+
+        moveCamera(from: world.initialCameraNode,
+                   to: synthoidNode.cameraNode,
+                   animationDuration: 3.0)
+        grid.currentPosition = grid.startPosition
+        return true
     }
 
     private func process(interaction: UserInteraction, node: SCNNode) -> Bool {
@@ -157,14 +157,12 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: interactiveNodeType) -> Bool {
         var point: GridPoint? = nil
-        if let floorNode = node as? FloorNode,
-            let piece = nodeMap.getPiece(for: floorNode) {
-            point = piece.point
+        if let floorNode = node as? FloorNode {
+            point = playerNodeManipulator.point(for: floorNode)
         } else if let floorNode = node.parent as? FloorNode,
             let floorName = floorNode.name,
-            floorName == floorNodeName,
-            let piece = nodeMap.getPiece(for: floorNode) {
-            point = piece.point
+            floorName == floorNodeName {
+            point = playerNodeManipulator.point(for: floorNode)
         }
 
         switch (interaction, interactiveNodeType) {
@@ -246,13 +244,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func move(to synthoidNode: SynthoidNode) {
-        guard
-            let floorNode = synthoidNode.floorNode,
-            let piece = nodeMap.getPiece(for: floorNode)
+        guard let floorNode = synthoidNode.floorNode,
+            let point = playerNodeManipulator.point(for: floorNode)
             else {
                 return
         }
-        let point = piece.point
         moveCamera(to: synthoidNode, animationDuration: 1.0)
         grid.currentPosition = point
     }
@@ -274,33 +270,25 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func buildTree(at point: GridPoint, isPlayer: Bool = true) {
-        guard
-            hasEnergy(required: treeEnergyValue, isPlayer: isPlayer),
-            let floorNode = nodeMap.getFloorNode(for: point)
-            else {
-                return
+        guard hasEnergy(required: treeEnergyValue, isPlayer: isPlayer) else {
+            return
         }
 
         grid.treePositions.insert(point)
 
-        let treeNode = nodeFactory.createTreeNode(height: floorNode.rockNodes.count)
-        floorNode.treeNode = treeNode
+        playerNodeManipulator.buildTree(at: point)
+        opponentNodeManipulator.buildTree(at: point)
 
         adjustEnergy(delta: -treeEnergyValue, isPlayer: isPlayer)
     }
 
     private func buildRock(at point: GridPoint, isPlayer: Bool = true) {
-        guard
-            hasEnergy(required: treeEnergyValue, isPlayer: isPlayer),
-            let floorNode = nodeMap.getFloorNode(for: point)
-            else {
-                return
+        guard hasEnergy(required: treeEnergyValue, isPlayer: isPlayer) else {
+            return
         }
 
         if (grid.treePositions.contains(point)) {
-            if let treeNode = floorNode.treeNode {
-                absorb(treeNode: treeNode, point: point)
-            }
+            adjustEnergy(delta: treeEnergyValue, isPlayer: isPlayer)
         }
 
         guard hasEnergy(required: rockEnergyValue, isPlayer: isPlayer) else {
@@ -308,24 +296,22 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         grid.rockPositions.insert(point)
-        let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count)
-        floorNode.add(rockNode: rockNode)
+
+        playerNodeManipulator.buildRock(at: point)
+        opponentNodeManipulator.buildRock(at: point)
 
         adjustEnergy(delta: -rockEnergyValue, isPlayer: isPlayer)
     }
 
     private func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
-        guard
-            hasEnergy(required: synthoidEnergyValue, isPlayer: true),
-            let floorNode = nodeMap.getFloorNode(for: point)
-            else {
-                return
+        guard hasEnergy(required: synthoidEnergyValue, isPlayer: true) else {
+            return
         }
 
         grid.synthoidPositions.insert(point)
 
-        let synthoidNode = nodeFactory.createSynthoidNode(height: floorNode.rockNodes.count, viewingAngle: viewingAngle)
-        floorNode.synthoidNode = synthoidNode
+        playerNodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
+        opponentNodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
 
         adjustEnergy(delta: -synthoidEnergyValue, isPlayer: true)
     }
@@ -335,14 +321,16 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        treeNode.removeFromParentNode()
+        playerNodeManipulator.absorbTree(at: point)
+        opponentNodeManipulator.absorbTree(at: point)
+
         grid.treePositions.remove(at: index)
 
         adjustEnergy(delta: treeEnergyValue, isPlayer: isPlayer)
     }
 
     private func absorb(rockNode: RockNode, point: GridPoint, isPlayer: Bool = true) {
-        guard let floorNode = nodeMap.getFloorNode(for: point) else {
+        guard let floorNode = rockNode.parent as? FloorNode else {
             return
         }
 
@@ -380,7 +368,9 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        synthoidNode.removeFromParentNode()
+        playerNodeManipulator.absorbSynthoid(at: point)
+        opponentNodeManipulator.absorbSynthoid(at: point)
+
         grid.synthoidPositions.remove(at: index)
 
         adjustEnergy(delta: synthoidEnergyValue, isPlayer: isPlayer)
@@ -400,11 +390,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func moveCamera(to nextSynthoidNode: SynthoidNode, animationDuration: CFTimeInterval) {
-        guard
-            let currentFloorNode = nodeMap.getFloorNode(for: grid.currentPosition),
-            let currentSynthoidNode = currentFloorNode.synthoidNode
-            else {
-                return
+        guard let currentSynthoidNode = playerNodeManipulator.synthoidNode(at: grid.currentPosition) else {
+            return
         }
 
         moveCamera(from: currentSynthoidNode.cameraNode,
@@ -449,36 +436,32 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         timeEngine.handle(currentTimeInterval: time, renderer: renderer)
     }
 
-    private func oppositionScan(in renderer: SCNSceneRenderer) {
-        guard let floorNode = nodeMap.getFloorNode(for: grid.currentPosition),
-            let synthoidNode = floorNode.synthoidNode else {
-                return
+    private func oppositionScan(in playerRenderer: SCNSceneRenderer) {
+        guard let synthoidNode = playerNodeManipulator.synthoidNode(at: grid.currentPosition) else {
+            return
         }
 
-        for oppositionNode in terrainNode.oppositionNodes {
-            if let visibleSynthoid = oppositionNode.visibleSynthoids(in: renderer).randomElement() {
+        for oppositionNode in playerNodeManipulator.terrainNode.oppositionNodes {
+            if let visibleSynthoid = oppositionNode.visibleSynthoids(in: playerRenderer).randomElement() {
                 if visibleSynthoid == synthoidNode {
                     print("SEEN")
                 } else {
                     if let floorNode = visibleSynthoid.floorNode,
-                        let piece = nodeMap.getPiece(for: floorNode) {
-                        let point = piece.point
+                        let point = playerNodeManipulator.point(for: floorNode) {
                         absorb(synthoidNode: visibleSynthoid, point: point, isPlayer: false)
                         buildRock(at: point, isPlayer: false)
                         oppositionBuildRandomTree()
                     }
                 }
-            } else if let visibleRock = oppositionNode.visibleRocks(in: renderer).randomElement(),
+            } else if let visibleRock = oppositionNode.visibleRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleRock.floorNode,
-                let piece = nodeMap.getPiece(for: floorNode) {
-                let point = piece.point
+                let point = playerNodeManipulator.point(for: floorNode) {
                 absorb(rockNode: visibleRock, point: point, isPlayer: false)
                 buildTree(at: point, isPlayer: false)
                 oppositionBuildRandomTree()
-            } else if let visibleTree = oppositionNode.visibleTreesOnRocks(in: renderer).randomElement(),
+            } else if let visibleTree = oppositionNode.visibleTreesOnRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleTree.floorNode,
-                let piece = nodeMap.getPiece(for: floorNode) {
-                let point = piece.point
+                let point = playerNodeManipulator.point(for: floorNode) {
                 absorb(treeNode: visibleTree, point: point, isPlayer: false)
                 oppositionBuildRandomTree()
             }
