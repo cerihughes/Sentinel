@@ -26,6 +26,10 @@ class NodeManipulator: NSObject {
         return piece.point
     }
 
+    func floorNode(for point: GridPoint) -> FloorNode? {
+        return nodeMap.getFloorNode(for: point)
+    }
+
     func rotateOpposition(by radians: Float, duration: TimeInterval) {
         for oppositionNode in terrainNode.oppositionNodes {
             oppositionNode.rotate(by: radians, duration: duration)

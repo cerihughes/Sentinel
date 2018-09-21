@@ -2,8 +2,8 @@ import SceneKit
 import UIKit
 
 class OpponentViewController: UIViewController {
-    private let scene: SCNScene
-    private let cameraNode: SCNNode?
+    let scene: SCNScene
+    let cameraNode: SCNNode?
 
     init(scene: SCNScene, cameraNode: SCNNode?) {
         self.scene = scene
