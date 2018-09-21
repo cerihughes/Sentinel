@@ -81,30 +81,38 @@ class NodeManipulator: NSObject, NodeOperations {
         floorNode.synthoidNode = synthoidNode
     }
 
-    func absorbTree(at point: GridPoint) {
-        absorb(node: nodeMap.getFloorNode(for: point)?.treeNode)
+    func absorbTree(at point: GridPoint) -> Bool {
+        return absorb(node: nodeMap.getFloorNode(for: point)?.treeNode)
     }
 
-    func absorbRock(at point: GridPoint, index: Int) {
-        absorb(node: nodeMap.getFloorNode(for: point)?.rockNodes.last)
+    func absorbRock(at point: GridPoint, height: Int) -> Bool {
+        guard
+            let floorNode = nodeMap.getFloorNode(for: point),
+            floorNode.rockNodes.count > height
+            else {
+                return false
+        }
+        return absorb(node: floorNode.rockNodes.last)
     }
 
-    func absorbSynthoid(at point: GridPoint) {
-        absorb(node: nodeMap.getFloorNode(for: point)?.synthoidNode)
+    func absorbSynthoid(at point: GridPoint) -> Bool {
+        return absorb(node: nodeMap.getFloorNode(for: point)?.synthoidNode)
     }
 
-    func absorbSentry(at point: GridPoint) {
-        absorb(node: nodeMap.getFloorNode(for: point)?.sentryNode)
+    func absorbSentry(at point: GridPoint) -> Bool {
+        return absorb(node: nodeMap.getFloorNode(for: point)?.sentryNode)
     }
 
-    func absorbSentinel(at point: GridPoint) {
-        absorb(node: nodeMap.getFloorNode(for: point)?.sentinelNode)
+    func absorbSentinel(at point: GridPoint) -> Bool {
+        return absorb(node: nodeMap.getFloorNode(for: point)?.sentinelNode)
     }
 
-    private func absorb(node: SCNNode?) {
+    private func absorb(node: SCNNode?) -> Bool {
         if let node = node {
             node.removeFromParentNode()
+            return true
         }
+        return false
     }
 }
 

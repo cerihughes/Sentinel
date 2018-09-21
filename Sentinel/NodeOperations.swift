@@ -10,10 +10,10 @@ protocol NodeOperations {
     func buildTree(at point: GridPoint)
     func buildRock(at point: GridPoint)
     func buildSynthoid(at point: GridPoint, viewingAngle: Float)
-    
-    func absorbTree(at point: GridPoint)
-    func absorbRock(at point: GridPoint, index: Int)
-    func absorbSynthoid(at point: GridPoint)
-    func absorbSentry(at point: GridPoint)
-    func absorbSentinel(at point: GridPoint)
+
+    func absorbTree(at point: GridPoint) -> Bool
+    func absorbRock(at point: GridPoint, height: Int) -> Bool
+    func absorbSynthoid(at point: GridPoint) -> Bool
+    func absorbSentry(at point: GridPoint) -> Bool
+    func absorbSentinel(at point: GridPoint) -> Bool
 }
