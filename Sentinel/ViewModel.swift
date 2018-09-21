@@ -223,9 +223,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func processLongPressObject(node: SCNNode, point: GridPoint, interactiveNodeType: interactiveNodeType) -> Bool {
         if grid.sentinelPosition == point && interactiveNodeType == .sentinel {
-            // Absorb
+            if let sentinelNode = node as? SentinelNode {
+                absorb(sentinelNode: sentinelNode, point: point)
+            }
         } else if grid.sentryPositions.contains(point) && interactiveNodeType == .sentry {
-            // Absorb
+            if let sentryNode = node as? SentryNode {
+                absorb(sentryNode: sentryNode, point: point)
+            }
         } else if grid.treePositions.contains(point) && interactiveNodeType == .tree {
             if let treeNode = node as? TreeNode {
                 absorb(treeNode: treeNode, point: point)
@@ -374,6 +378,28 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.synthoidPositions.remove(at: index)
 
         adjustEnergy(delta: synthoidEnergyValue, isPlayer: isPlayer)
+    }
+
+    private func absorb(sentryNode: SentryNode, point: GridPoint) {
+        guard let index = grid.sentryPositions.index(of: point) else {
+            return
+        }
+
+        playerNodeManipulator.absorbSentry(at: point)
+        opponentNodeManipulator.absorbSentry(at: point)
+
+        grid.sentryPositions.remove(at: index)
+
+        adjustEnergy(delta: sentryEnergyValue, isPlayer: true)
+    }
+
+    private func absorb(sentinelNode: SentinelNode, point: GridPoint) {
+        playerNodeManipulator.absorbSentinel(at: point)
+        opponentNodeManipulator.absorbSentinel(at: point)
+
+        grid.sentinelPosition = undefinedPosition
+
+        adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
     }
 
     private func oppositionBuildRandomTree() {
