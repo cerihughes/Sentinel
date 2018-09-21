@@ -149,12 +149,13 @@ class NodeFactory: NSObject {
         }
 
         if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            floorNode.synthoidNode = createSynthoidNode(rockCount: 0)
+            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
+            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
         }
 
         for treePosition in grid.treePositions {
             if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getFloorNode(for: treePosition) {
-                floorNode.treeNode = createTreeNode(rockCount: 0)
+                floorNode.treeNode = createTreeNode(height: 0)
             }
         }
 
@@ -189,24 +190,22 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createSynthoidNode(rockCount: Int) -> SynthoidNode {
+    func createSynthoidNode(height: Int, viewingAngle: Float) -> SynthoidNode {
         let clone = synthoid.clone()
-        clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
+        clone.position = nodePositioning.calculateObjectPosition(height: height)
+        clone.viewingAngle = viewingAngle
         return clone
     }
 
-    func createTreeNode(rockCount: Int) -> TreeNode {
+    func createTreeNode(height: Int) -> TreeNode {
         let clone = tree.clone()
-        clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
+        clone.position = nodePositioning.calculateObjectPosition(height: height)
         return clone
     }
 
-    func createRockNode(rockCount: Int) -> RockNode {
+    func createRockNode(height: Int) -> RockNode {
         let clone = rock.clone()
-        clone.position = nodePositioning.calculateObjectPosition()
-        clone.position.y += Float(rockCount) * 0.5 * nodePositioning.floorSize
+        clone.position = nodePositioning.calculateObjectPosition(height: height)
         let rotation = radiansInCircle * Float(drand48())
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
         return clone

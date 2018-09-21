@@ -24,7 +24,7 @@ class TimeEngine: NSObject {
         let timeInterval: TimeInterval
         let function: (TimeInterval, SCNSceneRenderer) -> Bool
 
-        private var lastTimeInterval: TimeInterval = 0
+        private var nextTimeInterval: TimeInterval? = nil
 
         init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer) -> Bool) {
             self.timeInterval = timeInterval
@@ -33,10 +33,14 @@ class TimeEngine: NSObject {
         }
 
         func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) {
-            if currentTimeInterval - lastTimeInterval >= timeInterval {
-                if function(currentTimeInterval, renderer) {
-                    self.lastTimeInterval = currentTimeInterval
+            if let nextTimeInterval = nextTimeInterval {
+                if currentTimeInterval >= nextTimeInterval {
+                    if function(currentTimeInterval, renderer) {
+                        self.nextTimeInterval = currentTimeInterval + timeInterval
+                    }
                 }
+            } else {
+                nextTimeInterval = currentTimeInterval // This will fire on the next iteration
             }
         }
 

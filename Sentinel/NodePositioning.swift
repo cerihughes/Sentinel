@@ -1,13 +1,13 @@
 import SceneKit
 
 class NodePositioning: NSObject {
-    let gridWidth: Float
-    let gridDepth: Float
+    private let gridWidth: Float
+    private let gridDepth: Float
     let floorSize: Float
 
-    init(gridWidth: Float, gridDepth: Float, floorSize: Float) {
-        self.gridWidth = gridWidth
-        self.gridDepth = gridDepth
+    init(gridWidth: Int, gridDepth: Int, floorSize: Float) {
+        self.gridWidth = Float(gridWidth)
+        self.gridDepth = Float(gridDepth)
         self.floorSize = floorSize
         
         super.init()
@@ -20,9 +20,10 @@ class NodePositioning: NSObject {
                               (Float(z) - (gridDepth / 2.0)) * floorSize)
     }
 
-    func calculateObjectPosition() -> SCNVector3 {
+    func calculateObjectPosition(height: Int = 0) -> SCNVector3 {
+        let heightOffset = Float(height) * 0.5 * floorSize
         return SCNVector3Make(0.0,
-                              0.5 * floorSize,
+                              (0.5 * floorSize) + heightOffset,
                               0.0)
     }
 }

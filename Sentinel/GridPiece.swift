@@ -4,13 +4,8 @@ class GridPiece: NSObject {
     let point: GridPoint
 
     var isFloor = true
-    var rockCount = 0
     var level: Float = 0.0
     private var slopes: Int = 0
-
-    var rockLevel: Float {
-        return level + (Float(rockCount) * 0.5)
-    }
 
     init(x: Int, z: Int) {
         point = GridPoint(x: x, z: z)
