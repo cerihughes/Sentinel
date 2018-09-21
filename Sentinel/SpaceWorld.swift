@@ -25,7 +25,6 @@ class SpaceWorld: NSObject, World {
 
         initialCameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
 
-        let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
         orbitNode.name = "orbitNodeName"
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
         let orbit = CABasicAnimation(keyPath: "rotation.w")
@@ -36,18 +35,20 @@ class SpaceWorld: NSObject, World {
         orbitNode.addAnimation(orbit, forKey: "orbit")
 
         orbitNode.addChildNode(initialCameraNode)
-        for ambientLightNode in ambientLightNodes {
-            orbitNode.addChildNode(ambientLightNode)
-        }
+        addAmbientLights(to: orbitNode)
 
         playerScene.rootNode.addChildNode(orbitNode)
     }
 
     private func setupOpponentScene() {
+        addAmbientLights(to: opponentScene.rootNode)
+    }
+
+    private func addAmbientLights(to node: SCNNode) {
         let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
 
         for ambientLightNode in ambientLightNodes {
-            opponentScene.rootNode.addChildNode(ambientLightNode)
+            node.addChildNode(ambientLightNode)
         }
     }
 
