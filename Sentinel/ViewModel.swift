@@ -156,19 +156,21 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: interactiveNodeType) -> Bool {
-        var piece: GridPiece? = nil
-        if let floorNode = node as? FloorNode {
-            piece = nodeMap.getPiece(for: floorNode)
+        var point: GridPoint? = nil
+        if let floorNode = node as? FloorNode,
+            let piece = nodeMap.getPiece(for: floorNode) {
+            point = piece.point
         } else if let floorNode = node.parent as? FloorNode,
             let floorName = floorNode.name,
-            floorName == floorNodeName {
-            piece = nodeMap.getPiece(for: floorNode)
+            floorName == floorNodeName,
+            let piece = nodeMap.getPiece(for: floorNode) {
+            point = piece.point
         }
 
         switch (interaction, interactiveNodeType) {
         case (.tap, .floor):
-            if let piece = piece {
-                return processTapFloor(node: node, piece: piece)
+            if let point = point {
+                return processTapFloor(node: node, point: point)
             }
         case (.tap, .synthoid):
             if let synthoidNode = node as? SynthoidNode {
@@ -176,12 +178,12 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 return true
             }
         case (.longPress, .floor):
-            if let piece = piece {
-                return processLongPressFloor(node: node, piece: piece)
+            if let point = point {
+                return processLongPressFloor(node: node, point: point)
             }
         case (.longPress, _):
-            if let piece = piece {
-                return processLongPressObject(node: node, piece: piece, interactiveNodeType: interactiveNodeType)
+            if let point = point {
+                return processLongPressObject(node: node, point: point, interactiveNodeType: interactiveNodeType)
             }
         default:
             print("Not processing \(interactiveNodeType)")
@@ -189,15 +191,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         return false
     }
 
-    private func processTapFloor(node: SCNNode, piece: GridPiece) -> Bool {
-        let point = piece.point
-
+    private func processTapFloor(node: SCNNode, point: GridPoint) -> Bool {
         if grid.sentinelPosition == point || grid.sentryPositions.contains(point) {
             return false
         } else if grid.treePositions.contains(point) {
-            buildRock(at: piece)
+            buildRock(at: point)
         } else if grid.rockPositions.contains(point) && !grid.synthoidPositions.contains(point) {
-            buildRock(at: piece)
+            buildRock(at: point)
         } else if grid.synthoidPositions.contains(point) {
             if let floorNode = node as? FloorNode,
                 let synthoidNode = floorNode.synthoidNode {
@@ -205,14 +205,12 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             }
         } else {
             // Empty space - build a rock
-            buildRock(at: piece)
+            buildRock(at: point)
         }
         return true
     }
 
-    private func processLongPressFloor(node: SCNNode, piece: GridPiece) -> Bool {
-        let point = piece.point
-
+    private func processLongPressFloor(node: SCNNode, point: GridPoint) -> Bool {
         guard grid.sentinelPosition != point,
             !grid.sentryPositions.contains(point),
             !grid.treePositions.contains(point),
@@ -221,29 +219,27 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         let viewingAngle = point.angle(to: grid.currentPosition)
-        buildSynthoid(at: piece, viewingAngle: viewingAngle)
+        buildSynthoid(at: point, viewingAngle: viewingAngle)
         return true
     }
 
-    private func processLongPressObject(node: SCNNode, piece: GridPiece, interactiveNodeType: interactiveNodeType) -> Bool {
-        let point = piece.point
-
+    private func processLongPressObject(node: SCNNode, point: GridPoint, interactiveNodeType: interactiveNodeType) -> Bool {
         if grid.sentinelPosition == point && interactiveNodeType == .sentinel {
             // Absorb
         } else if grid.sentryPositions.contains(point) && interactiveNodeType == .sentry {
             // Absorb
         } else if grid.treePositions.contains(point) && interactiveNodeType == .tree {
             if let treeNode = node as? TreeNode {
-                absorb(treeNode: treeNode, piece: piece)
+                absorb(treeNode: treeNode, point: point)
                 return true
             }
         } else if grid.rockPositions.contains(point) && interactiveNodeType == .rock {
             if let rockNode = node as? RockNode {
-                absorb(rockNode: rockNode, piece: piece)
+                absorb(rockNode: rockNode, point: point)
                 return true
             }
         } else if grid.synthoidPositions.contains(point) && interactiveNodeType == .synthoid {
-            absorb(synthoidNode: node, piece: piece)
+            absorb(synthoidNode: node, point: point)
             return true
         }
         return false
@@ -277,31 +273,33 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         energy += delta
     }
 
-    private func buildTree(at piece: GridPiece, isPlayer: Bool = true) {
-        guard hasEnergy(required: treeEnergyValue, isPlayer: isPlayer),
-            let floorNode = nodeMap.getFloorNode(for: piece.point) else {
-            return
+    private func buildTree(at point: GridPoint, isPlayer: Bool = true) {
+        guard
+            hasEnergy(required: treeEnergyValue, isPlayer: isPlayer),
+            let floorNode = nodeMap.getFloorNode(for: point)
+            else {
+                return
         }
 
-        let point = piece.point
         grid.treePositions.insert(point)
 
-        let treeNode = nodeFactory.createTreeNode(height: piece.rockCount)
+        let treeNode = nodeFactory.createTreeNode(height: floorNode.rockNodes.count)
         floorNode.treeNode = treeNode
 
         adjustEnergy(delta: -treeEnergyValue, isPlayer: isPlayer)
     }
 
-    private func buildRock(at piece: GridPiece, isPlayer: Bool = true) {
-        guard hasEnergy(required: treeEnergyValue, isPlayer: isPlayer),
-            let floorNode = nodeMap.getFloorNode(for: piece.point) else {
-            return
+    private func buildRock(at point: GridPoint, isPlayer: Bool = true) {
+        guard
+            hasEnergy(required: treeEnergyValue, isPlayer: isPlayer),
+            let floorNode = nodeMap.getFloorNode(for: point)
+            else {
+                return
         }
 
-        let point = piece.point
         if (grid.treePositions.contains(point)) {
             if let treeNode = floorNode.treeNode {
-                absorb(treeNode: treeNode, piece: piece)
+                absorb(treeNode: treeNode, point: point)
             }
         }
 
@@ -309,34 +307,30 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        let startRockCount = piece.rockCount
         grid.rockPositions.insert(point)
-
-        piece.rockCount += 1
-
-        let rockNode = nodeFactory.createRockNode(height: startRockCount)
+        let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count)
         floorNode.add(rockNode: rockNode)
 
         adjustEnergy(delta: -rockEnergyValue, isPlayer: isPlayer)
     }
 
-    private func buildSynthoid(at piece: GridPiece, viewingAngle: Float) {
-        guard hasEnergy(required: synthoidEnergyValue, isPlayer: true),
-            let floorNode = nodeMap.getFloorNode(for: piece.point) else {
-            return
+    private func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
+        guard
+            hasEnergy(required: synthoidEnergyValue, isPlayer: true),
+            let floorNode = nodeMap.getFloorNode(for: point)
+            else {
+                return
         }
 
-        let point = piece.point
         grid.synthoidPositions.insert(point)
 
-        let synthoidNode = nodeFactory.createSynthoidNode(height: piece.rockCount, viewingAngle: viewingAngle)
+        let synthoidNode = nodeFactory.createSynthoidNode(height: floorNode.rockNodes.count, viewingAngle: viewingAngle)
         floorNode.synthoidNode = synthoidNode
 
         adjustEnergy(delta: -synthoidEnergyValue, isPlayer: true)
     }
 
-    private func absorb(treeNode: TreeNode, piece: GridPiece, isPlayer: Bool = true) {
-        let point = piece.point
+    private func absorb(treeNode: TreeNode, point: GridPoint, isPlayer: Bool = true) {
         guard let index = grid.treePositions.index(of: point) else {
             return
         }
@@ -347,20 +341,19 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         adjustEnergy(delta: treeEnergyValue, isPlayer: isPlayer)
     }
 
-    private func absorb(rockNode: RockNode, piece: GridPiece, isPlayer: Bool = true) {
-        let point = piece.point
-        guard let floorNode = nodeMap.getFloorNode(for: piece.point) else {
+    private func absorb(rockNode: RockNode, point: GridPoint, isPlayer: Bool = true) {
+        guard let floorNode = nodeMap.getFloorNode(for: point) else {
             return
         }
 
         // TODO: Tidy this up - can use topmost now?
         if grid.synthoidPositions.contains(point) {
             if let synthoidNode = floorNode.synthoidNode {
-                absorb(synthoidNode: synthoidNode, piece: piece, isPlayer: isPlayer)
+                absorb(synthoidNode: synthoidNode, point: point, isPlayer: isPlayer)
             }
         } else if grid.treePositions.contains(point) {
             if let treeNode = floorNode.treeNode {
-                absorb(treeNode: treeNode, piece: piece, isPlayer: isPlayer)
+                absorb(treeNode: treeNode, point: point, isPlayer: isPlayer)
             }
         }
 
@@ -369,8 +362,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             absorbedRockNode = floorNode.removeLastRockNode()
             if absorbedRockNode != nil {
                 adjustEnergy(delta: rockEnergyValue, isPlayer: isPlayer)
-                piece.rockCount -= 1
-                if piece.rockCount == 0 {
+                if floorNode.rockNodes.count == 0 {
                     if let index = grid.rockPositions.index(of: point) {
                         grid.rockPositions.remove(at: index)
                     }
@@ -383,8 +375,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         } while absorbedRockNode != nil
     }
 
-    private func absorb(synthoidNode: SCNNode, piece: GridPiece, isPlayer: Bool = true) {
-        let point = piece.point
+    private func absorb(synthoidNode: SCNNode, point: GridPoint, isPlayer: Bool = true) {
         guard let index = grid.synthoidPositions.index(of: point) else {
             return
         }
@@ -404,7 +395,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         if let randomPiece = emptyPieces.randomElement() {
-            buildTree(at: randomPiece, isPlayer: false)
+            buildTree(at: randomPiece.point, isPlayer: false)
         }
     }
 
@@ -471,21 +462,24 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                 } else {
                     if let floorNode = visibleSynthoid.floorNode,
                         let piece = nodeMap.getPiece(for: floorNode) {
-                        absorb(synthoidNode: visibleSynthoid, piece: piece, isPlayer: false)
-                        buildRock(at: piece, isPlayer: false)
+                        let point = piece.point
+                        absorb(synthoidNode: visibleSynthoid, point: point, isPlayer: false)
+                        buildRock(at: point, isPlayer: false)
                         oppositionBuildRandomTree()
                     }
                 }
             } else if let visibleRock = oppositionNode.visibleRocks(in: renderer).randomElement(),
                 let floorNode = visibleRock.floorNode,
                 let piece = nodeMap.getPiece(for: floorNode) {
-                absorb(rockNode: visibleRock, piece: piece, isPlayer: false)
-                buildTree(at: piece, isPlayer: false)
+                let point = piece.point
+                absorb(rockNode: visibleRock, point: point, isPlayer: false)
+                buildTree(at: point, isPlayer: false)
                 oppositionBuildRandomTree()
             } else if let visibleTree = oppositionNode.visibleTreesOnRocks(in: renderer).randomElement(),
                 let floorNode = visibleTree.floorNode,
                 let piece = nodeMap.getPiece(for: floorNode) {
-                absorb(treeNode: visibleTree, piece: piece, isPlayer: false)
+                let point = piece.point
+                absorb(treeNode: visibleTree, point: point, isPlayer: false)
                 oppositionBuildRandomTree()
             }
         }
