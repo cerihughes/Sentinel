@@ -62,8 +62,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
         let duration = levelConfiguration.opponentRotationTime
         _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause) { (timeInterval, playerRenderer) -> Bool in
-            self.playerNodeManipulator.rotateOpposition(by: radians, duration: duration)
-            self.opponentNodeManipulator.rotateOpposition(by: radians, duration: duration)
+            self.playerNodeManipulator.rotateAllOpposition(by: radians, duration: duration)
+            self.opponentNodeManipulator.rotateAllOpposition(by: radians, duration: duration)
             return true
         }
     }
@@ -113,21 +113,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     func processPan(by x: Float, finished: Bool) {
-        guard let synthoidNode = playerNodeManipulator.synthoidNode(at: grid.currentPosition) else {
-            return
-        }
-
-        let currentAngle = synthoidNode.viewingAngle
+        let point = grid.currentPosition
         let angleDeltaDegrees = x / 10.0
         let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
-        synthoidNode.apply(rotationDelta: angleDeltaRadians)
+        playerNodeManipulator.rotateSynthoid(at: point, by: angleDeltaRadians)
+        opponentNodeManipulator.rotateSynthoid(at: point, by: angleDeltaRadians)
 
         if finished {
-            var newRadians = currentAngle + angleDeltaRadians
-            while newRadians < 0 {
-                newRadians += (2.0 * Float.pi)
-            }
-            synthoidNode.viewingAngle = newRadians
+            playerNodeManipulator.rotateSynthoid(at: point, by: angleDeltaRadians, persist: true)
+            opponentNodeManipulator.rotateSynthoid(at: point, by: angleDeltaRadians, persist: true)
         }
     }
 

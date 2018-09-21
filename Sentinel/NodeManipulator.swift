@@ -30,10 +30,18 @@ class NodeManipulator: NSObject {
         return nodeMap.getFloorNode(for: point)
     }
 
-    func rotateOpposition(by radians: Float, duration: TimeInterval) {
+    func rotateAllOpposition(by radians: Float, duration: TimeInterval) {
         for oppositionNode in terrainNode.oppositionNodes {
             oppositionNode.rotate(by: radians, duration: duration)
         }
+    }
+
+    func rotateSynthoid(at point: GridPoint, by radiansDelta: Float, persist: Bool = false) {
+        guard let synthoidNode = synthoidNode(at: point) else {
+            return
+        }
+
+        synthoidNode.apply(rotationDelta: radiansDelta, persist: persist)
     }
 
     func buildTree(at point: GridPoint) {
