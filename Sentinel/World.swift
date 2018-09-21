@@ -5,5 +5,5 @@ protocol World {
     var opponentScene: SCNScene {get}
     var initialCameraNode: SCNNode {get}
 
-    func set(terrainNode: TerrainNode)
+    func set(playerTerrainNode: TerrainNode, opponentTerrainNode: TerrainNode)
 }
