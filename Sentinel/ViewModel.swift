@@ -284,7 +284,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         let point = piece.point
-        grid.treePositions.append(point)
+        grid.treePositions.insert(point)
 
         let treeNode = nodeFactory.createTreeNode(height: piece.rockCount)
         floorNode.treeNode = treeNode
@@ -310,9 +310,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         let startRockCount = piece.rockCount
-        if piece.rockCount == 0 {
-            grid.rockPositions.append(point)
-        }
+        grid.rockPositions.insert(point)
 
         piece.rockCount += 1
 
@@ -329,7 +327,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         let point = piece.point
-        grid.synthoidPositions.append(point)
+        grid.synthoidPositions.insert(point)
 
         let synthoidNode = nodeFactory.createSynthoidNode(height: piece.rockCount, viewingAngle: viewingAngle)
         floorNode.synthoidNode = synthoidNode

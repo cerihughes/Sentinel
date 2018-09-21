@@ -58,14 +58,14 @@ class TerrainGenerator: NSObject {
                       gen: gen)
     }
 
-    private func generateTrees(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> [GridPoint] {
-        var trees: [GridPoint] = []
+    private func generateTrees(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> Set<GridPoint> {
+        var trees: Set<GridPoint> = []
         let countRange = levelConfiguration.treeCountRange
         for quadrant in GridQuadrant.allCases {
             let treesInQuadrant = generateTrees(countRange: countRange,
                                                 quadrant: quadrant,
                                                 gen: gen)
-            trees.append(contentsOf: treesInQuadrant)
+            trees = trees.union(treesInQuadrant)
         }
 
         return trees
@@ -90,7 +90,7 @@ class TerrainGenerator: NSObject {
         return pieces[index]
     }
 
-    private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> [GridPoint] {
+    private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> Set<GridPoint> {
         let sentries = levelConfiguration.sentryCount
         guard 1 ... 3 ~= sentries else {
             return []
@@ -108,7 +108,7 @@ class TerrainGenerator: NSObject {
         sentryPieces = sentryPieces.sorted { return $0.level < $1.level }
 
         let points = sentryPieces.map { return $0.point }
-        return Array(points.prefix(sentries))
+        return Set(points.prefix(sentries))
     }
 
     private func generateStartPosition(gen: ValueGenerator) -> GridPoint {
@@ -127,7 +127,7 @@ class TerrainGenerator: NSObject {
 
         let index = gen.next(range: 0 ..< startPieces.count - 1)
         let point = startPieces[index].point
-        grid.synthoidPositions.append(point)
+        grid.synthoidPositions.insert(point)
         
         return point
     }
