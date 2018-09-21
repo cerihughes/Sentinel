@@ -12,6 +12,7 @@ let sentinelEnergyValue = 4
 
 protocol ViewModelDelegate: class {
     func viewModel(_: ViewModel, didChange cameraNode: SCNNode)
+    func viewModel(_: ViewModel, didRemoveOpponent cameraNode: SCNNode)
 }
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
@@ -381,8 +382,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func absorb(sentryNode: SentryNode, point: GridPoint) {
-        guard let index = grid.sentryPositions.index(of: point) else {
-            return
+        guard
+            let delegate = delegate,
+            let index = grid.sentryPositions.index(of: point),
+            let floorNode = sentryNode.floorNode,
+            let point = playerNodeManipulator.point(for: floorNode),
+            let opponentFloorNode = opponentNodeManipulator.floorNode(for: point),
+            let opponentSentryNode = opponentFloorNode.sentryNode
+            else {
+                return
         }
 
         playerNodeManipulator.absorbSentry(at: point)
@@ -391,15 +399,26 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.sentryPositions.remove(at: index)
 
         adjustEnergy(delta: sentryEnergyValue, isPlayer: true)
+
+        delegate.viewModel(self, didRemoveOpponent: opponentSentryNode.cameraNode)
     }
 
     private func absorb(sentinelNode: SentinelNode, point: GridPoint) {
+        guard
+            let delegate = delegate,
+            let opponentSeninelNode = opponentNodeManipulator.terrainNode.sentinelNode
+            else {
+                return
+        }
+
         playerNodeManipulator.absorbSentinel(at: point)
         opponentNodeManipulator.absorbSentinel(at: point)
 
         grid.sentinelPosition = undefinedPosition
 
         adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
+
+        delegate.viewModel(self, didRemoveOpponent: opponentSeninelNode.cameraNode)
     }
 
     private func oppositionBuildRandomTree() {

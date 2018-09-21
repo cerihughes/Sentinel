@@ -7,7 +7,7 @@ enum Viewer: Int {
 
 class ContainerViewController: UIViewController, ViewModelDelegate {
     private let viewModel: ViewModel
-    private let oppositionContainer = OppositionViewContainer()
+    private let opponentViewContainer = OpponentViewContainer()
     private let playerViewController: PlayerViewController
 
     init(viewModel: ViewModel) {
@@ -45,19 +45,19 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         let mainWidth = mainView.widthAnchor.constraint(equalTo: view.widthAnchor)
         let mainHeight = mainView.heightAnchor.constraint(equalTo: view.heightAnchor)
 
-        oppositionContainer.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(oppositionContainer)
+        opponentViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(opponentViewContainer)
 
-        let containerRight = oppositionContainer.rightAnchor.constraint(equalTo: view.rightAnchor)
-        let containerTop = oppositionContainer.topAnchor.constraint(equalTo: view.topAnchor)
-        let containerWidth = NSLayoutConstraint(item: oppositionContainer,
+        let containerRight = opponentViewContainer.rightAnchor.constraint(equalTo: view.rightAnchor)
+        let containerTop = opponentViewContainer.topAnchor.constraint(equalTo: view.topAnchor)
+        let containerWidth = NSLayoutConstraint(item: opponentViewContainer,
                                                 attribute: .width,
                                                 relatedBy: .equal,
                                                 toItem: view,
                                                 attribute: .width,
                                                 multiplier: 0.2,
                                                 constant: 0)
-        let containerHeight = oppositionContainer.heightAnchor.constraint(equalTo: view.heightAnchor)
+        let containerHeight = opponentViewContainer.heightAnchor.constraint(equalTo: view.heightAnchor)
 
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
                                      containerRight, containerTop, containerWidth, containerHeight])
@@ -88,21 +88,21 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         let scene = viewModel.world.opponentScene
         let cameraNode = viewModel.cameraNode(for: .sentinel)
         let sentinelViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
-        add(oppositionController: sentinelViewController)
+        add(opponentViewController: sentinelViewController)
 
         let rawValueOffset = Viewer.sentry1.rawValue
         for i in 0 ..< viewModel.levelConfiguration.sentryCount {
             if let viewer = Viewer(rawValue: i + rawValueOffset) {
                 let cameraNode = viewModel.cameraNode(for: viewer)
                 let sentryViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
-                add(oppositionController: sentryViewController)
+                add(opponentViewController: sentryViewController)
             }
         }
     }
 
     override func viewWillLayoutSubviews() {
         let size = view.frame.size
-        oppositionContainer.aspectRatio = size.width / size.height
+        opponentViewContainer.aspectRatio = size.width / size.height
     }
 
     @objc
@@ -137,16 +137,16 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         return nil
     }
 
-    private func add(oppositionController: UIViewController) {
-        addChild(oppositionController)
-        oppositionContainer.addSubview(oppositionController.view)
-        oppositionController.didMove(toParent: self)
+    private func add(opponentViewController: OpponentViewController) {
+        addChild(opponentViewController)
+        opponentViewContainer.addSubview(opponentViewController.view)
+        opponentViewController.didMove(toParent: self)
     }
 
-    private func remove(oppositionController: UIViewController) {
-        oppositionController.willMove(toParent: nil)
-        oppositionController.view.removeFromSuperview()
-        oppositionController.removeFromParent()
+    private func remove(opponentViewController: OpponentViewController) {
+        opponentViewController.willMove(toParent: nil)
+        opponentViewController.view.removeFromSuperview()
+        opponentViewController.removeFromParent()
     }
 
     // MARK: ViewModelDelegate
@@ -158,9 +158,25 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
 
         sceneView.pointOfView = cameraNode
     }
+
+    func viewModel(_: ViewModel, didRemoveOpponent cameraNode: SCNNode) {
+        for child in children {
+            if let opponentViewController = child as? OpponentViewController {
+                if opponentViewController.cameraNode == cameraNode {
+                    remove(opponentViewController: opponentViewController)
+                }
+            }
+        }
+
+        opponentViewContainer.setNeedsLayout()
+
+        UIView.animate(withDuration: 0.3) {
+            self.opponentViewContainer.layoutIfNeeded()
+        }
+    }
 }
 
-class OppositionViewContainer: UIView {
+class OpponentViewContainer: UIView {
     private let maxViews: Int = 4
     private let topBottomSpacing: CGFloat = 20.0
 
