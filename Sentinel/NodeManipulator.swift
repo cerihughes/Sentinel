@@ -65,7 +65,7 @@ class NodeManipulator: NSObject, NodeOperations {
         }
 
         if floorNode.treeNode != nil {
-            absorbTree(at: point)
+            _ = absorbTree(at: point)
         }
 
         let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count)

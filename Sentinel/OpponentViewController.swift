@@ -28,7 +28,7 @@ class OpponentViewController: UIViewController {
         }
 
         sceneView.scene = scene
-        sceneView.backgroundColor = UIColor(white: 0.7, alpha: 1.0)
+        sceneView.backgroundColor = UIColor.black
         sceneView.pointOfView = cameraNode
     }
 }

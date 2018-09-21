@@ -3,7 +3,7 @@ import SceneKit
 class TimeEngine: NSObject {
     private var timingFunctions: [UUID:TimeEngineData] = [:]
 
-    func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer) -> Bool) -> UUID {
+    func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID {
         let data = TimeEngineData(timeInterval: timeInterval, function: function)
         let token = UUID()
         timingFunctions[token] = data
@@ -22,11 +22,12 @@ class TimeEngine: NSObject {
 
     private class TimeEngineData: NSObject {
         let timeInterval: TimeInterval
-        let function: (TimeInterval, SCNSceneRenderer) -> Bool
+        let function: (TimeInterval, SCNSceneRenderer, Any?) -> Any?
+        var lastResults: Any? = nil
 
         private var nextTimeInterval: TimeInterval? = nil
 
-        init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer) -> Bool) {
+        init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) {
             self.timeInterval = timeInterval
             self.function = function
             super.init()
@@ -35,14 +36,12 @@ class TimeEngine: NSObject {
         func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) {
             if let nextTimeInterval = nextTimeInterval {
                 if currentTimeInterval >= nextTimeInterval {
-                    if function(currentTimeInterval, renderer) {
-                        self.nextTimeInterval = currentTimeInterval + timeInterval
-                    }
+                    lastResults = function(currentTimeInterval, renderer, lastResults)
+                    self.nextTimeInterval = currentTimeInterval + timeInterval
                 }
             } else {
                 nextTimeInterval = currentTimeInterval // This will fire on the next iteration
             }
         }
-
     }
 }

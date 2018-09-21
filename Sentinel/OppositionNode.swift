@@ -9,7 +9,7 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
         super.init(coder: aDecoder)
     }
 
-    fileprivate init(floorSize: Float, colour: UIColor) {
+    fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor) {
         super.init()
 
         var material = SCNMaterial()
@@ -40,7 +40,7 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
         boxNode.position.y = y
         let camera = SCNCamera()
         camera.fieldOfView = 45.0
-        camera.zFar = 500.0
+        camera.zFar = Double(detectionRadius)
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
@@ -126,8 +126,8 @@ class SentinelNode: OppositionNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float) {
-        super.init(floorSize: floorSize, colour: .blue)
+    init(floorSize: Float, detectionRadius: Float) {
+        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue)
 
         name = sentinelNodeName
         categoryBitMask = interactiveNodeType.sentinel.rawValue
@@ -143,8 +143,8 @@ class SentryNode: OppositionNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float) {
-        super.init(floorSize: floorSize, colour: .green)
+    init(floorSize: Float, detectionRadius: Float) {
+        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green)
 
         name = sentryNodeName
         categoryBitMask = interactiveNodeType.sentry.rawValue

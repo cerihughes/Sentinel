@@ -26,6 +26,8 @@ enum interactiveNodeType: Int, CaseIterable {
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
 
+    private let detectionNode: DetectionNode
+
     private let cube1: FloorNode
     private let cube2: FloorNode
     private let slope: SlopeNode
@@ -37,19 +39,23 @@ class NodeFactory: NSObject {
     private let tree: TreeNode
     private let rock: RockNode
 
-    init(nodePositioning: NodePositioning) {
+    init(nodePositioning: NodePositioning, detectionRadius: Float) {
         self.nodePositioning = nodePositioning
 
         let floorSize = nodePositioning.floorSize
 
+        detectionNode = DetectionNode(detectionRadius: detectionRadius)
         cube1 = FloorNode(floorSize: floorSize, colour: .red)
         cube2 = FloorNode(floorSize: floorSize, colour: .yellow)
         slope = SlopeNode(floorSize: floorSize)
-        sentinel = SentinelNode(floorSize: floorSize)
-        sentry = SentryNode(floorSize: floorSize)
+        sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius)
+        sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius)
         synthoid = SynthoidNode(floorSize: floorSize)
         tree = TreeNode(floorSize: floorSize)
         rock = RockNode(floorSize: floorSize)
+
+        sentinel.addChildNode(detectionNode.clone())
+        sentry.addChildNode(detectionNode.clone())
 
         super.init()
     }

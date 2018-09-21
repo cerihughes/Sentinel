@@ -86,20 +86,6 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
             longPressRecogniser.isEnabled = true
             panRecogniser.isEnabled = true
         }
-
-        let scene = viewModel.world.opponentScene
-        let cameraNode = viewModel.cameraNode(for: .sentinel)
-        let sentinelViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
-        add(opponentViewController: sentinelViewController)
-
-        let rawValueOffset = Viewer.sentry1.rawValue
-        for i in 0 ..< viewModel.levelConfiguration.sentryCount {
-            if let viewer = Viewer(rawValue: i + rawValueOffset) {
-                let cameraNode = viewModel.cameraNode(for: viewer)
-                let sentryViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
-                add(opponentViewController: sentryViewController)
-            }
-        }
     }
 
     override func viewWillLayoutSubviews() {
@@ -161,19 +147,35 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         sceneView.pointOfView = cameraNode
     }
 
-    func viewModel(_: ViewModel, didRemoveOpponent cameraNode: SCNNode) {
-        for child in children {
-            if let opponentViewController = child as? OpponentViewController {
-                if opponentViewController.cameraNode == cameraNode {
-                    remove(opponentViewController: opponentViewController)
-                }
+    func viewModel(_: ViewModel, didDetectOpponent cameraNode: SCNNode) {
+        DispatchQueue.main.async {
+            let scene = self.viewModel.world.opponentScene
+            let opponentViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
+            self.add(opponentViewController: opponentViewController)
+
+            self.opponentViewContainer.setNeedsLayout()
+
+            UIView.animate(withDuration: 0.3) {
+                self.opponentViewContainer.layoutIfNeeded()
             }
         }
+    }
 
-        opponentViewContainer.setNeedsLayout()
+    func viewModel(_: ViewModel, didEndDetectOpponent cameraNode: SCNNode) {
+        DispatchQueue.main.async {
+            for child in self.children {
+                if let opponentViewController = child as? OpponentViewController {
+                    if opponentViewController.cameraNode == cameraNode {
+                        self.remove(opponentViewController: opponentViewController)
+                    }
+                }
+            }
 
-        UIView.animate(withDuration: 0.3) {
-            self.opponentViewContainer.layoutIfNeeded()
+            self.opponentViewContainer.setNeedsLayout()
+
+            UIView.animate(withDuration: 0.3) {
+                self.opponentViewContainer.layoutIfNeeded()
+            }
         }
     }
 }
