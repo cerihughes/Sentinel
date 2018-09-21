@@ -71,11 +71,11 @@ class Grid: NSObject {
     private var grid: [[GridPiece]] = []
 
     var sentinelPosition: GridPoint = undefinedPosition
-    var sentryPositions: [GridPoint] = []
+    var sentryPositions: Set<GridPoint> = []
     var startPosition: GridPoint = undefinedPosition
-    var treePositions: [GridPoint] = []
-    var rockPositions: [GridPoint] = []
-    var synthoidPositions: [GridPoint] = []
+    var treePositions: Set<GridPoint> = []
+    var rockPositions: Set<GridPoint> = []
+    var synthoidPositions: Set<GridPoint> = []
     var currentPosition = undefinedPosition
 
     init(width: Int, depth: Int) {
