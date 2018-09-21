@@ -28,7 +28,22 @@ class WorldManipulator: NSObject, NodeOperations {
         }
     }
 
+    func opponentOppositionNode(for playerOppositionNode: OppositionNode) -> OppositionNode? {
+        guard
+            let playerFloorNode = playerOppositionNode.floorNode,
+            let point = playerNodeManipulator.point(for: playerFloorNode),
+            let opponentFloorNode = opponentNodeManipulator.floorNode(for: point)
+            else {
+                return nil
+        }
+        return opponentFloorNode.sentinelNode ?? opponentFloorNode.sentryNode
+    }
+
     // MARK: NodeOperations
+
+    var currentSynthoidNode: SynthoidNode? {
+        return playerNodeManipulator.currentSynthoidNode
+    }
 
     func rotateAllOpposition(by radians: Float, duration: TimeInterval) {
         playerNodeManipulator.rotateAllOpposition(by: radians, duration: duration)

@@ -348,10 +348,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         guard
             let delegate = delegate,
             let index = grid.sentryPositions.index(of: point),
-            let floorNode = sentryNode.floorNode,
-            let point = worldManipulator.playerNodeManipulator.point(for: floorNode),
-            let opponentFloorNode = worldManipulator.opponentNodeManipulator.floorNode(for: point),
-            let opponentSentryNode = opponentFloorNode.sentryNode
+            let opponentSentryNode = worldManipulator.opponentOppositionNode(for: sentryNode)
             else {
                 return
         }
@@ -366,7 +363,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func absorb(sentinelNode: SentinelNode, point: GridPoint) {
         guard
             let delegate = delegate,
-            let opponentSeninelNode = worldManipulator.opponentNodeManipulator.terrainNode.sentinelNode
+            let opponentSentinelNode = worldManipulator.opponentOppositionNode(for: sentinelNode)
             else {
                 return
         }
@@ -375,7 +372,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         grid.sentinelPosition = undefinedPosition
         adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
 
-        delegate.viewModel(self, didRemoveOpponent: opponentSeninelNode.cameraNode)
+        delegate.viewModel(self, didRemoveOpponent: opponentSentinelNode.cameraNode)
     }
 
     private func oppositionBuildRandomTree() {
@@ -392,7 +389,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func moveCamera(to nextSynthoidNode: SynthoidNode, animationDuration: CFTimeInterval) {
-        guard let currentSynthoidNode = worldManipulator.playerNodeManipulator.currentSynthoidNode else {
+        guard let currentSynthoidNode = worldManipulator.currentSynthoidNode else {
             return
         }
 
@@ -439,7 +436,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func oppositionScan(in playerRenderer: SCNSceneRenderer) {
-        guard let synthoidNode = worldManipulator.playerNodeManipulator.currentSynthoidNode else {
+        guard let synthoidNode = worldManipulator.currentSynthoidNode else {
             return
         }
 

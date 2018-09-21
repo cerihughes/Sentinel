@@ -1,6 +1,8 @@
 import SceneKit
 
 protocol NodeOperations {
+    var currentSynthoidNode: SynthoidNode? {get}
+
     func rotateAllOpposition(by radians: Float, duration: TimeInterval)
     func rotateCurrentSynthoid(by radiansDelta: Float, persist: Bool)
     func makeSynthoidCurrent(at point: GridPoint)
