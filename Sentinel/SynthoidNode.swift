@@ -52,7 +52,7 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         return [self]
     }
 
-    func apply(rotationDelta radians: Float, persist: Bool = false) {
+    func apply(rotationDelta radians: Float, persist: Bool) {
         let newRadians = viewingAngle + radians
         let oldPosition = position
         transform = SCNMatrix4MakeRotation(newRadians, 0, 1, 0)

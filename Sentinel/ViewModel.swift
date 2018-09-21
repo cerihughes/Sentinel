@@ -27,8 +27,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private let grid: Grid
     private let timeEngine = TimeEngine()
     private var energy: Int = 10
-    private let playerNodeManipulator: NodeManipulator
-    private let opponentNodeManipulator: NodeManipulator
+    private let worldManipulator: WorldManipulator
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.levelConfiguration = levelConfiguration
@@ -45,8 +44,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         world.set(playerTerrainNode: playerTerrainNode, opponentTerrainNode: opponentTerrainNode)
 
-        playerNodeManipulator = NodeManipulator(terrainNode: playerTerrainNode, nodeMap: playerNodeMap, nodeFactory: nodeFactory)
-        opponentNodeManipulator = NodeManipulator(terrainNode: opponentTerrainNode, nodeMap: opponentNodeMap, nodeFactory: nodeFactory)
+        let playerNodeManipulator = NodeManipulator(terrainNode: playerTerrainNode, nodeMap: playerNodeMap, nodeFactory: nodeFactory)
+        let opponentNodeManipulator = NodeManipulator(terrainNode: opponentTerrainNode, nodeMap: opponentNodeMap, nodeFactory: nodeFactory)
+
+        worldManipulator = WorldManipulator(playerNodeManipulator: playerNodeManipulator,
+                                            opponentNodeManipulator: opponentNodeManipulator)
 
         super.init()
 
@@ -62,34 +64,16 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
         let duration = levelConfiguration.opponentRotationTime
         _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause) { (timeInterval, playerRenderer) -> Bool in
-            self.playerNodeManipulator.rotateAllOpposition(by: radians, duration: duration)
-            self.opponentNodeManipulator.rotateAllOpposition(by: radians, duration: duration)
+            self.worldManipulator.rotateAllOpposition(by: radians, duration: duration)
             return true
         }
     }
 
     func cameraNode(for viewer: Viewer) -> SCNNode? {
-        if let viewingNode = viewingNode(for: viewer) {
+        if let viewingNode = worldManipulator.viewingNode(for: viewer) {
             return viewingNode.cameraNode
         }
         return nil
-    }
-
-    private func viewingNode(for viewer: Viewer) -> ViewingNode? {
-        switch viewer {
-        case .player:
-            return playerNodeManipulator.currentSynthoidNode
-        case .sentinel:
-            return opponentNodeManipulator.terrainNode.sentinelNode
-        default:
-            let sentryNodes = opponentNodeManipulator.terrainNode.sentryNodes
-            let rawValueOffset = Viewer.sentry1.rawValue
-            let index = viewer.rawValue - rawValueOffset
-            if index < sentryNodes.count {
-                return sentryNodes[index]
-            }
-            return nil
-        }
     }
 
     func process(interaction: UserInteraction, hitTestResults: [SCNHitTestResult]) -> Bool {
@@ -109,12 +93,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     func processPan(by x: Float, finished: Bool) {
         let angleDeltaDegrees = x / 10.0
         let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
-        playerNodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians)
-        opponentNodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians)
+        worldManipulator.rotateCurrentSynthoid(by: angleDeltaRadians)
 
         if finished {
-            playerNodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians, persist: true)
-            opponentNodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians, persist: true)
+            worldManipulator.rotateCurrentSynthoid(by: angleDeltaRadians, persist: true)
         }
     }
 
@@ -123,7 +105,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func enterScene() -> Bool {
-        guard let synthoidNode = playerNodeManipulator.synthoidNode(at: grid.startPosition) else {
+        guard let synthoidNode = worldManipulator.playerNodeManipulator.synthoidNode(at: grid.startPosition) else {
             return false
         }
 
@@ -132,8 +114,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
                    animationDuration: 3.0)
         grid.currentPosition = grid.startPosition
 
-        playerNodeManipulator.makeSynthoidNodeCurrent(at: grid.currentPosition)
-        opponentNodeManipulator.makeSynthoidNodeCurrent(at: grid.currentPosition)
+        worldManipulator.makeSynthoidCurrent(at: grid.currentPosition)
 
         return true
     }
@@ -152,11 +133,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: interactiveNodeType) -> Bool {
         var point: GridPoint? = nil
         if let floorNode = node as? FloorNode {
-            point = playerNodeManipulator.point(for: floorNode)
+            point = worldManipulator.playerNodeManipulator.point(for: floorNode)
         } else if let floorNode = node.parent as? FloorNode,
             let floorName = floorNode.name,
             floorName == floorNodeName {
-            point = playerNodeManipulator.point(for: floorNode)
+            point = worldManipulator.playerNodeManipulator.point(for: floorNode)
         }
 
         switch (interaction, interactiveNodeType) {
@@ -243,7 +224,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
     private func move(to synthoidNode: SynthoidNode) {
         guard let floorNode = synthoidNode.floorNode,
-            let point = playerNodeManipulator.point(for: floorNode)
+            let point = worldManipulator.playerNodeManipulator.point(for: floorNode)
             else {
                 return
         }
@@ -252,8 +233,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         grid.currentPosition = point
         
-        playerNodeManipulator.makeSynthoidNodeCurrent(at: grid.currentPosition)
-        opponentNodeManipulator.makeSynthoidNodeCurrent(at: grid.currentPosition)
+        worldManipulator.makeSynthoidCurrent(at: grid.currentPosition)
     }
 
     private func hasEnergy(required: Int, isPlayer: Bool) -> Bool {
@@ -278,10 +258,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         grid.treePositions.insert(point)
-
-        playerNodeManipulator.buildTree(at: point)
-        opponentNodeManipulator.buildTree(at: point)
-
+        worldManipulator.buildTree(at: point)
         adjustEnergy(delta: -treeEnergyValue, isPlayer: isPlayer)
     }
 
@@ -299,10 +276,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         grid.rockPositions.insert(point)
-
-        playerNodeManipulator.buildRock(at: point)
-        opponentNodeManipulator.buildRock(at: point)
-
+        worldManipulator.buildRock(at: point)
         adjustEnergy(delta: -rockEnergyValue, isPlayer: isPlayer)
     }
 
@@ -312,10 +286,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         grid.synthoidPositions.insert(point)
-
-        playerNodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
-        opponentNodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
-
+        worldManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
         adjustEnergy(delta: -synthoidEnergyValue, isPlayer: true)
     }
 
@@ -324,11 +295,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        playerNodeManipulator.absorbTree(at: point)
-        opponentNodeManipulator.absorbTree(at: point)
-
         grid.treePositions.remove(at: index)
-
+        worldManipulator.absorbTree(at: point)
         adjustEnergy(delta: treeEnergyValue, isPlayer: isPlayer)
     }
 
@@ -371,11 +339,8 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        playerNodeManipulator.absorbSynthoid(at: point)
-        opponentNodeManipulator.absorbSynthoid(at: point)
-
+        worldManipulator.absorbSynthoid(at: point)
         grid.synthoidPositions.remove(at: index)
-
         adjustEnergy(delta: synthoidEnergyValue, isPlayer: isPlayer)
     }
 
@@ -384,18 +349,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
             let delegate = delegate,
             let index = grid.sentryPositions.index(of: point),
             let floorNode = sentryNode.floorNode,
-            let point = playerNodeManipulator.point(for: floorNode),
-            let opponentFloorNode = opponentNodeManipulator.floorNode(for: point),
+            let point = worldManipulator.playerNodeManipulator.point(for: floorNode),
+            let opponentFloorNode = worldManipulator.opponentNodeManipulator.floorNode(for: point),
             let opponentSentryNode = opponentFloorNode.sentryNode
             else {
                 return
         }
 
-        playerNodeManipulator.absorbSentry(at: point)
-        opponentNodeManipulator.absorbSentry(at: point)
-
+        worldManipulator.absorbSentry(at: point)
         grid.sentryPositions.remove(at: index)
-
         adjustEnergy(delta: sentryEnergyValue, isPlayer: true)
 
         delegate.viewModel(self, didRemoveOpponent: opponentSentryNode.cameraNode)
@@ -404,16 +366,13 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     private func absorb(sentinelNode: SentinelNode, point: GridPoint) {
         guard
             let delegate = delegate,
-            let opponentSeninelNode = opponentNodeManipulator.terrainNode.sentinelNode
+            let opponentSeninelNode = worldManipulator.opponentNodeManipulator.terrainNode.sentinelNode
             else {
                 return
         }
 
-        playerNodeManipulator.absorbSentinel(at: point)
-        opponentNodeManipulator.absorbSentinel(at: point)
-
+        worldManipulator.absorbSentinel(at: point)
         grid.sentinelPosition = undefinedPosition
-
         adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
 
         delegate.viewModel(self, didRemoveOpponent: opponentSeninelNode.cameraNode)
@@ -433,7 +392,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func moveCamera(to nextSynthoidNode: SynthoidNode, animationDuration: CFTimeInterval) {
-        guard let currentSynthoidNode = playerNodeManipulator.currentSynthoidNode else {
+        guard let currentSynthoidNode = worldManipulator.playerNodeManipulator.currentSynthoidNode else {
             return
         }
 
@@ -480,10 +439,11 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func oppositionScan(in playerRenderer: SCNSceneRenderer) {
-        guard let synthoidNode = playerNodeManipulator.currentSynthoidNode else {
+        guard let synthoidNode = worldManipulator.playerNodeManipulator.currentSynthoidNode else {
             return
         }
 
+        let playerNodeManipulator = worldManipulator.playerNodeManipulator
         for oppositionNode in playerNodeManipulator.terrainNode.oppositionNodes {
             if let visibleSynthoid = oppositionNode.visibleSynthoids(in: playerRenderer).randomElement() {
                 if visibleSynthoid == synthoidNode {
