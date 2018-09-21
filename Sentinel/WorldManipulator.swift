@@ -28,13 +28,9 @@ class WorldManipulator: NSObject, NodeOperations {
         }
     }
 
-    func opponentOppositionNode(for playerOppositionNode: OppositionNode) -> OppositionNode? {
-        guard
-            let playerFloorNode = playerOppositionNode.floorNode,
-            let point = playerNodeManipulator.point(for: playerFloorNode),
-            let opponentFloorNode = opponentNodeManipulator.floorNode(for: point)
-            else {
-                return nil
+    func opponentOppositionNode(at point: GridPoint) -> OppositionNode? {
+        guard let opponentFloorNode = opponentNodeManipulator.floorNode(for: point) else {
+            return nil
         }
         return opponentFloorNode.sentinelNode ?? opponentFloorNode.sentryNode
     }
@@ -75,28 +71,28 @@ class WorldManipulator: NSObject, NodeOperations {
         opponentNodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
     }
 
-    func absorbTree(at point: GridPoint) {
-        playerNodeManipulator.absorbTree(at: point)
-        opponentNodeManipulator.absorbTree(at: point)
+    func absorbTree(at point: GridPoint) -> Bool {
+        _ = playerNodeManipulator.absorbTree(at: point)
+        return opponentNodeManipulator.absorbTree(at: point)
     }
 
-    func absorbRock(at point: GridPoint, index: Int) {
-        playerNodeManipulator.absorbRock(at: point, index: index)
-        opponentNodeManipulator.absorbRock(at: point, index: index)
+    func absorbRock(at point: GridPoint, height: Int) -> Bool {
+        _ = playerNodeManipulator.absorbRock(at: point, height: height)
+        return opponentNodeManipulator.absorbRock(at: point, height: height)
     }
 
-    func absorbSynthoid(at point: GridPoint) {
-        playerNodeManipulator.absorbSynthoid(at: point)
-        opponentNodeManipulator.absorbSynthoid(at: point)
+    func absorbSynthoid(at point: GridPoint) -> Bool {
+        _ = playerNodeManipulator.absorbSynthoid(at: point)
+        return opponentNodeManipulator.absorbSynthoid(at: point)
     }
 
-    func absorbSentry(at point: GridPoint) {
-        playerNodeManipulator.absorbSentry(at: point)
-        opponentNodeManipulator.absorbSentry(at: point)
+    func absorbSentry(at point: GridPoint) -> Bool {
+        _ = playerNodeManipulator.absorbSentry(at: point)
+        return opponentNodeManipulator.absorbSentry(at: point)
     }
 
-    func absorbSentinel(at point: GridPoint) {
-        playerNodeManipulator.absorbSentinel(at: point)
-        opponentNodeManipulator.absorbSentinel(at: point)
+    func absorbSentinel(at point: GridPoint) -> Bool {
+        _ = playerNodeManipulator.absorbSentinel(at: point)
+        return opponentNodeManipulator.absorbSentinel(at: point)
     }
 }
