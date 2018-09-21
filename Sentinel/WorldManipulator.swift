@@ -28,6 +28,21 @@ class WorldManipulator: NSObject, NodeOperations {
         }
     }
 
+    func opponentOppositionNode(for playerOppositionNode: OppositionNode) -> OppositionNode? {
+        guard let playerFloorNode = playerOppositionNode.floorNode,
+            let point = playerNodeManipulator.point(for: playerFloorNode)
+            else {
+                return nil
+        }
+
+        return opponentOppositionNode(at: point)
+    }
+
+    func opponentOppositionNodes(for playerOppositionNodes: [OppositionNode]) -> [OppositionNode] {
+        return playerOppositionNodes.map { opponentOppositionNode(for: $0) }
+            .compactMap { $0 != nil ? $0! : nil }
+    }
+
     func opponentOppositionNode(at point: GridPoint) -> OppositionNode? {
         guard let opponentFloorNode = opponentNodeManipulator.floorNode(for: point) else {
             return nil

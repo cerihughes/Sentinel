@@ -13,7 +13,8 @@ let sentinelEnergyValue = 4
 
 protocol ViewModelDelegate: class {
     func viewModel(_: ViewModel, didChange cameraNode: SCNNode)
-    func viewModel(_: ViewModel, didRemoveOpponent cameraNode: SCNNode)
+    func viewModel(_: ViewModel, didDetectOpponent cameraNode: SCNNode)
+    func viewModel(_: ViewModel, didEndDetectOpponent cameraNode: SCNNode)
 }
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
@@ -53,20 +54,6 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         super.init()
 
         setupTimingFunctions()
-    }
-
-    private func setupTimingFunctions() {
-        _ = timeEngine.add(timeInterval: 2.0) { (timeInterval, playerRenderer) -> Bool in
-            self.oppositionScan(in: playerRenderer)
-            return true
-        }
-
-        let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
-        let duration = levelConfiguration.opponentRotationTime
-        _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause) { (timeInterval, playerRenderer) -> Bool in
-            self.worldManipulator.rotateAllOpposition(by: radians, duration: duration)
-            return true
-        }
     }
 
     func cameraNode(for viewer: Viewer) -> SCNNode? {
@@ -340,11 +327,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         if worldManipulator.absorbSentry(at: point) {
+            delegate.viewModel(self, didEndDetectOpponent: opponentSentryNode.cameraNode)
             grid.sentryPositions.remove(at: index)
             adjustEnergy(delta: sentryEnergyValue, isPlayer: true)
         }
-
-        delegate.viewModel(self, didRemoveOpponent: opponentSentryNode.cameraNode)
     }
 
     private func absorbSentinelNode(at point: GridPoint) {
@@ -356,11 +342,10 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         if worldManipulator.absorbSentinel(at: point) {
+            delegate.viewModel(self, didEndDetectOpponent: opponentSentinelNode.cameraNode)
             grid.sentinelPosition = undefinedPosition
             adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
         }
-
-        delegate.viewModel(self, didRemoveOpponent: opponentSentinelNode.cameraNode)
     }
 
     private func oppositionBuildRandomTree() {
@@ -422,37 +407,102 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         timeEngine.handle(currentTimeInterval: time, renderer: renderer)
     }
+}
 
-    private func oppositionScan(in playerRenderer: SCNSceneRenderer) {
+extension ViewModel {
+    fileprivate func setupTimingFunctions() {
+        _ = timeEngine.add(timeInterval: 2.0, function: oppositionAbsorbObjects(timeInterval:playerRenderer:lastResult:))
+        _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause, function: oppositionRotation(timeInterval:playerRenderer:lastResult:))
+        _ = timeEngine.add(timeInterval: 2.0, function: oppositionDetection(timeInterval:playerRenderer:lastResult:))
+    }
+
+    private func oppositionAbsorbObjects(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
         guard let synthoidNode = worldManipulator.currentSynthoidNode else {
-            return
+            return nil
         }
 
         let playerNodeManipulator = worldManipulator.playerNodeManipulator
         for oppositionNode in playerNodeManipulator.terrainNode.oppositionNodes {
-            if let visibleSynthoid = oppositionNode.visibleSynthoids(in: playerRenderer).randomElement() {
-                if visibleSynthoid == synthoidNode {
-                    print("SEEN")
-                } else {
-                    if let floorNode = visibleSynthoid.floorNode,
-                        let point = playerNodeManipulator.point(for: floorNode) {
-                        absorbSynthoidNode(at: point, isPlayer: false)
-                        buildRock(at: point, isPlayer: false)
-                        oppositionBuildRandomTree()
-                    }
-                }
-            } else if let visibleRock = oppositionNode.visibleRocks(in: playerRenderer).randomElement(),
+            let visibleSynthoids = oppositionNode.visibleSynthoids(in: playerRenderer)
+            if visibleSynthoids.contains(synthoidNode) {
+                return nil // Don't absorb the player - this is handled by a separate timing function
+            }
+
+            if let visibleSynthoid = visibleSynthoids.randomElement(),
+                let floorNode = visibleSynthoid.floorNode,
+                let point = playerNodeManipulator.point(for: floorNode) {
+                absorbSynthoidNode(at: point, isPlayer: false)
+                buildRock(at: point, isPlayer: false)
+                oppositionBuildRandomTree()
+                return nil
+            }
+
+            if let visibleRock = oppositionNode.visibleRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleRock.floorNode,
                 let point = playerNodeManipulator.point(for: floorNode) {
                 absorbRockNode(at: point, height: floorNode.rockNodes.count - 1, isPlayer: false)
                 buildTree(at: point, isPlayer: false)
                 oppositionBuildRandomTree()
-            } else if let visibleTree = oppositionNode.visibleTreesOnRocks(in: playerRenderer).randomElement(),
+                return nil
+            }
+
+            if let visibleTree = oppositionNode.visibleTreesOnRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleTree.floorNode,
                 let point = playerNodeManipulator.point(for: floorNode) {
                 absorbTreeNode(at: point, isPlayer: false)
                 oppositionBuildRandomTree()
+                return nil
             }
         }
+        return nil
+    }
+
+    private func oppositionRotation(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
+        let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
+        let duration = levelConfiguration.opponentRotationTime
+        worldManipulator.rotateAllOpposition(by: radians, duration: duration)
+        return nil
+    }
+
+    private func oppositionDetection(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
+        guard
+            let delegate = delegate,
+            let synthoidNode = worldManipulator.currentSynthoidNode
+            else {
+                return lastResult
+        }
+
+        let playerOppositionNodes = self.worldManipulator.playerNodeManipulator.terrainNode.oppositionNodes
+        let detectingPlayerOppositionNodes = nodes(playerOppositionNodes, thatSee: synthoidNode, in: playerRenderer)
+        let detecingOpponentOppositionNodes = worldManipulator.opponentOppositionNodes(for: detectingPlayerOppositionNodes)
+        let detectingCameraNodes = Set(detecingOpponentOppositionNodes.map { $0.cameraNode })
+        let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
+
+        for detectingCameraNode in detectingCameraNodes {
+            if !lastCameraNodes.contains(detectingCameraNode) {
+                delegate.viewModel(self, didDetectOpponent: detectingCameraNode)
+            }
+        }
+
+        for lastCameraNode in lastCameraNodes {
+            if !detectingCameraNodes.contains(lastCameraNode) {
+                delegate.viewModel(self, didEndDetectOpponent: lastCameraNode)
+            }
+        }
+
+        return detectingCameraNodes
+    }
+
+    private func nodes(_ oppositionNodes: [OppositionNode],
+                       thatSee synthoidNode: SynthoidNode,
+                       in playerRenderer: SCNSceneRenderer) -> [OppositionNode] {
+        var detectingOppositionNodes: [OppositionNode] = []
+        for oppositionNode in oppositionNodes {
+            let detectableSynthoids = oppositionNode.visibleSynthoids(in: playerRenderer)
+            if detectableSynthoids.contains(synthoidNode) {
+                detectingOppositionNodes.append(oppositionNode)
+            }
+        }
+        return detectingOppositionNodes
     }
 }

@@ -2,6 +2,8 @@ import Foundation
 
 protocol LevelConfiguration {
     var level: Int {get}
+
+    var opponentDetectionRadius: Float {get}
     var opponentRotationSteps: Int {get}
     var opponentRotationTime: TimeInterval {get}
     var opponentRotationPause: TimeInterval {get}
@@ -29,6 +31,7 @@ struct MainLevelConfiguration: LevelConfiguration {
     let opponentRotationSteps: Int = 12
     let opponentRotationTime: TimeInterval = 0.3
 
+    private let opponentDetectionRadiusRange = 10.0 ..< 25.0
     private let opponentRotationPauseRange = 5.0 ..< 8.0
     private let gridWidthRange = 24 ..< 32
     private let gridDepthRange = 16 ..< 24
@@ -37,6 +40,11 @@ struct MainLevelConfiguration: LevelConfiguration {
 
     private var progression: Float {
         return Float(level) / Float(maxLevel)
+    }
+
+    var opponentDetectionRadius: Float {
+        let adjustment = progression * Float(opponentDetectionRadiusRange.upperBound - opponentDetectionRadiusRange.lowerBound)
+        return Float(opponentDetectionRadiusRange.lowerBound) + adjustment
     }
 
     var opponentRotationPause: TimeInterval {
@@ -93,6 +101,8 @@ struct MainLevelConfiguration: LevelConfiguration {
 
 struct TestLevelConfiguration: LevelConfiguration {
     let level: Int
+
+    let opponentDetectionRadius: Float = 100.0
     let opponentRotationSteps: Int = 12
     let opponentRotationTime: TimeInterval = 1.0
     let opponentRotationPause: TimeInterval = 8.0
