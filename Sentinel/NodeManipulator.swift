@@ -5,6 +5,8 @@ class NodeManipulator: NSObject {
     private let nodeMap: NodeMap
     private let nodeFactory: NodeFactory
 
+    var currentSynthoidNode: SynthoidNode?
+
     init(terrainNode: TerrainNode, nodeMap: NodeMap, nodeFactory: NodeFactory) {
         self.terrainNode = terrainNode
         self.nodeMap = nodeMap
@@ -26,6 +28,10 @@ class NodeManipulator: NSObject {
         return piece.point
     }
 
+    func makeSynthoidNodeCurrent(at point: GridPoint) {
+        currentSynthoidNode = nodeMap.getFloorNode(for: point)?.synthoidNode
+    }
+
     func floorNode(for point: GridPoint) -> FloorNode? {
         return nodeMap.getFloorNode(for: point)
     }
@@ -36,8 +42,8 @@ class NodeManipulator: NSObject {
         }
     }
 
-    func rotateSynthoid(at point: GridPoint, by radiansDelta: Float, persist: Bool = false) {
-        guard let synthoidNode = synthoidNode(at: point) else {
+    func rotateCurrentSynthoid(by radiansDelta: Float, persist: Bool = false) {
+        guard let synthoidNode = currentSynthoidNode else {
             return
         }
 
