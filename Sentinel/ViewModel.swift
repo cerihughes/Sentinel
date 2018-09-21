@@ -1,4 +1,5 @@
 import SceneKit
+import SpriteKit
 
 enum UserInteraction {
     case tap, longPress
@@ -17,6 +18,7 @@ protocol ViewModelDelegate: class {
 
 class ViewModel: NSObject, SCNSceneRendererDelegate {
     let levelConfiguration: LevelConfiguration
+    let overlay = SKScene()
     let world: World
     weak var delegate: ViewModelDelegate?
     var preAnimationBlock: (() -> Void)?

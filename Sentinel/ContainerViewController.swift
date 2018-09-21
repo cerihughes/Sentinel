@@ -1,4 +1,5 @@
 import SceneKit
+import SpriteKit
 import UIKit
 
 enum Viewer: Int {
@@ -15,7 +16,8 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
 
         let scene = viewModel.world.playerScene
         let cameraNode = viewModel.world.initialCameraNode
-        playerViewController = PlayerViewController(scene: scene, cameraNode: cameraNode)
+        let overlay = viewModel.overlay
+        playerViewController = PlayerViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
 
         super.init(nibName: nil, bundle: nil)
     }
