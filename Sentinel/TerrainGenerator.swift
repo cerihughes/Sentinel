@@ -190,10 +190,10 @@ class TerrainGenerator: NSObject {
 
     private func generateTrees(countRange: CountableRange<Int>,
                                quadrant: GridQuadrant,
-                               gen: ValueGenerator) -> [GridPoint] {
+                               gen: ValueGenerator) -> Set<GridPoint> {
         let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
         var allPieces = gridIndex.allPieces()
-        var treePoints: [GridPoint] = []
+        var treePoints: Set<GridPoint> = []
 
         var count = gen.next(range: countRange) / 4
         if (count > allPieces.count) {
@@ -203,7 +203,7 @@ class TerrainGenerator: NSObject {
         for _ in 0 ..< count {
             let index = gen.next(array: allPieces)
             let piece = allPieces.remove(at: index)
-            treePoints.append(piece.point)
+            treePoints.insert(piece.point)
         }
 
         return treePoints
