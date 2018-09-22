@@ -19,6 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = GameViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
         let viewController = GameContainerViewController(viewModel: viewModel)
+
+//        let lobbyViewModel = LobbyViewModel()
+//        let viewController = LobbyViewController(lobbyViewModel: lobbyViewModel)
         window!.rootViewController = viewController
         window!.makeKeyAndVisible()
         return true
