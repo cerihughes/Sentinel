@@ -11,22 +11,22 @@ let synthoidEnergyValue = 3
 let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
-protocol ViewModelDelegate: class {
-    func viewModel(_: ViewModel, didChange cameraNode: SCNNode)
-    func viewModel(_: ViewModel, didDetectOpponent cameraNode: SCNNode)
-    func viewModel(_: ViewModel, didEndDetectOpponent cameraNode: SCNNode)
+protocol GameViewModelDelegate: class {
+    func gameViewModel(_: GameViewModel, didChange cameraNode: SCNNode)
+    func gameViewModel(_: GameViewModel, didDetectOpponent cameraNode: SCNNode)
+    func gameViewModel(_: GameViewModel, didEndDetectOpponent cameraNode: SCNNode)
 }
 
-class ViewModel: NSObject, SCNSceneRendererDelegate {
+class GameViewModel: NSObject, SCNSceneRendererDelegate {
     let levelConfiguration: LevelConfiguration
     let overlay = SKScene()
     let world: World
-    weak var delegate: ViewModelDelegate?
+    weak var delegate: GameViewModelDelegate?
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
 
     private let grid: Grid
-    private let timeEngine = TimeEngine()
+    private let timeMachine = TimeMachine()
     private var energy: Int = 10
     private let worldManipulator: WorldManipulator
 
@@ -327,7 +327,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         if worldManipulator.absorbSentry(at: point) {
-            delegate.viewModel(self, didEndDetectOpponent: opponentSentryNode.cameraNode)
+            delegate.gameViewModel(self, didEndDetectOpponent: opponentSentryNode.cameraNode)
             grid.sentryPositions.remove(at: index)
             adjustEnergy(delta: sentryEnergyValue, isPlayer: true)
         }
@@ -342,7 +342,7 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         if worldManipulator.absorbSentinel(at: point) {
-            delegate.viewModel(self, didEndDetectOpponent: opponentSentinelNode.cameraNode)
+            delegate.gameViewModel(self, didEndDetectOpponent: opponentSentinelNode.cameraNode)
             grid.sentinelPosition = undefinedPosition
             adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
         }
@@ -385,12 +385,12 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
 
         let transitionCameraNode = from.clone()
         parent.addChildNode(transitionCameraNode)
-        delegate.viewModel(self, didChange: transitionCameraNode)
+        delegate.gameViewModel(self, didChange: transitionCameraNode)
 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = animationDuration
         SCNTransaction.completionBlock = {
-            delegate.viewModel(self, didChange: to)
+            delegate.gameViewModel(self, didChange: to)
             transitionCameraNode.removeFromParentNode()
             if let postAnimationBlock = self.postAnimationBlock {
                 postAnimationBlock()
@@ -405,15 +405,15 @@ class ViewModel: NSObject, SCNSceneRendererDelegate {
     // MARK: SCNSceneRendererDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        timeEngine.handle(currentTimeInterval: time, renderer: renderer)
+        timeMachine.handle(currentTimeInterval: time, renderer: renderer)
     }
 }
 
-extension ViewModel {
+extension GameViewModel {
     fileprivate func setupTimingFunctions() {
-        _ = timeEngine.add(timeInterval: 2.0, function: oppositionAbsorbObjects(timeInterval:playerRenderer:lastResult:))
-        _ = timeEngine.add(timeInterval: levelConfiguration.opponentRotationPause, function: oppositionRotation(timeInterval:playerRenderer:lastResult:))
-        _ = timeEngine.add(timeInterval: 2.0, function: oppositionDetection(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: 2.0, function: oppositionAbsorbObjects(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: levelConfiguration.opponentRotationPause, function: oppositionRotation(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: 2.0, function: oppositionDetection(timeInterval:playerRenderer:lastResult:))
     }
 
     private func oppositionAbsorbObjects(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
@@ -480,13 +480,13 @@ extension ViewModel {
 
         for detectingCameraNode in detectingCameraNodes {
             if !lastCameraNodes.contains(detectingCameraNode) {
-                delegate.viewModel(self, didDetectOpponent: detectingCameraNode)
+                delegate.gameViewModel(self, didDetectOpponent: detectingCameraNode)
             }
         }
 
         for lastCameraNode in lastCameraNodes {
             if !detectingCameraNodes.contains(lastCameraNode) {
-                delegate.viewModel(self, didEndDetectOpponent: lastCameraNode)
+                delegate.gameViewModel(self, didEndDetectOpponent: lastCameraNode)
             }
         }
 
