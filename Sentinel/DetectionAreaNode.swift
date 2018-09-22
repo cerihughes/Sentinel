@@ -1,6 +1,6 @@
 import SceneKit
 
-class DetectionNode: SCNNode {
+class DetectionAreaNode: SCNNode {
     override init() {
         super.init()
     }

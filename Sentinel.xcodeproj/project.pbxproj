@@ -45,7 +45,7 @@
 		65B83F81213C08C600515915 /* NodeFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F80213C08C600515915 /* NodeFactory.swift */; };
 		65B83F83213C08E400515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
 		65B83F84213C09A000515915 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B83F82213C08E400515915 /* Grid.swift */; };
-		65BB5F262155443900E01923 /* DetectionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BB5F252155443900E01923 /* DetectionNode.swift */; };
+		65BB5F262155443900E01923 /* DetectionAreaNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BB5F252155443900E01923 /* DetectionAreaNode.swift */; };
 		65BFF02021414F66000861F8 /* NodePositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BFF01F21414F66000861F8 /* NodePositioning.swift */; };
 		65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		65DCBC5F2154047A00F5D2FB /* SpaceWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */; };
@@ -101,7 +101,7 @@
 		65A9E07721427795009011C8 /* SkyBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyBox.swift; sourceTree = "<group>"; };
 		65B83F80213C08C600515915 /* NodeFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFactory.swift; sourceTree = "<group>"; };
 		65B83F82213C08E400515915 /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
-		65BB5F252155443900E01923 /* DetectionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionNode.swift; sourceTree = "<group>"; };
+		65BB5F252155443900E01923 /* DetectionAreaNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionAreaNode.swift; sourceTree = "<group>"; };
 		65BFF01F21414F66000861F8 /* NodePositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePositioning.swift; sourceTree = "<group>"; };
 		65C003B82146BF3400EDB205 /* LevelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelConfiguration.swift; sourceTree = "<group>"; };
 		65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceWorld.swift; sourceTree = "<group>"; };
@@ -191,7 +191,7 @@
 				656AAEE6214EB82100991151 /* TreeNode.swift */,
 				656AAEEE214ED18D00991151 /* SynthoidNode.swift */,
 				656AAEEC214ECE3100991151 /* OppositionNode.swift */,
-				65BB5F252155443900E01923 /* DetectionNode.swift */,
+				65BB5F252155443900E01923 /* DetectionAreaNode.swift */,
 				6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */,
 				655141E921543034009E7486 /* NodeManipulator.swift */,
 				654C0DF121556B7400C2657F /* NodeOperations.swift */,
@@ -388,7 +388,7 @@
 				65B83F83213C08E400515915 /* Grid.swift in Sources */,
 				65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */,
 				6594D0F12152B09300D13EC6 /* ViewingNode.swift in Sources */,
-				65BB5F262155443900E01923 /* DetectionNode.swift in Sources */,
+				65BB5F262155443900E01923 /* DetectionAreaNode.swift in Sources */,
 				659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */,
 				656AAEE5214EA4C600991151 /* FloorNode.swift in Sources */,
 			);
