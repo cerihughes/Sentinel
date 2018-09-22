@@ -6,18 +6,18 @@ enum Viewer: Int {
     case player = 0, sentinel, sentry1, sentry2, sentry3
 }
 
-class ContainerViewController: UIViewController, ViewModelDelegate {
-    private let viewModel: ViewModel
+class GameContainerViewController: UIViewController, GameViewModelDelegate {
+    private let viewModel: GameViewModel
+    private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
-    private let playerViewController: PlayerViewController
 
-    init(viewModel: ViewModel) {
+    init(viewModel: GameViewModel) {
         self.viewModel = viewModel
 
         let scene = viewModel.world.playerScene
         let cameraNode = viewModel.world.initialCameraNode
         let overlay = viewModel.overlay
-        playerViewController = PlayerViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
+        mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -29,18 +29,18 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let sceneView = playerViewController.view as? SCNView else {
+        guard let sceneView = mainViewController.view as? SCNView else {
             return
         }
 
         sceneView.delegate = viewModel
         viewModel.delegate = self
 
-        addChild(playerViewController)
-        view.addSubview(playerViewController.view)
-        playerViewController.didMove(toParent: self)
+        addChild(mainViewController)
+        view.addSubview(mainViewController.view)
+        mainViewController.didMove(toParent: self)
 
-        let mainView: UIView = playerViewController.view
+        let mainView: UIView = mainViewController.view
         mainView.translatesAutoresizingMaskIntoConstraints = false
         let mainCenterX = mainView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         let mainCenterY = mainView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
@@ -95,7 +95,7 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
 
     @objc
     func tapGesture(sender: UIGestureRecognizer) {
-        if let sceneView = playerViewController.view as? SCNView, let interaction = interaction(for: sender) {
+        if let sceneView = mainViewController.view as? SCNView, let interaction = interaction(for: sender) {
             let point = sender.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(point, options: [:])
             if viewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
@@ -125,13 +125,13 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         return nil
     }
 
-    private func add(opponentViewController: OpponentViewController) {
+    private func add(opponentViewController: GameOpponentViewController) {
         addChild(opponentViewController)
         opponentViewContainer.addSubview(opponentViewController.view)
         opponentViewController.didMove(toParent: self)
     }
 
-    private func remove(opponentViewController: OpponentViewController) {
+    private func remove(opponentViewController: GameOpponentViewController) {
         opponentViewController.willMove(toParent: nil)
         opponentViewController.view.removeFromSuperview()
         opponentViewController.removeFromParent()
@@ -139,18 +139,18 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
 
     // MARK: ViewModelDelegate
 
-    func viewModel(_: ViewModel, didChange cameraNode: SCNNode) {
-        guard let sceneView = playerViewController.view as? SCNView else {
+    func gameViewModel(_: GameViewModel, didChange cameraNode: SCNNode) {
+        guard let sceneView = mainViewController.view as? SCNView else {
             return
         }
 
         sceneView.pointOfView = cameraNode
     }
 
-    func viewModel(_: ViewModel, didDetectOpponent cameraNode: SCNNode) {
+    func gameViewModel(_: GameViewModel, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             let scene = self.viewModel.world.opponentScene
-            let opponentViewController = OpponentViewController(scene: scene, cameraNode: cameraNode)
+            let opponentViewController = GameOpponentViewController(scene: scene, cameraNode: cameraNode)
             self.add(opponentViewController: opponentViewController)
 
             self.opponentViewContainer.setNeedsLayout()
@@ -161,10 +161,10 @@ class ContainerViewController: UIViewController, ViewModelDelegate {
         }
     }
 
-    func viewModel(_: ViewModel, didEndDetectOpponent cameraNode: SCNNode) {
+    func gameViewModel(_: GameViewModel, didEndDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             for child in self.children {
-                if let opponentViewController = child as? OpponentViewController {
+                if let opponentViewController = child as? GameOpponentViewController {
                     if opponentViewController.cameraNode == cameraNode {
                         self.remove(opponentViewController: opponentViewController)
                     }

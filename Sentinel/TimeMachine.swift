@@ -1,6 +1,6 @@
 import SceneKit
 
-class TimeEngine: NSObject {
+class TimeMachine: NSObject {
     private var timingFunctions: [UUID:TimeEngineData] = [:]
 
     func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID {

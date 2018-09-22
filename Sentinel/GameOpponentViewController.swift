@@ -1,7 +1,7 @@
 import SceneKit
 import UIKit
 
-class OpponentViewController: UIViewController {
+class GameOpponentViewController: UIViewController {
     let scene: SCNScene
     let cameraNode: SCNNode?
 

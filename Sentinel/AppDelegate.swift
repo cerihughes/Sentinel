@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize)
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
-        let viewModel = ViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
-        let viewController = ContainerViewController(viewModel: viewModel)
+        let viewModel = GameViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
+        let viewController = GameContainerViewController(viewModel: viewModel)
         window!.rootViewController = viewController
         window!.makeKeyAndVisible()
         return true
