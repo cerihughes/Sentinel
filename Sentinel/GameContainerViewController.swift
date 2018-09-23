@@ -14,7 +14,7 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
 
-        let scene = viewModel.world.playerScene
+        let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
         let overlay = viewModel.overlay
         mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
@@ -149,7 +149,7 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
 
     func gameViewModel(_: GameViewModel, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
-            let scene = self.viewModel.world.opponentScene
+            let scene = self.viewModel.world.scene
             let opponentViewController = GameOpponentViewController(scene: scene, cameraNode: cameraNode)
             self.add(opponentViewController: opponentViewController)
 

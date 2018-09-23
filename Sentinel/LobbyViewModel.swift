@@ -12,10 +12,9 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("Cell for index: \(indexPath)")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: lobbyViewModelReuseIdentifier, for: indexPath) as! LobbyCollectionViewCell
         let cellViewModel = createCellViewModel(for: indexPath)
-        cell.sceneView.scene = cellViewModel.world.playerScene
+        cell.sceneView.scene = cellViewModel.world.scene
         return cell
     }
 
