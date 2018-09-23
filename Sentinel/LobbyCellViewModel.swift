@@ -7,7 +7,7 @@ class LobbyCellViewModel: NSObject {
 
     private let grid: Grid
     private let timeMachine = TimeMachine()
-    private let nodeManipulator: NodeOperations
+    private let nodeManipulator: NodeManipulator
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.levelConfiguration = levelConfiguration
@@ -16,15 +16,11 @@ class LobbyCellViewModel: NSObject {
         let tg = TerrainGenerator()
         self.grid = tg.generate(levelConfiguration: levelConfiguration)
 
-        let playerNodeMap = NodeMap()
-        let playerTerrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: playerNodeMap)
+        let nodeMap = NodeMap()
+        let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
+        world.set(terrainNode: terrainNode)
 
-        let opponentNodeMap = NodeMap()
-        let opponentTerrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: opponentNodeMap)
-
-        world.set(playerTerrainNode: playerTerrainNode, opponentTerrainNode: opponentTerrainNode)
-
-        self.nodeManipulator = NodeManipulator(terrainNode: playerTerrainNode, nodeMap: playerNodeMap, nodeFactory: nodeFactory)
+        self.nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
 
         super.init()
     }

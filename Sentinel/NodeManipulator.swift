@@ -1,6 +1,6 @@
 import SceneKit
 
-class NodeManipulator: NSObject, NodeOperations {
+class NodeManipulator: NSObject {
     let terrainNode: TerrainNode
     private let nodeMap: NodeMap
     private let nodeFactory: NodeFactory
@@ -20,12 +20,36 @@ class NodeManipulator: NSObject, NodeOperations {
         return nodeMap.getFloorNode(for: point)?.synthoidNode
     }
 
+    func oppositionNode(at point: GridPoint) -> OppositionNode? {
+        if let floorNode = nodeMap.getFloorNode(for: point) {
+            return floorNode.sentinelNode ?? floorNode.sentryNode
+        }
+        return nil
+    }
+
     func point(for floorNode: FloorNode) -> GridPoint? {
         guard let piece = nodeMap.getPiece(for: floorNode) else {
             return nil
         }
 
         return piece.point
+    }
+
+    func viewingNode(for viewer: Viewer) -> ViewingNode? {
+        switch viewer {
+        case .player:
+            return currentSynthoidNode
+        case .sentinel:
+            return terrainNode.sentinelNode
+        default:
+            let sentryNodes = terrainNode.sentryNodes
+            let rawValueOffset = Viewer.sentry1.rawValue
+            let index = viewer.rawValue - rawValueOffset
+            if index < sentryNodes.count {
+                return sentryNodes[index]
+            }
+            return nil
+        }
     }
 
     func makeSynthoidCurrent(at point: GridPoint) {
@@ -42,7 +66,7 @@ class NodeManipulator: NSObject, NodeOperations {
         }
     }
 
-    func rotateCurrentSynthoid(by radiansDelta: Float, persist: Bool) {
+    func rotateCurrentSynthoid(by radiansDelta: Float, persist: Bool = false) {
         guard let synthoidNode = currentSynthoidNode else {
             return
         }

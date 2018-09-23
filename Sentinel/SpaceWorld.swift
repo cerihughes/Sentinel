@@ -3,8 +3,7 @@ import SceneKit
 class SpaceWorld: NSObject, World {
     private let nodeFactory: NodeFactory
     internal let initialCameraNode: SCNNode
-    internal let playerScene = SCNScene()
-    internal let opponentScene = SCNScene()
+    internal let scene = SCNScene()
 
     private let orbitNode = SCNNode()
 
@@ -13,14 +12,13 @@ class SpaceWorld: NSObject, World {
         self.initialCameraNode = nodeFactory.createCameraNode()
         super.init()
 
-        setupPlayerScene()
-        setupOpponentScene()
+        setupScene()
     }
 
-    private func setupPlayerScene() {
+    private func setupScene() {
         let skyBox = SkyBox(sourceImage: #imageLiteral(resourceName: "skybox.png"))
         if let components = skyBox.componentImages() {
-            playerScene.background.contents = components
+            scene.background.contents = components
         }
 
         initialCameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
@@ -37,11 +35,7 @@ class SpaceWorld: NSObject, World {
         orbitNode.addChildNode(initialCameraNode)
         addAmbientLights(to: orbitNode)
 
-        playerScene.rootNode.addChildNode(orbitNode)
-    }
-
-    private func setupOpponentScene() {
-        addAmbientLights(to: opponentScene.rootNode)
+        scene.rootNode.addChildNode(orbitNode)
     }
 
     private func addAmbientLights(to node: SCNNode) {
@@ -52,9 +46,8 @@ class SpaceWorld: NSObject, World {
         }
     }
 
-    func set(playerTerrainNode: TerrainNode, opponentTerrainNode: TerrainNode) {
-        orbitNode.addChildNode(playerTerrainNode)
-        opponentScene.rootNode.addChildNode(opponentTerrainNode)
-        initialCameraNode.look(at: playerTerrainNode.worldPosition)
+    func set(terrainNode: TerrainNode) {
+        orbitNode.addChildNode(terrainNode)
+        initialCameraNode.look(at: terrainNode.worldPosition)
     }
 }
