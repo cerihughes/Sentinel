@@ -19,7 +19,7 @@ protocol GameViewModelDelegate: class {
 
 class GameViewModel: NSObject, SCNSceneRendererDelegate {
     let levelConfiguration: LevelConfiguration
-    let overlay = SKScene()
+    let overlay = OverlayScene()
     let world: World
     weak var delegate: GameViewModelDelegate?
     var preAnimationBlock: (() -> Void)?
@@ -27,7 +27,6 @@ class GameViewModel: NSObject, SCNSceneRendererDelegate {
 
     private let grid: Grid
     private let timeMachine = TimeMachine()
-    private var energy: Int = 10
     private let nodeManipulator: NodeManipulator
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
@@ -45,6 +44,7 @@ class GameViewModel: NSObject, SCNSceneRendererDelegate {
 
         super.init()
 
+        overlay.energy = 10
         setupTimingFunctions()
     }
 
@@ -212,7 +212,7 @@ class GameViewModel: NSObject, SCNSceneRendererDelegate {
             return true
         }
 
-        return energy > required
+        return overlay.energy > required
     }
 
     private func adjustEnergy(delta: Int, isPlayer: Bool) {
@@ -220,7 +220,7 @@ class GameViewModel: NSObject, SCNSceneRendererDelegate {
             return
         }
 
-        energy += delta
+        overlay.energy += delta
     }
 
     private func buildTree(at point: GridPoint, isPlayer: Bool = true) {
