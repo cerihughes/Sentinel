@@ -11,10 +11,15 @@ let synthoidEnergyValue = 3
 let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
+enum GameEndState {
+    case victory, defeat
+}
+
 protocol GameViewModelDelegate: class {
     func gameViewModel(_: GameViewModel, didChange cameraNode: SCNNode)
     func gameViewModel(_: GameViewModel, didDetectOpponent cameraNode: SCNNode)
     func gameViewModel(_: GameViewModel, didEndDetectOpponent cameraNode: SCNNode)
+    func gameViewModel(_: GameViewModel, levelDidEndWith state: GameEndState)
 }
 
 class GameViewModel: NSObject, SCNSceneRendererDelegate {
@@ -216,11 +221,18 @@ class GameViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func adjustEnergy(delta: Int, isPlayer: Bool) {
-        guard isPlayer else {
-            return
+        guard
+            isPlayer,
+            let delegate = delegate
+            else {
+                return
         }
 
         overlay.energy += delta
+
+        if overlay.energy <= 0 {
+            delegate.gameViewModel(self, levelDidEndWith: .defeat)
+        }
     }
 
     private func buildTree(at point: GridPoint, isPlayer: Bool = true) {
@@ -335,6 +347,7 @@ class GameViewModel: NSObject, SCNSceneRendererDelegate {
             delegate.gameViewModel(self, didEndDetectOpponent: sentinelNode.cameraNode)
             grid.sentinelPosition = undefinedPosition
             adjustEnergy(delta: sentinelEnergyValue, isPlayer: true)
+            delegate.gameViewModel(self, levelDidEndWith: .victory)
         }
     }
 
@@ -412,10 +425,8 @@ extension GameViewModel {
         }
 
         for oppositionNode in nodeManipulator.terrainNode.oppositionNodes {
-            let visibleSynthoids = oppositionNode.visibleSynthoids(in: playerRenderer)
-            if visibleSynthoids.contains(synthoidNode) {
-                return nil // Don't absorb the player - this is handled by a separate timing function
-            }
+            // Don't absorb the player - this is handled by a separate timing function
+            let visibleSynthoids = oppositionNode.visibleSynthoids(in: playerRenderer).filter { $0 != synthoidNode }
 
             if let visibleSynthoid = visibleSynthoids.randomElement(),
                 let floorNode = visibleSynthoid.floorNode,
@@ -465,6 +476,10 @@ extension GameViewModel {
         let detectingOppositionNodes = nodes(oppositionNodes, thatSee: synthoidNode, in: playerRenderer)
         let detectingCameraNodes = Set(detectingOppositionNodes.map { $0.cameraNode })
         let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
+        if detectingCameraNodes.intersection(lastCameraNodes).count > 0 {
+            // Seen by a camera for more than 1 "cycle"...
+            adjustEnergy(delta: -treeEnergyValue, isPlayer: true)
+        }
 
         for detectingCameraNode in detectingCameraNodes {
             if !lastCameraNodes.contains(detectingCameraNode) {
