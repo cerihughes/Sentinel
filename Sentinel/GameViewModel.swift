@@ -425,10 +425,8 @@ extension GameViewModel {
         }
 
         for oppositionNode in nodeManipulator.terrainNode.oppositionNodes {
-            let visibleSynthoids = oppositionNode.visibleSynthoids(in: playerRenderer)
-            if visibleSynthoids.contains(synthoidNode) {
-                return nil // Don't absorb the player - this is handled by a separate timing function
-            }
+            // Don't absorb the player - this is handled by a separate timing function
+            let visibleSynthoids = oppositionNode.visibleSynthoids(in: playerRenderer).filter { $0 != synthoidNode }
 
             if let visibleSynthoid = visibleSynthoids.randomElement(),
                 let floorNode = visibleSynthoid.floorNode,
