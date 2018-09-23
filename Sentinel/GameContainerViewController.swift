@@ -178,6 +178,10 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
             }
         }
     }
+
+    func gameViewModel(_: GameViewModel, levelDidEndWith state: GameEndState) {
+        // No-op
+    }
 }
 
 class OpponentViewContainer: UIView {
