@@ -201,9 +201,8 @@ class PlayerViewModel: NSObject {
             absorbTreeNode(at: point)
         } else if grid.rockPositions.contains(point) && interactiveNodeType == .rock {
             if let rockNode = node as? RockNode,
-                let floorNode = rockNode.floorNode,
-                let height = floorNode.rockNodes.firstIndex(of: rockNode) {
-                absorbRockNode(at: point, height: height)
+                let floorNode = rockNode.floorNode {
+                absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
             }
         } else if grid.synthoidPositions.contains(point) && interactiveNodeType == .synthoid {
             absorbSynthoidNode(at: point)
@@ -265,8 +264,8 @@ class PlayerViewModel: NSObject {
         }
     }
 
-    private func absorbRockNode(at point: GridPoint, height: Int) {
-        if terrainViewModel.absorbRockNode(at: point, height: height) {
+    private func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) {
+        if terrainViewModel.absorbRockNode(at: point, isFinalRockNode: isFinalRockNode) {
             adjustEnergy(delta: rockEnergyValue)
         }
     }

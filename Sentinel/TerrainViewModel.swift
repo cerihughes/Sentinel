@@ -39,7 +39,7 @@ class TerrainViewModel: NSObject {
         return true
     }
 
-    func absorbRockNode(at point: GridPoint, height: Int) -> Bool {
+    func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
         guard let index = grid.rockPositions.index(of: point) else {
             return false
         }
@@ -50,13 +50,10 @@ class TerrainViewModel: NSObject {
             return absorbTreeNode(at: point)
         }
 
-        var absorbed = true
-        repeat {
-            absorbed = nodeManipulator.absorbRock(at: point, height: height)
-        } while absorbed
-
-        if height == 0 {
-            grid.rockPositions.remove(at: index)
+        if nodeManipulator.absorbRock(at: point) {
+            if isFinalRockNode {
+                grid.rockPositions.remove(at: index)
+            }
         }
 
         return true

@@ -83,7 +83,7 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
             if let visibleRock = oppositionNode.visibleRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleRock.floorNode,
                 let point = nodeManipulator.point(for: floorNode) {
-                if terrainViewModel.absorbRockNode(at: point, height: floorNode.rockNodes.count - 1) {
+                if terrainViewModel.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1) {
                     terrainViewModel.buildTree(at: point)
                     oppositionBuildRandomTree()
                     return nil

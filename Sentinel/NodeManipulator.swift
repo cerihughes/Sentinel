@@ -109,10 +109,11 @@ class NodeManipulator: NSObject {
         return absorb(node: nodeMap.getFloorNode(for: point)?.treeNode)
     }
 
-    func absorbRock(at point: GridPoint, height: Int) -> Bool {
+    func absorbRock(at point: GridPoint) -> Bool {
         guard
             let floorNode = nodeMap.getFloorNode(for: point),
-            floorNode.rockNodes.count > height
+            floorNode.treeNode == nil,
+            floorNode.synthoidNode == nil
             else {
                 return false
         }
