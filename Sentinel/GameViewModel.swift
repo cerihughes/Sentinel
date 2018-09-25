@@ -8,7 +8,7 @@ class GameViewModel: NSObject {
     let playerViewModel: PlayerViewModel
     let opponentsViewModel: OpponentsViewModel
 
-    private let nodeManipulator: NodeManipulator
+    let nodeManipulator: NodeManipulator
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.world = world

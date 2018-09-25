@@ -37,6 +37,7 @@
 		656AED89215A5E61005D88B3 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED88215A5E61005D88B3 /* PlayerViewModel.swift */; };
 		656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */; };
 		656AED8D215A5E74005D88B3 /* TerrainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */; };
+		656AED90215A68BC005D88B3 /* InputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8F215A68BC005D88B3 /* InputViewModel.swift */; };
 		657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657A3B47214F070D0092E2D9 /* PlaceableNode.swift */; };
 		6586AC9F214F1325008727D9 /* SCNNodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */; };
 		6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586ACA0214FC753008727D9 /* DetectableNode.swift */; };
@@ -103,6 +104,7 @@
 		656AED88215A5E61005D88B3 /* PlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpponentsViewModel.swift; sourceTree = "<group>"; };
 		656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TerrainViewModel.swift; sourceTree = "<group>"; };
+		656AED8F215A68BC005D88B3 /* InputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewModel.swift; sourceTree = "<group>"; };
 		657A3B47214F070D0092E2D9 /* PlaceableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceableNode.swift; sourceTree = "<group>"; };
 		6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNNodeExtensions.swift; sourceTree = "<group>"; };
 		6586ACA0214FC753008727D9 /* DetectableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectableNode.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 		6546A840213C0651009F0650 /* Sentinel */ = {
 			isa = PBXGroup;
 			children = (
+				656AED8E215A68A3005D88B3 /* Input */,
 				65D7F1DB2157FD220085C6CF /* Overlay */,
 				655D5E4D21564CC100BA2F49 /* Game */,
 				655D5E4E21564E4400BA2F49 /* Lobby */,
@@ -277,6 +280,14 @@
 				6586ACA421500CEE008727D9 /* TimeMachine.swift */,
 			);
 			name = Timing;
+			sourceTree = "<group>";
+		};
+		656AED8E215A68A3005D88B3 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				656AED8F215A68BC005D88B3 /* InputViewModel.swift */,
+			);
+			name = Input;
 			sourceTree = "<group>";
 		};
 		65D7F1DB2157FD220085C6CF /* Overlay */ = {
@@ -401,6 +412,7 @@
 			files = (
 				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				655D5E5721564FC400BA2F49 /* LobbyCollectionViewCell.swift in Sources */,
+				656AED90215A68BC005D88B3 /* InputViewModel.swift in Sources */,
 				6586ACA521500CEE008727D9 /* TimeMachine.swift in Sources */,
 				655141EA21543034009E7486 /* NodeManipulator.swift in Sources */,
 				655D5E5121564E7800BA2F49 /* LobbyViewController.swift in Sources */,

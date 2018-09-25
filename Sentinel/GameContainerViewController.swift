@@ -7,17 +7,21 @@ enum Viewer: Int {
 }
 
 class GameContainerViewController: UIViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
+    private let inputViewModel: InputViewModel
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
+        self.inputViewModel = InputViewModel(playerViewModel: viewModel.playerViewModel,
+                                             opponentsViewModel: viewModel.opponentsViewModel,
+                                             nodeManipulator: viewModel.nodeManipulator)
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
         let overlay = viewModel.playerViewModel.overlay
-        mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
+        self.mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -65,72 +69,19 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
                                      containerRight, containerTop, containerWidth, containerHeight])
 
-        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tapGesture(sender:)))
-        sceneView.addGestureRecognizer(tapRecogniser)
-
-        let longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(tapGesture(sender:)))
-        longPressRecogniser.isEnabled = false
-        sceneView.addGestureRecognizer(longPressRecogniser)
-
-        let panRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panGesture(sender:)))
-        panRecogniser.isEnabled = false
-        sceneView.addGestureRecognizer(panRecogniser)
-
+        inputViewModel.addGestureRecognisers(to: sceneView)
         viewModel.playerViewModel.preAnimationBlock = {
-            tapRecogniser.isEnabled = false
-            longPressRecogniser.isEnabled = false
-            panRecogniser.isEnabled = false
+            self.inputViewModel.disableGestureRecognisers()
         }
 
         viewModel.playerViewModel.postAnimationBlock = {
-            tapRecogniser.isEnabled = true
-            longPressRecogniser.isEnabled = true
-            panRecogniser.isEnabled = true
+            self.inputViewModel.enableGestureRecognisers()
         }
     }
 
     override func viewWillLayoutSubviews() {
         let size = view.frame.size
         opponentViewContainer.aspectRatio = size.width / size.height
-    }
-
-    @objc
-    func tapGesture(sender: UIGestureRecognizer) {
-        guard sender.state != .cancelled else {
-            return
-        }
-
-        if let sceneView = mainViewController.view as? SCNView, let interaction = interaction(for: sender) {
-            let point = sender.location(in: sceneView)
-            let hitTestResults = sceneView.hitTest(point, options: [:])
-            if viewModel.playerViewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
-                // Start the time machine
-                viewModel.opponentsViewModel.timeMachine.start()
-
-                // Toggle the state to "complete" the gesture
-                sender.isEnabled = false
-                sender.isEnabled = true
-            }
-        }
-    }
-
-    @objc
-    func panGesture(sender: UIPanGestureRecognizer) {
-        let translation = sender.translation(in: sender.view!)
-        let deltaX = Float(translation.x)
-        viewModel.playerViewModel.processPan(by: deltaX, finished: sender.state == .ended)
-    }
-
-    private func interaction(for sender: UIGestureRecognizer) -> UserInteraction? {
-        if sender.isKind(of: UITapGestureRecognizer.self) {
-            return .tap
-        }
-
-        if sender.isKind(of: UILongPressGestureRecognizer.self) {
-            return .longPress
-        }
-
-        return nil
     }
 
     private func add(opponentViewController: GameOpponentViewController) {
