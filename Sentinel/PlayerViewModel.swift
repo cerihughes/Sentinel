@@ -1,10 +1,6 @@
 import SceneKit
 import SpriteKit
 
-enum UserInteraction {
-    case tap, longPress
-}
-
 let treeEnergyValue = 1
 let rockEnergyValue = 2
 let synthoidEnergyValue = 3
