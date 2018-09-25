@@ -96,6 +96,10 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
 
     @objc
     func tapGesture(sender: UIGestureRecognizer) {
+        guard sender.state != .cancelled else {
+            return
+        }
+        
         if let sceneView = mainViewController.view as? SCNView, let interaction = interaction(for: sender) {
             let point = sender.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(point, options: [:])
