@@ -99,11 +99,14 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
         guard sender.state != .cancelled else {
             return
         }
-        
+
         if let sceneView = mainViewController.view as? SCNView, let interaction = interaction(for: sender) {
             let point = sender.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(point, options: [:])
             if viewModel.playerViewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
+                // Start the time machine
+                viewModel.opponentsViewModel.timeMachine.start()
+
                 // Toggle the state to "complete" the gesture
                 sender.isEnabled = false
                 sender.isEnabled = true
@@ -153,7 +156,7 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
     }
 
     func playerViewModel(_: PlayerViewModel, levelDidEndWith state: GameEndState) {
-        // No-op
+        viewModel.opponentsViewModel.timeMachine.stop()
     }
 
     // MARK: OpponentsViewModelDelegate
