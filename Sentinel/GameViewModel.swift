@@ -2,23 +2,19 @@ import SceneKit
 import SpriteKit
 
 class GameViewModel: NSObject {
-    let levelConfiguration: LevelConfiguration
     let world: World
 
     let terrainViewModel: TerrainViewModel
     let playerViewModel: PlayerViewModel
     let opponentsViewModel: OpponentsViewModel
 
-    private let grid: Grid
-    private let timeMachine = TimeMachine()
     private let nodeManipulator: NodeManipulator
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
-        self.levelConfiguration = levelConfiguration
         self.world = world
 
         let tg = TerrainGenerator()
-        self.grid = tg.generate(levelConfiguration: levelConfiguration)
+        let grid = tg.generate(levelConfiguration: levelConfiguration)
 
         let nodeMap = NodeMap()
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
