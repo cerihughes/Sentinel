@@ -1,0 +1,97 @@
+import SceneKit
+import SpriteKit
+
+class TerrainViewModel: NSObject {
+    let grid: Grid
+    let nodeManipulator: NodeManipulator
+
+    init(grid: Grid, nodeManipulator: NodeManipulator) {
+        self.grid = grid
+        self.nodeManipulator = nodeManipulator
+
+        super.init()
+    }
+
+    func buildTree(at point: GridPoint) {
+        grid.treePositions.insert(point)
+        nodeManipulator.buildTree(at: point)
+    }
+
+    func buildRock(at point: GridPoint) {
+        grid.rockPositions.insert(point)
+        nodeManipulator.buildRock(at: point)
+    }
+
+    func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
+        grid.synthoidPositions.insert(point)
+        nodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
+    }
+
+    func absorbTreeNode(at point: GridPoint) -> Bool {
+        guard
+            nodeManipulator.absorbTree(at: point),
+            let index = grid.treePositions.index(of: point)
+            else {
+                return false
+        }
+
+        grid.treePositions.remove(at: index)
+        return true
+    }
+
+    func absorbRockNode(at point: GridPoint, height: Int) -> Bool {
+        guard let index = grid.rockPositions.index(of: point) else {
+            return false
+        }
+
+        if grid.synthoidPositions.contains(point) {
+            return absorbSynthoidNode(at: point)
+        } else if grid.treePositions.contains(point) {
+            return absorbTreeNode(at: point)
+        }
+
+        var absorbed = true
+        repeat {
+            absorbed = nodeManipulator.absorbRock(at: point, height: height)
+        } while absorbed
+
+        if height == 0 {
+            grid.rockPositions.remove(at: index)
+        }
+
+        return true
+    }
+
+    func absorbSynthoidNode(at point: GridPoint) -> Bool {
+        guard
+            nodeManipulator.absorbSynthoid(at: point),
+            let index = grid.synthoidPositions.index(of: point)
+            else {
+                return false
+        }
+
+        grid.synthoidPositions.remove(at: index)
+        return true
+    }
+
+    func absorbSentryNode(at point: GridPoint) -> Bool {
+        guard
+            nodeManipulator.absorbSentry(at: point),
+            let index = grid.sentryPositions.index(of: point)
+            else {
+                return false
+        }
+
+        grid.sentryPositions.remove(at: index)
+        return true
+    }
+
+    func absorbSentinelNode(at point: GridPoint) -> Bool {
+        guard nodeManipulator.absorbSentinel(at: point) else {
+            return false
+        }
+
+        grid.sentinelPosition = undefinedPosition
+        return true
+    }
+}
