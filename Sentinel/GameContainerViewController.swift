@@ -14,7 +14,9 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
 
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
-        self.inputViewModel = InputViewModel(playerViewModel: viewModel.playerViewModel, opponentsViewModel: viewModel.opponentsViewModel)
+        self.inputViewModel = InputViewModel(playerViewModel: viewModel.playerViewModel,
+                                             opponentsViewModel: viewModel.opponentsViewModel,
+                                             nodeManipulator: viewModel.nodeManipulator)
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
