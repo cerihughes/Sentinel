@@ -15,7 +15,7 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
 
     weak var delegate: OpponentsViewModelDelegate?
 
-    private let timeMachine = TimeMachine()
+    let timeMachine = TimeMachine()
 
     init(levelConfiguration: LevelConfiguration, terrainViewModel: TerrainViewModel) {
         self.levelConfiguration = levelConfiguration
@@ -124,6 +124,7 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
         if detectingCameraNodes.intersection(lastCameraNodes).count > 0 {
             // Seen by a camera for more than 1 "cycle"...
             delegate.opponentsViewModelDidDepleteEnergy(self)
+            oppositionBuildRandomTree()
         }
 
         for detectingCameraNode in detectingCameraNodes {

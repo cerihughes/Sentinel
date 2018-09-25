@@ -112,7 +112,7 @@ class PlayerViewModel: NSObject {
 
         nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
 
-        return true
+        return false
     }
 
     private func process(interaction: UserInteraction, node: SCNNode) -> Bool {

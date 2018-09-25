@@ -2,6 +2,7 @@ import SceneKit
 
 class TimeMachine: NSObject {
     private var timingFunctions: [UUID:TimeEngineData] = [:]
+    private var started = false
 
     func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID {
         let data = TimeEngineData(timeInterval: timeInterval, function: function)
@@ -15,9 +16,21 @@ class TimeMachine: NSObject {
     }
 
     func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) {
+        guard started else {
+            return
+        }
+
         for data in timingFunctions.values {
             data.handle(currentTimeInterval: currentTimeInterval, renderer: renderer)
         }
+    }
+
+    func start() {
+        started = true
+    }
+
+    func stop() {
+        started = false
     }
 
     private class TimeEngineData: NSObject {
