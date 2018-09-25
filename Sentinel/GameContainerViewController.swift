@@ -6,7 +6,7 @@ enum Viewer: Int {
     case player = 0, sentinel, sentry1, sentry2, sentry3
 }
 
-class GameContainerViewController: UIViewController, GameViewModelDelegate {
+class GameContainerViewController: UIViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
@@ -16,7 +16,7 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
-        let overlay = viewModel.overlay
+        let overlay = viewModel.playerViewModel.overlay
         mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
 
         super.init(nibName: nil, bundle: nil)
@@ -33,8 +33,9 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
             return
         }
 
-        sceneView.delegate = viewModel
-        viewModel.delegate = self
+        sceneView.delegate = viewModel.opponentsViewModel
+        viewModel.playerViewModel.delegate = self
+        viewModel.opponentsViewModel.delegate = self
 
         addChild(mainViewController)
         view.addSubview(mainViewController.view)
@@ -75,13 +76,13 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
         panRecogniser.isEnabled = false
         sceneView.addGestureRecognizer(panRecogniser)
 
-        viewModel.preAnimationBlock = {
+        viewModel.playerViewModel.preAnimationBlock = {
             tapRecogniser.isEnabled = false
             longPressRecogniser.isEnabled = false
             panRecogniser.isEnabled = false
         }
 
-        viewModel.postAnimationBlock = {
+        viewModel.playerViewModel.postAnimationBlock = {
             tapRecogniser.isEnabled = true
             longPressRecogniser.isEnabled = true
             panRecogniser.isEnabled = true
@@ -98,7 +99,7 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
         if let sceneView = mainViewController.view as? SCNView, let interaction = interaction(for: sender) {
             let point = sender.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(point, options: [:])
-            if viewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
+            if viewModel.playerViewModel.process(interaction: interaction, hitTestResults: hitTestResults) {
                 // Toggle the state to "complete" the gesture
                 sender.isEnabled = false
                 sender.isEnabled = true
@@ -110,7 +111,7 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
     func panGesture(sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: sender.view!)
         let deltaX = Float(translation.x)
-        viewModel.processPan(by: deltaX, finished: sender.state == .ended)
+        viewModel.playerViewModel.processPan(by: deltaX, finished: sender.state == .ended)
     }
 
     private func interaction(for sender: UIGestureRecognizer) -> UserInteraction? {
@@ -137,9 +138,9 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
         opponentViewController.removeFromParent()
     }
 
-    // MARK: ViewModelDelegate
+    // MARK: PlayerViewModelDelegate
 
-    func gameViewModel(_: GameViewModel, didChange cameraNode: SCNNode) {
+    func playerViewModel(_: PlayerViewModel, didChange cameraNode: SCNNode) {
         guard let sceneView = mainViewController.view as? SCNView else {
             return
         }
@@ -147,7 +148,13 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
         sceneView.pointOfView = cameraNode
     }
 
-    func gameViewModel(_: GameViewModel, didDetectOpponent cameraNode: SCNNode) {
+    func playerViewModel(_: PlayerViewModel, levelDidEndWith state: GameEndState) {
+        // No-op
+    }
+
+    // MARK: OpponentsViewModelDelegate
+
+    func opponentsViewModel(_: OpponentsViewModel, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             let scene = self.viewModel.world.scene
             let opponentViewController = GameOpponentViewController(scene: scene, cameraNode: cameraNode)
@@ -161,7 +168,11 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
         }
     }
 
-    func gameViewModel(_: GameViewModel, didEndDetectOpponent cameraNode: SCNNode) {
+    func opponentsViewModelDidDepleteEnergy(_: OpponentsViewModel) {
+        viewModel.playerViewModel.adjustEnergy(delta: -treeEnergyValue)
+    }
+
+    func opponentsViewModel(_: OpponentsViewModel, didEndDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             for child in self.children {
                 if let opponentViewController = child as? GameOpponentViewController {
@@ -177,10 +188,6 @@ class GameContainerViewController: UIViewController, GameViewModelDelegate {
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }
-    }
-
-    func gameViewModel(_: GameViewModel, levelDidEndWith state: GameEndState) {
-        // No-op
     }
 }
 
