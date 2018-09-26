@@ -3,7 +3,7 @@ import SceneKit
 class NodeManipulator: NSObject {
     let terrainNode: TerrainNode
     private let nodeMap: NodeMap
-    private let nodeFactory: NodeFactory
+    let nodeFactory: NodeFactory
 
     var currentSynthoidNode: SynthoidNode?
 

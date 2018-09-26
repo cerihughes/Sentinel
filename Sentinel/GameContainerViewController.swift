@@ -7,16 +7,16 @@ enum Viewer: Int {
 }
 
 class GameContainerViewController: UIViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
-    private let inputViewModel: InputViewModel
+    private let inputViewModel: SwipeInputViewModel
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
-        self.inputViewModel = InputViewModel(playerViewModel: viewModel.playerViewModel,
-                                             opponentsViewModel: viewModel.opponentsViewModel,
-                                             nodeManipulator: viewModel.nodeManipulator)
+        self.inputViewModel = SwipeInputViewModel(playerViewModel: viewModel.playerViewModel,
+                                                  opponentsViewModel: viewModel.opponentsViewModel,
+                                                  nodeManipulator: viewModel.nodeManipulator)
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode

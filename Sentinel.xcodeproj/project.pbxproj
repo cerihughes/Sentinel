@@ -45,6 +45,7 @@
 		659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
 		659395F4213D511A00302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
 		6594D0F12152B09300D13EC6 /* ViewingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6594D0F02152B09300D13EC6 /* ViewingNode.swift */; };
+		65A18F50215BB1D00014E90B /* SwipeInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */; };
 		65A9E07421417013009011C8 /* GridPointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07321417013009011C8 /* GridPointTests.swift */; };
 		65A9E0762142712C009011C8 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A9E0752142712B009011C8 /* skybox.png */; };
 		65A9E07821427795009011C8 /* SkyBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07721427795009011C8 /* SkyBox.swift */; };
@@ -111,6 +112,7 @@
 		6586ACA421500CEE008727D9 /* TimeMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachine.swift; sourceTree = "<group>"; };
 		659395F0213D46B700302665 /* TerrainGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainGenerator.swift; sourceTree = "<group>"; };
 		6594D0F02152B09300D13EC6 /* ViewingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingNode.swift; sourceTree = "<group>"; };
+		65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeInputViewModel.swift; sourceTree = "<group>"; };
 		65A9E07321417013009011C8 /* GridPointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPointTests.swift; sourceTree = "<group>"; };
 		65A9E0752142712B009011C8 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
 		65A9E07721427795009011C8 /* SkyBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyBox.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 			isa = PBXGroup;
 			children = (
 				656AED8F215A68BC005D88B3 /* InputViewModel.swift */,
+				65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */,
 			);
 			name = Input;
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 				6586ACA521500CEE008727D9 /* TimeMachine.swift in Sources */,
 				655141EA21543034009E7486 /* NodeManipulator.swift in Sources */,
 				655D5E5121564E7800BA2F49 /* LobbyViewController.swift in Sources */,
+				65A18F50215BB1D00014E90B /* SwipeInputViewModel.swift in Sources */,
 				656635DB2141483D00C264EA /* GameViewModel.swift in Sources */,
 				65DCBC61215407D000F5D2FB /* World.swift in Sources */,
 				656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */,
