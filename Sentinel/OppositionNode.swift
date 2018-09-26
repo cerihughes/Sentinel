@@ -130,7 +130,7 @@ class SentinelNode: OppositionNode {
         super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue)
 
         name = sentinelNodeName
-        categoryBitMask = interactiveNodeType.sentinel.rawValue
+        categoryBitMask = InteractiveNodeType.sentinel.rawValue
     }
 }
 
@@ -147,6 +147,6 @@ class SentryNode: OppositionNode {
         super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green)
 
         name = sentryNodeName
-        categoryBitMask = interactiveNodeType.sentry.rawValue
+        categoryBitMask = InteractiveNodeType.sentry.rawValue
     }
 }

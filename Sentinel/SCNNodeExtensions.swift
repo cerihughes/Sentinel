@@ -13,7 +13,7 @@ extension SCNNode {
 
     func firstInteractiveParent() -> SCNNode? {
         var interactiveNode = self
-        while interactiveNode.categoryBitMask < interactiveNodeType.floor.rawValue {
+        while interactiveNode.categoryBitMask < InteractiveNodeType.floor.rawValue {
             let parent = interactiveNode.parent
             if (parent != nil) {
                 interactiveNode = parent!

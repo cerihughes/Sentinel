@@ -25,7 +25,7 @@ class FloorNode: SCNNode {
 
         geometry = box
         name = floorNodeName
-        categoryBitMask = interactiveNodeType.floor.rawValue
+        categoryBitMask = InteractiveNodeType.floor.rawValue
     }
 
     var treeNode: TreeNode? {
