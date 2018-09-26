@@ -21,7 +21,10 @@ class TimeMachine: NSObject {
         }
 
         for data in timingFunctions.values {
-            data.handle(currentTimeInterval: currentTimeInterval, renderer: renderer)
+            if data.handle(currentTimeInterval: currentTimeInterval, renderer: renderer) {
+                // Only run 1 operation per time "slice" - the rest will run in subsequent iterations
+                return
+            }
         }
     }
 
@@ -46,15 +49,17 @@ class TimeMachine: NSObject {
             super.init()
         }
 
-        func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) {
+        func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) -> Bool {
             if let nextTimeInterval = nextTimeInterval {
                 if currentTimeInterval >= nextTimeInterval {
                     lastResults = function(currentTimeInterval, renderer, lastResults)
                     self.nextTimeInterval = currentTimeInterval + timeInterval
+                    return true
                 }
             } else {
                 nextTimeInterval = currentTimeInterval // This will fire on the next iteration
             }
+            return false
         }
     }
 }
