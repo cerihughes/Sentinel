@@ -43,7 +43,7 @@ class RockNode: SCNNode, PlaceableNode, DetectableNode {
         rockNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -2.0)
 
         name = rockNodeName
-        categoryBitMask = interactiveNodeType.rock.rawValue
+        categoryBitMask = InteractiveNodeType.rock.rawValue
         addChildNode(rockNode)
     }
 

@@ -14,7 +14,7 @@ let ambientLightNodeName = "ambientLightNodeName"
 
 fileprivate let radiansInCircle = Float.pi * 2.0
 
-enum interactiveNodeType: Int, CaseIterable {
+enum InteractiveNodeType: Int, CaseIterable {
     case floor = 2
     case tree = 4
     case rock = 8

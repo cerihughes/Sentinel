@@ -122,7 +122,7 @@ class InputViewModel: NSObject {
 
     private func process(interaction: UserInteraction, node: SCNNode) -> Bool {
         let bitmask = node.categoryBitMask
-        for interactiveNodeType in interactiveNodeType.allCases {
+        for interactiveNodeType in InteractiveNodeType.allCases {
             if bitmask & interactiveNodeType.rawValue == interactiveNodeType.rawValue {
                 return process(interaction: interaction, node: node, interactiveNodeType: interactiveNodeType)
             }
@@ -131,7 +131,7 @@ class InputViewModel: NSObject {
         return false
     }
 
-    private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: interactiveNodeType) -> Bool {
+    private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: InteractiveNodeType) -> Bool {
         var point: GridPoint? = nil
         if let floorNode = node as? FloorNode {
             point = nodeManipulator.point(for: floorNode)
@@ -192,7 +192,7 @@ class InputViewModel: NSObject {
         return true
     }
 
-    private func processLongPressObject(node: SCNNode, point: GridPoint, interactiveNodeType: interactiveNodeType) -> Bool {
+    private func processLongPressObject(node: SCNNode, point: GridPoint, interactiveNodeType: InteractiveNodeType) -> Bool {
         if interactiveNodeType == .sentinel {
             playerViewModel.absorbSentinelNode(at: point)
         } else if interactiveNodeType == .sentry {

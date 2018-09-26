@@ -44,7 +44,7 @@ class TreeNode: SCNNode, PlaceableNode, DetectableNode {
         }
 
         name = treeNodeName
-        categoryBitMask = interactiveNodeType.tree.rawValue
+        categoryBitMask = InteractiveNodeType.tree.rawValue
     }
 
     var floorNode: FloorNode? {
