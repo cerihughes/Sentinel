@@ -68,11 +68,11 @@ class FloorNode: SCNNode {
         return childNodes.compactMap { $0 as? RockNode }
     }
 
-    private func get(name: String) -> SCNNode? {
+    func get(name: String) -> SCNNode? {
         return childNode(withName: name, recursively: false)
     }
 
-    private func set(instance: SCNNode?, name: String) {
+    func set(instance: SCNNode?, name: String) {
         _ = remove(name: name)
         if let node = instance {
             addChildNode(node)
