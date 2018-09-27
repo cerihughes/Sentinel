@@ -1,13 +1,10 @@
 import SceneKit
 
+fileprivate let elevationLock = Float.pi / 6.0
+
 class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
-    var viewingAngle: Float = 0.0 {
-        didSet {
-            let oldPosition = position
-            transform = SCNMatrix4MakeRotation(viewingAngle, 0, 1, 0)
-            position = oldPosition
-        }
-    }
+    private var rotationRadians: Float = 0.0
+    private var elevationRadians: Float = 0.0
 
     override init() {
         super.init()
@@ -52,14 +49,25 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         return [self]
     }
 
-    func apply(rotationDelta radians: Float, persist: Bool) {
-        let newRadians = viewingAngle + radians
+    func apply(rotationDelta: Float, elevationDelta: Float, persist: Bool) {
+        let newRotationAngle = rotationRadians + rotationDelta
+        var newElevationAngle = elevationRadians + elevationDelta
+
+        if newElevationAngle > elevationLock {
+            newElevationAngle = elevationLock
+        } else if newElevationAngle < -elevationLock {
+            newElevationAngle = -elevationLock
+        }
+
         let oldPosition = position
-        transform = SCNMatrix4MakeRotation(newRadians, 0, 1, 0)
+        transform = SCNMatrix4MakeRotation(newRotationAngle, 0, 1, 0)
+        cameraNode.transform = SCNMatrix4MakeRotation(newElevationAngle, 1, 0, 0)
         position = oldPosition
 
         if persist {
-            viewingAngle = newRadians
+            print("Rotation: \(newRotationAngle) Elevation: \(newElevationAngle)")
+            rotationRadians = newRotationAngle
+            elevationRadians = newElevationAngle
         }
     }
 }

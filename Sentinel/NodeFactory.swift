@@ -196,7 +196,7 @@ class NodeFactory: NSObject {
     func createSynthoidNode(height: Int, viewingAngle: Float) -> SynthoidNode {
         let clone = synthoid.clone()
         clone.position = nodePositioning.calculateObjectPosition(height: height)
-        clone.viewingAngle = viewingAngle
+        clone.apply(rotationDelta: viewingAngle, elevationDelta: 0.0, persist: true)
         return clone
     }
 

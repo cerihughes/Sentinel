@@ -66,12 +66,12 @@ class NodeManipulator: NSObject {
         }
     }
 
-    func rotateCurrentSynthoid(by radiansDelta: Float, persist: Bool = false) {
+    func rotateCurrentSynthoid(rotationDelta: Float, elevationDelta: Float, persist: Bool = false) {
         guard let synthoidNode = currentSynthoidNode else {
             return
         }
 
-        synthoidNode.apply(rotationDelta: radiansDelta, persist: persist)
+        synthoidNode.apply(rotationDelta: rotationDelta, elevationDelta: elevationDelta, persist: persist)
     }
 
     func buildTree(at point: GridPoint) {

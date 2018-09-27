@@ -96,11 +96,7 @@ class InputViewModel: NSObject {
     private func processPan(by x: Float, finished: Bool) {
         let angleDeltaDegrees = x / 10.0
         let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
-        nodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians)
-
-        if finished {
-            nodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians, persist: true)
-        }
+        nodeManipulator.rotateCurrentSynthoid(rotationDelta: angleDeltaRadians, elevationDelta: 0.0, persist: finished)
     }
 
     // MARK: Tap / Press
