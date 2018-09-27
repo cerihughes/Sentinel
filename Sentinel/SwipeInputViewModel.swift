@@ -209,15 +209,6 @@ class SwipeInputViewModel: NSObject {
         return [.left, .up, .right]
     }
 
-    private func buildHeight(for floorNode: FloorNode) -> Int {
-        if let topmostNode = floorNode.topmostNode {
-            if topmostNode is RockNode {
-                return floorNode.rockNodes.count
-            }
-        }
-        return 0
-    }
-
     private func processAbsorb(placeableNode: SCNNode&PlaceableNode, swipeState: SwipeState) {
         switch swipeState {
         case .building(let scale):
@@ -271,6 +262,15 @@ class SwipeInputViewModel: NSObject {
         }
 
         temporaryNode.scaleAllDimensions(by: scale)
+    }
+
+    private func buildHeight(for floorNode: FloorNode) -> Int {
+        if let topmostNode = floorNode.topmostNode {
+            if topmostNode is RockNode {
+                return floorNode.rockNodes.count
+            }
+        }
+        return 0
     }
 
     private func processCompleteBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildIt: Bool) {
