@@ -45,6 +45,7 @@ class SwipeInputViewModel: NSObject {
     private let gestureRecognisers: [UIGestureRecognizer]
 
     private var startTapPoint: CGPoint? = nil
+    private var startNode: SCNNode? = nil
     private var floorNode: FloorNode? = nil
     private var buildHeight: Int? = nil
 
@@ -114,10 +115,12 @@ class SwipeInputViewModel: NSObject {
                 let hitTestResults = sceneView.hitTest(point, options: [:])
                 if let buildData = processInitial(hitTestResults: hitTestResults) {
                     self.startTapPoint = point
+                    self.startNode = buildData.node
                     self.floorNode = buildData.floorNode
                     self.buildHeight = buildData.buildHeight
                 } else {
                     self.startTapPoint = nil
+                    self.startNode = nil
                     self.floorNode = nil
                     self.buildHeight = nil
 
@@ -127,10 +130,12 @@ class SwipeInputViewModel: NSObject {
                 }
             } else if state == .changed || state == .ended {
                 if let startTapPoint = startTapPoint,
+                    let startNode = startNode,
                     let floorNode = floorNode,
                     let buildHeight = buildHeight {
                     let swipe = self.swipe(from: startTapPoint, to: point)
-                    processSwipe(floorNode: floorNode,
+                    processSwipe(from: startNode,
+                                 floorNode: floorNode,
                                  buildHeight: buildHeight,
                                  swipeDirection: swipe.direction,
                                  delta: swipe.delta,
@@ -163,7 +168,7 @@ class SwipeInputViewModel: NSObject {
         }
     }
 
-    func processInitial(hitTestResults: [SCNHitTestResult]) -> (floorNode: FloorNode, buildHeight: Int)? {
+    func processInitial(hitTestResults: [SCNHitTestResult]) -> (node: SCNNode, floorNode: FloorNode, buildHeight: Int)? {
         if !playerViewModel.hasEnteredScene() {
             _ = playerViewModel.enterScene()
             return nil
@@ -172,24 +177,29 @@ class SwipeInputViewModel: NSObject {
         return buildableNode(for: hitTestResults)
     }
 
-    private func buildableNode(for hitTestResults:[SCNHitTestResult]) -> (floorNode: FloorNode, buildHeight: Int)? {
+    private func buildableNode(for hitTestResults:[SCNHitTestResult]) -> (node: SCNNode, floorNode: FloorNode, buildHeight: Int)? {
         if let hitTestResult = hitTestResults.first {
             let node = hitTestResult.node
             if let interactiveNode = node.firstInteractiveParent() {
                 if let floorNode = interactiveNode as? FloorNode {
-                    return (floorNode, 0)
+                    return (interactiveNode, floorNode, 0)
                 }
                 if let rockNode = interactiveNode as? RockNode,
                     let floorNode = rockNode.floorNode,
                     let index = floorNode.rockNodes.index(of: rockNode) {
-                    return (floorNode, index + 1)
+                    return (interactiveNode, floorNode, index + 1)
+                }
+                if let placeableNode = interactiveNode as? PlaceableNode,
+                    let floorNode = placeableNode.floorNode {
+                    let index = floorNode.rockNodes.count
+                    return (interactiveNode, floorNode, index)
                 }
             }
         }
         return nil
     }
 
-    private func processSwipe(floorNode: FloorNode, buildHeight: Int, swipeDirection: SwipeDirection, delta: CGFloat, finished: Bool) {
+    private func processSwipe(from startNode: SCNNode, floorNode: FloorNode, buildHeight: Int, swipeDirection: SwipeDirection, delta: CGFloat, finished: Bool) {
         let scale: Float
         if delta < threshold {
             scale = Float(delta / threshold)
@@ -197,14 +207,17 @@ class SwipeInputViewModel: NSObject {
             scale = 1.0
         }
 
+        let swipeState = SwipeState(scale: scale, finished: finished)
+
         switch swipeDirection {
         case .down:
-            return
+            if let topmostNode = floorNode.topmostNode {
+                processAbsorb(placeableNode: topmostNode, swipeState: swipeState)
+            }
         default:
             if let buildableType = swipeDirection.buildableType {
                 var tweakedBuildHeight = buildHeight
                 if validBuildSwipeDirections(for: floorNode, buildHeight: &tweakedBuildHeight).contains(swipeDirection) {
-                    let swipeState = SwipeState(scale: scale, finished: finished)
                     processBuild(buildableType, floorNode: floorNode, buildHeight: tweakedBuildHeight, swipeState: swipeState)
                 }
             }
@@ -229,6 +242,30 @@ class SwipeInputViewModel: NSObject {
         return buildHeight
     }
 
+    private func processAbsorb(placeableNode: SCNNode&PlaceableNode, swipeState: SwipeState) {
+        switch swipeState {
+        case .building(let scale):
+            processInProgressAbsorb(placeableNode: placeableNode, scale: scale)
+        case .finished(let removeIt):
+            processCompleteAbsorb(placeableNode: placeableNode, removeIt: removeIt)
+        }
+    }
+
+    private func processInProgressAbsorb(placeableNode: SCNNode&PlaceableNode, scale: Float) {
+        placeableNode.scaleAllDimensions(by: 1.0 - scale)
+    }
+
+    private func processCompleteAbsorb(placeableNode: SCNNode&PlaceableNode, removeIt: Bool) {
+        if removeIt,
+            let floorNode = placeableNode.floorNode,
+            let point = nodeManipulator.point(for: floorNode),
+            playerViewModel.absorbTopmostNode(at: point) {
+            placeableNode.removeFromParentNode()
+        } else {
+            placeableNode.scaleAllDimensions(by: 1.0, animated: true)
+        }
+    }
+
     private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildHeight: Int, swipeState: SwipeState) {
         switch swipeState {
         case .building(let scale):
@@ -245,7 +282,7 @@ class SwipeInputViewModel: NSObject {
     private func processCompleteBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildIt: Bool) {
         if let point = nodeManipulator.point(for: floorNode),
             let temporaryNode = temporaryNode(on: floorNode) {
-            remove(temporaryNode: temporaryNode, from: floorNode, animated: !buildIt)
+            temporaryNode.removeFromParent(animated: !buildIt)
 
             if buildIt {
                 switch (buildableType) {
@@ -257,7 +294,7 @@ class SwipeInputViewModel: NSObject {
                     playerViewModel.buildSynthoid(at: point)
                 }
 
-                opponentsViewModel.timeMachine.start()
+//                opponentsViewModel.timeMachine.start()
             }
         }
     }
@@ -276,7 +313,7 @@ class SwipeInputViewModel: NSObject {
             temporaryNode.contents = createNode(for: buildableType)
         }
 
-        temporaryNode.apply(scale: scale)
+        temporaryNode.scaleAllDimensions(by: scale)
         return temporaryNode
     }
 
@@ -303,22 +340,6 @@ class SwipeInputViewModel: NSObject {
 
     private func temporaryNode(on floorNode: FloorNode) -> TemporaryNode? {
         return floorNode.childNode(withName: temporaryNodeName, recursively: false) as? TemporaryNode
-    }
-
-    private func remove(temporaryNode: TemporaryNode, from floorNode: FloorNode, animated: Bool) {
-        if animated {
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.3
-            SCNTransaction.completionBlock = {
-                temporaryNode.removeFromParentNode()
-            }
-
-            apply(scale: 0, to: temporaryNode)
-
-            SCNTransaction.commit()
-        } else {
-            temporaryNode.removeFromParentNode()
-        }
     }
 
     // MARK: Panning
@@ -367,9 +388,40 @@ class TemporaryNode: SCNNode {
         }
         return nil
     }
+}
 
-    func apply(scale: Float) {
+extension SCNNode {
+    func scaleAllDimensions(by scale: Float) {
         self.scale = SCNVector3Make(scale, scale, scale)
+    }
+
+    func scaleAllDimensions(by scale: Float, animated: Bool) {
+        if !animated {
+            scaleAllDimensions(by: scale)
+        }
+
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = 0.3
+
+        scaleAllDimensions(by: scale)
+
+        SCNTransaction.commit()
+    }
+
+    func removeFromParent(animated: Bool) {
+        if animated {
+            SCNTransaction.begin()
+            SCNTransaction.animationDuration = 0.3
+            SCNTransaction.completionBlock = {
+                self.removeFromParentNode()
+            }
+
+            scaleAllDimensions(by: 0.0)
+
+            SCNTransaction.commit()
+        } else {
+            removeFromParentNode()
+        }
     }
 }
 

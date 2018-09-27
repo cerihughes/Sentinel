@@ -135,39 +135,66 @@ class PlayerViewModel: NSObject {
         terrainViewModel.buildSynthoid(at: point, viewingAngle: viewingAngle)
     }
 
-    func absorbTreeNode(at point: GridPoint) {
+    func absorbTopmostNode(at point: GridPoint) -> Bool {
+        if let floorNode = nodeManipulator.floorNode(for: point),
+            let topmostNode = floorNode.topmostNode {
+            if topmostNode is TreeNode {
+                return absorbTreeNode(at: point)
+            }
+            if topmostNode is RockNode {
+                return absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
+            }
+            if topmostNode is SynthoidNode {
+                return absorbSynthoidNode(at: point)
+            }
+        }
+        return false
+    }
+
+    func absorbTreeNode(at point: GridPoint) -> Bool {
         if terrainViewModel.absorbTreeNode(at: point) {
             adjustEnergy(delta: treeEnergyValue)
+            return true
         }
+        return false
     }
 
-    func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) {
+    func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
         if terrainViewModel.absorbRockNode(at: point, isFinalRockNode: isFinalRockNode) {
             adjustEnergy(delta: rockEnergyValue)
+            return true
         }
+        return false
     }
 
-    func absorbSynthoidNode(at point: GridPoint) {
+    func absorbSynthoidNode(at point: GridPoint) -> Bool {
         if terrainViewModel.absorbSynthoidNode(at: point) {
             adjustEnergy(delta: synthoidEnergyValue)
+            return true
         }
+        return false
     }
 
-    func absorbSentryNode(at point: GridPoint) {
+    func absorbSentryNode(at point: GridPoint) -> Bool {
         if nodeManipulator.absorbSentry(at: point) {
             adjustEnergy(delta: sentryEnergyValue)
+            return true
         }
+        return false
     }
 
-    func absorbSentinelNode(at point: GridPoint) {
+    func absorbSentinelNode(at point: GridPoint) -> Bool {
         guard let delegate = delegate else {
-            return
+            return false
         }
 
         if nodeManipulator.absorbSentinel(at: point) {
             adjustEnergy(delta: sentinelEnergyValue)
             delegate.playerViewModel(self, levelDidEndWith: .victory)
+            return true
         }
+
+        return false
     }
 
     private func moveCamera(to nextSynthoidNode: SynthoidNode, animationDuration: CFTimeInterval) {

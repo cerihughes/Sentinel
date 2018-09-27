@@ -27,6 +27,22 @@ class TerrainViewModel: NSObject {
         nodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
     }
 
+    func absorbTopmostNode(at point: GridPoint) -> Bool {
+        if let floorNode = nodeManipulator.floorNode(for: point),
+            let topmostNode = floorNode.topmostNode {
+            if topmostNode is TreeNode {
+                return absorbTreeNode(at: point)
+            }
+            if topmostNode is RockNode {
+                return absorbRockNode(at: point, isFinalRockNode: topmostNode == floorNode.rockNodes.last)
+            }
+            if topmostNode is SynthoidNode {
+                return  absorbSynthoidNode(at: point)
+            }
+        }
+        return false
+    }
+
     func absorbTreeNode(at point: GridPoint) -> Bool {
         guard
             nodeManipulator.absorbTree(at: point),

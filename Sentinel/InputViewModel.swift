@@ -194,21 +194,28 @@ class InputViewModel: NSObject {
 
     private func processLongPressObject(node: SCNNode, point: GridPoint, interactiveNodeType: interactiveNodeType) -> Bool {
         if interactiveNodeType == .sentinel {
-            playerViewModel.absorbSentinelNode(at: point)
-        } else if interactiveNodeType == .sentry {
-            playerViewModel.absorbSentryNode(at: point)
-        } else if interactiveNodeType == .tree {
-            playerViewModel.absorbTreeNode(at: point)
-        } else if interactiveNodeType == .rock {
-            if let rockNode = node as? RockNode,
-                let floorNode = rockNode.floorNode {
-                playerViewModel.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
-            }
-        } else if interactiveNodeType == .synthoid {
-            playerViewModel.absorbSynthoidNode(at: point)
-
+            return playerViewModel.absorbSentinelNode(at: point)
         }
-        return true
+
+        if interactiveNodeType == .sentry {
+            return playerViewModel.absorbSentryNode(at: point)
+        }
+
+        if interactiveNodeType == .tree {
+            return playerViewModel.absorbTreeNode(at: point)
+        }
+
+        if interactiveNodeType == .rock,
+            let rockNode = node as? RockNode,
+            let floorNode = rockNode.floorNode {
+            return playerViewModel.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
+        }
+
+        if interactiveNodeType == .synthoid {
+            return playerViewModel.absorbSynthoidNode(at: point)
+        }
+
+        return false
     }
 
 }
