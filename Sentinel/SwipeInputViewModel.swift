@@ -198,8 +198,8 @@ class SwipeInputViewModel: NSObject {
             if let floorNode = interactiveNode as? FloorNode {
                 return floorNode
             }
-            if let placeableNode = interactiveNode as? PlaceableNode,
-                let floorNode = placeableNode.floorNode {
+            if let rockNode = interactiveNode as? RockNode,
+                let floorNode = rockNode.floorNode {
                 return floorNode
             }
         }
@@ -345,18 +345,17 @@ class SwipeInputViewModel: NSObject {
     @objc
     func panGesture(sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: sender.view!)
-        let deltaX = Float(translation.x)
-        processPan(by: deltaX, finished: sender.state == .ended)
+        processPan(by: translation, finished: sender.state == .ended)
     }
 
-    private func processPan(by x: Float, finished: Bool) {
-        let angleDeltaDegrees = x / 10.0
-        let angleDeltaRadians = angleDeltaDegrees * Float.pi / 180.0
-        nodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians)
-
-        if finished {
-            nodeManipulator.rotateCurrentSynthoid(by: angleDeltaRadians, persist: true)
-        }
+    private func processPan(by point: CGPoint, finished: Bool) {
+        let deltaX = Float(point.x)
+        let deltaY = Float(point.y)
+        let deltaXDegrees = deltaX / 10.0
+        let deltaXRadians = deltaXDegrees * Float.pi / 180.0
+        let deltaYDegrees = deltaY / 10.0
+        let deltaYRadians = deltaYDegrees * Float.pi / 180.0
+        nodeManipulator.rotateCurrentSynthoid(rotationDelta: deltaXRadians, elevationDelta: deltaYRadians, persist: finished)
     }
 }
 
