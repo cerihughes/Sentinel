@@ -60,6 +60,7 @@ class SwipeInputViewModel: NSObject {
 
         tapRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
 
+        longPressRecogniser.minimumPressDuration = 0.1
         longPressRecogniser.addTarget(self, action: #selector(longPressGesture(sender:)))
         longPressRecogniser.isEnabled = false
 
