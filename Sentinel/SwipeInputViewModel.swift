@@ -44,9 +44,7 @@ class SwipeInputViewModel: NSObject {
     private let gestureRecognisers: [UIGestureRecognizer]
 
     private var startTapPoint: CGPoint? = nil
-    private var startNode: SCNNode? = nil
     private var floorNode: FloorNode? = nil
-    private var buildHeight: Int? = nil
 
     init(playerViewModel: PlayerViewModel, opponentsViewModel: OpponentsViewModel, nodeManipulator: NodeManipulator) {
         self.playerViewModel = playerViewModel
@@ -112,16 +110,12 @@ class SwipeInputViewModel: NSObject {
 
             if state == .began {
                 let hitTestResults = sceneView.hitTest(point, options: [:])
-                if let buildData = processInitial(hitTestResults: hitTestResults) {
+                if let floorNode = floorNode(for: hitTestResults) {
                     self.startTapPoint = point
-                    self.startNode = buildData.node
-                    self.floorNode = buildData.floorNode
-                    self.buildHeight = buildData.buildHeight
+                    self.floorNode = floorNode
                 } else {
                     self.startTapPoint = nil
-                    self.startNode = nil
                     self.floorNode = nil
-                    self.buildHeight = nil
 
                     // Toggle the state to "cancel" the gesture
                     sender.isEnabled = false
@@ -129,13 +123,9 @@ class SwipeInputViewModel: NSObject {
                 }
             } else if state == .changed || state == .ended {
                 if let startTapPoint = startTapPoint,
-                    let startNode = startNode,
-                    let floorNode = floorNode,
-                    let buildHeight = buildHeight {
+                    let floorNode = floorNode {
                     let swipe = self.swipe(from: startTapPoint, to: point)
-                    processSwipe(from: startNode,
-                                 floorNode: floorNode,
-                                 buildHeight: buildHeight,
+                    processSwipe(floorNode: floorNode,
                                  swipeDirection: swipe.direction,
                                  delta: swipe.delta,
                                  finished: state == .ended)
@@ -167,38 +157,23 @@ class SwipeInputViewModel: NSObject {
         }
     }
 
-    func processInitial(hitTestResults: [SCNHitTestResult]) -> (node: SCNNode, floorNode: FloorNode, buildHeight: Int)? {
-        if !playerViewModel.hasEnteredScene() {
-            _ = playerViewModel.enterScene()
-            return nil
-        }
-
-        return buildableNode(for: hitTestResults)
-    }
-
-    private func buildableNode(for hitTestResults:[SCNHitTestResult]) -> (node: SCNNode, floorNode: FloorNode, buildHeight: Int)? {
+    func floorNode(for hitTestResults: [SCNHitTestResult]) -> FloorNode? {
         if let hitTestResult = hitTestResults.first {
             let node = hitTestResult.node
             if let interactiveNode = node.firstInteractiveParent() {
                 if let floorNode = interactiveNode as? FloorNode {
-                    return (interactiveNode, floorNode, 0)
-                }
-                if let rockNode = interactiveNode as? RockNode,
-                    let floorNode = rockNode.floorNode,
-                    let index = floorNode.rockNodes.index(of: rockNode) {
-                    return (interactiveNode, floorNode, index + 1)
+                    return floorNode
                 }
                 if let placeableNode = interactiveNode as? PlaceableNode,
                     let floorNode = placeableNode.floorNode {
-                    let index = floorNode.rockNodes.count
-                    return (interactiveNode, floorNode, index)
+                    return floorNode
                 }
             }
         }
         return nil
     }
 
-    private func processSwipe(from startNode: SCNNode, floorNode: FloorNode, buildHeight: Int, swipeDirection: SwipeDirection, delta: CGFloat, finished: Bool) {
+    private func processSwipe(floorNode: FloorNode, swipeDirection: SwipeDirection, delta: CGFloat, finished: Bool) {
         let scale: Float
         if delta < threshold {
             scale = Float(delta / threshold)
@@ -215,30 +190,32 @@ class SwipeInputViewModel: NSObject {
             }
         default:
             if let buildableType = swipeDirection.buildableType {
-                var tweakedBuildHeight = buildHeight
-                if validBuildSwipeDirections(for: floorNode, buildHeight: &tweakedBuildHeight).contains(swipeDirection) {
-                    processBuild(buildableType, floorNode: floorNode, buildHeight: tweakedBuildHeight, swipeState: swipeState)
+                if validBuildSwipeDirections(for: floorNode).contains(swipeDirection) {
+                    processBuild(buildableType, floorNode: floorNode, swipeState: swipeState)
                 }
             }
         }
     }
 
-    private func validBuildSwipeDirections(for floorNode: FloorNode, buildHeight: inout Int) -> [SwipeDirection] {
+    private func validBuildSwipeDirections(for floorNode: FloorNode) -> [SwipeDirection] {
         if let topmostNode = floorNode.topmostNode {
             if topmostNode is RockNode {
-                buildHeight = floorNode.rockNodes.count
                 return SwipeDirection.allCases
             } else {
                 return []
             }
         }
 
-        buildHeight = 0
         return [.left, .up, .right]
     }
 
-    private func validAbsorptionHeight(for floorNode: FloorNode, buildHeight: Int) -> Int? {
-        return buildHeight
+    private func buildHeight(for floorNode: FloorNode) -> Int {
+        if let topmostNode = floorNode.topmostNode {
+            if topmostNode is RockNode {
+                return floorNode.rockNodes.count
+            }
+        }
+        return 0
     }
 
     private func processAbsorb(placeableNode: SCNNode&PlaceableNode, swipeState: SwipeState) {
@@ -255,31 +232,36 @@ class SwipeInputViewModel: NSObject {
     }
 
     private func processCompleteAbsorb(placeableNode: SCNNode&PlaceableNode, removeIt: Bool) {
-        if removeIt,
-            let floorNode = placeableNode.floorNode,
-            let point = nodeManipulator.point(for: floorNode),
-            playerViewModel.absorbTopmostNode(at: point) {
-            placeableNode.removeFromParentNode()
-        } else {
-            placeableNode.scaleAllDimensions(by: 1.0, animated: true)
+        if let floorNode = placeableNode.floorNode {
+            // There may be a temporary node lying around if we initially swiped (e.g.) up and then down before releasing the swipe.
+            floorNode.temporaryNode?.removeFromParentNode()
+
+            if removeIt,
+                let point = nodeManipulator.point(for: floorNode),
+                playerViewModel.absorbTopmostNode(at: point) {
+                placeableNode.removeFromParentNode()
+            } else {
+                placeableNode.scaleAllDimensions(by: 1.0, animated: true)
+            }
         }
     }
 
-    private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildHeight: Int, swipeState: SwipeState) {
+    private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, swipeState: SwipeState) {
         switch swipeState {
         case .building(let scale):
-            processInProgressBuild(buildableType, floorNode: floorNode, buildHeight: buildHeight, scale: scale)
+            processInProgressBuild(buildableType, floorNode: floorNode, scale: scale)
         case .finished(let buildIt):
             processCompleteBuild(buildableType, floorNode: floorNode, buildIt: buildIt)
         }
     }
 
-    private func processInProgressBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildHeight: Int, scale: Float) {
+    private func processInProgressBuild(_ buildableType: BuildableType, floorNode: FloorNode, scale: Float) {
         let temporaryNode: TemporaryNode
         if let node = floorNode.temporaryNode {
             temporaryNode = node
         } else {
-            temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: buildHeight)
+            let height = buildHeight(for: floorNode)
+            temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: height)
             floorNode.addChildNode(temporaryNode)
         }
 
@@ -294,7 +276,7 @@ class SwipeInputViewModel: NSObject {
     private func processCompleteBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildIt: Bool) {
         if let point = nodeManipulator.point(for: floorNode),
             let temporaryNode = floorNode.temporaryNode {
-            temporaryNode.removeFromParent(animated: !buildIt)
+            temporaryNode.removeFromParentNode(animated: !buildIt)
 
             if buildIt {
                 switch (buildableType) {
@@ -391,7 +373,7 @@ extension SCNNode {
         SCNTransaction.commit()
     }
 
-    func removeFromParent(animated: Bool) {
+    func removeFromParentNode(animated: Bool) {
         if animated {
             SCNTransaction.begin()
             SCNTransaction.animationDuration = 0.3
