@@ -147,6 +147,12 @@ class PlayerViewModel: NSObject {
             if topmostNode is SynthoidNode {
                 return absorbSynthoidNode(at: point)
             }
+            if topmostNode is SentryNode {
+                return absorbSentryNode(at: point)
+            }
+            if topmostNode is SentinelNode {
+                return absorbSentinelNode(at: point)
+            }
         }
         return false
     }
