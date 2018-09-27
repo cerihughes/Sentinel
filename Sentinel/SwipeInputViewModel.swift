@@ -52,13 +52,17 @@ class SwipeInputViewModel: NSObject {
         self.nodeManipulator = nodeManipulator
 
         let tapRecogniser = UITapGestureRecognizer()
+        let doubleTapRecogniser = UITapGestureRecognizer()
         let longPressRecogniser = UILongPressGestureRecognizer()
         let panRecogniser = UIPanGestureRecognizer()
 
-        self.gestureRecognisers = [tapRecogniser, longPressRecogniser, panRecogniser]
+        self.gestureRecognisers = [tapRecogniser, doubleTapRecogniser, longPressRecogniser, panRecogniser]
         super.init()
 
         tapRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
+
+        doubleTapRecogniser.numberOfTapsRequired = 2
+        doubleTapRecogniser.addTarget(self, action: #selector(doubleTapGesture(sender:)))
 
         longPressRecogniser.minimumPressDuration = 0.1
         longPressRecogniser.addTarget(self, action: #selector(longPressGesture(sender:)))
@@ -101,36 +105,59 @@ class SwipeInputViewModel: NSObject {
         }
     }
 
+    // MARK: Double Tap
+
+    @objc
+    func doubleTapGesture(sender: UIGestureRecognizer) {
+        guard let sceneView = sender.view as? SCNView else {
+            return
+        }
+
+        let point = sender.location(in: sceneView)
+        let hitTestResults = sceneView.hitTest(point, options: [:])
+        if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
+            processDoubleTap(node: interactiveNode)
+        }
+    }
+
+    private func processDoubleTap(node: SCNNode) {
+        if let synthoidNode = node as? SynthoidNode {
+            playerViewModel.move(to: synthoidNode)
+        }
+    }
+
     // MARK: Long Press
 
     @objc
     func longPressGesture(sender: UILongPressGestureRecognizer) {
-        if let sceneView = sender.view as? SCNView {
-            let point = sender.location(in: sceneView)
-            let state = sender.state
+        guard let sceneView = sender.view as? SCNView else {
+            return
+        }
 
-            if state == .began {
-                let hitTestResults = sceneView.hitTest(point, options: [:])
-                if let floorNode = floorNode(for: hitTestResults) {
-                    self.startTapPoint = point
-                    self.floorNode = floorNode
-                } else {
-                    self.startTapPoint = nil
-                    self.floorNode = nil
+        let point = sender.location(in: sceneView)
+        let state = sender.state
 
-                    // Toggle the state to "cancel" the gesture
-                    sender.isEnabled = false
-                    sender.isEnabled = true
-                }
-            } else if state == .changed || state == .ended {
-                if let startTapPoint = startTapPoint,
-                    let floorNode = floorNode {
-                    let swipe = self.swipe(from: startTapPoint, to: point)
-                    processSwipe(floorNode: floorNode,
-                                 swipeDirection: swipe.direction,
-                                 delta: swipe.delta,
-                                 finished: state == .ended)
-                }
+        if state == .began {
+            let hitTestResults = sceneView.hitTest(point, options: [:])
+            if let floorNode = floorNode(for: hitTestResults) {
+                self.startTapPoint = point
+                self.floorNode = floorNode
+            } else {
+                self.startTapPoint = nil
+                self.floorNode = nil
+
+                // Toggle the state to "cancel" the gesture
+                sender.isEnabled = false
+                sender.isEnabled = true
+            }
+        } else if state == .changed || state == .ended {
+            if let startTapPoint = startTapPoint,
+                let floorNode = floorNode {
+                let swipe = self.swipe(from: startTapPoint, to: point)
+                processSwipe(floorNode: floorNode,
+                             swipeDirection: swipe.direction,
+                             delta: swipe.delta,
+                             finished: state == .ended)
             }
         }
     }
@@ -158,17 +185,22 @@ class SwipeInputViewModel: NSObject {
         }
     }
 
-    func floorNode(for hitTestResults: [SCNHitTestResult]) -> FloorNode? {
+    private func firstInteractiveNode(for hitTestResults: [SCNHitTestResult]) -> SCNNode? {
         if let hitTestResult = hitTestResults.first {
             let node = hitTestResult.node
-            if let interactiveNode = node.firstInteractiveParent() {
-                if let floorNode = interactiveNode as? FloorNode {
-                    return floorNode
-                }
-                if let placeableNode = interactiveNode as? PlaceableNode,
-                    let floorNode = placeableNode.floorNode {
-                    return floorNode
-                }
+            return node.firstInteractiveParent()
+        }
+        return nil
+    }
+
+    private func floorNode(for hitTestResults: [SCNHitTestResult]) -> FloorNode? {
+        if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
+            if let floorNode = interactiveNode as? FloorNode {
+                return floorNode
+            }
+            if let placeableNode = interactiveNode as? PlaceableNode,
+                let floorNode = placeableNode.floorNode {
+                return floorNode
             }
         }
         return nil
