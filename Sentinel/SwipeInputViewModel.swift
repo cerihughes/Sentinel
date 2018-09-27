@@ -288,7 +288,7 @@ class SwipeInputViewModel: NSObject {
                     playerViewModel.buildSynthoid(at: point)
                 }
 
-//                opponentsViewModel.timeMachine.start()
+                opponentsViewModel.timeMachine.start()
             }
         }
     }
