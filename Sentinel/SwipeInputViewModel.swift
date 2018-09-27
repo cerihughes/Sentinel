@@ -36,7 +36,6 @@ enum SwipeState {
 }
 
 fileprivate let threshold: CGFloat = 200.0
-fileprivate let temporaryNodeName = "temporaryNodeName"
 
 class SwipeInputViewModel: NSObject {
     private let playerViewModel: PlayerViewModel
@@ -276,12 +275,25 @@ class SwipeInputViewModel: NSObject {
     }
 
     private func processInProgressBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildHeight: Int, scale: Float) {
-        _ = build(buildableType, on: floorNode, buildHeight: buildHeight, scale: scale)
+        let temporaryNode: TemporaryNode
+        if let node = floorNode.temporaryNode {
+            temporaryNode = node
+        } else {
+            temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: buildHeight)
+            floorNode.addChildNode(temporaryNode)
+        }
+
+        if let existingType = temporaryNode.buildableType, existingType == buildableType {
+        } else {
+            temporaryNode.contents = createNode(for: buildableType)
+        }
+
+        temporaryNode.scaleAllDimensions(by: scale)
     }
 
     private func processCompleteBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildIt: Bool) {
         if let point = nodeManipulator.point(for: floorNode),
-            let temporaryNode = temporaryNode(on: floorNode) {
+            let temporaryNode = floorNode.temporaryNode {
             temporaryNode.removeFromParent(animated: !buildIt)
 
             if buildIt {
@@ -299,24 +311,6 @@ class SwipeInputViewModel: NSObject {
         }
     }
 
-    private func build(_ buildableType: BuildableType, on floorNode: FloorNode, buildHeight: Int, scale: Float) -> TemporaryNode {
-        let temporaryNode: TemporaryNode
-        if let node = self.temporaryNode(on: floorNode) {
-            temporaryNode = node
-        } else {
-            temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: buildHeight)
-            floorNode.addChildNode(temporaryNode)
-        }
-
-        if let existingType = temporaryNode.buildableType, existingType == buildableType {
-        } else {
-            temporaryNode.contents = createNode(for: buildableType)
-        }
-
-        temporaryNode.scaleAllDimensions(by: scale)
-        return temporaryNode
-    }
-
     private func createNode(for buildableType: BuildableType) -> (SCNNode&PlaceableNode) {
         let node: SCNNode&PlaceableNode
         switch buildableType {
@@ -329,17 +323,6 @@ class SwipeInputViewModel: NSObject {
         }
         node.position = SCNVector3Make(0, 0, 0)
         return node
-    }
-
-    private func absorb(from floorNode: FloorNode, scale: Float, finished: Bool) {
-    }
-
-    private func apply(scale: Float, to node: SCNNode) {
-        node.scale = SCNVector3Make(scale, scale, scale)
-    }
-
-    private func temporaryNode(on floorNode: FloorNode) -> TemporaryNode? {
-        return floorNode.childNode(withName: temporaryNodeName, recursively: false) as? TemporaryNode
     }
 
     // MARK: Panning
@@ -425,11 +408,24 @@ extension SCNNode {
     }
 }
 
+fileprivate let temporaryNodeName = "temporaryNodeName"
+
 extension NodeFactory {
     func createTemporaryNode(height: Int) -> TemporaryNode {
         let node = TemporaryNode()
         node.name = temporaryNodeName
         node.position = nodePositioning.calculateObjectPosition(height: height)
         return node
+    }
+}
+
+extension FloorNode {
+    var temporaryNode: TemporaryNode? {
+        get {
+            return get(name: temporaryNodeName) as? TemporaryNode
+        }
+        set {
+            set(instance: newValue, name: temporaryNodeName)
+        }
     }
 }
