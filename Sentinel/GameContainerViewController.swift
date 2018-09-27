@@ -52,6 +52,7 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
         let mainWidth = mainView.widthAnchor.constraint(equalTo: view.widthAnchor)
         let mainHeight = mainView.heightAnchor.constraint(equalTo: view.heightAnchor)
 
+        opponentViewContainer.isUserInteractionEnabled = false
         opponentViewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(opponentViewContainer)
 
