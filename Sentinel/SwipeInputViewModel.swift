@@ -218,9 +218,7 @@ class SwipeInputViewModel: NSObject {
 
         switch swipeDirection {
         case .down:
-            if let topmostNode = floorNode.topmostNode {
-                processAbsorb(placeableNode: topmostNode, swipeState: swipeState)
-            }
+            processAbsorb(floorNode: floorNode, swipeState: swipeState)
         default:
             if let buildableType = swipeDirection.buildableType {
                 if validBuildSwipeDirections(for: floorNode).contains(swipeDirection) {
@@ -242,30 +240,32 @@ class SwipeInputViewModel: NSObject {
         return [.left, .up, .right]
     }
 
-    private func processAbsorb(placeableNode: SCNNode&PlaceableNode, swipeState: SwipeState) {
+    private func processAbsorb(floorNode: FloorNode, swipeState: SwipeState) {
         switch swipeState {
         case .building(let scale):
-            processInProgressAbsorb(placeableNode: placeableNode, scale: scale)
+            processInProgressAbsorb(floorNode: floorNode, scale: scale)
         case .finished(let removeIt):
-            processCompleteAbsorb(placeableNode: placeableNode, removeIt: removeIt)
+            processCompleteAbsorb(floorNode: floorNode, removeIt: removeIt)
         }
     }
 
-    private func processInProgressAbsorb(placeableNode: SCNNode&PlaceableNode, scale: Float) {
-        placeableNode.scaleAllDimensions(by: 1.0 - scale)
+    private func processInProgressAbsorb(floorNode: FloorNode, scale: Float) {
+        if let topmostNode = floorNode.topmostNode {
+            topmostNode.scaleAllDimensions(by: 1.0 - scale)
+        }
     }
 
-    private func processCompleteAbsorb(placeableNode: SCNNode&PlaceableNode, removeIt: Bool) {
-        if let floorNode = placeableNode.floorNode {
-            // There may be a temporary node lying around if we initially swiped (e.g.) up and then down before releasing the swipe.
-            floorNode.temporaryNode?.removeFromParentNode()
+    private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
+        // There may be a temporary node lying around if we initially swiped (e.g.) up and then down before releasing the swipe.
+        floorNode.temporaryNode?.removeFromParentNode()
 
+        if let topmostNode = floorNode.topmostNode {
             if removeIt,
                 let point = nodeManipulator.point(for: floorNode),
                 playerViewModel.absorbTopmostNode(at: point) {
-                placeableNode.removeFromParentNode()
+                topmostNode.removeFromParentNode()
             } else {
-                placeableNode.scaleAllDimensions(by: 1.0, animated: true)
+                topmostNode.scaleAllDimensions(by: 1.0, animated: true)
             }
         }
     }
