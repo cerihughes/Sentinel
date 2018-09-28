@@ -65,7 +65,6 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         position = oldPosition
 
         if persist {
-            print("Rotation: \(newRotationAngle) Elevation: \(newElevationAngle)")
             rotationRadians = newRotationAngle
             elevationRadians = newElevationAngle
         }
