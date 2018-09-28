@@ -1,10 +1,14 @@
 import UIKit
 
+let floorSize: Float = 10.0
+
 class UI: NSObject {
-    private let registry = ViewControllerRegistry<String>()
+    private let registry = ViewControllerRegistry<RegistrationLocator>()
 
     override init() {
         super.init()
+
+        registry.ui = self
 
         let lobbyUI = LobbyUI()
         lobbyUI.register(with: registry)
@@ -17,6 +21,7 @@ class UI: NSObject {
     }
 
     var initialViewController: UIViewController {
-        return registry.createViewController(from: gameIdentifier)!
+        let rl = RegistrationLocator(identifier: gameIdentifier, level: 1)
+        return registry.createViewController(from: rl)!
     }
 }

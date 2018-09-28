@@ -3,12 +3,12 @@ import UIKit
 let lobbyIdentifier = "lobbyIdentifier"
 
 class LobbyUI: NSObject {
-    func register(with registry: ViewControllerRegistry<String>) {
-        _ = registry.add(registryFunction: createViewController(id:))
+    func register(with registry: ViewControllerRegistry<RegistrationLocator>) {
+        _ = registry.add(registryFunction: createViewController(id:context:))
     }
 
-    private func createViewController(id: String) -> UIViewController? {
-        guard id == lobbyIdentifier else {
+    private func createViewController(id: RegistrationLocator, context: UI) -> UIViewController? {
+        guard id.identifier == lobbyIdentifier else {
             return nil
         }
 

@@ -3,20 +3,22 @@ import UIKit
 let levelSummaryIdentifier = "levelSummaryIdentifier"
 
 class LevelSummaryUI: NSObject {
-    func register(with registry: ViewControllerRegistry<String>) {
-        _ = registry.add(registryFunction: createViewController(id:))
+    func register(with registry: ViewControllerRegistry<RegistrationLocator>) {
+        _ = registry.add(registryFunction: createViewController(id:context:))
     }
 
-    private func createViewController(id: String) -> UIViewController? {
-        guard id == levelSummaryIdentifier else {
-            return nil
+    private func createViewController(id: RegistrationLocator, context: UI) -> UIViewController? {
+        guard
+            id.identifier == levelSummaryIdentifier,
+            let level = id.level
+            else {
+                return nil
         }
 
-        let floorSize: Float = 10.0
-        let levelConfiguration = MainLevelConfiguration(level: 40)
+        let levelConfiguration = MainLevelConfiguration(level: level)
         let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                               gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: 10.0)
+                                              floorSize: floorSize)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize)
 
