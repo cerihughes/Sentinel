@@ -27,6 +27,12 @@
 		655D5E5521564F8500BA2F49 /* LobbyCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655D5E5421564F8500BA2F49 /* LobbyCellViewModel.swift */; };
 		655D5E5721564FC400BA2F49 /* LobbyCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655D5E5621564FC400BA2F49 /* LobbyCollectionViewCell.swift */; };
 		656635DB2141483D00C264EA /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656635DA2141483D00C264EA /* GameViewModel.swift */; };
+		6567866F215E7A79005105EE /* ViewControllerRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6567866E215E7A79005105EE /* ViewControllerRegistry.swift */; };
+		65678671215E7CC2005105EE /* UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678670215E7CC2005105EE /* UI.swift */; };
+		65678673215E8105005105EE /* GameUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678672215E8105005105EE /* GameUI.swift */; };
+		65678679215E87E1005105EE /* LevelSummaryUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678678215E87E1005105EE /* LevelSummaryUI.swift */; };
+		6567867B215E87F5005105EE /* LobbyUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6567867A215E87F5005105EE /* LobbyUI.swift */; };
+		6567867E215E8F91005105EE /* RegistrationLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6567867D215E8F91005105EE /* RegistrationLocator.swift */; };
 		656AAEE5214EA4C600991151 /* FloorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEE4214EA4C600991151 /* FloorNode.swift */; };
 		656AAEE7214EB82100991151 /* TreeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEE6214EB82100991151 /* TreeNode.swift */; };
 		656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEE8214EBAAA00991151 /* RockNode.swift */; };
@@ -97,6 +103,12 @@
 		655D5E5421564F8500BA2F49 /* LobbyCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyCellViewModel.swift; sourceTree = "<group>"; };
 		655D5E5621564FC400BA2F49 /* LobbyCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyCollectionViewCell.swift; sourceTree = "<group>"; };
 		656635DA2141483D00C264EA /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		6567866E215E7A79005105EE /* ViewControllerRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerRegistry.swift; sourceTree = "<group>"; };
+		65678670215E7CC2005105EE /* UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.swift; sourceTree = "<group>"; };
+		65678672215E8105005105EE /* GameUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameUI.swift; sourceTree = "<group>"; };
+		65678678215E87E1005105EE /* LevelSummaryUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryUI.swift; sourceTree = "<group>"; };
+		6567867A215E87F5005105EE /* LobbyUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyUI.swift; sourceTree = "<group>"; };
+		6567867D215E8F91005105EE /* RegistrationLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationLocator.swift; sourceTree = "<group>"; };
 		656AAEE4214EA4C600991151 /* FloorNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorNode.swift; sourceTree = "<group>"; };
 		656AAEE6214EB82100991151 /* TreeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeNode.swift; sourceTree = "<group>"; };
 		656AAEE8214EBAAA00991151 /* RockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RockNode.swift; sourceTree = "<group>"; };
@@ -174,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				65CDD422215E63F8004703EE /* View Controllers */,
+				6567866D215E7A54005105EE /* Navigation */,
 				656AED8E215A68A3005D88B3 /* Input */,
 				65D7F1DB2157FD220085C6CF /* Overlay */,
 				656AAEE2214EA3EF00991151 /* Timing */,
@@ -205,6 +218,7 @@
 		655D5E4D21564CC100BA2F49 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				65678672215E8105005105EE /* GameUI.swift */,
 				6546A843213C0651009F0650 /* GameMainViewController.swift */,
 				654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */,
 				656635DA2141483D00C264EA /* GameViewModel.swift */,
@@ -218,12 +232,32 @@
 		655D5E4E21564E4400BA2F49 /* Lobby */ = {
 			isa = PBXGroup;
 			children = (
+				6567867A215E87F5005105EE /* LobbyUI.swift */,
 				655D5E5021564E7800BA2F49 /* LobbyViewController.swift */,
 				655D5E5221564F0E00BA2F49 /* LobbyViewModel.swift */,
 				655D5E5421564F8500BA2F49 /* LobbyCellViewModel.swift */,
 				655D5E5621564FC400BA2F49 /* LobbyCollectionViewCell.swift */,
 			);
 			name = Lobby;
+			sourceTree = "<group>";
+		};
+		6567866D215E7A54005105EE /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				6567866E215E7A79005105EE /* ViewControllerRegistry.swift */,
+				6567867D215E8F91005105EE /* RegistrationLocator.swift */,
+			);
+			name = Navigation;
+			sourceTree = "<group>";
+		};
+		6567867C215E8A89005105EE /* Space */ = {
+			isa = PBXGroup;
+			children = (
+				65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */,
+				65A9E07721427795009011C8 /* SkyBox.swift */,
+				65A9E0752142712B009011C8 /* skybox.png */,
+			);
+			name = Space;
 			sourceTree = "<group>";
 		};
 		656AAEDD214EA38200991151 /* Node */ = {
@@ -272,8 +306,10 @@
 		656AAEE1214EA3DD00991151 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				65A9E07721427795009011C8 /* SkyBox.swift */,
-				65A9E0752142712B009011C8 /* skybox.png */,
+				65678670215E7CC2005105EE /* UI.swift */,
+				655D5E4E21564E4400BA2F49 /* Lobby */,
+				65CDD423215E640B004703EE /* Level Summary */,
+				655D5E4D21564CC100BA2F49 /* Game */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -299,9 +335,6 @@
 			isa = PBXGroup;
 			children = (
 				65DCBC6221540C2900F5D2FB /* SceneViewController.swift */,
-				655D5E4E21564E4400BA2F49 /* Lobby */,
-				65CDD423215E640B004703EE /* Level Summary */,
-				655D5E4D21564CC100BA2F49 /* Game */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -309,6 +342,7 @@
 		65CDD423215E640B004703EE /* Level Summary */ = {
 			isa = PBXGroup;
 			children = (
+				65678678215E87E1005105EE /* LevelSummaryUI.swift */,
 				65CDD426215E644B004703EE /* LevelSummaryViewController.swift */,
 				65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */,
 			);
@@ -327,8 +361,8 @@
 		65DCBC592154043700F5D2FB /* World */ = {
 			isa = PBXGroup;
 			children = (
+				6567867C215E8A89005105EE /* Space */,
 				65DCBC60215407D000F5D2FB /* World.swift */,
-				65DCBC5E2154047A00F5D2FB /* SpaceWorld.swift */,
 			);
 			name = World;
 			sourceTree = "<group>";
@@ -442,11 +476,16 @@
 				655141EA21543034009E7486 /* NodeManipulator.swift in Sources */,
 				655D5E5121564E7800BA2F49 /* LobbyViewController.swift in Sources */,
 				65A18F50215BB1D00014E90B /* SwipeInputViewModel.swift in Sources */,
+				65678671215E7CC2005105EE /* UI.swift in Sources */,
 				656635DB2141483D00C264EA /* GameViewModel.swift in Sources */,
+				65678673215E8105005105EE /* GameUI.swift in Sources */,
 				65DCBC61215407D000F5D2FB /* World.swift in Sources */,
 				656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */,
 				6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */,
 				656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */,
+				6567866F215E7A79005105EE /* ViewControllerRegistry.swift in Sources */,
+				6567867E215E8F91005105EE /* RegistrationLocator.swift in Sources */,
+				65678679215E87E1005105EE /* LevelSummaryUI.swift in Sources */,
 				656AED89215A5E61005D88B3 /* PlayerViewModel.swift in Sources */,
 				656AAEE7214EB82100991151 /* TreeNode.swift in Sources */,
 				65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */,
@@ -457,6 +496,7 @@
 				6546A844213C0651009F0650 /* GameMainViewController.swift in Sources */,
 				656AED8D215A5E74005D88B3 /* TerrainViewModel.swift in Sources */,
 				65DCBC6321540C2900F5D2FB /* SceneViewController.swift in Sources */,
+				6567867B215E87F5005105EE /* LobbyUI.swift in Sources */,
 				65D7F1DD2157FD390085C6CF /* OverlayScene.swift in Sources */,
 				652778CE2145625E00643BE0 /* GridPiece.swift in Sources */,
 				65CDD427215E644B004703EE /* LevelSummaryViewController.swift in Sources */,

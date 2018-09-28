@@ -19,11 +19,10 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
     }
 
     private func createCellViewModel(for indexPath: IndexPath) -> LobbyCellViewModel {
-        let floorSize: Float = 10.0
         let levelConfiguration = MainLevelConfiguration(level: indexPath.row)
         let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                               gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: 10.0)
+                                              floorSize: floorSize)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize)
 
