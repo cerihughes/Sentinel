@@ -1,7 +1,7 @@
 import UIKit
 
 class ViewControllerRegistry<T>: NSObject {
-    typealias ViewControllerRegistryFunction = (T, UI) -> UIViewController?
+    typealias ViewControllerRegistryFunction = (T, UIContext) -> UIViewController?
 
     private var registry: [UUID:ViewControllerRegistryFunction] = [:]
 

@@ -7,7 +7,7 @@ class LevelSummaryUI: NSObject {
         _ = registry.add(registryFunction: createViewController(id:context:))
     }
 
-    private func createViewController(id: RegistrationLocator, context: UI) -> UIViewController? {
+    private func createViewController(id: RegistrationLocator, context: UIContext) -> UIViewController? {
         guard
             id.identifier == levelSummaryIdentifier,
             let level = id.level
