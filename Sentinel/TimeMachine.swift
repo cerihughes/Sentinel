@@ -4,7 +4,11 @@ class TimeMachine: NSObject {
     private var timingFunctions: [UUID:TimeEngineData] = [:]
     private var started = false
 
-    func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID {
+    func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID? {
+        guard started == false else {
+            return nil
+        }
+
         let data = TimeEngineData(timeInterval: timeInterval, function: function)
         let token = UUID()
         timingFunctions[token] = data
@@ -12,6 +16,10 @@ class TimeMachine: NSObject {
     }
 
     func remove(token: UUID) {
+        guard started == false else {
+            return
+        }
+
         timingFunctions.removeValue(forKey: token)
     }
 
@@ -29,6 +37,11 @@ class TimeMachine: NSObject {
     }
 
     func start() {
+        guard started == false else {
+            return
+        }
+
+        assignInitialOffsets()
         started = true
     }
 
@@ -36,10 +49,23 @@ class TimeMachine: NSObject {
         started = false
     }
 
+    private func assignInitialOffsets() {
+        let count = timingFunctions.count
+        guard count > 0 else {
+            return
+        }
+
+        let interval: TimeInterval = 1.0 / TimeInterval(count)
+        for (i, timingFunction) in timingFunctions.values.enumerated() {
+            timingFunction.initialOffset = interval * TimeInterval(i)
+        }
+    }
+
     private class TimeEngineData: NSObject {
         let timeInterval: TimeInterval
         let function: (TimeInterval, SCNSceneRenderer, Any?) -> Any?
         var lastResults: Any? = nil
+        var initialOffset: TimeInterval = 0.0
 
         private var nextTimeInterval: TimeInterval? = nil
 
@@ -57,7 +83,7 @@ class TimeMachine: NSObject {
                     return true
                 }
             } else {
-                nextTimeInterval = currentTimeInterval // This will fire on the next iteration
+                nextTimeInterval = currentTimeInterval + initialOffset
             }
             return false
         }

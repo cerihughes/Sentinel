@@ -56,9 +56,9 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
     }
 
     private func setupTimingFunctions() {
-        _ = timeMachine.add(timeInterval: 2.0001, function: oppositionAbsorbObjects(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: 2.0, function: oppositionAbsorbObjects(timeInterval:playerRenderer:lastResult:))
         _ = timeMachine.add(timeInterval: levelConfiguration.opponentRotationPause, function: oppositionRotation(timeInterval:playerRenderer:lastResult:))
-        _ = timeMachine.add(timeInterval: 2.0002, function: oppositionDetection(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: 2.0, function: oppositionDetection(timeInterval:playerRenderer:lastResult:))
     }
 
     private func oppositionAbsorbObjects(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
