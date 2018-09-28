@@ -43,13 +43,6 @@ class PlayerViewModel: NSObject {
         super.init()
     }
 
-    func cameraNode(for viewer: Viewer) -> SCNNode? {
-        if let viewingNode = nodeManipulator.viewingNode(for: viewer) {
-            return viewingNode.cameraNode
-        }
-        return nil
-    }
-
     func adjustEnergy(delta: Int) {
         guard
             let delegate = delegate

@@ -22,6 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 //        let lobbyViewModel = LobbyViewModel()
 //        let viewController = LobbyViewController(lobbyViewModel: lobbyViewModel)
+
+//        let viewModel = LevelSummaryViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
+//        let viewController = LevelSummaryViewController(viewModel: viewModel)
+
         window!.rootViewController = viewController
         window!.makeKeyAndVisible()
         return true

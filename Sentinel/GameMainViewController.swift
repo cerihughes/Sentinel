@@ -2,7 +2,7 @@ import SceneKit
 import SpriteKit
 import UIKit
 
-class GameMainViewController: GameOpponentViewController {
+class GameMainViewController: SceneViewController {
     let overlay: OverlayScene
 
     init(scene: SCNScene, cameraNode: SCNNode?, overlay: OverlayScene) {
