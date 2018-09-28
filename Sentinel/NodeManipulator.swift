@@ -35,23 +35,6 @@ class NodeManipulator: NSObject {
         return piece.point
     }
 
-    func viewingNode(for viewer: Viewer) -> ViewingNode? {
-        switch viewer {
-        case .player:
-            return currentSynthoidNode
-        case .sentinel:
-            return terrainNode.sentinelNode
-        default:
-            let sentryNodes = terrainNode.sentryNodes
-            let rawValueOffset = Viewer.sentry1.rawValue
-            let index = viewer.rawValue - rawValueOffset
-            if index < sentryNodes.count {
-                return sentryNodes[index]
-            }
-            return nil
-        }
-    }
-
     func makeSynthoidCurrent(at point: GridPoint) {
         currentSynthoidNode = nodeMap.getFloorNode(for: point)?.synthoidNode
     }

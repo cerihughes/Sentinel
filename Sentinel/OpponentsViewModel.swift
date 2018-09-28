@@ -29,13 +29,6 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
         setupTimingFunctions()
     }
 
-    func cameraNode(for viewer: Viewer) -> SCNNode? {
-        if let viewingNode = nodeManipulator.viewingNode(for: viewer) {
-            return viewingNode.cameraNode
-        }
-        return nil
-    }
-
     private func oppositionBuildRandomTree() {
         let gridIndex = GridIndex(grid: grid)
         let emptyPieces = gridIndex.allPieces()

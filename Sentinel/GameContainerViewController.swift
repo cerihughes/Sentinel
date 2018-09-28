@@ -16,7 +16,7 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
         self.viewModel = viewModel
         self.inputViewModel = SwipeInputViewModel(playerViewModel: viewModel.playerViewModel,
                                                   opponentsViewModel: viewModel.opponentsViewModel,
-                                                  nodeManipulator: viewModel.nodeManipulator)
+                                                  nodeManipulator: viewModel.terrainViewModel.nodeManipulator)
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
@@ -85,13 +85,13 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
         opponentViewContainer.aspectRatio = size.width / size.height
     }
 
-    private func add(opponentViewController: GameOpponentViewController) {
+    private func add(opponentViewController: SceneViewController) {
         addChild(opponentViewController)
         opponentViewContainer.addSubview(opponentViewController.view)
         opponentViewController.didMove(toParent: self)
     }
 
-    private func remove(opponentViewController: GameOpponentViewController) {
+    private func remove(opponentViewController: SceneViewController) {
         opponentViewController.willMove(toParent: nil)
         opponentViewController.view.removeFromSuperview()
         opponentViewController.removeFromParent()
@@ -116,7 +116,7 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
     func opponentsViewModel(_: OpponentsViewModel, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             let scene = self.viewModel.world.scene
-            let opponentViewController = GameOpponentViewController(scene: scene, cameraNode: cameraNode)
+            let opponentViewController = SceneViewController(scene: scene, cameraNode: cameraNode)
             self.add(opponentViewController: opponentViewController)
 
             self.opponentViewContainer.setNeedsLayout()
@@ -134,7 +134,7 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
     func opponentsViewModel(_: OpponentsViewModel, didEndDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             for child in self.children {
-                if let opponentViewController = child as? GameOpponentViewController {
+                if let opponentViewController = child as? SceneViewController {
                     if opponentViewController.cameraNode == cameraNode {
                         self.remove(opponentViewController: opponentViewController)
                     }
