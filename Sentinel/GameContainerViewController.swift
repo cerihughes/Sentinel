@@ -2,17 +2,17 @@ import SceneKit
 import SpriteKit
 import UIKit
 
-enum Viewer: Int {
-    case player = 0, sentinel, sentry1, sentry2, sentry3
-}
-
-class GameContainerViewController: UIViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
+class GameContainerViewController: UIViewController, LeafViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
+    private let ui: UIContext
     private let inputViewModel: SwipeInputViewModel
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
-    init(viewModel: GameViewModel) {
+    var completionData: Bool = false
+
+    init(ui: UIContext, viewModel: GameViewModel) {
+        self.ui = ui
         self.viewModel = viewModel
         self.inputViewModel = SwipeInputViewModel(playerViewModel: viewModel.playerViewModel,
                                                   opponentsViewModel: viewModel.opponentsViewModel,
@@ -108,7 +108,9 @@ class GameContainerViewController: UIViewController, PlayerViewModelDelegate, Op
     }
 
     func playerViewModel(_: PlayerViewModel, levelDidEndWith state: GameEndState) {
+        completionData = state == .victory
         viewModel.opponentsViewModel.timeMachine.stop()
+        _ = ui.leave(viewController: self, animated: true)
     }
 
     // MARK: OpponentsViewModelDelegate

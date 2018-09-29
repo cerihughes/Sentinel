@@ -1,11 +1,13 @@
 import SceneKit
 import UIKit
 
-class LobbyViewController: UIViewController {
+class LobbyViewController: UIViewController, LobbyViewModelDelegate {
+    private let ui: UIContext
     private let lobbyViewModel: LobbyViewModel
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    init(lobbyViewModel: LobbyViewModel) {
+    init(ui: UIContext, lobbyViewModel: LobbyViewModel) {
+        self.ui = ui
         self.lobbyViewModel = lobbyViewModel
 
         super.init(nibName: nil, bundle: nil)
@@ -17,6 +19,8 @@ class LobbyViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        lobbyViewModel.delegate = self
 
         collectionViewLayout.scrollDirection = .horizontal
         configureCollectionViewLayout()
@@ -49,5 +53,12 @@ class LobbyViewController: UIViewController {
         }
 
         collectionViewLayout.itemSize = CGSize(width: scaled * aspectRatio, height: scaled)
+    }
+
+    // MARK: LobbyViewModelDelegate
+
+    func viewModel(_: LobbyViewModel, didSelect level: Int) {
+        let rl = RegistrationLocator(identifier: gameIdentifier, level: level)
+        _ = ui.navigate(with: rl, animated: true)
     }
 }

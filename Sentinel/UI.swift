@@ -12,16 +12,19 @@ class UI: NSObject, UIContext {
 
         registry.ui = self
 
-        let lobbyUI = LobbyUI()
-        lobbyUI.register(with: registry)
+        let intro = IntroUI()
+        intro.register(with: registry)
+
+        let lobby = LobbyUI()
+        lobby.register(with: registry)
 
         let levelSummary = LevelSummaryUI()
         levelSummary.register(with: registry)
 
-        let gameUI = GameUI()
-        gameUI.register(with: registry)
+        let game = GameUI()
+        game.register(with: registry)
 
-        let rl = RegistrationLocator(identifier: gameIdentifier, level: 1)
+        let rl = RegistrationLocator(identifier: introIdentifier, level: nil)
         let initialViewController = registry.createViewController(from: rl)!
         navigationController.pushViewController(initialViewController, animated: false)
 
