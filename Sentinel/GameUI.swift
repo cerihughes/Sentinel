@@ -24,6 +24,6 @@ class GameUI: NSObject {
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = GameViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
-        return GameContainerViewController(viewModel: viewModel)
+        return GameContainerViewController(ui: context, viewModel: viewModel)
     }
 }

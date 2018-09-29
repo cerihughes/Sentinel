@@ -3,10 +3,15 @@ import UIKit
 
 let lobbyViewModelReuseIdentifier = "lobbyViewModelReuseIdentifier"
 
-class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDelegate {
+protocol LobbyViewModelDelegate: class {
+    func viewModel(_: LobbyViewModel, didSelect level: Int)
+}
 
-    // MARK: UICollectionViewDelegate
-    
+class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDelegate {
+    weak var delegate: LobbyViewModelDelegate?
+
+    // MARK: UICollectionViewDataSource
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 100
     }
@@ -30,4 +35,13 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
         return LobbyCellViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
     }
 
+    // MARK: UICollectionViewDelegate
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let delegate = delegate else {
+            return
+        }
+
+        delegate.viewModel(self, didSelect: indexPath.row)
+    }
 }

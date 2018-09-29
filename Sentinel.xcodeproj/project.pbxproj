@@ -53,6 +53,9 @@
 		6594D0F12152B09300D13EC6 /* ViewingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6594D0F02152B09300D13EC6 /* ViewingNode.swift */; };
 		65A18F50215BB1D00014E90B /* SwipeInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */; };
 		65A381F2215E9B700011052F /* UIContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F1215E9B700011052F /* UIContext.swift */; };
+		65A381F4215FA06C0011052F /* LeafViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F3215FA06C0011052F /* LeafViewController.swift */; };
+		65A381F7215FA3040011052F /* IntroUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F6215FA3040011052F /* IntroUI.swift */; };
+		65A381F9215FA30C0011052F /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F8215FA30C0011052F /* IntroViewController.swift */; };
 		65A9E07421417013009011C8 /* GridPointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07321417013009011C8 /* GridPointTests.swift */; };
 		65A9E0762142712C009011C8 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A9E0752142712B009011C8 /* skybox.png */; };
 		65A9E07821427795009011C8 /* SkyBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07721427795009011C8 /* SkyBox.swift */; };
@@ -129,6 +132,9 @@
 		6594D0F02152B09300D13EC6 /* ViewingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingNode.swift; sourceTree = "<group>"; };
 		65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeInputViewModel.swift; sourceTree = "<group>"; };
 		65A381F1215E9B700011052F /* UIContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIContext.swift; sourceTree = "<group>"; };
+		65A381F3215FA06C0011052F /* LeafViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeafViewController.swift; sourceTree = "<group>"; };
+		65A381F6215FA3040011052F /* IntroUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroUI.swift; sourceTree = "<group>"; };
+		65A381F8215FA30C0011052F /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		65A9E07321417013009011C8 /* GridPointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPointTests.swift; sourceTree = "<group>"; };
 		65A9E0752142712B009011C8 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
 		65A9E07721427795009011C8 /* SkyBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyBox.swift; sourceTree = "<group>"; };
@@ -248,6 +254,7 @@
 			children = (
 				6567866E215E7A79005105EE /* ViewControllerRegistry.swift */,
 				6567867D215E8F91005105EE /* RegistrationLocator.swift */,
+				65A381F3215FA06C0011052F /* LeafViewController.swift */,
 			);
 			name = Navigation;
 			sourceTree = "<group>";
@@ -310,6 +317,7 @@
 			children = (
 				65678670215E7CC2005105EE /* UI.swift */,
 				65A381F1215E9B700011052F /* UIContext.swift */,
+				65A381F5215FA2ED0011052F /* Intro */,
 				655D5E4E21564E4400BA2F49 /* Lobby */,
 				65CDD423215E640B004703EE /* Level Summary */,
 				655D5E4D21564CC100BA2F49 /* Game */,
@@ -332,6 +340,15 @@
 				65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */,
 			);
 			name = Input;
+			sourceTree = "<group>";
+		};
+		65A381F5215FA2ED0011052F /* Intro */ = {
+			isa = PBXGroup;
+			children = (
+				65A381F6215FA3040011052F /* IntroUI.swift */,
+				65A381F8215FA30C0011052F /* IntroViewController.swift */,
+			);
+			name = Intro;
 			sourceTree = "<group>";
 		};
 		65CDD422215E63F8004703EE /* View Controllers */ = {
@@ -475,6 +492,7 @@
 				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				655D5E5721564FC400BA2F49 /* LobbyCollectionViewCell.swift in Sources */,
 				656AED90215A68BC005D88B3 /* InputViewModel.swift in Sources */,
+				65A381F4215FA06C0011052F /* LeafViewController.swift in Sources */,
 				6586ACA521500CEE008727D9 /* TimeMachine.swift in Sources */,
 				655141EA21543034009E7486 /* NodeManipulator.swift in Sources */,
 				655D5E5121564E7800BA2F49 /* LobbyViewController.swift in Sources */,
@@ -515,6 +533,8 @@
 				6586AC9F214F1325008727D9 /* SCNNodeExtensions.swift in Sources */,
 				656AAEED214ECE3100991151 /* OppositionNode.swift in Sources */,
 				65B83F81213C08C600515915 /* NodeFactory.swift in Sources */,
+				65A381F7215FA3040011052F /* IntroUI.swift in Sources */,
+				65A381F9215FA30C0011052F /* IntroViewController.swift in Sources */,
 				65B83F83213C08E400515915 /* Grid.swift in Sources */,
 				655D5E5321564F0E00BA2F49 /* LobbyViewModel.swift in Sources */,
 				65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */,
