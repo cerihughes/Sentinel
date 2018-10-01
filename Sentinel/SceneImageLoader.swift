@@ -1,6 +1,10 @@
 import SceneKit
 import UIKit
 
+protocol SceneImageLoaderToken {
+    func cancel()
+}
+
 class SceneImageLoader: NSObject {
     private let operationQueue = OperationQueue()
 
@@ -10,9 +14,10 @@ class SceneImageLoader: NSObject {
         super.init()
     }
     
-    func loadImage(level: Int, size: CGSize, completion: @escaping (UIImage?) -> Void) {
+    func loadImage(level: Int, size: CGSize, completion: @escaping (UIImage) -> Void) -> SceneImageLoaderToken {
         let operation = SceneImageLoaderOperation(level: level, size: size, completion: completion)
         operationQueue.addOperation(operation)
+        return operation
     }
 
     private func createScene(for level: Int) -> SCNScene {
@@ -27,12 +32,12 @@ class SceneImageLoader: NSObject {
         return world.scene
     }
 
-    private class SceneImageLoaderOperation: Operation {
+    private class SceneImageLoaderOperation: Operation, SceneImageLoaderToken {
         let level: Int
         let view: SCNView
-        let completion: (UIImage?) -> Void
+        let completion: (UIImage) -> Void
 
-        init(level: Int, size: CGSize, completion: @escaping (UIImage?) -> Void) {
+        init(level: Int, size: CGSize, completion: @escaping (UIImage) -> Void) {
             self.level = level
             self.completion = completion
             self.view = SCNView(frame: CGRect(origin: CGPoint(x: 0.0, y: 0.0), size: size))
@@ -43,6 +48,7 @@ class SceneImageLoader: NSObject {
         // MARK: Operation
 
         override func main() {
+            print("Running for \(level)")
             let levelConfiguration = MainLevelConfiguration(level: level)
             let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                                   gridDepth: levelConfiguration.gridDepth,
