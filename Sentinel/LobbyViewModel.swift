@@ -1,6 +1,8 @@
 import Foundation
 import UIKit
 
+fileprivate let imageLoadThreshold: TimeInterval = 0.1
+
 let lobbyViewModelReuseIdentifier = "lobbyViewModelReuseIdentifier"
 
 protocol LobbyViewModelDelegate: class {
@@ -38,10 +40,11 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
 
         cell.terrainIndex = level
 
-        let token = sceneImageLoader.loadImage(level: level, size: size) { (image) in
+        let token = sceneImageLoader.loadImage(level: level, size: size) { (image, timeInterval) in
             if cell.terrainIndex == level {
+                let duration = (timeInterval < imageLoadThreshold) ? 0.0 : 0.3
                 UIView.transition(with: cell.imageView,
-                                  duration:0.3,
+                                  duration: duration,
                                   options: .transitionCrossDissolve,
                                   animations: { cell.imageView.image = image },
                                   completion: nil)
