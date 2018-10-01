@@ -3,7 +3,11 @@ import UIKit
 class LobbyCollectionViewLayout: UICollectionViewLayout {
     var itemSize: CGSize = .zero
 
-    private let peekOffsetPercentage: CGFloat = 0.05
+    private var collectionViewSize: CGSize = .zero
+    private var collectionViewContentOffset: CGPoint = CGPoint(x: 0, y: 0)
+    private let peekOffsetPercentage: CGFloat = 0.1
+
+    private let itemShrinkPercentage: CGFloat = 0.2
 
     private var cache = [UICollectionViewLayoutAttributes]()
 
@@ -26,17 +30,22 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
             return
         }
 
+        collectionViewSize = collectionView.bounds.size
+        collectionViewContentOffset = collectionView.contentOffset
+
         cache.removeAll(keepingCapacity: false)
 
-        let y: CGFloat = (collectionView.bounds.height - itemSize.height) / 2.0
+        let y: CGFloat = (collectionViewSize.height - itemSize.height) / 2.0
         let numberOfItems = collectionView.numberOfItems(inSection: 0)
-        for item in 0 ..< numberOfItems {
-            let x = xPosition(for: item)
-            let indexPath = IndexPath(item: item, section: 0)
+        for i in 0 ..< numberOfItems {
+            let x = xPosition(for: i)
+            let indexPath = IndexPath(item: i, section: 0)
             let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
 
-            let frame = CGRect(x: x, y: y, width: itemSize.width, height: itemSize.height)
-            print(frame)
+            let size = adjustedItemSizeForContentOffset(at: i)
+            let adjustedX = x + ((itemSize.width - size.width) / 2.0)
+            let adjustedY = y + ((itemSize.height - size.height) / 2.0)
+            let frame = CGRect(x: adjustedX, y: adjustedY, width: size.width, height: size.height)
             attributes.frame = frame
             cache.append(attributes)
         }
@@ -56,36 +65,47 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
         let offset = peekOffset + spacing
         let width = itemSize.width + spacing
         let x = proposedContentOffset.x
-        let indexFloat = CGFloat(x) / width
+        let indexFloat = x / width
         let index = Int(indexFloat.rounded())
         return CGPoint(x: xPosition(for: index) - offset, y: proposedContentOffset.y)
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return false
+        return true
     }
 
     // MARK: Private
+
+    private var peekOffset: CGFloat {
+        return collectionViewSize.width * peekOffsetPercentage
+    }
+
+    private var spacing: CGFloat {
+        let spacing = collectionViewSize.width - itemSize.width - (peekOffset * 2.0)
+        return spacing / 2.0
+    }
 
     private func xPosition(for itemIndex: Int) -> CGFloat {
         let width = itemSize.width + spacing
         return peekOffset + spacing + (CGFloat(itemIndex) * width)
     }
 
-    private var peekOffset: CGFloat {
-        guard let collectionView = collectionView else {
-            return 0.0
+    private func adjustedItemSizeForContentOffset(at index: Int) -> CGSize {
+        let width = itemSize.width + spacing
+        let x = collectionViewContentOffset.x
+        let scaled = x / width
+
+        var delta = abs(CGFloat(index) - scaled)
+        if delta > 1.0 {
+            delta = 1.0
         }
 
-        return collectionView.bounds.width * peekOffsetPercentage
-    }
+        delta *= itemShrinkPercentage
 
-    private var spacing: CGFloat {
-        guard let collectionView = collectionView else {
-            return 0.0
-        }
+        var size = itemSize
+        size.width *= (1.0 - delta)
+        size.height *= (1.0 - delta)
 
-        let spacing = collectionView.bounds.width - itemSize.width - (peekOffset * 2.0)
-        return spacing / 2.0
+        return size
     }
 }
