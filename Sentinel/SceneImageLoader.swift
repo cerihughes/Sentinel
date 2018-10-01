@@ -5,7 +5,7 @@ class SceneImageLoader: NSObject {
     private let operationQueue = OperationQueue()
 
     override init() {
-        operationQueue.maxConcurrentOperationCount = 2
+        operationQueue.maxConcurrentOperationCount = 5
 
         super.init()
     }
@@ -42,36 +42,7 @@ class SceneImageLoader: NSObject {
 
         // MARK: Operation
 
-        private var _executing = false {
-            willSet {
-                willChangeValue(forKey: "isExecuting")
-            }
-            didSet {
-                didChangeValue(forKey: "isExecuting")
-            }
-        }
-
-        override var isExecuting: Bool {
-            return _executing
-        }
-
-        private var _finished = false {
-            willSet {
-                willChangeValue(forKey: "isFinished")
-            }
-
-            didSet {
-                didChangeValue(forKey: "isFinished")
-            }
-        }
-
-        override var isFinished: Bool {
-            return _finished
-        }
-
-        override func start() {
-            _executing = true
-
+        override func main() {
             let levelConfiguration = MainLevelConfiguration(level: level)
             let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                                   gridDepth: levelConfiguration.gridDepth,
@@ -93,9 +64,6 @@ class SceneImageLoader: NSObject {
             DispatchQueue.main.async {
                 self.completion(snapshot)
             }
-
-            _executing = false
-            _finished = true
         }
     }
 }
