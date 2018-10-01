@@ -32,7 +32,7 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
 
         let level = indexPath.row
         var size = collectionView.frame.size
-        if let collectionViewLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+        if let collectionViewLayout = collectionView.collectionViewLayout as? LobbyCollectionViewLayout {
             size = collectionViewLayout.itemSize
         }
 
