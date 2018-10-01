@@ -13,23 +13,11 @@ class SceneImageLoader: NSObject {
 
         super.init()
     }
-    
+
     func loadImage(level: Int, size: CGSize, completion: @escaping (UIImage) -> Void) -> SceneImageLoaderToken {
         let operation = SceneImageLoaderOperation(level: level, size: size, completion: completion)
         operationQueue.addOperation(operation)
         return operation
-    }
-
-    private func createScene(for level: Int) -> SCNScene {
-        let levelConfiguration = MainLevelConfiguration(level: level)
-        let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
-                                              gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: floorSize)
-        let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
-                                      detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize)
-
-        let world = SpaceWorld(nodeFactory: nodeFactory)
-        return world.scene
     }
 
     private class SceneImageLoaderOperation: Operation, SceneImageLoaderToken {
@@ -48,7 +36,6 @@ class SceneImageLoader: NSObject {
         // MARK: Operation
 
         override func main() {
-            print("Running for \(level)")
             let levelConfiguration = MainLevelConfiguration(level: level)
             let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                                   gridDepth: levelConfiguration.gridDepth,
