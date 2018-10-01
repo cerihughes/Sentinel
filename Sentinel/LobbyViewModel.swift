@@ -8,6 +8,8 @@ protocol LobbyViewModelDelegate: class {
 }
 
 class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDelegate {
+    private let sceneImageLoader = SceneImageLoader()
+
     weak var delegate: LobbyViewModelDelegate?
 
     // MARK: UICollectionViewDataSource
@@ -18,21 +20,14 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: lobbyViewModelReuseIdentifier, for: indexPath) as! LobbyCollectionViewCell
-        let cellViewModel = createCellViewModel(for: indexPath)
-        cell.sceneView.scene = cellViewModel.world.scene
+        var size = collectionView.frame.size
+        if let collectionViewLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            size = collectionViewLayout.itemSize
+        }
+        sceneImageLoader.loadImage(level: indexPath.row, size: size) { (image) in
+            cell.imageView.image = image
+        }
         return cell
-    }
-
-    private func createCellViewModel(for indexPath: IndexPath) -> LobbyCellViewModel {
-        let levelConfiguration = MainLevelConfiguration(level: indexPath.row)
-        let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
-                                              gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: floorSize)
-        let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
-                                      detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize)
-
-        let world = SpaceWorld(nodeFactory: nodeFactory)
-        return LobbyCellViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
     }
 
     // MARK: UICollectionViewDelegate
