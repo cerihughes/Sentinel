@@ -4,7 +4,7 @@ import UIKit
 class LobbyViewController: UIViewController, LobbyViewModelDelegate {
     private let ui: UIContext
     private let lobbyViewModel: LobbyViewModel
-    private let collectionViewLayout = UICollectionViewFlowLayout()
+    private let collectionViewLayout = LobbyCollectionViewLayout()
 
     init(ui: UIContext, lobbyViewModel: LobbyViewModel) {
         self.ui = ui
@@ -22,7 +22,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
 
         lobbyViewModel.delegate = self
 
-        collectionViewLayout.scrollDirection = .horizontal
         configureCollectionViewLayout()
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
@@ -31,6 +30,7 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
 
         collectionView.register(LobbyCollectionViewCell.self, forCellWithReuseIdentifier: lobbyViewModelReuseIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.decelerationRate = .fast
 
         view.addSubview(collectionView)
 
@@ -46,7 +46,7 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
         let size = view.frame.size
         let aspectRatio = size.height > 0 ? size.width / size.height : 1.0
         let smallestDimension = min(size.width, size.height)
-        var scaled = smallestDimension / 3.0 * 2.0
+        var scaled = smallestDimension / 5.0 * 3.0
         if scaled < 100.0 {
             scaled = 100.0
         }

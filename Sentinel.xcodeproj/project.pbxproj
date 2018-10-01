@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		650788C62162899800252727 /* LobbyCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650788C52162899800252727 /* LobbyCollectionViewLayout.swift */; };
 		6515594E213FFD0000F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
 		6515594F213FFD4400F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
 		65155950213FFD7000F35776 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
@@ -87,6 +88,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		650788C52162899800252727 /* LobbyCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyCollectionViewLayout.swift; sourceTree = "<group>"; };
 		6515594D213FFD0000F35776 /* GridIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridIndex.swift; sourceTree = "<group>"; };
 		6515595121403AD500F35776 /* NodeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeMap.swift; sourceTree = "<group>"; };
 		652778CD2145625E00643BE0 /* GridPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPiece.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				6567867A215E87F5005105EE /* LobbyUI.swift */,
 				655D5E5021564E7800BA2F49 /* LobbyViewController.swift */,
 				655D5E5221564F0E00BA2F49 /* LobbyViewModel.swift */,
+				650788C52162899800252727 /* LobbyCollectionViewLayout.swift */,
 				655D5E5621564FC400BA2F49 /* LobbyCollectionViewCell.swift */,
 			);
 			name = Lobby;
@@ -523,6 +526,7 @@
 				652778CE2145625E00643BE0 /* GridPiece.swift in Sources */,
 				65CDD427215E644B004703EE /* LevelSummaryViewController.swift in Sources */,
 				6515595221403AD500F35776 /* NodeMap.swift in Sources */,
+				650788C62162899800252727 /* LobbyCollectionViewLayout.swift in Sources */,
 				65CDD425215E643D004703EE /* LevelSummaryViewModel.swift in Sources */,
 				6546A842213C0651009F0650 /* AppDelegate.swift in Sources */,
 				65F89CDA216256970031CFC0 /* SceneImageLoader.swift in Sources */,
