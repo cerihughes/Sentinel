@@ -314,7 +314,10 @@ class SwipeInputViewModel: NSObject {
             if buildIt {
                 switch (buildableType) {
                 case (.rock):
-                    playerViewModel.buildRock(at: point)
+                    if let contents = temporaryNode.contents as? RockNode {
+                        let w = contents.rotation.w
+                        playerViewModel.buildRock(at: point, rotation: w)
+                    }
                 case (.tree):
                     playerViewModel.buildTree(at: point)
                 case (.synthoid):
@@ -389,6 +392,10 @@ class TemporaryNode: SCNNode {
 
 extension SCNNode {
     func scaleAllDimensions(by scale: Float) {
+        let angle = Float.pi * 8.0 * scale
+        let position = self.position
+        self.transform = SCNMatrix4MakeRotation(angle, 0, 1, 0)
+        self.position = position
         self.scale = SCNVector3Make(scale, scale, scale)
     }
 

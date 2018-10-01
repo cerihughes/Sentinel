@@ -17,9 +17,9 @@ class TerrainViewModel: NSObject {
         nodeManipulator.buildTree(at: point)
     }
 
-    func buildRock(at point: GridPoint) {
+    func buildRock(at point: GridPoint, rotation: Float? = nil) {
         grid.rockPositions.insert(point)
-        nodeManipulator.buildRock(at: point)
+        nodeManipulator.buildRock(at: point, rotation: rotation)
     }
 
     func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
