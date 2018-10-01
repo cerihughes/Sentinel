@@ -1,23 +1,27 @@
-import SceneKit
 import UIKit
 
 class LobbyCollectionViewCell: UICollectionViewCell {
-    let sceneView: SCNView
+    var terrainIndex: Int = -1
+    let imageView: UIImageView
 
     override init(frame: CGRect) {
-        sceneView = SCNView(frame: frame)
-        sceneView.backgroundColor = UIColor.clear
+        imageView = UIImageView(frame: frame)
         super.init(frame: frame)
 
-        sceneView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(sceneView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(imageView)
 
-        let mainCenterX = sceneView.centerXAnchor.constraint(equalTo: centerXAnchor)
-        let mainCenterY = sceneView.centerYAnchor.constraint(equalTo: centerYAnchor)
-        let mainWidth = sceneView.widthAnchor.constraint(equalTo: widthAnchor)
-        let mainHeight = sceneView.heightAnchor.constraint(equalTo: heightAnchor)
+        let mainCenterX = imageView.centerXAnchor.constraint(equalTo: centerXAnchor)
+        let mainCenterY = imageView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        let mainWidth = imageView.widthAnchor.constraint(equalTo: widthAnchor)
+        let mainHeight = imageView.heightAnchor.constraint(equalTo: heightAnchor)
 
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight])
+    }
+
+    override func prepareForReuse() {
+        terrainIndex = -1
+        imageView.image = nil
     }
 
     required init?(coder aDecoder: NSCoder) {

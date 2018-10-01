@@ -43,7 +43,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
     }
 
     private func configureCollectionViewLayout() {
-        print("configureCollectionViewLayout")
         let size = view.frame.size
         let aspectRatio = size.height > 0 ? size.width / size.height : 1.0
         let smallestDimension = min(size.width, size.height)
