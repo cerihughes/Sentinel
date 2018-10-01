@@ -66,7 +66,7 @@ class NodeManipulator: NSObject {
         floorNode.treeNode = treeNode
     }
 
-    func buildRock(at point: GridPoint) {
+    func buildRock(at point: GridPoint, rotation: Float? = nil) {
         guard let floorNode = nodeMap.getFloorNode(for: point) else {
             return
         }
@@ -75,7 +75,7 @@ class NodeManipulator: NSObject {
             _ = absorbTree(at: point)
         }
 
-        let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count)
+        let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count, rotation: rotation)
         floorNode.add(rockNode: rockNode)
     }
 

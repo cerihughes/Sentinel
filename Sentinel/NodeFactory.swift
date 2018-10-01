@@ -206,11 +206,17 @@ class NodeFactory: NSObject {
         return clone
     }
 
-    func createRockNode(height: Int) -> RockNode {
+    func createRockNode(height: Int, rotation: Float? = nil) -> RockNode {
         let clone = rock.clone()
         clone.position = nodePositioning.calculateObjectPosition(height: height)
-        let rotation = radiansInCircle * Float(drand48())
-        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, rotation)
+        let w: Float
+        if let rotation = rotation {
+            w = rotation
+        } else {
+            w = radiansInCircle * Float(drand48())
+        }
+
+        clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, w)
         return clone
     }
 

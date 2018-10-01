@@ -101,7 +101,7 @@ class PlayerViewModel: NSObject {
         terrainViewModel.buildTree(at: point)
     }
 
-    func buildRock(at point: GridPoint, isPlayer: Bool = true) {
+    func buildRock(at point: GridPoint, rotation: Float? = nil) {
         guard hasEnergy(required: treeEnergyValue) else {
             return
         }
@@ -115,7 +115,7 @@ class PlayerViewModel: NSObject {
         }
 
         adjustEnergy(delta: -rockEnergyValue)
-        terrainViewModel.buildRock(at: point)
+        terrainViewModel.buildRock(at: point, rotation: rotation)
     }
 
     func buildSynthoid(at point: GridPoint) {
