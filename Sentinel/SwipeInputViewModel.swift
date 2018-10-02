@@ -218,8 +218,10 @@ class SwipeInputViewModel: NSObject {
 
         switch swipeDirection {
         case .down:
+            cancelBuild(floorNode: floorNode)
             processAbsorb(floorNode: floorNode, swipeState: swipeState)
         default:
+            cancelAbsorb(floorNode: floorNode)
             if let buildableType = swipeDirection.buildableType {
                 if validBuildSwipeDirections(for: floorNode).contains(swipeDirection) {
                     processBuild(buildableType, floorNode: floorNode, swipeState: swipeState)
@@ -256,9 +258,6 @@ class SwipeInputViewModel: NSObject {
     }
 
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
-        // There may be a temporary node lying around if we initially swiped (e.g.) up and then down before releasing the swipe.
-        floorNode.temporaryNode?.removeFromParentNode()
-
         if let topmostNode = floorNode.topmostNode {
             if removeIt,
                 let point = nodeManipulator.point(for: floorNode),
@@ -268,6 +267,13 @@ class SwipeInputViewModel: NSObject {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
             }
         }
+    }
+
+    private func cancelAbsorb(floorNode: FloorNode) {
+        guard let topmostNode = floorNode.topmostNode else {
+            return
+        }
+        topmostNode.scaleAllDimensions(by: 1.0, animated: true)
     }
 
     private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, swipeState: SwipeState) {
@@ -327,6 +333,14 @@ class SwipeInputViewModel: NSObject {
                 opponentsViewModel.timeMachine.start()
             }
         }
+    }
+
+    private func cancelBuild(floorNode: FloorNode) {
+        guard let temporaryNode = floorNode.temporaryNode else {
+            return
+        }
+
+        temporaryNode.removeFromParentNode(animated: true)
     }
 
     private func createNode(for buildableType: BuildableType) -> (SCNNode&PlaceableNode) {
