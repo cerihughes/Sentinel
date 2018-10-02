@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		650788C62162899800252727 /* LobbyCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650788C52162899800252727 /* LobbyCollectionViewLayout.swift */; };
+		650788C821638B0000252727 /* MaterialFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650788C721638B0000252727 /* MaterialFactory.swift */; };
+		650788CA2163989D00252727 /* ColourGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650788C92163989D00252727 /* ColourGenerator.swift */; };
 		6515594E213FFD0000F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
 		6515594F213FFD4400F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
 		65155950213FFD7000F35776 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
@@ -89,6 +91,8 @@
 
 /* Begin PBXFileReference section */
 		650788C52162899800252727 /* LobbyCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyCollectionViewLayout.swift; sourceTree = "<group>"; };
+		650788C721638B0000252727 /* MaterialFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialFactory.swift; sourceTree = "<group>"; };
+		650788C92163989D00252727 /* ColourGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourGenerator.swift; sourceTree = "<group>"; };
 		6515594D213FFD0000F35776 /* GridIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridIndex.swift; sourceTree = "<group>"; };
 		6515595121403AD500F35776 /* NodeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeMap.swift; sourceTree = "<group>"; };
 		652778CD2145625E00643BE0 /* GridPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPiece.swift; sourceTree = "<group>"; };
@@ -290,6 +294,8 @@
 				65BB5F252155443900E01923 /* DetectionAreaNode.swift */,
 				6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */,
 				655141E921543034009E7486 /* NodeManipulator.swift */,
+				650788C721638B0000252727 /* MaterialFactory.swift */,
+				650788C92163989D00252727 /* ColourGenerator.swift */,
 			);
 			name = Node;
 			sourceTree = "<group>";
@@ -507,6 +513,7 @@
 				656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */,
 				6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */,
 				656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */,
+				650788C821638B0000252727 /* MaterialFactory.swift in Sources */,
 				6567866F215E7A79005105EE /* ViewControllerRegistry.swift in Sources */,
 				6567867E215E8F91005105EE /* RegistrationLocator.swift in Sources */,
 				65678679215E87E1005105EE /* LevelSummaryUI.swift in Sources */,
@@ -521,6 +528,7 @@
 				6546A844213C0651009F0650 /* GameMainViewController.swift in Sources */,
 				656AED8D215A5E74005D88B3 /* TerrainViewModel.swift in Sources */,
 				65DCBC6321540C2900F5D2FB /* SceneViewController.swift in Sources */,
+				650788CA2163989D00252727 /* ColourGenerator.swift in Sources */,
 				6567867B215E87F5005105EE /* LobbyUI.swift in Sources */,
 				65D7F1DD2157FD390085C6CF /* OverlayScene.swift in Sources */,
 				652778CE2145625E00643BE0 /* GridPiece.swift in Sources */,

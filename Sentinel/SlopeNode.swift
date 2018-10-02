@@ -9,10 +9,10 @@ class SlopeNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float) {
+    init(floorSize: Float, colour: UIColor) {
         super.init()
 
-        geometry = createGeometry(floorSize: floorSize, colour: .darkGray)
+        geometry = createGeometry(floorSize: floorSize, colour: colour)
         name = slopeNodeName
     }
 
