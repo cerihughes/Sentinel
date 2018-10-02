@@ -30,7 +30,8 @@ class NodeFactory: NSObject {
 
     private let cube1: FloorNode
     private let cube2: FloorNode
-    private let slope: SlopeNode
+    private let slope1: SlopeNode
+    private let slope2: SlopeNode
 
     private let sentinel: SentinelNode
     private let sentry: SentryNode
@@ -39,15 +40,16 @@ class NodeFactory: NSObject {
     private let tree: TreeNode
     private let rock: RockNode
 
-    init(nodePositioning: NodePositioning, detectionRadius: Float) {
+    init(nodePositioning: NodePositioning, detectionRadius: Float, materialFactory: MaterialFactory) {
         self.nodePositioning = nodePositioning
 
         let floorSize = nodePositioning.floorSize
 
         detectionNode = DetectionAreaNode(detectionRadius: detectionRadius)
-        cube1 = FloorNode(floorSize: floorSize, colour: .red)
-        cube2 = FloorNode(floorSize: floorSize, colour: .yellow)
-        slope = SlopeNode(floorSize: floorSize)
+        cube1 = FloorNode(floorSize: floorSize, colour: materialFactory.floor1Colour)
+        cube2 = FloorNode(floorSize: floorSize, colour: materialFactory.floor2Colour)
+        slope1 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope1Colour)
+        slope2 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope2Colour)
         sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius)
         sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius)
         synthoid = SynthoidNode(floorSize: floorSize)
@@ -262,13 +264,14 @@ class NodeFactory: NSObject {
     }
 
     private func createFloorNode(x: Int, y: Int, z: Int) -> FloorNode {
-        let source = (x + z + y) % 2 == 0 ? cube1 : cube2
-        let boxNode = source.clone()
-        boxNode.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
-        return boxNode
+        let cube = (x + z + y) % 2 == 0 ? cube1 : cube2
+        let clone = cube.clone()
+        clone.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
+        return clone
     }
 
     private func createSlopeNode(x: Int, y: Int, z: Int, rotation: SCNVector4? = nil) -> SlopeNode {
+        let slope = (x + z + y) % 2 == 0 ? slope1 : slope2
         let clone = slope.clone()
         clone.position = nodePositioning.calculateTerrainPosition(x: x, y: Float(y), z: z)
         if let rotation = rotation {
