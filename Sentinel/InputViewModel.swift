@@ -117,48 +117,23 @@ class InputViewModel: NSObject {
 
 
     private func process(interaction: UserInteraction, node: SCNNode) -> Bool {
-        let bitmask = node.categoryBitMask
-        for interactiveNodeType in InteractiveNodeType.allCases {
-            if bitmask & interactiveNodeType.rawValue == interactiveNodeType.rawValue {
-                return process(interaction: interaction, node: node, interactiveNodeType: interactiveNodeType)
-            }
-        }
-        print("Not processing \(interaction) on \(bitmask)")
-        return false
-    }
-
-    private func process(interaction: UserInteraction, node: SCNNode, interactiveNodeType: InteractiveNodeType) -> Bool {
-        var point: GridPoint? = nil
-        if let floorNode = node as? FloorNode {
-            point = nodeManipulator.point(for: floorNode)
-        } else if let floorNode = node.parent as? FloorNode,
-            let floorName = floorNode.name,
-            floorName == floorNodeName {
-            point = nodeManipulator.point(for: floorNode)
-        }
-
-        switch (interaction, interactiveNodeType) {
-        case (.tap, .floor):
+        switch (interaction) {
+        case (.tap):
             if let floorNode = node as? FloorNode,
-                let point = point {
+                let point = nodeManipulator.point(for: floorNode) {
                 return processTap(floorNode: floorNode, point: point)
-            }
-        case (.tap, .synthoid):
-            if let synthoidNode = node as? SynthoidNode {
+            } else if let synthoidNode = node as? SynthoidNode {
                 playerViewModel.move(to: synthoidNode)
                 return true
             }
-        case (.longPress, .floor):
+        case (.longPress):
             if let floorNode = node as? FloorNode,
-                let point = point {
+                let point = nodeManipulator.point(for: floorNode) {
                 return processLongPress(floorNode: floorNode, point: point)
+            } else if let floorNode = node.parent as? FloorNode,
+                let point = nodeManipulator.point(for: floorNode) {
+                return processLongPressObject(node: node, point: point)
             }
-        case (.longPress, _):
-            if let point = point {
-                return processLongPressObject(node: node, point: point, interactiveNodeType: interactiveNodeType)
-            }
-        default:
-            print("Not processing \(interactiveNodeType)")
         }
         return false
     }
@@ -188,26 +163,25 @@ class InputViewModel: NSObject {
         return true
     }
 
-    private func processLongPressObject(node: SCNNode, point: GridPoint, interactiveNodeType: InteractiveNodeType) -> Bool {
-        if interactiveNodeType == .sentinel {
+    private func processLongPressObject(node: SCNNode, point: GridPoint) -> Bool {
+        if node is SentinelNode {
             return playerViewModel.absorbSentinelNode(at: point)
         }
 
-        if interactiveNodeType == .sentry {
+        if node is SentryNode {
             return playerViewModel.absorbSentryNode(at: point)
         }
 
-        if interactiveNodeType == .tree {
+        if node is TreeNode {
             return playerViewModel.absorbTreeNode(at: point)
         }
 
-        if interactiveNodeType == .rock,
-            let rockNode = node as? RockNode,
+        if let rockNode = node as? RockNode,
             let floorNode = rockNode.floorNode {
             return playerViewModel.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
         }
 
-        if interactiveNodeType == .synthoid {
+        if node is SynthoidNode {
             return playerViewModel.absorbSynthoidNode(at: point)
         }
 

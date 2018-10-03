@@ -14,14 +14,7 @@ let ambientLightNodeName = "ambientLightNodeName"
 
 fileprivate let radiansInCircle = Float.pi * 2.0
 
-enum InteractiveNodeType: Int, CaseIterable {
-    case floor = 2
-    case tree = 4
-    case rock = 8
-    case synthoid = 16
-    case sentry = 32
-    case sentinel = 64
-}
+let interactiveNodeBitMask = 2
 
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
