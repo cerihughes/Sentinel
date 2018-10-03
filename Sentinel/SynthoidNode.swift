@@ -33,7 +33,7 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         addChildNode(cameraNode)
 
         name = synthoidNodeName
-        categoryBitMask = InteractiveNodeType.synthoid.rawValue
+        categoryBitMask |= interactiveNodeBitMask
         pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * floorSize, 0.0)
     }
 
