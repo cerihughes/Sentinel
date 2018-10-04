@@ -103,7 +103,7 @@ class InputViewModel: NSObject {
 
     private func process(interaction: UserInteraction, hitTestResults: [SCNHitTestResult]) -> Bool {
         if playerViewModel.hasEnteredScene() {
-            if let hitTestResult = hitTestResults.first {
+            for hitTestResult in hitTestResults {
                 let node = hitTestResult.node
                 if let interactiveNode = node.firstInteractiveParent() {
                     return process(interaction: interaction, node: interactiveNode)
