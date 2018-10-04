@@ -15,6 +15,7 @@ let ambientLightNodeName = "ambientLightNodeName"
 fileprivate let radiansInCircle = Float.pi * 2.0
 
 let interactiveNodeBitMask = 2
+let noninteractiveNodeBitMask = 4
 
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning

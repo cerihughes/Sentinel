@@ -43,6 +43,8 @@ class SwipeInputViewModel: NSObject {
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
 
+    private let hitTestOptions:[SCNHitTestOption:Any]
+
     private var startTapPoint: CGPoint? = nil
     private var floorNode: FloorNode? = nil
 
@@ -50,6 +52,9 @@ class SwipeInputViewModel: NSObject {
         self.playerViewModel = playerViewModel
         self.opponentsViewModel = opponentsViewModel
         self.nodeManipulator = nodeManipulator
+
+        self.hitTestOptions = [SCNHitTestOption.searchMode:SCNHitTestSearchMode.all.rawValue,
+                               SCNHitTestOption.rootNode:nodeManipulator.terrainNode]
 
         let tapRecogniser = UITapGestureRecognizer()
         let doubleTapRecogniser = UITapGestureRecognizer()
@@ -114,7 +119,7 @@ class SwipeInputViewModel: NSObject {
         }
 
         let point = sender.location(in: sceneView)
-        let hitTestResults = sceneView.hitTest(point, options: [:])
+        let hitTestResults = sceneView.hitTest(point, options: hitTestOptions)
         if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
             processDoubleTap(node: interactiveNode)
         }
@@ -138,7 +143,7 @@ class SwipeInputViewModel: NSObject {
         let state = sender.state
 
         if state == .began {
-            let hitTestResults = sceneView.hitTest(point, options: [:])
+            let hitTestResults = sceneView.hitTest(point, options: hitTestOptions)
             if let floorNode = floorNode(for: hitTestResults) {
                 self.startTapPoint = point
                 self.floorNode = floorNode
@@ -186,9 +191,11 @@ class SwipeInputViewModel: NSObject {
     }
 
     private func firstInteractiveNode(for hitTestResults: [SCNHitTestResult]) -> SCNNode? {
-        if let hitTestResult = hitTestResults.first {
+        for hitTestResult in hitTestResults {
             let node = hitTestResult.node
-            return node.firstInteractiveParent()
+            if let interactiveParent = node.firstInteractiveParent() {
+                return interactiveParent
+            }
         }
         return nil
     }
