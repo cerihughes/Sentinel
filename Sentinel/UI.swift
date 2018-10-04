@@ -12,6 +12,9 @@ class UI: NSObject, UIContext {
 
         registry.ui = self
 
+        let stagingArea = StagingAreaUI()
+        stagingArea.register(with: registry)
+
         let intro = IntroUI()
         intro.register(with: registry)
 
