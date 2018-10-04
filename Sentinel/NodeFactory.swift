@@ -2,6 +2,9 @@ import GLKit
 import SceneKit
 
 let cameraNodeName = "cameraNodeName"
+let eyeNodeName = "eyeNodeName"
+let visionNodeName = "visionNodeName"
+
 let terrainNodeName = "terrainNodeName"
 let floorNodeName = "floorNodeName"
 let slopeNodeName = "slopeNodeName"

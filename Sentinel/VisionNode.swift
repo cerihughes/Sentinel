@@ -18,12 +18,15 @@ class VisionNode: SCNNode {
 
         let material = SCNMaterial()
         material.isDoubleSided = true
-        material.diffuse.contents = UIColor.white.withAlphaComponent(0.5)
+        material.diffuse.contents = UIColor.red.withAlphaComponent(0.5)
         let pyramid = SCNPyramid(hFOV: hDegrees, aspectRatio: aspectRatio, zFar: zFar)
         pyramid.materials = [material]
         let node = SCNNode(geometry: pyramid)
         node.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / 2.0)
         node.categoryBitMask |= noninteractiveNodeBitMask
+
         addChildNode(node)
+
+        name = visionNodeName
     }
 }
