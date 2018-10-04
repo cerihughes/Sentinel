@@ -47,7 +47,7 @@
 		656AED8D215A5E74005D88B3 /* TerrainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */; };
 		656AED90215A68BC005D88B3 /* InputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8F215A68BC005D88B3 /* InputViewModel.swift */; };
 		657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657A3B47214F070D0092E2D9 /* PlaceableNode.swift */; };
-		6586AC9F214F1325008727D9 /* SCNNodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */; };
+		6586AC9F214F1325008727D9 /* SCNNode_Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586AC9E214F1325008727D9 /* SCNNode_Extensions.swift */; };
 		6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586ACA0214FC753008727D9 /* DetectableNode.swift */; };
 		6586ACA521500CEE008727D9 /* TimeMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586ACA421500CEE008727D9 /* TimeMachine.swift */; };
 		659395F1213D46B700302665 /* TerrainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659395F0213D46B700302665 /* TerrainGenerator.swift */; };
@@ -130,7 +130,7 @@
 		656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TerrainViewModel.swift; sourceTree = "<group>"; };
 		656AED8F215A68BC005D88B3 /* InputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewModel.swift; sourceTree = "<group>"; };
 		657A3B47214F070D0092E2D9 /* PlaceableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceableNode.swift; sourceTree = "<group>"; };
-		6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNNodeExtensions.swift; sourceTree = "<group>"; };
+		6586AC9E214F1325008727D9 /* SCNNode_Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNNode_Extensions.swift; sourceTree = "<group>"; };
 		6586ACA0214FC753008727D9 /* DetectableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectableNode.swift; sourceTree = "<group>"; };
 		6586ACA421500CEE008727D9 /* TimeMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMachine.swift; sourceTree = "<group>"; };
 		659395F0213D46B700302665 /* TerrainGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainGenerator.swift; sourceTree = "<group>"; };
@@ -178,6 +178,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6529F31C21663559006856DB /* SceneKit Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6586AC9E214F1325008727D9 /* SCNNode_Extensions.swift */,
+			);
+			name = "SceneKit Extensions";
+			sourceTree = "<group>";
+		};
 		6546A835213C0651009F0650 = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +207,7 @@
 		6546A840213C0651009F0650 /* Sentinel */ = {
 			isa = PBXGroup;
 			children = (
+				6529F31C21663559006856DB /* SceneKit Extensions */,
 				65CDD422215E63F8004703EE /* View Controllers */,
 				6567866D215E7A54005105EE /* Navigation */,
 				656AED8E215A68A3005D88B3 /* Input */,
@@ -292,7 +301,6 @@
 				656AAEEE214ED18D00991151 /* SynthoidNode.swift */,
 				656AAEEC214ECE3100991151 /* OppositionNode.swift */,
 				65BB5F252155443900E01923 /* DetectionAreaNode.swift */,
-				6586AC9E214F1325008727D9 /* SCNNodeExtensions.swift */,
 				655141E921543034009E7486 /* NodeManipulator.swift */,
 				650788C721638B0000252727 /* MaterialFactory.swift */,
 				650788C92163989D00252727 /* ColourGenerator.swift */,
@@ -543,7 +551,7 @@
 				654AB2C7214D4B0400E8851D /* GameContainerViewController.swift in Sources */,
 				657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */,
 				656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */,
-				6586AC9F214F1325008727D9 /* SCNNodeExtensions.swift in Sources */,
+				6586AC9F214F1325008727D9 /* SCNNode_Extensions.swift in Sources */,
 				656AAEED214ECE3100991151 /* OppositionNode.swift in Sources */,
 				65B83F81213C08C600515915 /* NodeFactory.swift in Sources */,
 				65A381F7215FA3040011052F /* IntroUI.swift in Sources */,
