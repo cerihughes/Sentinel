@@ -41,6 +41,8 @@ class EyeNode: SCNNode {
 
         boxNode.addChildNode(cameraNode)
         addChildNode(boxNode)
+
+        name = eyeNodeName
     }
 
     var cameraNode: SCNNode {
