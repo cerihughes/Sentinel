@@ -19,18 +19,17 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
 
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.purple
-        let capsule = SCNCapsule(capRadius: CGFloat(floorSize / 3.0), height: CGFloat(floorSize))
+        let radius = floorSize / 3.0
+        let capsule = SCNCapsule(capRadius: CGFloat(radius), height: CGFloat(floorSize))
         capsule.firstMaterial = material
 
         let capsuleNode = SCNNode(geometry: capsule)
         addChildNode(capsuleNode)
-        let camera = SCNCamera()
-        camera.automaticallyAdjustsZRange = true
-        let cameraNode = SCNNode()
-        cameraNode.position.y += floorSize / 4.0
-        cameraNode.name = cameraNodeName
-        cameraNode.camera = camera
-        addChildNode(cameraNode)
+
+        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: nil)
+        eyeNode.position.y += floorSize / 4.0
+        eyeNode.position.z = -radius
+        addChildNode(eyeNode)
 
         name = synthoidNodeName
         categoryBitMask |= interactiveNodeBitMask

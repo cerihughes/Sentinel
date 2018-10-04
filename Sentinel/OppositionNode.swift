@@ -12,7 +12,7 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
     fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor) {
         super.init()
 
-        var material = SCNMaterial()
+        let material = SCNMaterial()
         material.diffuse.contents = colour
 
         let segments = 3
@@ -29,26 +29,11 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
             addChildNode(sphereNode)
         }
 
-        material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
-        let width = CGFloat(floorSize / 3.0)
-        let height = CGFloat(floorSize / 10.0)
-        let box = SCNBox(width: width, height: height, length: height, chamferRadius: 0.2)
-        box.firstMaterial = material
-        let boxNode = SCNNode(geometry: box)
-        boxNode.position.z = floorSize / 5.0
-        boxNode.position.y = y
-        let camera = SCNCamera()
-        camera.fieldOfView = 45.0
-        camera.zFar = Double(detectionRadius)
-        let cameraNode = SCNNode()
-        cameraNode.name = cameraNodeName
-        cameraNode.camera = camera
-        cameraNode.rotation = SCNVector4Make(0.0, 1.0, 0.25, Float.pi)
-        cameraNode.position = SCNVector3Make(0.0, 0.0, floorSize / 10.0)
-
-        boxNode.addChildNode(cameraNode)
-        addChildNode(boxNode)
+        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: detectionRadius)
+        eyeNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -6.0)
+        eyeNode.position.z = floorSize / -5.0
+        eyeNode.position.y = y
+        addChildNode(eyeNode)
     }
 
     var floorNode: FloorNode? {
