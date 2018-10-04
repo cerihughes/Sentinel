@@ -31,7 +31,7 @@ struct MainLevelConfiguration: LevelConfiguration {
     let opponentRotationSteps: Int = 12
     let opponentRotationTime: TimeInterval = 0.3
 
-    private let opponentDetectionRadiusRange = 10.0 ..< 25.0
+    private let opponentDetectionRadiusRange = 16.0 ..< 32.0
     private let opponentRotationPauseRange = 5.0 ..< 8.0
     private let gridWidthRange = 24 ..< 32
     private let gridDepthRange = 16 ..< 24

@@ -27,6 +27,9 @@
 		65473B1D2145A23300AC4A2D /* GridPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652778CD2145625E00643BE0 /* GridPiece.swift */; };
 		654AB2C5214D486100E8851D /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		654AB2C7214D4B0400E8851D /* GameContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */; };
+		654B9ECC216638CC00CD81BA /* EyeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654B9ECB216638CB00CD81BA /* EyeNode.swift */; };
+		654B9ED0216638FB00CD81BA /* VisionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654B9ECF216638FB00CD81BA /* VisionNode.swift */; };
+		654B9ED22166391000CD81BA /* SCNPyramid_Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654B9ED12166391000CD81BA /* SCNPyramid_Extension.swift */; };
 		655141EA21543034009E7486 /* NodeManipulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655141E921543034009E7486 /* NodeManipulator.swift */; };
 		655D5E5121564E7800BA2F49 /* LobbyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655D5E5021564E7800BA2F49 /* LobbyViewController.swift */; };
 		655D5E5321564F0E00BA2F49 /* LobbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655D5E5221564F0E00BA2F49 /* LobbyViewModel.swift */; };
@@ -113,6 +116,9 @@
 		6546A856213C0652009F0650 /* GridTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTests.swift; sourceTree = "<group>"; };
 		6546A858213C0652009F0650 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameContainerViewController.swift; sourceTree = "<group>"; };
+		654B9ECB216638CB00CD81BA /* EyeNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EyeNode.swift; sourceTree = "<group>"; };
+		654B9ECF216638FB00CD81BA /* VisionNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisionNode.swift; sourceTree = "<group>"; };
+		654B9ED12166391000CD81BA /* SCNPyramid_Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCNPyramid_Extension.swift; sourceTree = "<group>"; };
 		655141E921543034009E7486 /* NodeManipulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeManipulator.swift; sourceTree = "<group>"; };
 		655D5E5021564E7800BA2F49 /* LobbyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyViewController.swift; sourceTree = "<group>"; };
 		655D5E5221564F0E00BA2F49 /* LobbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyViewModel.swift; sourceTree = "<group>"; };
@@ -187,6 +193,7 @@
 		6529F31C21663559006856DB /* SceneKit Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				654B9ED12166391000CD81BA /* SCNPyramid_Extension.swift */,
 				6586AC9E214F1325008727D9 /* SCNNode_Extensions.swift */,
 			);
 			name = "SceneKit Extensions";
@@ -314,6 +321,8 @@
 				656AAEEA214ECBD500991151 /* SlopeNode.swift */,
 				656AAEE8214EBAAA00991151 /* RockNode.swift */,
 				656AAEE6214EB82100991151 /* TreeNode.swift */,
+				654B9ECB216638CB00CD81BA /* EyeNode.swift */,
+				654B9ECF216638FB00CD81BA /* VisionNode.swift */,
 				656AAEEE214ED18D00991151 /* SynthoidNode.swift */,
 				656AAEEC214ECE3100991151 /* OppositionNode.swift */,
 				65BB5F252155443900E01923 /* DetectionAreaNode.swift */,
@@ -523,6 +532,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				654B9ED22166391000CD81BA /* SCNPyramid_Extension.swift in Sources */,
 				6515594E213FFD0000F35776 /* GridIndex.swift in Sources */,
 				655D5E5721564FC400BA2F49 /* LobbyCollectionViewCell.swift in Sources */,
 				656AED90215A68BC005D88B3 /* InputViewModel.swift in Sources */,
@@ -570,10 +580,12 @@
 				657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */,
 				656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */,
 				6586AC9F214F1325008727D9 /* SCNNode_Extensions.swift in Sources */,
+				654B9ED0216638FB00CD81BA /* VisionNode.swift in Sources */,
 				656AAEED214ECE3100991151 /* OppositionNode.swift in Sources */,
 				65B83F81213C08C600515915 /* NodeFactory.swift in Sources */,
 				6529F31F216636B5006856DB /* StagingAreaUI.swift in Sources */,
 				65A381F7215FA3040011052F /* IntroUI.swift in Sources */,
+				654B9ECC216638CC00CD81BA /* EyeNode.swift in Sources */,
 				65A381F9215FA30C0011052F /* IntroViewController.swift in Sources */,
 				65B83F83213C08E400515915 /* Grid.swift in Sources */,
 				655D5E5321564F0E00BA2F49 /* LobbyViewModel.swift in Sources */,
