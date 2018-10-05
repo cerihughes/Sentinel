@@ -1,5 +1,7 @@
 import SceneKit
 
+let eyeNodeName = "eyeNodeName"
+
 class EyeNode: SCNNode {
     override init() {
         super.init()
@@ -9,7 +11,7 @@ class EyeNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float? = nil) {
+    init(floorSize: Float, detectionRadius: Float? = nil, options: [NodeFactoryOption]) {
         super.init()
 
         let width = CGFloat(floorSize / 3.0)
@@ -30,11 +32,15 @@ class EyeNode: SCNNode {
         cameraNode.camera = camera
         cameraNode.position = SCNVector3Make(0.0, 0.0, floorSize / -10.0)
 
+        let useVisionNode = options.contains(.showVisionNode(true)) || options.contains(.showVisionNode(false))
+
         if let detectionRadius = detectionRadius {
             camera.zFar = Double(detectionRadius)
-            let visionNode = VisionNode(camera: camera, aspectRatio: 1024.0/768.0)
-            visionNode.position = SCNVector3Make(0, 0, Float(-camera.zFar))
-            cameraNode.addChildNode(visionNode)
+            if useVisionNode {
+                let visionNode = VisionNode(camera: camera, aspectRatio: 1024.0/768.0)
+                visionNode.position = SCNVector3Make(0, 0, Float(-camera.zFar))
+                cameraNode.addChildNode(visionNode)
+            }
         } else {
             camera.automaticallyAdjustsZRange = true
         }

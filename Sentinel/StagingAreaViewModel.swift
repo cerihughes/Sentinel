@@ -7,7 +7,7 @@ class StagingAreaViewModel: NSObject {
     override init() {
         scene = SCNScene()
 
-        let opponentNode = SentinelNode(floorSize: 10.0, detectionRadius: 100.0)
+        let opponentNode = SentinelNode(floorSize: 10.0, detectionRadius: 100.0, options: [])
 
         scene.rootNode.addChildNode(opponentNode)
 

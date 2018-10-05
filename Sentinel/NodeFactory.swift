@@ -1,18 +1,6 @@
 import GLKit
 import SceneKit
 
-let cameraNodeName = "cameraNodeName"
-let eyeNodeName = "eyeNodeName"
-let visionNodeName = "visionNodeName"
-
-let terrainNodeName = "terrainNodeName"
-let floorNodeName = "floorNodeName"
-let slopeNodeName = "slopeNodeName"
-let sentinelNodeName = "sentinelNodeName"
-let sentryNodeName = "sentryNodeName"
-let synthoidNodeName = "synthoidNodeName"
-let treeNodeName = "treeNodeName"
-let rockNodeName = "rockNodeName"
 let ambientLightNodeName = "ambientLightNodeName"
 
 fileprivate let radiansInCircle = Float.pi * 2.0
@@ -20,25 +8,33 @@ fileprivate let radiansInCircle = Float.pi * 2.0
 let interactiveNodeBitMask = 2
 let noninteractiveNodeBitMask = 4
 
+enum NodeFactoryOption: Equatable {
+    case showDetectionNode
+    case showVisionNode(Bool)
+}
+
 class NodeFactory: NSObject {
     let nodePositioning: NodePositioning
 
-    private let detectionNode: DetectionAreaNode
+    private let options: [NodeFactoryOption]
 
+    private let detectionNode: DetectionAreaNode
     private let cube1: FloorNode
     private let cube2: FloorNode
     private let slope1: SlopeNode
     private let slope2: SlopeNode
-
     private let sentinel: SentinelNode
     private let sentry: SentryNode
-
     private let synthoid: SynthoidNode
     private let tree: TreeNode
     private let rock: RockNode
 
-    init(nodePositioning: NodePositioning, detectionRadius: Float, materialFactory: MaterialFactory) {
+    init(nodePositioning: NodePositioning,
+         detectionRadius: Float,
+         materialFactory: MaterialFactory,
+         options:[NodeFactoryOption] = []) {
         self.nodePositioning = nodePositioning
+        self.options = options
 
         let floorSize = nodePositioning.floorSize
 
@@ -47,8 +43,8 @@ class NodeFactory: NSObject {
         cube2 = FloorNode(floorSize: floorSize, colour: materialFactory.floor2Colour)
         slope1 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope1Colour)
         slope2 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope2Colour)
-        sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius)
-        sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius)
+        sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius, options: options)
+        sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius, options: options)
         synthoid = SynthoidNode(floorSize: floorSize)
         tree = TreeNode(floorSize: floorSize)
         rock = RockNode(floorSize: floorSize)
@@ -57,12 +53,7 @@ class NodeFactory: NSObject {
     }
 
     func createCameraNode() -> SCNNode {
-        let camera = SCNCamera()
-        camera.automaticallyAdjustsZRange = true
-        let cameraNode = SCNNode()
-        cameraNode.name = cameraNodeName
-        cameraNode.camera = camera
-        return cameraNode
+        return CameraNode(zFar: nil)
     }
 
     func createAmbientLightNodes(distance: Float) -> [SCNNode] {
@@ -182,6 +173,8 @@ class NodeFactory: NSObject {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
+        addDetectionNode(to: clone)
+        addBlurFilter(to: clone)
         return clone
     }
 
@@ -189,7 +182,29 @@ class NodeFactory: NSObject {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
+        addDetectionNode(to: clone)
+        addBlurFilter(to: clone)
         return clone
+    }
+
+    private func addDetectionNode(to node: SCNNode) {
+        guard options.contains(.showDetectionNode) else {
+            return
+        }
+
+        let clone = detectionNode.clone()
+        node.addChildNode(clone)
+    }
+
+    private func addBlurFilter(to node: SCNNode) {
+        guard options.contains(.showVisionNode(true)) else {
+            return
+        }
+
+        if let visionNode = node.childNode(withName: visionNodeName, recursively: true),
+            let gaussianBlurFilter = CIFilter(name: "CIGaussianBlur") {
+            visionNode.filters = [ gaussianBlurFilter ]
+        }
     }
 
     func createSynthoidNode(height: Int, viewingAngle: Float) -> SynthoidNode {

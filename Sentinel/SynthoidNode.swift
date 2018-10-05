@@ -1,5 +1,7 @@
 import SceneKit
 
+let synthoidNodeName = "synthoidNodeName"
+
 fileprivate let elevationLock = Float.pi / 6.0
 
 class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
@@ -26,7 +28,7 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         let capsuleNode = SCNNode(geometry: capsule)
         addChildNode(capsuleNode)
 
-        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: nil)
+        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: nil, options: [])
         eyeNode.position.y += floorSize / 4.0
         eyeNode.position.z = -radius
         addChildNode(eyeNode)

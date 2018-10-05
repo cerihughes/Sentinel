@@ -1,5 +1,7 @@
 import SceneKit
 
+let floorNodeName = "floorNodeName"
+
 class FloorNode: SCNNode {
     override init() {
         super.init()

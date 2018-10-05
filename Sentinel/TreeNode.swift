@@ -1,5 +1,7 @@
 import SceneKit
 
+let treeNodeName = "treeNodeName"
+
 class TreeNode: SCNNode, PlaceableNode, DetectableNode {
     override init() {
         super.init()

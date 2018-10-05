@@ -1,5 +1,7 @@
 import SceneKit
 
+let slopeNodeName = "slopeNodeName"
+
 class SlopeNode: SCNNode {
     override init() {
         super.init()
