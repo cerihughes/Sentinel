@@ -45,7 +45,7 @@
 		656AAEE7214EB82100991151 /* TreeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEE6214EB82100991151 /* TreeNode.swift */; };
 		656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEE8214EBAAA00991151 /* RockNode.swift */; };
 		656AAEEB214ECBD500991151 /* SlopeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEA214ECBD500991151 /* SlopeNode.swift */; };
-		656AAEED214ECE3100991151 /* OppositionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEC214ECE3100991151 /* OppositionNode.swift */; };
+		656AAEED214ECE3100991151 /* OpponentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEC214ECE3100991151 /* OpponentNode.swift */; };
 		656AAEEF214ED18D00991151 /* SynthoidNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEE214ED18D00991151 /* SynthoidNode.swift */; };
 		656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEF0214ED76600991151 /* TerrainNode.swift */; };
 		656AED89215A5E61005D88B3 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED88215A5E61005D88B3 /* PlayerViewModel.swift */; };
@@ -135,7 +135,7 @@
 		656AAEE6214EB82100991151 /* TreeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeNode.swift; sourceTree = "<group>"; };
 		656AAEE8214EBAAA00991151 /* RockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RockNode.swift; sourceTree = "<group>"; };
 		656AAEEA214ECBD500991151 /* SlopeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlopeNode.swift; sourceTree = "<group>"; };
-		656AAEEC214ECE3100991151 /* OppositionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OppositionNode.swift; sourceTree = "<group>"; };
+		656AAEEC214ECE3100991151 /* OpponentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentNode.swift; sourceTree = "<group>"; };
 		656AAEEE214ED18D00991151 /* SynthoidNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynthoidNode.swift; sourceTree = "<group>"; };
 		656AAEF0214ED76600991151 /* TerrainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainNode.swift; sourceTree = "<group>"; };
 		656AED88215A5E61005D88B3 /* PlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
@@ -327,7 +327,7 @@
 				654B9ECB216638CB00CD81BA /* EyeNode.swift */,
 				654B9ECF216638FB00CD81BA /* VisionNode.swift */,
 				656AAEEE214ED18D00991151 /* SynthoidNode.swift */,
-				656AAEEC214ECE3100991151 /* OppositionNode.swift */,
+				656AAEEC214ECE3100991151 /* OpponentNode.swift */,
 				65BB5F252155443900E01923 /* DetectionAreaNode.swift */,
 				655141E921543034009E7486 /* NodeManipulator.swift */,
 				650788C721638B0000252727 /* MaterialFactory.swift */,
@@ -584,7 +584,7 @@
 				656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */,
 				6586AC9F214F1325008727D9 /* SCNNode_Extensions.swift in Sources */,
 				654B9ED0216638FB00CD81BA /* VisionNode.swift in Sources */,
-				656AAEED214ECE3100991151 /* OppositionNode.swift in Sources */,
+				656AAEED214ECE3100991151 /* OpponentNode.swift in Sources */,
 				65B83F81213C08C600515915 /* NodeFactory.swift in Sources */,
 				6529F31F216636B5006856DB /* StagingAreaUI.swift in Sources */,
 				65A381F7215FA3040011052F /* IntroUI.swift in Sources */,

@@ -20,7 +20,7 @@ class NodeManipulator: NSObject {
         return nodeMap.getFloorNode(for: point)?.synthoidNode
     }
 
-    func oppositionNode(at point: GridPoint) -> OppositionNode? {
+    func opponentNode(at point: GridPoint) -> OpponentNode? {
         if let floorNode = nodeMap.getFloorNode(for: point) {
             return floorNode.sentinelNode ?? floorNode.sentryNode
         }
@@ -43,9 +43,9 @@ class NodeManipulator: NSObject {
         return nodeMap.getFloorNode(for: point)
     }
 
-    func rotateAllOpposition(by radians: Float, duration: TimeInterval) {
-        for oppositionNode in terrainNode.oppositionNodes {
-            oppositionNode.rotate(by: radians, duration: duration)
+    func rotateAllOpponents(by radians: Float, duration: TimeInterval) {
+        for opponentNode in terrainNode.opponentNodes {
+            opponentNode.rotate(by: radians, duration: duration)
         }
     }
 
