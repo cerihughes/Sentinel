@@ -23,10 +23,11 @@ class LevelSummaryUI: NSObject {
         let materialFactory = MainMaterialFactory(level: levelConfiguration.level)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
-                                      materialFactory: materialFactory)
+                                      materialFactory: materialFactory,
+                                      options: [.showDetectionNode, .showVisionNode(false)])
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = LevelSummaryViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
-        return LevelSummaryViewController(viewModel: viewModel)
+        return LevelSummaryViewController(ui: context, viewModel: viewModel)
     }
 }
