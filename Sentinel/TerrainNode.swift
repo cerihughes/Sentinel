@@ -21,8 +21,8 @@ class TerrainNode: SCNNode {
         return floorNodes.compactMap { $0.sentryNode }
     }
 
-    var oppositionNodes: [OppositionNode] {
-        var nodes: [OppositionNode] = []
+    var opponentNodes: [OpponentNode] {
+        var nodes: [OpponentNode] = []
         if let sentinelNode = sentinelNode {
             nodes.append(sentinelNode)
         }

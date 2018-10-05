@@ -3,7 +3,7 @@ import SceneKit
 let sentinelNodeName = "sentinelNodeName"
 let sentryNodeName = "sentryNodeName"
 
-class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
+class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
     fileprivate override init() {
         super.init()
     }
@@ -105,7 +105,7 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
     }
 }
 
-class SentinelNode: OppositionNode {
+class SentinelNode: OpponentNode {
     override init() {
         super.init()
     }
@@ -122,7 +122,7 @@ class SentinelNode: OppositionNode {
     }
 }
 
-class SentryNode: OppositionNode {
+class SentryNode: OpponentNode {
     override init() {
         super.init()
     }
