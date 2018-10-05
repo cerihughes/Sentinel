@@ -1,5 +1,7 @@
 import SceneKit
 
+let rockNodeName = "rockNodeName"
+
 class RockNode: SCNNode, PlaceableNode, DetectableNode {
     override init() {
         super.init()

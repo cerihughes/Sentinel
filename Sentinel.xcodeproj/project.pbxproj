@@ -75,6 +75,7 @@
 		65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		65CDD425215E643D004703EE /* LevelSummaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */; };
 		65CDD427215E644B004703EE /* LevelSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDD426215E644B004703EE /* LevelSummaryViewController.swift */; };
+		65D57A922167A31100CC4374 /* CameraNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D57A912167A31100CC4374 /* CameraNode.swift */; };
 		65D7F1DD2157FD390085C6CF /* OverlayScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7F1DC2157FD390085C6CF /* OverlayScene.swift */; };
 		65D7F1DF2157FFDE0085C6CF /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 65D7F1DE2157FFDE0085C6CF /* Sprites.atlas */; };
 		65D7F1E1215800F80085C6CF /* SpriteFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7F1E0215800F80085C6CF /* SpriteFactory.swift */; };
@@ -162,6 +163,7 @@
 		65C003B82146BF3400EDB205 /* LevelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelConfiguration.swift; sourceTree = "<group>"; };
 		65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewModel.swift; sourceTree = "<group>"; };
 		65CDD426215E644B004703EE /* LevelSummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewController.swift; sourceTree = "<group>"; };
+		65D57A912167A31100CC4374 /* CameraNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraNode.swift; sourceTree = "<group>"; };
 		65D7F1DC2157FD390085C6CF /* OverlayScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayScene.swift; sourceTree = "<group>"; };
 		65D7F1DE2157FFDE0085C6CF /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
 		65D7F1E0215800F80085C6CF /* SpriteFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteFactory.swift; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 				657A3B47214F070D0092E2D9 /* PlaceableNode.swift */,
 				6594D0F02152B09300D13EC6 /* ViewingNode.swift */,
 				6586ACA0214FC753008727D9 /* DetectableNode.swift */,
+				65D57A912167A31100CC4374 /* CameraNode.swift */,
 				656AAEE4214EA4C600991151 /* FloorNode.swift */,
 				656AAEEA214ECBD500991151 /* SlopeNode.swift */,
 				656AAEE8214EBAAA00991151 /* RockNode.swift */,
@@ -590,6 +593,7 @@
 				65B83F83213C08E400515915 /* Grid.swift in Sources */,
 				655D5E5321564F0E00BA2F49 /* LobbyViewModel.swift in Sources */,
 				65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */,
+				65D57A922167A31100CC4374 /* CameraNode.swift in Sources */,
 				6594D0F12152B09300D13EC6 /* ViewingNode.swift in Sources */,
 				65BB5F262155443900E01923 /* DetectionAreaNode.swift in Sources */,
 				6529F321216636C3006856DB /* StagingAreaViewController.swift in Sources */,

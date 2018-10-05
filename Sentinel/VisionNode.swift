@@ -1,5 +1,7 @@
 import SceneKit
 
+let visionNodeName = "visionNodeName"
+
 class VisionNode: SCNNode {
     override init() {
         super.init()

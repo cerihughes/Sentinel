@@ -1,5 +1,7 @@
 import SceneKit
 
+let terrainNodeName = "terrainNodeName"
+
 class TerrainNode: SCNNode {
     override init() {
         super.init()

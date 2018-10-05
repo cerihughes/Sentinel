@@ -1,5 +1,7 @@
 import SceneKit
 
+let detectionAreaNodeName = "detectionAreaNodeName"
+
 class DetectionAreaNode: SCNNode {
     override init() {
         super.init()
@@ -19,5 +21,8 @@ class DetectionAreaNode: SCNNode {
         sphere.firstMaterial = material
 
         geometry = sphere
+        
+        name = detectionAreaNodeName
+        categoryBitMask |= noninteractiveNodeBitMask
     }
 }

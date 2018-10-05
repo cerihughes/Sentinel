@@ -1,5 +1,8 @@
 import SceneKit
 
+let sentinelNodeName = "sentinelNodeName"
+let sentryNodeName = "sentryNodeName"
+
 class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
     fileprivate override init() {
         super.init()
@@ -9,7 +12,7 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
         super.init(coder: aDecoder)
     }
 
-    fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor) {
+    fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor, options: [NodeFactoryOption]) {
         super.init()
 
         let material = SCNMaterial()
@@ -29,7 +32,7 @@ class OppositionNode: SCNNode, PlaceableNode, ViewingNode {
             addChildNode(sphereNode)
         }
 
-        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: detectionRadius)
+        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: detectionRadius, options: options)
         eyeNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -6.0)
         eyeNode.position.z = floorSize / -5.0
         eyeNode.position.y = y
@@ -111,8 +114,8 @@ class SentinelNode: OppositionNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float) {
-        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue)
+    init(floorSize: Float, detectionRadius: Float, options: [NodeFactoryOption]) {
+        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue, options: options)
 
         name = sentinelNodeName
         categoryBitMask |= interactiveNodeBitMask
@@ -128,8 +131,8 @@ class SentryNode: OppositionNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float) {
-        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green)
+    init(floorSize: Float, detectionRadius: Float, options: [NodeFactoryOption]) {
+        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green, options: options)
 
         name = sentryNodeName
         categoryBitMask |= interactiveNodeBitMask
