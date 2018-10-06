@@ -4,12 +4,15 @@ import UIKit
 class LevelSummaryViewController: SceneViewController {
     private let ui: UIContext
     private let viewModel: LevelSummaryViewModel
+    private let tapGestureRecogniser = UITapGestureRecognizer()
 
     init(ui: UIContext, viewModel: LevelSummaryViewModel) {
         self.ui = ui
         self.viewModel = viewModel
 
         super.init(scene: viewModel.world.scene, cameraNode: viewModel.world.initialCameraNode)
+
+        tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -19,8 +22,13 @@ class LevelSummaryViewController: SceneViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tapGesture(sender:)))
-        view.addGestureRecognizer(tapRecogniser)
+        view.addGestureRecognizer(tapGestureRecogniser)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        tapGestureRecogniser.isEnabled = true
     }
 
     // MARK: Tap
