@@ -6,7 +6,8 @@ let ambientLightNodeName = "ambientLightNodeName"
 let radiansInCircle = Float.pi * 2.0
 
 let interactiveNodeBitMask = 2
-let noninteractiveNodeBitMask = 4
+let noninteractiveTransparentNodeBitMask = 4
+let noninteractiveBlockingNodeBitMask = 8
 
 enum NodeFactoryOption: Equatable {
     case showDetectionNode

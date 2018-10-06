@@ -77,7 +77,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
 
         let cameraPresentation = cameraNode.presentation
         let frustrumNodes = renderer.nodesInsideFrustum(of: cameraPresentation)
-        let interactiveNodes = Set(frustrumNodes.compactMap { $0.firstInteractiveParent() })
+        let interactiveNodes = Set(frustrumNodes.compactMap { $0.findInteractiveParent()?.node })
         let compacted = interactiveNodes.compactMap { $0 as? T }
         return compacted.filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
     }
@@ -93,11 +93,13 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
             let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
             let endPosition = worldNode.convertPosition(detectionPresentationNode.worldPosition, to: nil)
 
-            let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: [:])
-            if let first = hits.first,
-                let placeableHit = first.node.firstPlaceableParent() as? SCNNode {
-                if placeableHit == otherNode {
-                    return true
+            let options: [String:Any] = [SCNHitTestOption.searchMode.rawValue:SCNHitTestSearchMode.all.rawValue]
+            let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: options)
+            for hit in hits {
+                if let placeableHit = hit.node.firstPlaceableParent() as? SCNNode {
+                    if placeableHit == otherNode {
+                        return true
+                    }
                 }
             }
         }

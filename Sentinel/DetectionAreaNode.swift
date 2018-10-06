@@ -23,6 +23,6 @@ class DetectionAreaNode: SCNNode {
         geometry = sphere
         
         name = detectionAreaNodeName
-        categoryBitMask |= noninteractiveNodeBitMask
+        categoryBitMask |= noninteractiveTransparentNodeBitMask
     }
 }
