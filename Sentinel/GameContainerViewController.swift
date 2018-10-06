@@ -109,8 +109,10 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
 
     func playerViewModel(_: PlayerViewModel, levelDidEndWith state: GameEndState) {
         completionData = state == .victory
-        viewModel.opponentsViewModel.timeMachine.stop()
-        _ = ui.leave(viewController: self, animated: true)
+        DispatchQueue.main.async {
+            self.viewModel.opponentsViewModel.timeMachine.stop()
+            _ = self.ui.leave(viewController: self, animated: true)
+        }
     }
 
     // MARK: OpponentsViewModelDelegate
