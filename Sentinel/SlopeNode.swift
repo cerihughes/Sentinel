@@ -16,7 +16,7 @@ class SlopeNode: SCNNode {
 
         geometry = createGeometry(floorSize: floorSize, colour: colour)
         name = slopeNodeName
-        categoryBitMask |= noninteractiveNodeBitMask
+        categoryBitMask |= noninteractiveBlockingNodeBitMask
     }
 
     func createGeometry(floorSize: Float, colour: UIColor) -> SCNGeometry {

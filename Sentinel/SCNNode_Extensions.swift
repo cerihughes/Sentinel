@@ -9,11 +9,15 @@ extension SCNNode {
         return placeableNode as? PlaceableNode
     }
 
-    func firstInteractiveParent() -> SCNNode? {
+    func findInteractiveParent() -> (node: SCNNode, bitMask: Int)? {
         var interactiveNode = self
-        while interactiveNode.categoryBitMask & interactiveNodeBitMask == 0 {
-            if interactiveNode.categoryBitMask & noninteractiveNodeBitMask != 0 {
-                return nil
+        while interactiveNode.isInteractive() == false {
+            if interactiveNode.isNonInteractiveTransparent() {
+                return (interactiveNode, noninteractiveTransparentNodeBitMask)
+            }
+
+            if  interactiveNode.isNonInteractiveBlocking() {
+                return (interactiveNode, noninteractiveBlockingNodeBitMask)
             }
 
             let parent = interactiveNode.parent
@@ -23,6 +27,22 @@ extension SCNNode {
                 return nil
             }
         }
-        return interactiveNode
+        return (interactiveNode, interactiveNodeBitMask)
+    }
+
+    func isInteractive() -> Bool {
+        return hasCategoryBit(bit: interactiveNodeBitMask)
+    }
+
+    func isNonInteractiveTransparent() -> Bool {
+        return hasCategoryBit(bit: noninteractiveTransparentNodeBitMask)
+    }
+
+    func isNonInteractiveBlocking() -> Bool {
+        return hasCategoryBit(bit: noninteractiveBlockingNodeBitMask)
+    }
+
+    private func hasCategoryBit(bit: Int) -> Bool {
+        return categoryBitMask & bit != 0
     }
 }

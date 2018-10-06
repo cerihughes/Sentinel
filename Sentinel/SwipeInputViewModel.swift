@@ -37,7 +37,7 @@ enum SwipeState {
 
 fileprivate let threshold: CGFloat = 200.0
 
-class SwipeInputViewModel: NSObject {
+class SwipeInputViewModel: NSObject, InputViewModel {
     private let playerViewModel: PlayerViewModel
     private let opponentsViewModel: OpponentsViewModel
     private let nodeManipulator: NodeManipulator
@@ -190,24 +190,14 @@ class SwipeInputViewModel: NSObject {
         }
     }
 
-    private func firstInteractiveNode(for hitTestResults: [SCNHitTestResult]) -> SCNNode? {
-        for hitTestResult in hitTestResults {
-            let node = hitTestResult.node
-            if let interactiveParent = node.firstInteractiveParent() {
-                return interactiveParent
-            }
-        }
-        return nil
-    }
 
     private func floorNode(for hitTestResults: [SCNHitTestResult]) -> FloorNode? {
         if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
             if let floorNode = interactiveNode as? FloorNode {
                 return floorNode
             }
-            if let rockNode = interactiveNode as? RockNode,
-                let floorNode = rockNode.floorNode {
-                return floorNode
+            if let rockNode = interactiveNode as? RockNode {
+                return rockNode.floorNode
             }
         }
         return nil

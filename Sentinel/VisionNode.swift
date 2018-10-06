@@ -25,7 +25,7 @@ class VisionNode: SCNNode {
         pyramid.materials = [material]
         let node = SCNNode(geometry: pyramid)
         node.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / 2.0)
-        node.categoryBitMask |= noninteractiveNodeBitMask
+        node.categoryBitMask |= noninteractiveTransparentNodeBitMask
 
         addChildNode(node)
 
