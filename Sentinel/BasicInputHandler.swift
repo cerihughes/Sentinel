@@ -5,7 +5,7 @@ enum UserInteraction {
     case tap, longPress
 }
 
-class BasicInputViewModel: NSObject, InputViewModel {
+class BasicInputHandler: NSObject, InputHandler {
     private let playerViewModel: PlayerViewModel
     private let opponentsViewModel: OpponentsViewModel
     private let nodeManipulator: NodeManipulator
@@ -32,25 +32,21 @@ class BasicInputViewModel: NSObject, InputViewModel {
         panRecogniser.isEnabled = false
     }
 
+    // MARK: InputHandler
+
     func addGestureRecognisers(to view: UIView) {
         for gestureRecogniser in gestureRecognisers {
             view.addGestureRecognizer(gestureRecogniser)
         }
     }
 
-    func enableGestureRecognisers() {
-        enableGestureRecognisers(isEnabled: true)
-    }
-
-    func disableGestureRecognisers() {
-        enableGestureRecognisers(isEnabled: false)
-    }
-
-    private func enableGestureRecognisers(isEnabled: Bool) {
+    func setGestureRecognisersEnabled(_ isEnabled: Bool) {
         for gestureRecogniser in gestureRecognisers {
             gestureRecogniser.isEnabled = isEnabled
         }
     }
+
+    // MARK: Tap
 
     @objc
     func tapGesture(sender: UIGestureRecognizer) {
@@ -71,6 +67,8 @@ class BasicInputViewModel: NSObject, InputViewModel {
             }
         }
     }
+
+    // MARK: Pan
 
     @objc
     func panGesture(sender: UIPanGestureRecognizer) {

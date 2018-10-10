@@ -12,19 +12,19 @@ class UI: NSObject, UIContext {
 
         registry.ui = self
 
-        let stagingArea = StagingAreaUI()
+        let stagingArea = StagingAreaViewControllerProvider()
         stagingArea.register(with: registry)
 
-        let intro = IntroUI()
+        let intro = IntroViewControllerProvider()
         intro.register(with: registry)
 
-        let lobby = LobbyUI()
+        let lobby = LobbyViewControllerProvider()
         lobby.register(with: registry)
 
-        let levelSummary = LevelSummaryUI()
+        let levelSummary = LevelSummaryViewControllerProvider()
         levelSummary.register(with: registry)
 
-        let game = GameUI()
+        let game = GameViewControllerProvider()
         game.register(with: registry)
 
         let rl = RegistrationLocator(identifier: introIdentifier, level: nil)

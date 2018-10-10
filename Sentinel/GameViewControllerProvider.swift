@@ -2,10 +2,15 @@ import UIKit
 
 let gameIdentifier = "gameIdentifier"
 
-class GameUI: NSObject {
+class GameViewControllerProvider: NSObject, ViewControllerProvider {
+
+    // MARK: ViewControllerProvider
+
     func register(with registry: ViewControllerRegistry<RegistrationLocator>) {
         _ = registry.add(registryFunction: createViewController(id:context:))
     }
+
+    // MARK: Private
 
     private func createViewController(id: RegistrationLocator, context: UIContext) -> UIViewController? {
         guard
@@ -27,6 +32,9 @@ class GameUI: NSObject {
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = GameViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
-        return GameContainerViewController(ui: context, viewModel: viewModel)
+        let inputHandler = SwipeInputHandler(playerViewModel: viewModel.playerViewModel,
+                                             opponentsViewModel: viewModel.opponentsViewModel,
+                                             nodeManipulator: viewModel.terrainViewModel.nodeManipulator)
+        return GameContainerViewController(ui: context, viewModel: viewModel, inputHandler: inputHandler)
     }
 }
