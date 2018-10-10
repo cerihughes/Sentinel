@@ -4,7 +4,7 @@ import UIKit
 
 class GameContainerViewController: UIViewController, LeafViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
     private let ui: UIContext
-    private let inputViewModel: SwipeInputViewModel
+    private let inputViewModel: SwipeInputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
@@ -14,7 +14,7 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
     init(ui: UIContext, viewModel: GameViewModel) {
         self.ui = ui
         self.viewModel = viewModel
-        self.inputViewModel = SwipeInputViewModel(playerViewModel: viewModel.playerViewModel,
+        self.inputViewModel = SwipeInputHandler(playerViewModel: viewModel.playerViewModel,
                                                   opponentsViewModel: viewModel.opponentsViewModel,
                                                   nodeManipulator: viewModel.terrainViewModel.nodeManipulator)
 
