@@ -62,7 +62,7 @@
 		65A18F50215BB1D00014E90B /* SwipeInputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */; };
 		65A381F2215E9B700011052F /* UIContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F1215E9B700011052F /* UIContext.swift */; };
 		65A381F4215FA06C0011052F /* LeafViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F3215FA06C0011052F /* LeafViewController.swift */; };
-		65A381F7215FA3040011052F /* IntroUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F6215FA3040011052F /* IntroUI.swift */; };
+		65A381F7215FA3040011052F /* IntroViewControllerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F6215FA3040011052F /* IntroViewControllerProvider.swift */; };
 		65A381F9215FA30C0011052F /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A381F8215FA30C0011052F /* IntroViewController.swift */; };
 		65A9E07421417013009011C8 /* GridPointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9E07321417013009011C8 /* GridPointTests.swift */; };
 		65A9E0762142712C009011C8 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A9E0752142712B009011C8 /* skybox.png */; };
@@ -153,7 +153,7 @@
 		65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeInputViewModel.swift; sourceTree = "<group>"; };
 		65A381F1215E9B700011052F /* UIContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIContext.swift; sourceTree = "<group>"; };
 		65A381F3215FA06C0011052F /* LeafViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeafViewController.swift; sourceTree = "<group>"; };
-		65A381F6215FA3040011052F /* IntroUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroUI.swift; sourceTree = "<group>"; };
+		65A381F6215FA3040011052F /* IntroViewControllerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewControllerProvider.swift; sourceTree = "<group>"; };
 		65A381F8215FA30C0011052F /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		65A9E07321417013009011C8 /* GridPointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPointTests.swift; sourceTree = "<group>"; };
 		65A9E0752142712B009011C8 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
@@ -397,7 +397,7 @@
 		65A381F5215FA2ED0011052F /* Intro */ = {
 			isa = PBXGroup;
 			children = (
-				65A381F6215FA3040011052F /* IntroUI.swift */,
+				65A381F6215FA3040011052F /* IntroViewControllerProvider.swift */,
 				65A381F8215FA30C0011052F /* IntroViewController.swift */,
 			);
 			name = Intro;
@@ -594,7 +594,7 @@
 				656AAEED214ECE3100991151 /* OpponentNode.swift in Sources */,
 				65B83F81213C08C600515915 /* NodeFactory.swift in Sources */,
 				6529F31F216636B5006856DB /* StagingAreaViewControllerProvider.swift in Sources */,
-				65A381F7215FA3040011052F /* IntroUI.swift in Sources */,
+				65A381F7215FA3040011052F /* IntroViewControllerProvider.swift in Sources */,
 				654B9ECC216638CC00CD81BA /* EyeNode.swift in Sources */,
 				65A381F9215FA30C0011052F /* IntroViewController.swift in Sources */,
 				65B83F83213C08E400515915 /* Grid.swift in Sources */,

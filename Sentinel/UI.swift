@@ -15,7 +15,7 @@ class UI: NSObject, UIContext {
         let stagingArea = StagingAreaViewControllerProvider()
         stagingArea.register(with: registry)
 
-        let intro = IntroUI()
+        let intro = IntroViewControllerProvider()
         intro.register(with: registry)
 
         let lobby = LobbyUI()

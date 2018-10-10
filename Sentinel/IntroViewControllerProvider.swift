@@ -2,7 +2,7 @@ import UIKit
 
 let introIdentifier = "introIdentifier"
 
-class IntroUI: NSObject, ViewControllerProvider {
+class IntroViewControllerProvider: NSObject, ViewControllerProvider {
 
     // MARK: ViewControllerProvider
 
