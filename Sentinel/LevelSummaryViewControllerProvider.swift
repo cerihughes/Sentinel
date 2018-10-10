@@ -2,7 +2,7 @@ import UIKit
 
 let levelSummaryIdentifier = "levelSummaryIdentifier"
 
-class LevelSummaryUI: NSObject, ViewControllerProvider {
+class LevelSummaryViewControllerProvider: NSObject, ViewControllerProvider {
 
     // MARK: ViewControllerProvider
 
