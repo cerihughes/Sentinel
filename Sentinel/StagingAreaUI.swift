@@ -2,10 +2,15 @@ import UIKit
 
 let stagingAreaIdentifier = "stagingAreaIdentifier"
 
-class StagingAreaUI: NSObject {
+class StagingAreaUI: NSObject, ViewControllerProvider {
+
+    // MARK: ViewControllerProvider
+
     func register(with registry: ViewControllerRegistry<RegistrationLocator>) {
         _ = registry.add(registryFunction: createViewController(id:context:))
     }
+
+    // MARK: Private
 
     private func createViewController(id: RegistrationLocator, context: UIContext) -> UIViewController? {
         guard id.identifier == stagingAreaIdentifier else {
