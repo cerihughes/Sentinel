@@ -75,7 +75,7 @@
 		65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		65CDD425215E643D004703EE /* LevelSummaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */; };
 		65CDD427215E644B004703EE /* LevelSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDD426215E644B004703EE /* LevelSummaryViewController.swift */; };
-		65D2C8B92168CEA9007E6B5E /* InputViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2C8B82168CEA9007E6B5E /* InputViewModel.swift */; };
+		65D2C8B92168CEA9007E6B5E /* InputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2C8B82168CEA9007E6B5E /* InputHandler.swift */; };
 		65D57A922167A31100CC4374 /* CameraNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D57A912167A31100CC4374 /* CameraNode.swift */; };
 		65D7F1DD2157FD390085C6CF /* OverlayScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7F1DC2157FD390085C6CF /* OverlayScene.swift */; };
 		65D7F1DF2157FFDE0085C6CF /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 65D7F1DE2157FFDE0085C6CF /* Sprites.atlas */; };
@@ -165,7 +165,7 @@
 		65C003B82146BF3400EDB205 /* LevelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelConfiguration.swift; sourceTree = "<group>"; };
 		65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewModel.swift; sourceTree = "<group>"; };
 		65CDD426215E644B004703EE /* LevelSummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewController.swift; sourceTree = "<group>"; };
-		65D2C8B82168CEA9007E6B5E /* InputViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewModel.swift; sourceTree = "<group>"; };
+		65D2C8B82168CEA9007E6B5E /* InputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputHandler.swift; sourceTree = "<group>"; };
 		65D57A912167A31100CC4374 /* CameraNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraNode.swift; sourceTree = "<group>"; };
 		65D7F1DC2157FD390085C6CF /* OverlayScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayScene.swift; sourceTree = "<group>"; };
 		65D7F1DE2157FFDE0085C6CF /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
@@ -387,7 +387,7 @@
 		656AED8E215A68A3005D88B3 /* Input */ = {
 			isa = PBXGroup;
 			children = (
-				65D2C8B82168CEA9007E6B5E /* InputViewModel.swift */,
+				65D2C8B82168CEA9007E6B5E /* InputHandler.swift */,
 				656AED8F215A68BC005D88B3 /* BasicInputViewModel.swift */,
 				65A18F4F215BB1CF0014E90B /* SwipeInputViewModel.swift */,
 			);
@@ -555,7 +555,7 @@
 				656635DB2141483D00C264EA /* GameViewModel.swift in Sources */,
 				65678673215E8105005105EE /* GameViewControllerProvider.swift in Sources */,
 				65DCBC61215407D000F5D2FB /* World.swift in Sources */,
-				65D2C8B92168CEA9007E6B5E /* InputViewModel.swift in Sources */,
+				65D2C8B92168CEA9007E6B5E /* InputHandler.swift in Sources */,
 				656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */,
 				6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */,
 				656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */,

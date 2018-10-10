@@ -5,7 +5,7 @@ enum UserInteraction {
     case tap, longPress
 }
 
-class BasicInputViewModel: NSObject, InputViewModel {
+class BasicInputViewModel: NSObject, InputHandler {
     private let playerViewModel: PlayerViewModel
     private let opponentsViewModel: OpponentsViewModel
     private let nodeManipulator: NodeManipulator

@@ -37,7 +37,7 @@ enum SwipeState {
 
 fileprivate let threshold: CGFloat = 200.0
 
-class SwipeInputViewModel: NSObject, InputViewModel {
+class SwipeInputViewModel: NSObject, InputHandler {
     private let playerViewModel: PlayerViewModel
     private let opponentsViewModel: OpponentsViewModel
     private let nodeManipulator: NodeManipulator
