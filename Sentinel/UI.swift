@@ -18,7 +18,7 @@ class UI: NSObject, UIContext {
         let intro = IntroViewControllerProvider()
         intro.register(with: registry)
 
-        let lobby = LobbyUI()
+        let lobby = LobbyViewControllerProvider()
         lobby.register(with: registry)
 
         let levelSummary = LevelSummaryUI()
