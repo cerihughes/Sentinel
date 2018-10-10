@@ -2,6 +2,7 @@ import SceneKit
 
 protocol InputHandler {
     func addGestureRecognisers(to view: UIView)
+    func setGestureRecognisersEnabled(_ isEnabled: Bool)
 }
 
 extension InputHandler {

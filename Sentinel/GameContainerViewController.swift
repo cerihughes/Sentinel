@@ -4,19 +4,17 @@ import UIKit
 
 class GameContainerViewController: UIViewController, LeafViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
     private let ui: UIContext
-    private let inputViewModel: SwipeInputHandler
+    private let inputHandler: InputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
     var completionData: Bool = false
 
-    init(ui: UIContext, viewModel: GameViewModel) {
+    init(ui: UIContext, viewModel: GameViewModel, inputHandler: InputHandler) {
         self.ui = ui
         self.viewModel = viewModel
-        self.inputViewModel = SwipeInputHandler(playerViewModel: viewModel.playerViewModel,
-                                                  opponentsViewModel: viewModel.opponentsViewModel,
-                                                  nodeManipulator: viewModel.terrainViewModel.nodeManipulator)
+        self.inputHandler = inputHandler
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
@@ -70,13 +68,13 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
         NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
                                      containerRight, containerTop, containerWidth, containerHeight])
 
-        inputViewModel.addGestureRecognisers(to: sceneView)
+        inputHandler.addGestureRecognisers(to: sceneView)
         viewModel.playerViewModel.preAnimationBlock = {
-            self.inputViewModel.disableGestureRecognisers()
+            self.inputHandler.setGestureRecognisersEnabled(false)
         }
 
         viewModel.playerViewModel.postAnimationBlock = {
-            self.inputViewModel.enableGestureRecognisers()
+            self.inputHandler.setGestureRecognisersEnabled(true)
         }
     }
 
