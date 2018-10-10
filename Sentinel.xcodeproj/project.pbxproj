@@ -37,7 +37,7 @@
 		656635DB2141483D00C264EA /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656635DA2141483D00C264EA /* GameViewModel.swift */; };
 		6567866F215E7A79005105EE /* ViewControllerRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6567866E215E7A79005105EE /* ViewControllerRegistry.swift */; };
 		65678671215E7CC2005105EE /* UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678670215E7CC2005105EE /* UI.swift */; };
-		65678673215E8105005105EE /* GameUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678672215E8105005105EE /* GameUI.swift */; };
+		65678673215E8105005105EE /* GameViewControllerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678672215E8105005105EE /* GameViewControllerProvider.swift */; };
 		65678679215E87E1005105EE /* LevelSummaryViewControllerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65678678215E87E1005105EE /* LevelSummaryViewControllerProvider.swift */; };
 		6567867B215E87F5005105EE /* LobbyViewControllerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6567867A215E87F5005105EE /* LobbyViewControllerProvider.swift */; };
 		6567867E215E8F91005105EE /* RegistrationLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6567867D215E8F91005105EE /* RegistrationLocator.swift */; };
@@ -129,7 +129,7 @@
 		656635DA2141483D00C264EA /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		6567866E215E7A79005105EE /* ViewControllerRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerRegistry.swift; sourceTree = "<group>"; };
 		65678670215E7CC2005105EE /* UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.swift; sourceTree = "<group>"; };
-		65678672215E8105005105EE /* GameUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameUI.swift; sourceTree = "<group>"; };
+		65678672215E8105005105EE /* GameViewControllerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewControllerProvider.swift; sourceTree = "<group>"; };
 		65678678215E87E1005105EE /* LevelSummaryViewControllerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewControllerProvider.swift; sourceTree = "<group>"; };
 		6567867A215E87F5005105EE /* LobbyViewControllerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyViewControllerProvider.swift; sourceTree = "<group>"; };
 		6567867D215E8F91005105EE /* RegistrationLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationLocator.swift; sourceTree = "<group>"; };
@@ -270,7 +270,7 @@
 		655D5E4D21564CC100BA2F49 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				65678672215E8105005105EE /* GameUI.swift */,
+				65678672215E8105005105EE /* GameViewControllerProvider.swift */,
 				6546A843213C0651009F0650 /* GameMainViewController.swift */,
 				654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */,
 				656635DA2141483D00C264EA /* GameViewModel.swift */,
@@ -553,7 +553,7 @@
 				65A18F50215BB1D00014E90B /* SwipeInputViewModel.swift in Sources */,
 				65678671215E7CC2005105EE /* UI.swift in Sources */,
 				656635DB2141483D00C264EA /* GameViewModel.swift in Sources */,
-				65678673215E8105005105EE /* GameUI.swift in Sources */,
+				65678673215E8105005105EE /* GameViewControllerProvider.swift in Sources */,
 				65DCBC61215407D000F5D2FB /* World.swift in Sources */,
 				65D2C8B92168CEA9007E6B5E /* InputViewModel.swift in Sources */,
 				656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */,

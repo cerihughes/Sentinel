@@ -24,7 +24,7 @@ class UI: NSObject, UIContext {
         let levelSummary = LevelSummaryViewControllerProvider()
         levelSummary.register(with: registry)
 
-        let game = GameUI()
+        let game = GameViewControllerProvider()
         game.register(with: registry)
 
         let rl = RegistrationLocator(identifier: introIdentifier, level: nil)

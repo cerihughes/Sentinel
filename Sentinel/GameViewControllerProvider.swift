@@ -2,7 +2,7 @@ import UIKit
 
 let gameIdentifier = "gameIdentifier"
 
-class GameUI: NSObject, ViewControllerProvider {
+class GameViewControllerProvider: NSObject, ViewControllerProvider {
 
     // MARK: ViewControllerProvider
 
