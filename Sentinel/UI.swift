@@ -4,28 +4,17 @@ let floorSize: Float = 10.0
 
 class UI: NSObject, UIContext {
     private let registry = ViewControllerRegistry<RegistrationLocator>()
-
     private let navigationController = UINavigationController()
 
-    override init() {
+    init(viewControllerProviderFactory: ViewControllerProviderFactory) {
         super.init()
 
         registry.ui = self
 
-        let stagingArea = StagingAreaViewControllerProvider()
-        stagingArea.register(with: registry)
-
-        let intro = IntroViewControllerProvider()
-        intro.register(with: registry)
-
-        let lobby = LobbyViewControllerProvider()
-        lobby.register(with: registry)
-
-        let levelSummary = LevelSummaryViewControllerProvider()
-        levelSummary.register(with: registry)
-
-        let game = GameViewControllerProvider()
-        game.register(with: registry)
+        let viewControllerProviders = viewControllerProviderFactory.createViewControllerProviders()
+        for viewControllerProvider in viewControllerProviders {
+            viewControllerProvider.register(with: registry)
+        }
 
         let rl = RegistrationLocator(identifier: introIdentifier, level: nil)
         let initialViewController = registry.createViewController(from: rl)!
