@@ -2,7 +2,13 @@ import UIKit
 
 let lobbyIdentifier = "lobbyIdentifier"
 
-class LobbyViewControllerProvider: NSObject, ViewControllerProvider {
+class LobbyViewControllerProvider: ViewControllerProviderFactory, ViewControllerProvider {
+
+    // MARK: ViewControllerProviderFactory
+
+    static func createViewControllerProvider() -> ViewControllerProvider {
+        return LobbyViewControllerProvider()
+    }
 
     // MARK: ViewControllerProvider
 

@@ -14,8 +14,8 @@
 		6515594F213FFD4400F35776 /* GridIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515594D213FFD0000F35776 /* GridIndex.swift */; };
 		65155950213FFD7000F35776 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
 		6515595221403AD500F35776 /* NodeMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6515595121403AD500F35776 /* NodeMap.swift */; };
-		6518B127216E85060035413F /* ViewControllerProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6518B126216E85060035413F /* ViewControllerProviderFactory.swift */; };
-		6518B129216E8E160035413F /* RuntimeViewControllerProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6518B128216E8E160035413F /* RuntimeViewControllerProviderFactory.swift */; };
+		6518B127216E85060035413F /* ViewControllerProviderLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6518B126216E85060035413F /* ViewControllerProviderLoader.swift */; };
+		6518B129216E8E160035413F /* RuntimeViewControllerProviderLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6518B128216E8E160035413F /* RuntimeViewControllerProviderLoader.swift */; };
 		652778CE2145625E00643BE0 /* GridPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652778CD2145625E00643BE0 /* GridPiece.swift */; };
 		6529F31F216636B5006856DB /* StagingAreaViewControllerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6529F31E216636B5006856DB /* StagingAreaViewControllerProvider.swift */; };
 		6529F321216636C3006856DB /* StagingAreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6529F320216636C3006856DB /* StagingAreaViewController.swift */; };
@@ -106,8 +106,8 @@
 		650788C92163989D00252727 /* ColourGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourGenerator.swift; sourceTree = "<group>"; };
 		6515594D213FFD0000F35776 /* GridIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridIndex.swift; sourceTree = "<group>"; };
 		6515595121403AD500F35776 /* NodeMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeMap.swift; sourceTree = "<group>"; };
-		6518B126216E85060035413F /* ViewControllerProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerProviderFactory.swift; sourceTree = "<group>"; };
-		6518B128216E8E160035413F /* RuntimeViewControllerProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeViewControllerProviderFactory.swift; sourceTree = "<group>"; };
+		6518B126216E85060035413F /* ViewControllerProviderLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerProviderLoader.swift; sourceTree = "<group>"; };
+		6518B128216E8E160035413F /* RuntimeViewControllerProviderLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeViewControllerProviderLoader.swift; sourceTree = "<group>"; };
 		652778CD2145625E00643BE0 /* GridPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridPiece.swift; sourceTree = "<group>"; };
 		6529F31E216636B5006856DB /* StagingAreaViewControllerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StagingAreaViewControllerProvider.swift; sourceTree = "<group>"; };
 		6529F320216636C3006856DB /* StagingAreaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StagingAreaViewController.swift; sourceTree = "<group>"; };
@@ -367,8 +367,8 @@
 			isa = PBXGroup;
 			children = (
 				65678670215E7CC2005105EE /* UI.swift */,
-				6518B126216E85060035413F /* ViewControllerProviderFactory.swift */,
-				6518B128216E8E160035413F /* RuntimeViewControllerProviderFactory.swift */,
+				6518B126216E85060035413F /* ViewControllerProviderLoader.swift */,
+				6518B128216E8E160035413F /* RuntimeViewControllerProviderLoader.swift */,
 				65A381F1215E9B700011052F /* UIContext.swift */,
 				65F89CD9216256970031CFC0 /* SceneImageLoader.swift */,
 				6529F31D2166369C006856DB /* Staging Area */,
@@ -588,7 +588,7 @@
 				6546A844213C0651009F0650 /* GameMainViewController.swift in Sources */,
 				656AED8D215A5E74005D88B3 /* TerrainOperations.swift in Sources */,
 				65DCBC6321540C2900F5D2FB /* SceneViewController.swift in Sources */,
-				6518B127216E85060035413F /* ViewControllerProviderFactory.swift in Sources */,
+				6518B127216E85060035413F /* ViewControllerProviderLoader.swift in Sources */,
 				650788CA2163989D00252727 /* ColourGenerator.swift in Sources */,
 				6567867B215E87F5005105EE /* LobbyViewControllerProvider.swift in Sources */,
 				65D7F1DD2157FD390085C6CF /* OverlayScene.swift in Sources */,
@@ -602,7 +602,7 @@
 				65DCBC5F2154047A00F5D2FB /* SpaceWorld.swift in Sources */,
 				65D7F1E1215800F80085C6CF /* SpriteFactory.swift in Sources */,
 				654AB2C7214D4B0400E8851D /* GameContainerViewController.swift in Sources */,
-				6518B129216E8E160035413F /* RuntimeViewControllerProviderFactory.swift in Sources */,
+				6518B129216E8E160035413F /* RuntimeViewControllerProviderLoader.swift in Sources */,
 				657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */,
 				656AAEE9214EBAAA00991151 /* RockNode.swift in Sources */,
 				6586AC9F214F1325008727D9 /* SCNNode_Extensions.swift in Sources */,

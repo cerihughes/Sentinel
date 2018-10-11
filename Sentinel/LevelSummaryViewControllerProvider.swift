@@ -2,7 +2,13 @@ import UIKit
 
 let levelSummaryIdentifier = "levelSummaryIdentifier"
 
-class LevelSummaryViewControllerProvider: NSObject, ViewControllerProvider {
+class LevelSummaryViewControllerProvider: ViewControllerProviderFactory, ViewControllerProvider {
+
+    // MARK: ViewControllerProviderFactory
+
+    static func createViewControllerProvider() -> ViewControllerProvider {
+        return LevelSummaryViewControllerProvider()
+    }
 
     // MARK: ViewControllerProvider
 

@@ -11,10 +11,10 @@ class UI: UIContext {
     private let registry = ViewControllerRegistry<RegistrationLocator>()
     private let navigationController = UINavigationController()
 
-    init(viewControllerProviderFactory: ViewControllerProviderFactory) {
+    init(viewControllerProviderLoader: ViewControllerProviderLoader) {
         registry.ui = self
 
-        let viewControllerProviders = viewControllerProviderFactory.createViewControllerProviders()
+        let viewControllerProviders = viewControllerProviderLoader.createViewControllerProviders()
         for viewControllerProvider in viewControllerProviders {
             viewControllerProvider.register(with: registry)
         }

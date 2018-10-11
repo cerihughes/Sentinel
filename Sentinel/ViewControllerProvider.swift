@@ -9,3 +9,7 @@ import UIKit
 protocol ViewControllerProvider {
     func register(with registry: ViewControllerRegistry<RegistrationLocator>)
 }
+
+protocol ViewControllerProviderFactory {
+    static func createViewControllerProvider() -> ViewControllerProvider
+}
