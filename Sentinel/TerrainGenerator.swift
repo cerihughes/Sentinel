@@ -8,7 +8,7 @@ import Foundation
 
  The LevelGenerator should also make sure this class creates increasingly difficult terrains to play with.
  */
-class TerrainGenerator: NSObject {
+class TerrainGenerator {
     var grid: Grid!
 
     func generate(levelConfiguration: LevelConfiguration) -> Grid {

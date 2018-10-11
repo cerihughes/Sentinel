@@ -7,7 +7,7 @@ protocol MaterialFactory {
     var slope2Colour: UIColor {get}
 }
 
-class MainMaterialFactory: NSObject, MaterialFactory {
+class MainMaterialFactory: MaterialFactory {
     var floor1Colour: UIColor
     var floor2Colour: UIColor
     var slope1Colour: UIColor
@@ -24,7 +24,5 @@ class MainMaterialFactory: NSObject, MaterialFactory {
         floor2Colour = UIColor(hue: hue2, saturation: floorSaturation, brightness: floorSaturation, alpha: 1.0)
         slope1Colour = UIColor(hue: hue1, saturation: slopeSaturation, brightness: slopeSaturation, alpha: 1.0)
         slope2Colour = UIColor(hue: hue2, saturation: slopeSaturation, brightness: slopeSaturation, alpha: 1.0)
-
-        super.init()
     }
 }

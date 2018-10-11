@@ -1,15 +1,13 @@
 import SceneKit
 import SpriteKit
 
-class TerrainOperations: NSObject {
+class TerrainOperations {
     let grid: Grid
     let nodeManipulator: NodeManipulator
 
     init(grid: Grid, nodeManipulator: NodeManipulator) {
         self.grid = grid
         self.nodeManipulator = nodeManipulator
-
-        super.init()
     }
 
     func buildTree(at point: GridPoint) {

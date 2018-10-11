@@ -9,14 +9,12 @@ protocol SceneImageLoaderToken {
  Converts a scene into a UIImage for rendering in a Collection View Cell. The image generation is done on a background
  thread to keep things snappy.
  */
-class SceneImageLoader: NSObject {
+class SceneImageLoader {
     private let operationQueue = OperationQueue()
     private var cache: NSMutableDictionary = NSMutableDictionary()
 
-    override init() {
+    init() {
         operationQueue.maxConcurrentOperationCount = 1
-
-        super.init()
     }
 
     func loadImage(level: Int, size: CGSize, completion: @escaping (UIImage, TimeInterval) -> Void) -> SceneImageLoaderToken {

@@ -1,6 +1,6 @@
 import SceneKit
 
-class NodeMap: NSObject {
+class NodeMap {
     private var nodeMap: [FloorNode:GridPiece] = [:]
     private var pointMap: [GridPoint:FloorNode] = [:]
 

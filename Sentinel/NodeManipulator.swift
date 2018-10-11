@@ -1,6 +1,6 @@
 import SceneKit
 
-class NodeManipulator: NSObject {
+class NodeManipulator {
     let terrainNode: TerrainNode
     private let nodeMap: NodeMap
     let nodeFactory: NodeFactory
@@ -11,8 +11,6 @@ class NodeManipulator: NSObject {
         self.terrainNode = terrainNode
         self.nodeMap = nodeMap
         self.nodeFactory = nodeFactory
-
-        super.init()
     }
 
     // TODO: Should these methods be in a different place? Maybe this class shouldn't know about the node map?

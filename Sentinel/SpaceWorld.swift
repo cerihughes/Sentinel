@@ -1,6 +1,6 @@
 import SceneKit
 
-class SpaceWorld: NSObject, World {
+class SpaceWorld: World {
     private let nodeFactory: NodeFactory
     internal let initialCameraNode: SCNNode
     internal let scene = SCNScene()
@@ -10,7 +10,6 @@ class SpaceWorld: NSObject, World {
     init(nodeFactory: NodeFactory) {
         self.nodeFactory = nodeFactory
         self.initialCameraNode = nodeFactory.createCameraNode()
-        super.init()
 
         setupScene()
     }

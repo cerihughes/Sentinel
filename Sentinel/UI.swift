@@ -7,13 +7,11 @@ let floorSize: Float = 10.0
 
  At the moment, this is achieved with a UINavigationController that can be pushed / popped to / from.
  */
-class UI: NSObject, UIContext {
+class UI: UIContext {
     private let registry = ViewControllerRegistry<RegistrationLocator>()
     private let navigationController = UINavigationController()
 
     init(viewControllerProviderFactory: ViewControllerProviderFactory) {
-        super.init()
-
         registry.ui = self
 
         let viewControllerProviders = viewControllerProviderFactory.createViewControllerProviders()

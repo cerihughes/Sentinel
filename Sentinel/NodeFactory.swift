@@ -14,7 +14,7 @@ enum NodeFactoryOption: Equatable {
     case showVisionNode(Bool)
 }
 
-class NodeFactory: NSObject {
+class NodeFactory {
     let nodePositioning: NodePositioning
 
     private let options: [NodeFactoryOption]
@@ -49,8 +49,6 @@ class NodeFactory: NSObject {
         synthoid = SynthoidNode(floorSize: floorSize)
         tree = TreeNode(floorSize: floorSize)
         rock = RockNode(floorSize: floorSize)
-
-        super.init()
     }
 
     func createCameraNode() -> SCNNode {

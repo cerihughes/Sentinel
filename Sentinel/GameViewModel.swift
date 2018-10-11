@@ -1,7 +1,7 @@
 import SceneKit
 import SpriteKit
 
-class GameViewModel: NSObject {
+class GameViewModel {
     let world: World
 
     let terrainOperations: TerrainOperations
@@ -23,7 +23,5 @@ class GameViewModel: NSObject {
         self.terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
         self.playerOperations = PlayerOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations, initialCameraNode: world.initialCameraNode)
         self.opponentsOperations = OpponentsOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations)
-
-        super.init()
     }
 }
