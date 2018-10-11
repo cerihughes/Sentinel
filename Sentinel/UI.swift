@@ -4,12 +4,9 @@ let floorSize: Float = 10.0
 
 class UI: NSObject, UIContext {
     private let registry = ViewControllerRegistry<RegistrationLocator>()
-    private let viewControllerProviderFactory: ViewControllerProviderFactory
     private let navigationController = UINavigationController()
 
-    override init() {
-        viewControllerProviderFactory = RuntimeViewControllerProviderFactory()
-
+    init(viewControllerProviderFactory: ViewControllerProviderFactory) {
         super.init()
 
         registry.ui = self
