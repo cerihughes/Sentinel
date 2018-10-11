@@ -274,13 +274,11 @@
 			isa = PBXGroup;
 			children = (
 				656AED8E215A68A3005D88B3 /* Input */,
+				65DA5861216F864900D95B3F /* Operations */,
 				65678672215E8105005105EE /* GameViewControllerProvider.swift */,
 				6546A843213C0651009F0650 /* GameMainViewController.swift */,
 				654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */,
 				656635DA2141483D00C264EA /* GameViewModel.swift */,
-				656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */,
-				656AED88215A5E61005D88B3 /* PlayerViewModel.swift */,
-				656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */,
 			);
 			name = Game;
 			sourceTree = "<group>";
@@ -434,6 +432,16 @@
 				65D7F1E0215800F80085C6CF /* SpriteFactory.swift */,
 			);
 			name = Overlay;
+			sourceTree = "<group>";
+		};
+		65DA5861216F864900D95B3F /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */,
+				656AED88215A5E61005D88B3 /* PlayerViewModel.swift */,
+				656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */,
+			);
+			name = Operations;
 			sourceTree = "<group>";
 		};
 		65DCBC592154043700F5D2FB /* World */ = {
