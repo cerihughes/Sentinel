@@ -14,8 +14,9 @@ class UI: UIContext {
     init(viewControllerProviderLoader: ViewControllerProviderLoader) {
         registry.ui = self
 
-        let viewControllerProviders = viewControllerProviderLoader.createViewControllerProviders()
-        for viewControllerProvider in viewControllerProviders {
+        let viewControllerProviderFactories = viewControllerProviderLoader.viewControllerProviderFactories()
+        for viewControllerProviderFactory in viewControllerProviderFactories {
+            let viewControllerProvider = viewControllerProviderFactory.createViewControllerProvider()
             viewControllerProvider.register(with: registry)
         }
 
