@@ -44,14 +44,14 @@ enum GridQuadrant: CaseIterable {
 /**
  For a given Grid (or part of a Grid), this represents a read-only description of its contents.
  */
-class GridIndex: NSObject {
+struct GridIndex {
     private let index: [Int:[GridPiece]]
 
-    convenience init(grid: Grid) {
+    init(grid: Grid) {
         self.init(grid: grid, minX: 0, maxX: grid.width, minZ: 0, maxZ: grid.depth)
     }
 
-    convenience init(grid: Grid, quadrant: GridQuadrant) {
+    init(grid: Grid, quadrant: GridQuadrant) {
         let xRange = quadrant.xRange(grid: grid)
         let zRange = quadrant.zRange(grid: grid)
         self.init(grid: grid,
@@ -83,8 +83,6 @@ class GridIndex: NSObject {
         }
 
         index = i
-
-        super.init()
     }
 
     func floorLevels() -> [Int] {

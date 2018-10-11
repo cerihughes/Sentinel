@@ -67,7 +67,7 @@ let undefinedPosition = GridPoint(x: -1, z: -1)
 /**
  Describes the playing grid.
  */
-class Grid: NSObject {
+class Grid {
     let width: Int
     let depth: Int
 
@@ -92,8 +92,6 @@ class Grid: NSObject {
             }
             grid.append(row)
         }
-
-        super.init()
     }
 
     func build(at point: GridPoint) {
@@ -134,7 +132,7 @@ class Grid: NSObject {
         return get(point: currentPosition)
     }
 
-    override var description: String {
+    var description: String {
         var desc = ""
         for z in 0 ..< depth {
             for x in 0 ..< width {

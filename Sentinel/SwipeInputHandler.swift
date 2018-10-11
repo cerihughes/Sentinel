@@ -37,7 +37,7 @@ enum SwipeState {
 
 fileprivate let threshold: CGFloat = 200.0
 
-class SwipeInputHandler: NSObject, GameInputHandler {
+class SwipeInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
     let opponentsOperations: OpponentsOperations
 
@@ -63,7 +63,6 @@ class SwipeInputHandler: NSObject, GameInputHandler {
         let panRecogniser = UIPanGestureRecognizer()
 
         self.gestureRecognisers = [tapRecogniser, doubleTapRecogniser, longPressRecogniser, panRecogniser]
-        super.init()
 
         tapRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
 

@@ -3,7 +3,7 @@ import Foundation
 /**
  Produces pseudo-random values for a given input. Output shouldn't be predictable, but be repeatable for the same input.
  */
-class ValueGenerator: NSObject {
+class ValueGenerator {
     private var seeds: [Int] = []
     private var genCount = 0
 
@@ -38,8 +38,6 @@ class ValueGenerator: NSObject {
         for _ in 0 ..< 3 {
             self.seeds.append(contentsOf: seeds)
         }
-
-        super.init()
     }
 
     func next(range: CountableRange<Int>) -> Int {

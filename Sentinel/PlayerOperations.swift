@@ -16,7 +16,7 @@ protocol PlayerOperationsDelegate: class {
     func playerOperations(_: PlayerOperations, levelDidEndWith state: GameEndState)
 }
 
-class PlayerOperations: NSObject {
+class PlayerOperations {
     private let levelConfiguration: LevelConfiguration
     private let terrainOperations: TerrainOperations
     private let initialCameraNode: SCNNode
@@ -39,8 +39,6 @@ class PlayerOperations: NSObject {
         self.nodeManipulator = terrainOperations.nodeManipulator
         self.grid = terrainOperations.grid
         overlay.energy = 10
-
-        super.init()
     }
 
     func adjustEnergy(delta: Int) {

@@ -1,10 +1,10 @@
 import SceneKit
 
-class StagingAreaViewModel: NSObject {
+class StagingAreaViewModel {
     let scene: SCNScene
     let initialCameraNode: SCNNode
 
-    override init() {
+    init() {
         scene = SCNScene()
 
         let opponentNode = SentinelNode(floorSize: 10.0, detectionRadius: 100.0, options: [])
@@ -12,7 +12,5 @@ class StagingAreaViewModel: NSObject {
         scene.rootNode.addChildNode(opponentNode)
 
         initialCameraNode = opponentNode.cameraNode
-
-        super.init()
     }
 }

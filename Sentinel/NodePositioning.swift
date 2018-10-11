@@ -1,6 +1,6 @@
 import SceneKit
 
-class NodePositioning: NSObject {
+class NodePositioning {
     private let gridWidth: Float
     private let gridDepth: Float
     let floorSize: Float
@@ -9,8 +9,6 @@ class NodePositioning: NSObject {
         self.gridWidth = Float(gridWidth)
         self.gridDepth = Float(gridDepth)
         self.floorSize = floorSize
-        
-        super.init()
     }
 
     func calculateTerrainPosition(x: Int, y: Float, z: Int) -> SCNVector3 {

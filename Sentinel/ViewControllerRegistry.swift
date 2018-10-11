@@ -11,7 +11,7 @@ import UIKit
  Note that registrants should make sure they don't "overlap" - if more than 1 registrant could potentially return a
  VC for the same token, behaviour is undefined - there's no guarantee which will be returned first.
  */
-class ViewControllerRegistry<T>: NSObject {
+class ViewControllerRegistry<T> {
     typealias ViewControllerRegistryFunction = (T, UIContext) -> UIViewController?
 
     private var registry: [UUID:ViewControllerRegistryFunction] = [:]

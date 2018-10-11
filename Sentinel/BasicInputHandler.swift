@@ -5,7 +5,7 @@ enum UserInteraction {
     case tap, longPress
 }
 
-class BasicInputHandler: NSObject, GameInputHandler {
+class BasicInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
     let opponentsOperations: OpponentsOperations
 
@@ -22,7 +22,6 @@ class BasicInputHandler: NSObject, GameInputHandler {
         let panRecogniser = UIPanGestureRecognizer()
 
         self.gestureRecognisers = [tapRecogniser, longPressRecogniser, panRecogniser]
-        super.init()
 
         tapRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
 

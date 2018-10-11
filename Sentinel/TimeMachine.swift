@@ -14,7 +14,7 @@ import SceneKit
  The goal here is to keep a 60/120 fps refresh rate as much as possible by distributing the work as much as possible
  over the run loop.
  */
-class TimeMachine: NSObject {
+class TimeMachine {
     private var timingFunctions: [UUID:TimeEngineData] = [:]
     private var started = false
 

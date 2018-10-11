@@ -1,12 +1,10 @@
 import UIKit
 
-class SkyBox: NSObject {
+class SkyBox {
     let sourceImage: UIImage
 
     init(sourceImage: UIImage) {
         self.sourceImage = sourceImage
-
-        super.init()
     }
 
     func componentImages() -> [UIImage]? {

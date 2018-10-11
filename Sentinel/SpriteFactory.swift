@@ -3,7 +3,7 @@ import SpriteKit
 /**
  Loads sprites from a texture atlas.
  */
-class SpriteFactory: NSObject {
+class SpriteFactory {
     let textureAtlas = SKTextureAtlas(named: "Sprites.atlas")
 
     var treeSpriteNode: SKSpriteNode {

@@ -1,6 +1,6 @@
 import UIKit
 
-class ColourGenerator: NSObject{
+class ColourGenerator {
     private let gen: ValueGenerator
     private let minimumHueDifference: CGFloat = 0.5
     private let hueRange = 0 ..< 255
@@ -11,8 +11,6 @@ class ColourGenerator: NSObject{
 
     init(level: Int) {
         self.gen = ValueGenerator(input: level)
-
-        super.init()
     }
 
     func nextHue() -> CGFloat {

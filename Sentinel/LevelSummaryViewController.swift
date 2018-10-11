@@ -28,7 +28,15 @@ class LevelSummaryViewController: SceneViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        viewModel.startAnimations()
+
         tapGestureRecogniser.isEnabled = true
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        viewModel.stopAnimations()
+
+        super.viewDidDisappear(animated)
     }
 
     // MARK: Tap
