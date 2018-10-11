@@ -1,23 +1,17 @@
 import SceneKit
 import UIKit
 
-class StagingAreaViewController: UIViewController {
+class StagingAreaViewController: SceneViewController {
     let ui: UIContext
-    let viewModel: StagingAreaViewModel
 
     init(ui: UIContext, viewModel: StagingAreaViewModel) {
         self.ui = ui
-        self.viewModel = viewModel
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(scene: viewModel.scene, cameraNode: viewModel.initialCameraNode)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func loadView() {
-        view = SCNView()
     }
 
     override func viewDidLoad() {
@@ -27,8 +21,6 @@ class StagingAreaViewController: UIViewController {
 
         super.viewDidLoad()
 
-        sceneView.scene = viewModel.scene
-        sceneView.pointOfView = viewModel.initialCameraNode
         sceneView.allowsCameraControl = true
 //        sceneView.debugOptions = [.renderAsWireframe, .showCameras]
         sceneView.showsStatistics = true
