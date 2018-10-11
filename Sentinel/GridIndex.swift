@@ -41,6 +41,9 @@ enum GridQuadrant: CaseIterable {
     }
 }
 
+/**
+ For a given Grid (or part of a Grid), this represents a read-only description of its contents.
+ */
 class GridIndex: NSObject {
     private let index: [Int:[GridPiece]]
 

@@ -1,5 +1,8 @@
 import SpriteKit
 
+/**
+ Loads sprites from a texture atlas.
+ */
 class SpriteFactory: NSObject {
     let textureAtlas = SKTextureAtlas(named: "Sprites.atlas")
 

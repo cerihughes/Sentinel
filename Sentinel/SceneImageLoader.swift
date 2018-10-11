@@ -5,6 +5,10 @@ protocol SceneImageLoaderToken {
     func cancel()
 }
 
+/**
+ Converts a scene into a UIImage for rendering in a Collection View Cell. The image generation is done on a background
+ thread to keep things snappy.
+ */
 class SceneImageLoader: NSObject {
     private let operationQueue = OperationQueue()
     private var cache: NSMutableDictionary = NSMutableDictionary()

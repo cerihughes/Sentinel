@@ -64,6 +64,9 @@ enum GridDirection: Int, CaseIterable {
 
 let undefinedPosition = GridPoint(x: -1, z: -1)
 
+/**
+ Describes the playing grid.
+ */
 class Grid: NSObject {
     let width: Int
     let depth: Int

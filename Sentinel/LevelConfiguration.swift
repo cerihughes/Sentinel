@@ -1,5 +1,8 @@
 import Foundation
 
+/**
+ Describes the level and what it's made up of (trees, terrain, opponents, opponent behaviour etc.)
+ */
 protocol LevelConfiguration {
     var level: Int {get}
 
