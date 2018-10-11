@@ -75,7 +75,7 @@ class TimeMachine {
         }
     }
 
-    private class TimeEngineData: NSObject {
+    private class TimeEngineData {
         let timeInterval: TimeInterval
         let function: (TimeInterval, SCNSceneRenderer, Any?) -> Any?
         var lastResults: Any? = nil
@@ -86,7 +86,6 @@ class TimeMachine {
         init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) {
             self.timeInterval = timeInterval
             self.function = function
-            super.init()
         }
 
         func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) -> Bool {
