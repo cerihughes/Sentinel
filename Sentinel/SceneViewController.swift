@@ -1,13 +1,16 @@
 import SceneKit
+import SpriteKit
 import UIKit
 
 class SceneViewController: UIViewController {
     let scene: SCNScene
     let cameraNode: SCNNode?
+    let overlay: SKScene?
 
-    init(scene: SCNScene, cameraNode: SCNNode?) {
+    init(scene: SCNScene, cameraNode: SCNNode?, overlay: SKScene? = nil) {
         self.scene = scene
         self.cameraNode = cameraNode
+        self.overlay = overlay
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -30,5 +33,17 @@ class SceneViewController: UIViewController {
         sceneView.scene = scene
         sceneView.backgroundColor = UIColor.black
         sceneView.pointOfView = cameraNode
+        sceneView.overlaySKScene = overlay
     }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        guard let overlay = overlay else {
+            return
+        }
+
+        overlay.size = view.frame.size
+    }
+
 }

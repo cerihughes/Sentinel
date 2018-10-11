@@ -1,14 +1,9 @@
 import SceneKit
-import SpriteKit
 import UIKit
 
 class GameMainViewController: SceneViewController {
-    let overlay: OverlayScene
-
     init(scene: SCNScene, cameraNode: SCNNode?, overlay: OverlayScene) {
-        self.overlay = overlay
-
-        super.init(scene: scene, cameraNode: cameraNode)
+        super.init(scene: scene, cameraNode: cameraNode, overlay: overlay)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -22,12 +17,16 @@ class GameMainViewController: SceneViewController {
             return
         }
 
-        sceneView.overlaySKScene = overlay
         sceneView.showsStatistics = true
     }
 
     override func viewDidLayoutSubviews() {
-        overlay.size = view.frame.size
+        super.viewDidLayoutSubviews()
+
+        guard let overlay = overlay as? OverlayScene else {
+            return
+        }
+
         overlay.updateEnergyUI()
     }
 }
