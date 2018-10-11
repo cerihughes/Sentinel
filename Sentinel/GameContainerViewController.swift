@@ -2,23 +2,23 @@ import SceneKit
 import SpriteKit
 import UIKit
 
-class GameContainerViewController: UIViewController, LeafViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
+class GameContainerViewController: UIViewController, LeafViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
     private let ui: UIContext
-    private let inputHandler: InputHandler
+    private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
     var completionData: Bool = false
 
-    init(ui: UIContext, viewModel: GameViewModel, inputHandler: InputHandler) {
+    init(ui: UIContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
         self.ui = ui
         self.viewModel = viewModel
         self.inputHandler = inputHandler
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
-        let overlay = viewModel.playerViewModel.overlay
+        let overlay = viewModel.playerOperations.overlay
         self.mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
 
         super.init(nibName: nil, bundle: nil)
@@ -35,9 +35,9 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
             return
         }
 
-        sceneView.delegate = viewModel.opponentsViewModel
-        viewModel.playerViewModel.delegate = self
-        viewModel.opponentsViewModel.delegate = self
+        sceneView.delegate = viewModel.opponentsOperations
+        viewModel.playerOperations.delegate = self
+        viewModel.opponentsOperations.delegate = self
 
         addChild(mainViewController)
         view.addSubview(mainViewController.view)
@@ -69,11 +69,11 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
                                      containerRight, containerTop, containerWidth, containerHeight])
 
         inputHandler.addGestureRecognisers(to: sceneView)
-        viewModel.playerViewModel.preAnimationBlock = {
+        viewModel.playerOperations.preAnimationBlock = {
             self.inputHandler.setGestureRecognisersEnabled(false)
         }
 
-        viewModel.playerViewModel.postAnimationBlock = {
+        viewModel.playerOperations.postAnimationBlock = {
             self.inputHandler.setGestureRecognisersEnabled(true)
         }
     }
@@ -97,7 +97,7 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
 
     // MARK: PlayerViewModelDelegate
 
-    func playerViewModel(_: PlayerViewModel, didChange cameraNode: SCNNode) {
+    func playerOperations(_: PlayerOperations, didChange cameraNode: SCNNode) {
         guard let sceneView = mainViewController.view as? SCNView else {
             return
         }
@@ -105,17 +105,17 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
         sceneView.pointOfView = cameraNode
     }
 
-    func playerViewModel(_: PlayerViewModel, levelDidEndWith state: GameEndState) {
+    func playerOperations(_: PlayerOperations, levelDidEndWith state: GameEndState) {
         completionData = state == .victory
         DispatchQueue.main.async {
-            self.viewModel.opponentsViewModel.timeMachine.stop()
+            self.viewModel.opponentsOperations.timeMachine.stop()
             _ = self.ui.leave(viewController: self, animated: true)
         }
     }
 
     // MARK: OpponentsViewModelDelegate
 
-    func opponentsViewModel(_: OpponentsViewModel, didDetectOpponent cameraNode: SCNNode) {
+    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             let scene = self.viewModel.world.scene
             let opponentViewController = SceneViewController(scene: scene, cameraNode: cameraNode)
@@ -129,11 +129,11 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerV
         }
     }
 
-    func opponentsViewModelDidDepleteEnergy(_: OpponentsViewModel) {
-        viewModel.playerViewModel.adjustEnergy(delta: -treeEnergyValue)
+    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
+        viewModel.playerOperations.adjustEnergy(delta: -treeEnergyValue)
     }
 
-    func opponentsViewModel(_: OpponentsViewModel, didEndDetectOpponent cameraNode: SCNNode) {
+    func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             for child in self.children {
                 if let opponentViewController = child as? SceneViewController {

@@ -50,9 +50,9 @@
 		656AAEED214ECE3100991151 /* OpponentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEC214ECE3100991151 /* OpponentNode.swift */; };
 		656AAEEF214ED18D00991151 /* SynthoidNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEEE214ED18D00991151 /* SynthoidNode.swift */; };
 		656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AAEF0214ED76600991151 /* TerrainNode.swift */; };
-		656AED89215A5E61005D88B3 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED88215A5E61005D88B3 /* PlayerViewModel.swift */; };
-		656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */; };
-		656AED8D215A5E74005D88B3 /* TerrainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */; };
+		656AED89215A5E61005D88B3 /* PlayerOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED88215A5E61005D88B3 /* PlayerOperations.swift */; };
+		656AED8B215A5E6D005D88B3 /* OpponentsOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8A215A5E6D005D88B3 /* OpponentsOperations.swift */; };
+		656AED8D215A5E74005D88B3 /* TerrainOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8C215A5E74005D88B3 /* TerrainOperations.swift */; };
 		656AED90215A68BC005D88B3 /* BasicInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656AED8F215A68BC005D88B3 /* BasicInputHandler.swift */; };
 		657A3B48214F070D0092E2D9 /* PlaceableNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657A3B47214F070D0092E2D9 /* PlaceableNode.swift */; };
 		6586AC9F214F1325008727D9 /* SCNNode_Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586AC9E214F1325008727D9 /* SCNNode_Extensions.swift */; };
@@ -77,7 +77,7 @@
 		65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C003B82146BF3400EDB205 /* LevelConfiguration.swift */; };
 		65CDD425215E643D004703EE /* LevelSummaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */; };
 		65CDD427215E644B004703EE /* LevelSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDD426215E644B004703EE /* LevelSummaryViewController.swift */; };
-		65D2C8B92168CEA9007E6B5E /* InputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2C8B82168CEA9007E6B5E /* InputHandler.swift */; };
+		65D2C8B92168CEA9007E6B5E /* GameInputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2C8B82168CEA9007E6B5E /* GameInputHandler.swift */; };
 		65D57A922167A31100CC4374 /* CameraNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D57A912167A31100CC4374 /* CameraNode.swift */; };
 		65D7F1DD2157FD390085C6CF /* OverlayScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7F1DC2157FD390085C6CF /* OverlayScene.swift */; };
 		65D7F1DF2157FFDE0085C6CF /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 65D7F1DE2157FFDE0085C6CF /* Sprites.atlas */; };
@@ -144,9 +144,9 @@
 		656AAEEC214ECE3100991151 /* OpponentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentNode.swift; sourceTree = "<group>"; };
 		656AAEEE214ED18D00991151 /* SynthoidNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynthoidNode.swift; sourceTree = "<group>"; };
 		656AAEF0214ED76600991151 /* TerrainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainNode.swift; sourceTree = "<group>"; };
-		656AED88215A5E61005D88B3 /* PlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
-		656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpponentsViewModel.swift; sourceTree = "<group>"; };
-		656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TerrainViewModel.swift; sourceTree = "<group>"; };
+		656AED88215A5E61005D88B3 /* PlayerOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerOperations.swift; sourceTree = "<group>"; };
+		656AED8A215A5E6D005D88B3 /* OpponentsOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpponentsOperations.swift; sourceTree = "<group>"; };
+		656AED8C215A5E74005D88B3 /* TerrainOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TerrainOperations.swift; sourceTree = "<group>"; };
 		656AED8F215A68BC005D88B3 /* BasicInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInputHandler.swift; sourceTree = "<group>"; };
 		657A3B47214F070D0092E2D9 /* PlaceableNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceableNode.swift; sourceTree = "<group>"; };
 		6586AC9E214F1325008727D9 /* SCNNode_Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNNode_Extensions.swift; sourceTree = "<group>"; };
@@ -169,7 +169,7 @@
 		65C003B82146BF3400EDB205 /* LevelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelConfiguration.swift; sourceTree = "<group>"; };
 		65CDD424215E643D004703EE /* LevelSummaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewModel.swift; sourceTree = "<group>"; };
 		65CDD426215E644B004703EE /* LevelSummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSummaryViewController.swift; sourceTree = "<group>"; };
-		65D2C8B82168CEA9007E6B5E /* InputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputHandler.swift; sourceTree = "<group>"; };
+		65D2C8B82168CEA9007E6B5E /* GameInputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameInputHandler.swift; sourceTree = "<group>"; };
 		65D57A912167A31100CC4374 /* CameraNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraNode.swift; sourceTree = "<group>"; };
 		65D7F1DC2157FD390085C6CF /* OverlayScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayScene.swift; sourceTree = "<group>"; };
 		65D7F1DE2157FFDE0085C6CF /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
@@ -243,7 +243,6 @@
 				6529F31C21663559006856DB /* SceneKit Extensions */,
 				65CDD422215E63F8004703EE /* View Controllers */,
 				6567866D215E7A54005105EE /* Navigation */,
-				656AED8E215A68A3005D88B3 /* Input */,
 				65D7F1DB2157FD220085C6CF /* Overlay */,
 				656AAEE2214EA3EF00991151 /* Timing */,
 				656AAEE1214EA3DD00991151 /* UI */,
@@ -274,13 +273,12 @@
 		655D5E4D21564CC100BA2F49 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				656AED8E215A68A3005D88B3 /* Input */,
+				65DA5861216F864900D95B3F /* Operations */,
 				65678672215E8105005105EE /* GameViewControllerProvider.swift */,
 				6546A843213C0651009F0650 /* GameMainViewController.swift */,
 				654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */,
 				656635DA2141483D00C264EA /* GameViewModel.swift */,
-				656AED8C215A5E74005D88B3 /* TerrainViewModel.swift */,
-				656AED88215A5E61005D88B3 /* PlayerViewModel.swift */,
-				656AED8A215A5E6D005D88B3 /* OpponentsViewModel.swift */,
 			);
 			name = Game;
 			sourceTree = "<group>";
@@ -393,7 +391,7 @@
 		656AED8E215A68A3005D88B3 /* Input */ = {
 			isa = PBXGroup;
 			children = (
-				65D2C8B82168CEA9007E6B5E /* InputHandler.swift */,
+				65D2C8B82168CEA9007E6B5E /* GameInputHandler.swift */,
 				656AED8F215A68BC005D88B3 /* BasicInputHandler.swift */,
 				65A18F4F215BB1CF0014E90B /* SwipeInputHandler.swift */,
 			);
@@ -434,6 +432,16 @@
 				65D7F1E0215800F80085C6CF /* SpriteFactory.swift */,
 			);
 			name = Overlay;
+			sourceTree = "<group>";
+		};
+		65DA5861216F864900D95B3F /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				656AED8C215A5E74005D88B3 /* TerrainOperations.swift */,
+				656AED88215A5E61005D88B3 /* PlayerOperations.swift */,
+				656AED8A215A5E6D005D88B3 /* OpponentsOperations.swift */,
+			);
+			name = Operations;
 			sourceTree = "<group>";
 		};
 		65DCBC592154043700F5D2FB /* World */ = {
@@ -561,15 +569,15 @@
 				656635DB2141483D00C264EA /* GameViewModel.swift in Sources */,
 				65678673215E8105005105EE /* GameViewControllerProvider.swift in Sources */,
 				65DCBC61215407D000F5D2FB /* World.swift in Sources */,
-				65D2C8B92168CEA9007E6B5E /* InputHandler.swift in Sources */,
-				656AED8B215A5E6D005D88B3 /* OpponentsViewModel.swift in Sources */,
+				65D2C8B92168CEA9007E6B5E /* GameInputHandler.swift in Sources */,
+				656AED8B215A5E6D005D88B3 /* OpponentsOperations.swift in Sources */,
 				6586ACA1214FC753008727D9 /* DetectableNode.swift in Sources */,
 				656AAEF1214ED76600991151 /* TerrainNode.swift in Sources */,
 				650788C821638B0000252727 /* MaterialFactory.swift in Sources */,
 				6567866F215E7A79005105EE /* ViewControllerRegistry.swift in Sources */,
 				6567867E215E8F91005105EE /* RegistrationLocator.swift in Sources */,
 				65678679215E87E1005105EE /* LevelSummaryViewControllerProvider.swift in Sources */,
-				656AED89215A5E61005D88B3 /* PlayerViewModel.swift in Sources */,
+				656AED89215A5E61005D88B3 /* PlayerOperations.swift in Sources */,
 				656AAEE7214EB82100991151 /* TreeNode.swift in Sources */,
 				65C003B92146BF3400EDB205 /* LevelConfiguration.swift in Sources */,
 				656AAEEB214ECBD500991151 /* SlopeNode.swift in Sources */,
@@ -578,7 +586,7 @@
 				65A9E07821427795009011C8 /* SkyBox.swift in Sources */,
 				65BFF02021414F66000861F8 /* NodePositioning.swift in Sources */,
 				6546A844213C0651009F0650 /* GameMainViewController.swift in Sources */,
-				656AED8D215A5E74005D88B3 /* TerrainViewModel.swift in Sources */,
+				656AED8D215A5E74005D88B3 /* TerrainOperations.swift in Sources */,
 				65DCBC6321540C2900F5D2FB /* SceneViewController.swift in Sources */,
 				6518B127216E85060035413F /* ViewControllerProviderFactory.swift in Sources */,
 				650788CA2163989D00252727 /* ColourGenerator.swift in Sources */,

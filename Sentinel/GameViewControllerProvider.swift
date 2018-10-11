@@ -32,9 +32,9 @@ class GameViewControllerProvider: NSObject, ViewControllerProvider {
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = GameViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
-        let inputHandler = SwipeInputHandler(playerViewModel: viewModel.playerViewModel,
-                                             opponentsViewModel: viewModel.opponentsViewModel,
-                                             nodeManipulator: viewModel.terrainViewModel.nodeManipulator)
+        let inputHandler = SwipeInputHandler(playerOperations: viewModel.playerOperations,
+                                             opponentsOperations: viewModel.opponentsOperations,
+                                             nodeManipulator: viewModel.terrainOperations.nodeManipulator)
         return GameContainerViewController(ui: context, viewModel: viewModel, inputHandler: inputHandler)
     }
 }

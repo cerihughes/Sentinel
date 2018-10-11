@@ -2,7 +2,7 @@ import SceneKit
 
 class LevelSummaryViewModel: NSObject {
     let world: World
-    let terrainViewModel: TerrainViewModel
+    let terrainOperations: TerrainOperations
     let level: Int
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
@@ -18,7 +18,7 @@ class LevelSummaryViewModel: NSObject {
 
         let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
 
-        self.terrainViewModel = TerrainViewModel(grid: grid, nodeManipulator: nodeManipulator)
+        self.terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
 
         super.init()
 
@@ -28,7 +28,7 @@ class LevelSummaryViewModel: NSObject {
     func startAnimations() {
         let rotationAction = SCNAction.rotateBy(x: 0, y: CGFloat(radiansInCircle), z: 0, duration: 3.0)
         let repeatedAction = SCNAction.repeatForever(rotationAction)
-        for opponentNode in terrainViewModel.nodeManipulator.terrainNode.opponentNodes {
+        for opponentNode in terrainOperations.nodeManipulator.terrainNode.opponentNodes {
             opponentNode.runAction(repeatedAction)
         }
     }

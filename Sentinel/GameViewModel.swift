@@ -4,9 +4,9 @@ import SpriteKit
 class GameViewModel: NSObject {
     let world: World
 
-    let terrainViewModel: TerrainViewModel
-    let playerViewModel: PlayerViewModel
-    let opponentsViewModel: OpponentsViewModel
+    let terrainOperations: TerrainOperations
+    let playerOperations: PlayerOperations
+    let opponentsOperations: OpponentsOperations
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.world = world
@@ -20,9 +20,9 @@ class GameViewModel: NSObject {
 
         let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
 
-        self.terrainViewModel = TerrainViewModel(grid: grid, nodeManipulator: nodeManipulator)
-        self.playerViewModel = PlayerViewModel(levelConfiguration: levelConfiguration, terrainViewModel: terrainViewModel, initialCameraNode: world.initialCameraNode)
-        self.opponentsViewModel = OpponentsViewModel(levelConfiguration: levelConfiguration, terrainViewModel: terrainViewModel)
+        self.terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
+        self.playerOperations = PlayerOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations, initialCameraNode: world.initialCameraNode)
+        self.opponentsOperations = OpponentsOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations)
 
         super.init()
     }
