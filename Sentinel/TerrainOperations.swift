@@ -1,7 +1,7 @@
 import SceneKit
 import SpriteKit
 
-class TerrainViewModel: NSObject {
+class TerrainOperations: NSObject {
     let grid: Grid
     let nodeManipulator: NodeManipulator
 

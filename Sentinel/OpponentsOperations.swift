@@ -1,28 +1,28 @@
 import SceneKit
 
-protocol OpponentsViewModelDelegate: class {
-    func opponentsViewModel(_: OpponentsViewModel, didDetectOpponent cameraNode: SCNNode)
-    func opponentsViewModelDidDepleteEnergy(_: OpponentsViewModel)
-    func opponentsViewModel(_: OpponentsViewModel, didEndDetectOpponent cameraNode: SCNNode)
+protocol OpponentsOperationsDelegate: class {
+    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
+    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations)
+    func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
 
-class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
+class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
     private let levelConfiguration: LevelConfiguration
-    private let terrainViewModel: TerrainViewModel
+    private let terrainOperations: TerrainOperations
 
     private let nodeManipulator: NodeManipulator
     private let grid: Grid
 
-    weak var delegate: OpponentsViewModelDelegate?
+    weak var delegate: OpponentsOperationsDelegate?
 
     let timeMachine = TimeMachine()
 
-    init(levelConfiguration: LevelConfiguration, terrainViewModel: TerrainViewModel) {
+    init(levelConfiguration: LevelConfiguration, terrainOperations: TerrainOperations) {
         self.levelConfiguration = levelConfiguration
-        self.terrainViewModel = terrainViewModel
+        self.terrainOperations = terrainOperations
 
-        self.nodeManipulator = terrainViewModel.nodeManipulator
-        self.grid = terrainViewModel.grid
+        self.nodeManipulator = terrainOperations.nodeManipulator
+        self.grid = terrainOperations.grid
 
         super.init()
 
@@ -38,7 +38,7 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
         }
 
         if let randomPiece = emptyPieces.randomElement() {
-            terrainViewModel.buildTree(at: randomPiece.point)
+            terrainOperations.buildTree(at: randomPiece.point)
         }
     }
 
@@ -66,8 +66,8 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
             if let visibleSynthoid = visibleSynthoids.randomElement(),
                 let floorNode = visibleSynthoid.floorNode,
                 let point = nodeManipulator.point(for: floorNode) {
-                if terrainViewModel.absorbSynthoidNode(at: point) {
-                    terrainViewModel.buildRock(at: point)
+                if terrainOperations.absorbSynthoidNode(at: point) {
+                    terrainOperations.buildRock(at: point)
                     buildRandomTree()
                     return nil
                 }
@@ -76,8 +76,8 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
             if let visibleRock = opponentNode.visibleRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleRock.floorNode,
                 let point = nodeManipulator.point(for: floorNode) {
-                if terrainViewModel.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1) {
-                    terrainViewModel.buildTree(at: point)
+                if terrainOperations.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1) {
+                    terrainOperations.buildTree(at: point)
                     buildRandomTree()
                     return nil
                 }
@@ -86,7 +86,7 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
             if let visibleTree = opponentNode.visibleTreesOnRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleTree.floorNode,
                 let point = nodeManipulator.point(for: floorNode) {
-                if terrainViewModel.absorbTreeNode(at: point) {
+                if terrainOperations.absorbTreeNode(at: point) {
                     buildRandomTree()
                     return nil
                 }
@@ -116,19 +116,19 @@ class OpponentsViewModel: NSObject, SCNSceneRendererDelegate {
         let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
         if detectingCameraNodes.intersection(lastCameraNodes).count > 0 {
             // Seen by a camera for more than 1 "cycle"...
-            delegate.opponentsViewModelDidDepleteEnergy(self)
+            delegate.opponentsOperationsDidDepleteEnergy(self)
             buildRandomTree()
         }
 
         for detectingCameraNode in detectingCameraNodes {
             if !lastCameraNodes.contains(detectingCameraNode) {
-                delegate.opponentsViewModel(self, didDetectOpponent: detectingCameraNode)
+                delegate.opponentsOperations(self, didDetectOpponent: detectingCameraNode)
             }
         }
 
         for lastCameraNode in lastCameraNodes {
             if !detectingCameraNodes.contains(lastCameraNode) {
-                delegate.opponentsViewModel(self, didEndDetectOpponent: lastCameraNode)
+                delegate.opponentsOperations(self, didEndDetectOpponent: lastCameraNode)
             }
         }
 

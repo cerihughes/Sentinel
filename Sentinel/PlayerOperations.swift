@@ -11,14 +11,14 @@ enum GameEndState {
     case victory, defeat
 }
 
-protocol PlayerViewModelDelegate: class {
-    func playerViewModel(_: PlayerViewModel, didChange cameraNode: SCNNode)
-    func playerViewModel(_: PlayerViewModel, levelDidEndWith state: GameEndState)
+protocol PlayerOperationsDelegate: class {
+    func playerOperations(_: PlayerOperations, didChange cameraNode: SCNNode)
+    func playerOperations(_: PlayerOperations, levelDidEndWith state: GameEndState)
 }
 
-class PlayerViewModel: NSObject {
+class PlayerOperations: NSObject {
     private let levelConfiguration: LevelConfiguration
-    private let terrainViewModel: TerrainViewModel
+    private let terrainOperations: TerrainOperations
     private let initialCameraNode: SCNNode
 
     private let nodeManipulator: NodeManipulator
@@ -26,18 +26,18 @@ class PlayerViewModel: NSObject {
 
     let overlay = OverlayScene()
 
-    weak var delegate: PlayerViewModelDelegate?
+    weak var delegate: PlayerOperationsDelegate?
 
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
 
-    init(levelConfiguration: LevelConfiguration, terrainViewModel: TerrainViewModel, initialCameraNode: SCNNode) {
+    init(levelConfiguration: LevelConfiguration, terrainOperations: TerrainOperations, initialCameraNode: SCNNode) {
         self.levelConfiguration = levelConfiguration
-        self.terrainViewModel = terrainViewModel
+        self.terrainOperations = terrainOperations
         self.initialCameraNode = initialCameraNode
 
-        self.nodeManipulator = terrainViewModel.nodeManipulator
-        self.grid = terrainViewModel.grid
+        self.nodeManipulator = terrainOperations.nodeManipulator
+        self.grid = terrainOperations.grid
         overlay.energy = 10
 
         super.init()
@@ -53,7 +53,7 @@ class PlayerViewModel: NSObject {
         overlay.energy += delta
 
         if overlay.energy <= 0 {
-            delegate.playerViewModel(self, levelDidEndWith: .defeat)
+            delegate.playerOperations(self, levelDidEndWith: .defeat)
         }
     }
 
@@ -98,7 +98,7 @@ class PlayerViewModel: NSObject {
         }
 
         adjustEnergy(delta: -treeEnergyValue)
-        terrainViewModel.buildTree(at: point)
+        terrainOperations.buildTree(at: point)
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {
@@ -115,7 +115,7 @@ class PlayerViewModel: NSObject {
         }
 
         adjustEnergy(delta: -rockEnergyValue)
-        terrainViewModel.buildRock(at: point, rotation: rotation)
+        terrainOperations.buildRock(at: point, rotation: rotation)
     }
 
     func buildSynthoid(at point: GridPoint) {
@@ -125,7 +125,7 @@ class PlayerViewModel: NSObject {
 
         let viewingAngle = point.angle(to: grid.currentPosition)
         adjustEnergy(delta: -synthoidEnergyValue)
-        terrainViewModel.buildSynthoid(at: point, viewingAngle: viewingAngle)
+        terrainOperations.buildSynthoid(at: point, viewingAngle: viewingAngle)
     }
 
     func absorbTopmostNode(at point: GridPoint) -> Bool {
@@ -151,7 +151,7 @@ class PlayerViewModel: NSObject {
     }
 
     func absorbTreeNode(at point: GridPoint) -> Bool {
-        if terrainViewModel.absorbTreeNode(at: point) {
+        if terrainOperations.absorbTreeNode(at: point) {
             adjustEnergy(delta: treeEnergyValue)
             return true
         }
@@ -159,7 +159,7 @@ class PlayerViewModel: NSObject {
     }
 
     func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
-        if terrainViewModel.absorbRockNode(at: point, isFinalRockNode: isFinalRockNode) {
+        if terrainOperations.absorbRockNode(at: point, isFinalRockNode: isFinalRockNode) {
             adjustEnergy(delta: rockEnergyValue)
             return true
         }
@@ -167,7 +167,7 @@ class PlayerViewModel: NSObject {
     }
 
     func absorbSynthoidNode(at point: GridPoint) -> Bool {
-        if terrainViewModel.absorbSynthoidNode(at: point) {
+        if terrainOperations.absorbSynthoidNode(at: point) {
             adjustEnergy(delta: synthoidEnergyValue)
             return true
         }
@@ -189,7 +189,7 @@ class PlayerViewModel: NSObject {
 
         if nodeManipulator.absorbSentinel(at: point) {
             adjustEnergy(delta: sentinelEnergyValue)
-            delegate.playerViewModel(self, levelDidEndWith: .victory)
+            delegate.playerOperations(self, levelDidEndWith: .victory)
             return true
         }
 
@@ -220,12 +220,12 @@ class PlayerViewModel: NSObject {
 
         let transitionCameraNode = from.clone()
         parent.addChildNode(transitionCameraNode)
-        delegate.playerViewModel(self, didChange: transitionCameraNode)
+        delegate.playerOperations(self, didChange: transitionCameraNode)
 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = animationDuration
         SCNTransaction.completionBlock = {
-            delegate.playerViewModel(self, didChange: to)
+            delegate.playerOperations(self, didChange: to)
             transitionCameraNode.removeFromParentNode()
             if let postAnimationBlock = self.postAnimationBlock {
                 postAnimationBlock()

@@ -38,8 +38,9 @@ enum SwipeState {
 fileprivate let threshold: CGFloat = 200.0
 
 class SwipeInputHandler: NSObject, GameInputHandler {
-    private let playerViewModel: PlayerViewModel
-    private let opponentsViewModel: OpponentsViewModel
+    let playerOperations: PlayerOperations
+    let opponentsOperations: OpponentsOperations
+
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
 
@@ -48,9 +49,9 @@ class SwipeInputHandler: NSObject, GameInputHandler {
     private var startTapPoint: CGPoint? = nil
     private var floorNode: FloorNode? = nil
 
-    init(playerViewModel: PlayerViewModel, opponentsViewModel: OpponentsViewModel, nodeManipulator: NodeManipulator) {
-        self.playerViewModel = playerViewModel
-        self.opponentsViewModel = opponentsViewModel
+    init(playerOperations: PlayerOperations, opponentsOperations: OpponentsOperations, nodeManipulator: NodeManipulator) {
+        self.playerOperations = playerOperations
+        self.opponentsOperations = opponentsOperations
         self.nodeManipulator = nodeManipulator
 
         self.hitTestOptions = [SCNHitTestOption.searchMode:SCNHitTestSearchMode.all.rawValue,
@@ -99,8 +100,8 @@ class SwipeInputHandler: NSObject, GameInputHandler {
             return
         }
 
-        if !playerViewModel.hasEnteredScene() {
-            _ = playerViewModel.enterScene()
+        if !playerOperations.hasEnteredScene() {
+            _ = playerOperations.enterScene()
         }
     }
 
@@ -121,7 +122,7 @@ class SwipeInputHandler: NSObject, GameInputHandler {
 
     private func processDoubleTap(node: SCNNode) {
         if let synthoidNode = node as? SynthoidNode {
-            playerViewModel.move(to: synthoidNode)
+            playerOperations.move(to: synthoidNode)
         }
     }
 
@@ -252,7 +253,7 @@ class SwipeInputHandler: NSObject, GameInputHandler {
         if let topmostNode = floorNode.topmostNode {
             if removeIt,
                 let point = nodeManipulator.point(for: floorNode),
-                playerViewModel.absorbTopmostNode(at: point) {
+                playerOperations.absorbTopmostNode(at: point) {
                 topmostNode.removeFromParentNode()
             } else {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
@@ -313,15 +314,15 @@ class SwipeInputHandler: NSObject, GameInputHandler {
                 case (.rock):
                     if let contents = temporaryNode.contents as? RockNode {
                         let w = contents.rotation.w
-                        playerViewModel.buildRock(at: point, rotation: w)
+                        playerOperations.buildRock(at: point, rotation: w)
                     }
                 case (.tree):
-                    playerViewModel.buildTree(at: point)
+                    playerOperations.buildTree(at: point)
                 case (.synthoid):
-                    playerViewModel.buildSynthoid(at: point)
+                    playerOperations.buildSynthoid(at: point)
                 }
 
-                opponentsViewModel.timeMachine.start()
+                opponentsOperations.timeMachine.start()
             }
         }
     }

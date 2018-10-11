@@ -6,14 +6,15 @@ enum UserInteraction {
 }
 
 class BasicInputHandler: NSObject, GameInputHandler {
-    private let playerViewModel: PlayerViewModel
-    private let opponentsViewModel: OpponentsViewModel
+    let playerOperations: PlayerOperations
+    let opponentsOperations: OpponentsOperations
+
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
 
-    init(playerViewModel: PlayerViewModel, opponentsViewModel: OpponentsViewModel, nodeManipulator: NodeManipulator) {
-        self.playerViewModel = playerViewModel
-        self.opponentsViewModel = opponentsViewModel
+    init(playerOperations: PlayerOperations, opponentsOperations: OpponentsOperations, nodeManipulator: NodeManipulator) {
+        self.playerOperations = playerOperations
+        self.opponentsOperations = opponentsOperations
         self.nodeManipulator = nodeManipulator
 
         let tapRecogniser = UITapGestureRecognizer()
@@ -59,7 +60,7 @@ class BasicInputHandler: NSObject, GameInputHandler {
             let hitTestResults = sceneView.hitTest(point, options: [:])
             if process(interaction: interaction, hitTestResults: hitTestResults) {
                 // Start the time machine
-                opponentsViewModel.timeMachine.start()
+                opponentsOperations.timeMachine.start()
 
                 // Toggle the state to "complete" the gesture
                 sender.isEnabled = false
@@ -100,12 +101,12 @@ class BasicInputHandler: NSObject, GameInputHandler {
     // MARK: Tap / Press
 
     private func process(interaction: UserInteraction, hitTestResults: [SCNHitTestResult]) -> Bool {
-        if playerViewModel.hasEnteredScene() {
+        if playerOperations.hasEnteredScene() {
             if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
                 return process(interaction: interaction, node: interactiveNode)
             }
         } else {
-            return playerViewModel.enterScene()
+            return playerOperations.enterScene()
         }
         return false
     }
@@ -118,7 +119,7 @@ class BasicInputHandler: NSObject, GameInputHandler {
                 let point = nodeManipulator.point(for: floorNode) {
                 return processTap(floorNode: floorNode, point: point)
             } else if let synthoidNode = node as? SynthoidNode {
-                playerViewModel.move(to: synthoidNode)
+                playerOperations.move(to: synthoidNode)
                 return true
             }
         case (.longPress):
@@ -137,14 +138,14 @@ class BasicInputHandler: NSObject, GameInputHandler {
         if floorNode.sentinelNode != nil || floorNode.sentryNode != nil {
             return false
         } else if floorNode.treeNode != nil {
-            playerViewModel.buildRock(at: point)
+            playerOperations.buildRock(at: point)
         } else if floorNode.rockNodes.count > 0 && floorNode.synthoidNode == nil {
-            playerViewModel.buildRock(at: point)
+            playerOperations.buildRock(at: point)
         } else if let synthoidNode = floorNode.synthoidNode {
-            playerViewModel.move(to: synthoidNode)
+            playerOperations.move(to: synthoidNode)
         } else {
             // Empty space - build a rock
-            playerViewModel.buildRock(at: point)
+            playerOperations.buildRock(at: point)
         }
         return true
     }
@@ -154,30 +155,30 @@ class BasicInputHandler: NSObject, GameInputHandler {
             return false
         }
 
-        playerViewModel.buildSynthoid(at: point)
+        playerOperations.buildSynthoid(at: point)
         return true
     }
 
     private func processLongPressObject(node: SCNNode, point: GridPoint) -> Bool {
         if node is SentinelNode {
-            return playerViewModel.absorbSentinelNode(at: point)
+            return playerOperations.absorbSentinelNode(at: point)
         }
 
         if node is SentryNode {
-            return playerViewModel.absorbSentryNode(at: point)
+            return playerOperations.absorbSentryNode(at: point)
         }
 
         if node is TreeNode {
-            return playerViewModel.absorbTreeNode(at: point)
+            return playerOperations.absorbTreeNode(at: point)
         }
 
         if let rockNode = node as? RockNode,
             let floorNode = rockNode.floorNode {
-            return playerViewModel.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
+            return playerOperations.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
         }
 
         if node is SynthoidNode {
-            return playerViewModel.absorbSynthoidNode(at: point)
+            return playerOperations.absorbSynthoidNode(at: point)
         }
 
         return false

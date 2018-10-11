@@ -1,6 +1,9 @@
 import SceneKit
 
 protocol GameInputHandler {
+    var playerOperations: PlayerOperations {get}
+    var opponentsOperations: OpponentsOperations {get}
+
     func addGestureRecognisers(to view: UIView)
     func setGestureRecognisersEnabled(_ isEnabled: Bool)
 }
