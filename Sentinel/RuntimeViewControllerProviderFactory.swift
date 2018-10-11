@@ -1,5 +1,10 @@
 import Foundation
 
+/**
+ An implementation of ViewControllerProviderFactory which uses objc-runtime magic to find all loaded classes that
+ implement ViewControllerProvider. It requires all ViewControllerProvider to also inherit from NSObject, so it's not
+ the Swiftiest way of doing things - it does serve as a nice example of accessing the Obj-C runtime from Swift though.
+ */
 class RuntimeViewControllerProviderFactory: ViewControllerProviderFactory {
 
     // MARK: ViewControllerProviderFactory

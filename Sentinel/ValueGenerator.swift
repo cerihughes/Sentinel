@@ -1,5 +1,8 @@
 import Foundation
 
+/**
+ Produces pseudo-random values for a given input. Output shouldn't be predictable, but be repeatable for the same input.
+ */
 class ValueGenerator: NSObject {
     private var seeds: [Int] = []
     private var genCount = 0

@@ -2,6 +2,9 @@ import SceneKit
 import SpriteKit
 import UIKit
 
+/**
+ A VC that does some of the full-screen SceneKit / SpriteKit setup.
+ */
 class SceneViewController: UIViewController {
     let scene: SCNScene
     let cameraNode: SCNNode?

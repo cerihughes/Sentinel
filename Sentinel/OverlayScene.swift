@@ -1,5 +1,8 @@
 import SpriteKit
 
+/**
+ An overlay that renders the "classic" sprite-based energy bar.
+ */
 class OverlayScene: SKScene {
     private let spriteFactory = SpriteFactory()
     private let energyContainer = SKNode()
