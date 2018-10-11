@@ -4,14 +4,14 @@ import UIKit
 
 class GameContainerViewController: UIViewController, LeafViewController, PlayerViewModelDelegate, OpponentsViewModelDelegate {
     private let ui: UIContext
-    private let inputHandler: InputHandler
+    private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
     var completionData: Bool = false
 
-    init(ui: UIContext, viewModel: GameViewModel, inputHandler: InputHandler) {
+    init(ui: UIContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
         self.ui = ui
         self.viewModel = viewModel
         self.inputHandler = inputHandler

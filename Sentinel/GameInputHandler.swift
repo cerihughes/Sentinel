@@ -1,11 +1,11 @@
 import SceneKit
 
-protocol InputHandler {
+protocol GameInputHandler {
     func addGestureRecognisers(to view: UIView)
     func setGestureRecognisersEnabled(_ isEnabled: Bool)
 }
 
-extension InputHandler {
+extension GameInputHandler {
     func firstInteractiveNode(for hitTestResults: [SCNHitTestResult]) -> SCNNode? {
         for hitTestResult in hitTestResults {
             let node = hitTestResult.node
