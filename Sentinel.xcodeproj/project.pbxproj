@@ -243,7 +243,6 @@
 				6529F31C21663559006856DB /* SceneKit Extensions */,
 				65CDD422215E63F8004703EE /* View Controllers */,
 				6567866D215E7A54005105EE /* Navigation */,
-				656AED8E215A68A3005D88B3 /* Input */,
 				65D7F1DB2157FD220085C6CF /* Overlay */,
 				656AAEE2214EA3EF00991151 /* Timing */,
 				656AAEE1214EA3DD00991151 /* UI */,
@@ -274,6 +273,7 @@
 		655D5E4D21564CC100BA2F49 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				656AED8E215A68A3005D88B3 /* Input */,
 				65678672215E8105005105EE /* GameViewControllerProvider.swift */,
 				6546A843213C0651009F0650 /* GameMainViewController.swift */,
 				654AB2C6214D4B0400E8851D /* GameContainerViewController.swift */,
