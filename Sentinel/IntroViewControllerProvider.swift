@@ -2,7 +2,13 @@ import UIKit
 
 let introIdentifier = "introIdentifier"
 
-class IntroViewControllerProvider: NSObject, ViewControllerProvider {
+class IntroViewControllerProvider: ViewControllerProviderFactory, ViewControllerProvider {
+
+    // MARK: ViewControllerProviderFactory
+
+    static func createViewControllerProvider() -> ViewControllerProvider {
+        return IntroViewControllerProvider()
+    }
 
     // MARK: ViewControllerProvider
 

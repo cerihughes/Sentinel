@@ -2,7 +2,13 @@ import UIKit
 
 let gameIdentifier = "gameIdentifier"
 
-class GameViewControllerProvider: NSObject, ViewControllerProvider {
+class GameViewControllerProvider: ViewControllerProviderFactory, ViewControllerProvider {
+
+    // MARK: ViewControllerProviderFactory
+
+    static func createViewControllerProvider() -> ViewControllerProvider {
+        return GameViewControllerProvider()
+    }
 
     // MARK: ViewControllerProvider
 

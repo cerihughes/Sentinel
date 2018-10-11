@@ -2,7 +2,13 @@ import UIKit
 
 let stagingAreaIdentifier = "stagingAreaIdentifier"
 
-class StagingAreaViewControllerProvider: NSObject, ViewControllerProvider {
+class StagingAreaViewControllerProvider: ViewControllerProviderFactory, ViewControllerProvider {
+
+    // MARK: ViewControllerProviderFactory
+
+    static func createViewControllerProvider() -> ViewControllerProvider {
+        return StagingAreaViewControllerProvider()
+    }
 
     // MARK: ViewControllerProvider
 
