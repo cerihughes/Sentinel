@@ -1,13 +1,14 @@
+import Madog
 import SceneKit
 import UIKit
 
 class LobbyViewController: UIViewController, LobbyViewModelDelegate {
-    private let ui: UIContext
+    private let forwardNavigationContext: ForwardNavigationContext
     private let lobbyViewModel: LobbyViewModel
     private let collectionViewLayout = LobbyCollectionViewLayout()
 
-    init(ui: UIContext, lobbyViewModel: LobbyViewModel) {
-        self.ui = ui
+    init(forwardNavigationContext: ForwardNavigationContext, lobbyViewModel: LobbyViewModel) {
+        self.forwardNavigationContext = forwardNavigationContext
         self.lobbyViewModel = lobbyViewModel
 
         super.init(nibName: nil, bundle: nil)
@@ -58,6 +59,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
         let rl = RegistrationLocator(identifier: levelSummaryIdentifier, level: level)
-        _ = ui.navigate(with: rl, animated: true)
+        _ = forwardNavigationContext.navigate(with: rl, from: self, animated: true)
     }
 }

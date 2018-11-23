@@ -1,13 +1,14 @@
+import Madog
 import SceneKit
 import UIKit
 
 class LevelSummaryViewController: SceneViewController {
-    private let ui: UIContext
+    private let forwardNavigationContext: ForwardNavigationContext
     private let viewModel: LevelSummaryViewModel
     private let tapGestureRecogniser = UITapGestureRecognizer()
 
-    init(ui: UIContext, viewModel: LevelSummaryViewModel) {
-        self.ui = ui
+    init(forwardNavigationContext: ForwardNavigationContext, viewModel: LevelSummaryViewModel) {
+        self.forwardNavigationContext = forwardNavigationContext
         self.viewModel = viewModel
 
         super.init(scene: viewModel.world.scene, cameraNode: viewModel.world.initialCameraNode)
@@ -46,6 +47,6 @@ class LevelSummaryViewController: SceneViewController {
         sender.isEnabled = false
 
         let rl = RegistrationLocator(identifier: gameIdentifier, level: viewModel.level)
-        _ = ui.navigate(with: rl, animated: true)
+        _ = forwardNavigationContext.navigate(with: rl, from: self, animated: true)
     }
 }
