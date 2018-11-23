@@ -1,28 +1,38 @@
+import Madog
 import UIKit
 
 let introIdentifier = "introIdentifier"
 
-class IntroViewControllerProvider: ViewControllerProviderFactory, ViewControllerProvider {
+class IntroViewControllerProvider: PageFactory, Page {
+    private var uuid: UUID?
 
-    // MARK: ViewControllerProviderFactory
+    // MARK: PageFactory
 
-    static func createViewControllerProvider() -> ViewControllerProvider {
+    static func createPage() -> Page {
         return IntroViewControllerProvider()
     }
 
-    // MARK: ViewControllerProvider
+    // MARK: Page
 
-    func register(with registry: ViewControllerRegistry<RegistrationLocator>) {
-        _ = registry.add(registryFunction: createViewController(id:context:))
+    func register<Token, Context>(with registry: ViewControllerRegistry<Token, Context>) {
+        uuid = registry.add(globalRegistryFunction: createViewController(context:))
+    }
+
+    func unregister<Token, Context>(from registry: ViewControllerRegistry<Token, Context>) {
+        guard let uuid = uuid else {
+            return
+        }
+
+        registry.removeGlobalRegistryFunction(uuid: uuid)
     }
 
     // Private
 
-    private func createViewController(id: RegistrationLocator, context: UIContext) -> UIViewController? {
-        guard id.identifier == introIdentifier else {
+    private func createViewController<Context>(context: Context) -> UIViewController? {
+        guard let forwardNavigationContext = context as? ForwardNavigationContext else {
             return nil
         }
 
-        return IntroViewController(ui: context)
+        return IntroViewController(forwardNavigationContext: forwardNavigationContext)
     }
 }

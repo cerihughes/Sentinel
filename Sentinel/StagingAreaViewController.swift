@@ -2,11 +2,7 @@ import SceneKit
 import UIKit
 
 class StagingAreaViewController: SceneViewController {
-    let ui: UIContext
-
-    init(ui: UIContext, viewModel: StagingAreaViewModel) {
-        self.ui = ui
-
+    init(viewModel: StagingAreaViewModel) {
         super.init(scene: viewModel.scene, cameraNode: viewModel.initialCameraNode)
     }
 

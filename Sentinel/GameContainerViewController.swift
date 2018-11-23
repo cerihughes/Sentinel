@@ -1,9 +1,10 @@
+import Madog
 import SceneKit
 import SpriteKit
 import UIKit
 
-class GameContainerViewController: UIViewController, LeafViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
-    private let ui: UIContext
+class GameContainerViewController: UIViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
+    private let forwardNavigationContext: ForwardNavigationContext
     private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
@@ -11,8 +12,8 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerO
 
     var completionData: Bool = false
 
-    init(ui: UIContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
-        self.ui = ui
+    init(forwardNavigationContext: ForwardNavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
+        self.forwardNavigationContext = forwardNavigationContext
         self.viewModel = viewModel
         self.inputHandler = inputHandler
 
@@ -109,7 +110,8 @@ class GameContainerViewController: UIViewController, LeafViewController, PlayerO
         completionData = state == .victory
         DispatchQueue.main.async {
             self.viewModel.opponentsOperations.timeMachine.stop()
-            _ = self.ui.leave(viewController: self, animated: true)
+            // TODO: Fix this
+//            _ = self.ui.leave(viewController: self, animated: true)
         }
     }
 

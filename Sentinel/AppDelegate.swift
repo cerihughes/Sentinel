@@ -1,17 +1,21 @@
+import Madog
 import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
-    var ui: UI?
+    let window = UIWindow()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        ui = UI(viewControllerProviderLoader: RuntimeViewControllerProviderLoader())
+        guard let ui = NavigationUI<RegistrationLocator>(pageResolver: RuntimePageResolver()) else {
+            return false
+        }
 
-        window!.rootViewController = ui?.initialViewController
-        window!.makeKeyAndVisible()
+        let navigationViewController = ui.initialViewController
+        navigationViewController.isNavigationBarHidden = true
+
+        window.rootViewController = navigationViewController
+        window.makeKeyAndVisible()
 
         return true
     }
