@@ -4,7 +4,7 @@ import SpriteKit
 import UIKit
 
 class GameContainerViewController: UIViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
-    private let forwardNavigationContext: ForwardNavigationContext
+    private let navigationContext: NavigationContext
     private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
@@ -12,8 +12,8 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
 
     var completionData: Bool = false
 
-    init(forwardNavigationContext: ForwardNavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
-        self.forwardNavigationContext = forwardNavigationContext
+    init(navigationContext: NavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
+        self.navigationContext = navigationContext
         self.viewModel = viewModel
         self.inputHandler = inputHandler
 
@@ -110,8 +110,7 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
         completionData = state == .victory
         DispatchQueue.main.async {
             self.viewModel.opponentsOperations.timeMachine.stop()
-            // TODO: Fix this
-//            _ = self.ui.leave(viewController: self, animated: true)
+            _ = self.navigationContext.navigateBack(animated: true)
         }
     }
 

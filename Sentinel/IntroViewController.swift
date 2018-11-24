@@ -2,10 +2,10 @@ import Madog
 import UIKit
 
 class IntroViewController: UIViewController {
-    let forwardNavigationContext: ForwardNavigationContext
+    let navigationContext: NavigationContext
 
-    init(forwardNavigationContext: ForwardNavigationContext) {
-        self.forwardNavigationContext = forwardNavigationContext
+    init(navigationContext: NavigationContext) {
+        self.navigationContext = navigationContext
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -17,6 +17,6 @@ class IntroViewController: UIViewController {
         super.viewDidAppear(animated)
 
         let rl = RegistrationLocator(identifier: lobbyIdentifier, level: nil)
-        _ = forwardNavigationContext.navigate(with: rl, from: self, animated: true)
+        _ = navigationContext.navigateForward(with: rl, animated: true)
     }
 }

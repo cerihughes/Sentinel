@@ -3,12 +3,12 @@ import SceneKit
 import UIKit
 
 class LobbyViewController: UIViewController, LobbyViewModelDelegate {
-    private let forwardNavigationContext: ForwardNavigationContext
+    private let navigationContext: NavigationContext
     private let lobbyViewModel: LobbyViewModel
     private let collectionViewLayout = LobbyCollectionViewLayout()
 
-    init(forwardNavigationContext: ForwardNavigationContext, lobbyViewModel: LobbyViewModel) {
-        self.forwardNavigationContext = forwardNavigationContext
+    init(navigationContext: NavigationContext, lobbyViewModel: LobbyViewModel) {
+        self.navigationContext = navigationContext
         self.lobbyViewModel = lobbyViewModel
 
         super.init(nibName: nil, bundle: nil)
@@ -59,6 +59,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
         let rl = RegistrationLocator(identifier: levelSummaryIdentifier, level: level)
-        _ = forwardNavigationContext.navigate(with: rl, from: self, animated: true)
+        _ = navigationContext.navigateForward(with: rl, animated: true)
     }
 }

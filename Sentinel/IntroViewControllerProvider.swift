@@ -15,7 +15,7 @@ class IntroViewControllerProvider: PageFactory, Page {
     // MARK: Page
 
     func register<Token, Context>(with registry: ViewControllerRegistry<Token, Context>) {
-        uuid = registry.add(globalRegistryFunction: createViewController(context:))
+        uuid = registry.add(initialRegistryFunction: createViewController(context:))
     }
 
     func unregister<Token, Context>(from registry: ViewControllerRegistry<Token, Context>) {
@@ -23,16 +23,16 @@ class IntroViewControllerProvider: PageFactory, Page {
             return
         }
 
-        registry.removeGlobalRegistryFunction(uuid: uuid)
+        registry.removeRegistryFunction(uuid: uuid)
     }
 
     // Private
 
     private func createViewController<Context>(context: Context) -> UIViewController? {
-        guard let forwardNavigationContext = context as? ForwardNavigationContext else {
+        guard let navigationContext = context as? NavigationContext else {
             return nil
         }
 
-        return IntroViewController(forwardNavigationContext: forwardNavigationContext)
+        return IntroViewController(navigationContext: navigationContext)
     }
 }

@@ -33,7 +33,7 @@ class LevelSummaryViewControllerProvider: PageFactory, Page {
             let id = token as? RegistrationLocator,
             id.identifier == levelSummaryIdentifier,
             let level = id.level,
-            let forwardNavigationContext = context as? ForwardNavigationContext
+            let navigationContext = context as? NavigationContext
             else {
                 return nil
         }
@@ -51,6 +51,6 @@ class LevelSummaryViewControllerProvider: PageFactory, Page {
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = LevelSummaryViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
-        return LevelSummaryViewController(forwardNavigationContext: forwardNavigationContext, viewModel: viewModel)
+        return LevelSummaryViewController(navigationContext: navigationContext, viewModel: viewModel)
     }
 }
