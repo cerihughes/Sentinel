@@ -5,13 +5,13 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let window = UIWindow()
+    let ui = NavigationUI<RegistrationLocator>()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        guard let ui = NavigationUI<RegistrationLocator>(pageResolver: RuntimePageResolver()) else {
+        guard let navigationViewController = ui.resolveInitialViewController(pageResolver: RuntimePageResolver()) else {
             return false
         }
 
-        let navigationViewController = ui.initialViewController
         navigationViewController.isNavigationBarHidden = true
 
         window.rootViewController = navigationViewController

@@ -32,11 +32,11 @@ class LobbyViewControllerProvider: PageFactory, Page {
         guard
             let id = token as? RegistrationLocator,
             id.identifier == lobbyIdentifier,
-            let forwardNavigationContext = context as? ForwardNavigationContext else {
+            let navigationContext = context as? NavigationContext else {
             return nil
         }
 
         let lobbyViewModel = LobbyViewModel()
-        return LobbyViewController(forwardNavigationContext: forwardNavigationContext, lobbyViewModel: lobbyViewModel)
+        return LobbyViewController(navigationContext: navigationContext, lobbyViewModel: lobbyViewModel)
     }
 }

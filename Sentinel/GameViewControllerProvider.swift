@@ -33,7 +33,7 @@ class GameViewControllerProvider: PageFactory, Page {
             let id = token as? RegistrationLocator,
             id.identifier == gameIdentifier,
             let level = id.level,
-            let forwardNavigationContext = context as? ForwardNavigationContext
+            let navigationContext = context as? NavigationContext
             else {
                 return nil
         }
@@ -53,6 +53,6 @@ class GameViewControllerProvider: PageFactory, Page {
         let inputHandler = SwipeInputHandler(playerOperations: viewModel.playerOperations,
                                              opponentsOperations: viewModel.opponentsOperations,
                                              nodeManipulator: viewModel.terrainOperations.nodeManipulator)
-        return GameContainerViewController(forwardNavigationContext: forwardNavigationContext, viewModel: viewModel, inputHandler: inputHandler)
+        return GameContainerViewController(navigationContext: navigationContext, viewModel: viewModel, inputHandler: inputHandler)
     }
 }
