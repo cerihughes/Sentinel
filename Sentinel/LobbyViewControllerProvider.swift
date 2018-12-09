@@ -1,24 +1,18 @@
 import Madog
 import UIKit
 
-let lobbyIdentifier = "lobbyIdentifier"
+fileprivate let lobbyIdentifier = "lobbyIdentifier"
 
-class LobbyViewControllerProvider: PageFactory, Page {
+class LobbyViewControllerProvider: PageObject {
     private var uuid: UUID?
 
-    // MARK: PageFactory
+    // MARK: PageObject
 
-    static func createPage() -> Page {
-        return LobbyViewControllerProvider()
-    }
-
-    // MARK: Page
-
-    func register<Token, Context>(with registry: ViewControllerRegistry<Token, Context>) {
+    override func register(with registry: ViewControllerRegistry) {
         uuid = registry.add(registryFunction: createViewController(token:context:))
     }
 
-    func unregister<Token, Context>(from registry: ViewControllerRegistry<Token, Context>) {
+    override func unregister(from registry: ViewControllerRegistry) {
         guard let uuid = uuid else {
             return
         }
@@ -28,15 +22,21 @@ class LobbyViewControllerProvider: PageFactory, Page {
 
     // MARK: Private
 
-    private func createViewController<Token, Context>(token: Token, context: Context) -> UIViewController? {
+    private func createViewController(token: Any, context: Context) -> UIViewController? {
         guard
             let id = token as? RegistrationLocator,
             id.identifier == lobbyIdentifier,
-            let navigationContext = context as? NavigationContext else {
+            let navigationContext = context as? ForwardBackNavigationContext else {
             return nil
         }
 
         let lobbyViewModel = LobbyViewModel()
         return LobbyViewController(navigationContext: navigationContext, lobbyViewModel: lobbyViewModel)
+    }
+}
+
+extension RegistrationLocator {
+    static func createLobbyRegistrationLocator() -> RegistrationLocator {
+        return RegistrationLocator(identifier: lobbyIdentifier, level: nil)
     }
 }

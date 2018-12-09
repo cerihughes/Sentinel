@@ -2,9 +2,9 @@ import Madog
 import UIKit
 
 class IntroViewController: UIViewController {
-    let navigationContext: NavigationContext
+    let navigationContext: ForwardBackNavigationContext
 
-    init(navigationContext: NavigationContext) {
+    init(navigationContext: ForwardBackNavigationContext) {
         self.navigationContext = navigationContext
         super.init(nibName: nil, bundle: nil)
     }
@@ -16,7 +16,7 @@ class IntroViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        let rl = RegistrationLocator(identifier: lobbyIdentifier, level: nil)
+        let rl = RegistrationLocator.createLobbyRegistrationLocator()
         _ = navigationContext.navigateForward(with: rl, animated: true)
     }
 }
