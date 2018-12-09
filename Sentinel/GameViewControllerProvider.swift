@@ -1,24 +1,18 @@
 import Madog
 import UIKit
 
-let gameIdentifier = "gameIdentifier"
+fileprivate let gameIdentifier = "gameIdentifier"
 
-class GameViewControllerProvider: PageFactory, Page {
+class GameViewControllerProvider: PageObject {
     private var uuid: UUID?
 
-    // MARK: PageFactory
+    // MARK: PageObject
 
-    static func createPage() -> Page {
-        return GameViewControllerProvider()
-    }
-
-    // MARK: Page
-
-    func register<Token, Context>(with registry: ViewControllerRegistry<Token, Context>) {
+    override func register(with registry: ViewControllerRegistry) {
         uuid = registry.add(registryFunction: createViewController(token:context:))
     }
 
-    func unregister<Token, Context>(from registry: ViewControllerRegistry<Token, Context>) {
+    override func unregister(from registry: ViewControllerRegistry) {
         guard let uuid = uuid else {
             return
         }
@@ -28,12 +22,12 @@ class GameViewControllerProvider: PageFactory, Page {
 
     // MARK: Private
 
-    private func createViewController<Token, Context>(token: Token, context: Context) -> UIViewController? {
+    private func createViewController(token: Any, context: Context) -> UIViewController? {
         guard
             let id = token as? RegistrationLocator,
             id.identifier == gameIdentifier,
             let level = id.level,
-            let navigationContext = context as? NavigationContext
+            let navigationContext = context as? ForwardBackNavigationContext
             else {
                 return nil
         }
@@ -54,5 +48,11 @@ class GameViewControllerProvider: PageFactory, Page {
                                              opponentsOperations: viewModel.opponentsOperations,
                                              nodeManipulator: viewModel.terrainOperations.nodeManipulator)
         return GameContainerViewController(navigationContext: navigationContext, viewModel: viewModel, inputHandler: inputHandler)
+    }
+}
+
+extension RegistrationLocator {
+    static func createGameRegistrationLocator(level: Int) -> RegistrationLocator {
+        return RegistrationLocator(identifier: gameIdentifier, level: level)
     }
 }

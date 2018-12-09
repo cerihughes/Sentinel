@@ -4,7 +4,7 @@ import SpriteKit
 import UIKit
 
 class GameContainerViewController: UIViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
-    private let navigationContext: NavigationContext
+    private let navigationContext: ForwardBackNavigationContext
     private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let mainViewController: GameMainViewController
@@ -12,7 +12,7 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
 
     var completionData: Bool = false
 
-    init(navigationContext: NavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
+    init(navigationContext: ForwardBackNavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
         self.inputHandler = inputHandler

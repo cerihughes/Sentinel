@@ -1,24 +1,18 @@
 import Madog
 import UIKit
 
-let stagingAreaIdentifier = "stagingAreaIdentifier"
+fileprivate let stagingAreaIdentifier = "stagingAreaIdentifier"
 
-class StagingAreaViewControllerProvider: PageFactory, Page {
+class StagingAreaViewControllerProvider: PageObject {
     private var uuid: UUID?
 
-    // MARK: PageFactory
+    // MARK: PageObject
 
-    static func createPage() -> Page {
-        return StagingAreaViewControllerProvider()
-    }
-
-    // MARK: Page
-
-    func register<Token, Context>(with registry: ViewControllerRegistry<Token, Context>) {
+    override func register(with registry: ViewControllerRegistry) {
         uuid = registry.add(registryFunction: createViewController(token:context:))
     }
 
-    func unregister<Token, Context>(from registry: ViewControllerRegistry<Token, Context>) {
+    override func unregister(from registry: ViewControllerRegistry) {
         guard let uuid = uuid else {
             return
         }
@@ -28,7 +22,7 @@ class StagingAreaViewControllerProvider: PageFactory, Page {
 
     // MARK: Private
 
-    private func createViewController<Token, Context>(token: Token, context: Context) -> UIViewController? {
+    private func createViewController(token: Any, context: Context) -> UIViewController? {
         guard let id = token as? RegistrationLocator, id.identifier == stagingAreaIdentifier else {
             return nil
         }
@@ -36,5 +30,11 @@ class StagingAreaViewControllerProvider: PageFactory, Page {
         let viewModel = StagingAreaViewModel()
 
         return StagingAreaViewController(viewModel: viewModel)
+    }
+}
+
+extension RegistrationLocator {
+    static func createStagingAreaRegistrationLocator() -> RegistrationLocator {
+        return RegistrationLocator(identifier: stagingAreaIdentifier, level: nil)
     }
 }

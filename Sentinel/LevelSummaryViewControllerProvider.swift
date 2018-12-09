@@ -1,24 +1,18 @@
 import Madog
 import UIKit
 
-let levelSummaryIdentifier = "levelSummaryIdentifier"
+fileprivate let levelSummaryIdentifier = "levelSummaryIdentifier"
 
-class LevelSummaryViewControllerProvider: PageFactory, Page {
+class LevelSummaryViewControllerProvider: PageObject {
     private var uuid: UUID?
 
-    // MARK: PageFactory
+    // MARK: PageObject
 
-    static func createPage() -> Page {
-        return LevelSummaryViewControllerProvider()
-    }
-
-    // MARK: Page
-
-    func register<Token, Context>(with registry: ViewControllerRegistry<Token, Context>) {
+    override func register(with registry: ViewControllerRegistry) {
         uuid = registry.add(registryFunction: createViewController(token:context:))
     }
 
-    func unregister<Token, Context>(from registry: ViewControllerRegistry<Token, Context>) {
+    override func unregister(from registry: ViewControllerRegistry) {
         guard let uuid = uuid else {
             return
         }
@@ -28,12 +22,12 @@ class LevelSummaryViewControllerProvider: PageFactory, Page {
 
     // Private
 
-    private func createViewController<Token, Context>(token: Token, context: Context) -> UIViewController? {
+    private func createViewController(token: Any, context: Context) -> UIViewController? {
         guard
             let id = token as? RegistrationLocator,
             id.identifier == levelSummaryIdentifier,
             let level = id.level,
-            let navigationContext = context as? NavigationContext
+            let navigationContext = context as? ForwardBackNavigationContext
             else {
                 return nil
         }
@@ -52,5 +46,11 @@ class LevelSummaryViewControllerProvider: PageFactory, Page {
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = LevelSummaryViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
         return LevelSummaryViewController(navigationContext: navigationContext, viewModel: viewModel)
+    }
+}
+
+extension RegistrationLocator {
+    static func createLevelSummaryRegistrationLocator(level: Int) -> RegistrationLocator {
+        return RegistrationLocator(identifier: levelSummaryIdentifier, level: level)
     }
 }
