@@ -3,32 +3,13 @@ import UIKit
 
 fileprivate let gameIdentifier = "gameIdentifier"
 
-class GameViewControllerProvider: PageObject {
-    private var uuid: UUID?
+class GameViewControllerProvider: TypedViewControllerProvider {
 
-    // MARK: PageObject
+    // MARK: TypedViewControllerProvider
 
-    override func register(with registry: ViewControllerRegistry) {
-        uuid = registry.add(registryFunction: createViewController(token:context:))
-    }
-
-    override func unregister(from registry: ViewControllerRegistry) {
-        guard let uuid = uuid else {
-            return
-        }
-
-        registry.removeRegistryFunction(uuid: uuid)
-    }
-
-    // MARK: Private
-
-    private func createViewController(token: Any, context: Context) -> UIViewController? {
-        guard
-            let id = token as? RegistrationLocator,
-            id.identifier == gameIdentifier,
-            let level = id.level,
-            let navigationContext = context as? ForwardBackNavigationContext
-            else {
+    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard registrationLocator.identifier == gameIdentifier,
+            let level = registrationLocator.level else {
                 return nil
         }
 
@@ -36,7 +17,7 @@ class GameViewControllerProvider: PageObject {
         let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                               gridDepth: levelConfiguration.gridDepth,
                                               floorSize: floorSize)
-        
+
         let materialFactory = MainMaterialFactory(level: levelConfiguration.level)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,

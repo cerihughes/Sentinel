@@ -3,27 +3,12 @@ import UIKit
 
 fileprivate let stagingAreaIdentifier = "stagingAreaIdentifier"
 
-class StagingAreaViewControllerProvider: PageObject {
-    private var uuid: UUID?
+class StagingAreaViewControllerProvider: TypedViewControllerProvider {
 
-    // MARK: PageObject
+    // MARK: TypedViewControllerProvider
 
-    override func register(with registry: ViewControllerRegistry) {
-        uuid = registry.add(registryFunction: createViewController(token:context:))
-    }
-
-    override func unregister(from registry: ViewControllerRegistry) {
-        guard let uuid = uuid else {
-            return
-        }
-
-        registry.removeRegistryFunction(uuid: uuid)
-    }
-
-    // MARK: Private
-
-    private func createViewController(token: Any, context: Context) -> UIViewController? {
-        guard let id = token as? RegistrationLocator, id.identifier == stagingAreaIdentifier else {
+    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard registrationLocator.identifier == stagingAreaIdentifier else {
             return nil
         }
 

@@ -17,6 +17,6 @@ class IntroViewController: UIViewController {
         super.viewDidAppear(animated)
 
         let rl = RegistrationLocator.createLobbyRegistrationLocator()
-        _ = navigationContext.navigateForward(with: rl, animated: true)
+        _ = navigationContext.navigateForward(token: rl, animated: true)
     }
 }

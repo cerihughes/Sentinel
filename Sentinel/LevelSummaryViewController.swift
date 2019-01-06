@@ -47,6 +47,6 @@ class LevelSummaryViewController: SceneViewController {
         sender.isEnabled = false
 
         let rl = RegistrationLocator.createGameRegistrationLocator(level: viewModel.level)
-        _ = navigationContext.navigateForward(with: rl, animated: true)
+        _ = navigationContext.navigateForward(token: rl, animated: true)
     }
 }

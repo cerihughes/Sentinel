@@ -3,30 +3,12 @@ import UIKit
 
 fileprivate let lobbyIdentifier = "lobbyIdentifier"
 
-class LobbyViewControllerProvider: PageObject {
-    private var uuid: UUID?
+class LobbyViewControllerProvider: TypedViewControllerProvider {
 
-    // MARK: PageObject
+    // MARK: TypedViewControllerProvider
 
-    override func register(with registry: ViewControllerRegistry) {
-        uuid = registry.add(registryFunction: createViewController(token:context:))
-    }
-
-    override func unregister(from registry: ViewControllerRegistry) {
-        guard let uuid = uuid else {
-            return
-        }
-
-        registry.removeRegistryFunction(uuid: uuid)
-    }
-
-    // MARK: Private
-
-    private func createViewController(token: Any, context: Context) -> UIViewController? {
-        guard
-            let id = token as? RegistrationLocator,
-            id.identifier == lobbyIdentifier,
-            let navigationContext = context as? ForwardBackNavigationContext else {
+    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard registrationLocator.identifier == lobbyIdentifier else {
             return nil
         }
 
