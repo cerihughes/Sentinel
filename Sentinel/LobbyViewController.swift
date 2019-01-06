@@ -59,6 +59,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
         let rl = RegistrationLocator.createLevelSummaryRegistrationLocator(level: level)
-        _ = navigationContext.navigateForward(with: rl, animated: true)
+        _ = navigationContext.navigateForward(token: rl, animated: true)
     }
 }

@@ -3,29 +3,12 @@ import UIKit
 
 fileprivate let introIdentifier = "introIdentifier"
 
-class IntroViewControllerProvider: PageObject {
-    private var uuid: UUID?
+class IntroViewControllerProvider: TypedViewControllerProvider {
 
-    // MARK: PageObject
+    // MARK: TypedViewControllerProvider
 
-    override func register(with registry: ViewControllerRegistry) {
-        uuid = registry.add(registryFunction: createViewController(token:context:))
-    }
-
-    override func unregister(from registry: ViewControllerRegistry) {
-        guard let uuid = uuid else {
-            return
-        }
-
-        registry.removeRegistryFunction(uuid: uuid)
-    }
-
-    // Private
-
-    private func createViewController(token: Any, context: Context) -> UIViewController? {
-        guard let navigationContext = context as? ForwardBackNavigationContext,
-            let id = token as? RegistrationLocator,
-            id.identifier == introIdentifier else {
+    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard registrationLocator.identifier == introIdentifier else {
             return nil
         }
 

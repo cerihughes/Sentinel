@@ -3,32 +3,13 @@ import UIKit
 
 fileprivate let levelSummaryIdentifier = "levelSummaryIdentifier"
 
-class LevelSummaryViewControllerProvider: PageObject {
-    private var uuid: UUID?
+class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
 
-    // MARK: PageObject
+    // MARK: TypedViewControllerProvider
 
-    override func register(with registry: ViewControllerRegistry) {
-        uuid = registry.add(registryFunction: createViewController(token:context:))
-    }
-
-    override func unregister(from registry: ViewControllerRegistry) {
-        guard let uuid = uuid else {
-            return
-        }
-
-        registry.removeRegistryFunction(uuid: uuid)
-    }
-
-    // Private
-
-    private func createViewController(token: Any, context: Context) -> UIViewController? {
-        guard
-            let id = token as? RegistrationLocator,
-            id.identifier == levelSummaryIdentifier,
-            let level = id.level,
-            let navigationContext = context as? ForwardBackNavigationContext
-            else {
+    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard registrationLocator.identifier == levelSummaryIdentifier,
+            let level = registrationLocator.level else {
                 return nil
         }
 

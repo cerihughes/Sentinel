@@ -5,16 +5,17 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let window = UIWindow()
-    let madog = Madog(resolver: RuntimeResolver())
+    let madog = Madog<RegistrationLocator>()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window.makeKeyAndVisible()
 
+        madog.resolve(resolver: RuntimeResolver())
         let initialRL = RegistrationLocator.createIntroRegistrationLocator()
-        let identifier = SinglePageUIIdentifier.createNavigationControllerIdentifier { (navigationController) in
+        let identifier = SingleUIIdentifier.createNavigationControllerIdentifier { (navigationController) in
             navigationController.isNavigationBarHidden = true
         }
-        return madog.renderSinglePageUI(identifier, with: initialRL, in: window)
+        return madog.renderUI(identifier: identifier, token: initialRL, in: window)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {}
