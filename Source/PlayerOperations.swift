@@ -11,7 +11,7 @@ enum GameEndState {
     case victory, defeat
 }
 
-protocol PlayerOperationsDelegate: class {
+protocol PlayerOperationsDelegate: AnyObject {
     func playerOperations(_: PlayerOperations, didChange cameraNode: SCNNode)
     func playerOperations(_: PlayerOperations, levelDidEndWith state: GameEndState)
 }

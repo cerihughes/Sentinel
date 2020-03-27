@@ -1,6 +1,6 @@
 import SceneKit
 
-protocol OpponentsOperationsDelegate: class {
+protocol OpponentsOperationsDelegate: AnyObject {
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations)
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
