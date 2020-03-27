@@ -215,8 +215,8 @@
 		6546A835213C0651009F0650 = {
 			isa = PBXGroup;
 			children = (
-				6546A840213C0651009F0650 /* Sentinel */,
-				6546A855213C0652009F0650 /* SentinelTests */,
+				6546A840213C0651009F0650 /* Source */,
+				6546A855213C0652009F0650 /* Tests */,
 				6546A83F213C0651009F0650 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -230,7 +230,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6546A840213C0651009F0650 /* Sentinel */ = {
+		6546A840213C0651009F0650 /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				6529F31C21663559006856DB /* SceneKit Extensions */,
@@ -250,10 +250,10 @@
 				6546A84D213C0652009F0650 /* Info.plist */,
 				659169BA21A8705E008237CA /* Madog.framework */,
 			);
-			path = Sentinel;
+			path = Source;
 			sourceTree = "<group>";
 		};
-		6546A855213C0652009F0650 /* SentinelTests */ = {
+		6546A855213C0652009F0650 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				6546A856213C0652009F0650 /* GridTests.swift */,
@@ -261,7 +261,7 @@
 				65A9E07321417013009011C8 /* GridPointTests.swift */,
 				6546A858213C0652009F0650 /* Info.plist */,
 			);
-			path = SentinelTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		655D5E4D21564CC100BA2F49 /* Game */ = {
@@ -795,7 +795,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = Sentinel/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -817,7 +817,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = Sentinel/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -835,7 +835,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y56955G4Q8;
-				INFOPLIST_FILE = SentinelTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -854,7 +854,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Y56955G4Q8;
-				INFOPLIST_FILE = SentinelTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
