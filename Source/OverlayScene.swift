@@ -32,7 +32,7 @@ class OverlayScene: SKScene {
 
     private func addSprites(for energy: inout Int, at index: inout Int, spriteEnergy: Int, spriteNode: SKSpriteNode) {
         while energy >= spriteEnergy {
-            let copy = spriteNode.copy() as! SKSpriteNode
+            guard let copy = spriteNode.copy() as? SKSpriteNode else { continue }
             copy.position = position(for: index, node: copy)
             energyContainer.addChild(copy)
             energy -= spriteEnergy

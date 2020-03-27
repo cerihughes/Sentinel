@@ -59,7 +59,7 @@ class ValueGenerator {
         let result = min + mod
 
         var seed2 = seeds.remove(at: 0)
-        seed2 = seed2 + mod
+        seed2 += mod
 
         seeds.append(seed)
         seeds.append(seed2)
