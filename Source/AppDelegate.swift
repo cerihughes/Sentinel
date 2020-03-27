@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 #if DEBUG
 extension UIApplicationDelegate {
     var isRunningUnitTests: Bool {
-        return NSClassFromString("XCTest") != nil
+        return UserDefaults.standard.bool(forKey: "isRunningUnitTests")
     }
 }
 #endif

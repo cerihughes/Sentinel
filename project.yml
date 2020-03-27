@@ -11,6 +11,8 @@ schemes:
         - Sentinel
       targets: 
         - SentinelTests
+      commandLineArguments:
+        "-isRunningUnitTests YES": true
 options:
   bundleIdPrefix: uk.co.cerihughes
 targets:
