@@ -94,22 +94,21 @@ class NodeFactory {
 
         for z in 0 ..< depth {
             for x in 0 ..< width {
-                if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
-                    if gridPiece.isFloor {
-                        let node = createFloorNode(x: x,
-                                                   y: Int(gridPiece.level - 1.0),
-                                                   z: z)
-                        terrainNode.addChildNode(node)
-                        nodeMap.add(floorNode: node, for: gridPiece)
-                    } else {
-                        for direction in GridDirection.allCases {
-                            if gridPiece.has(slopeDirection: direction) {
-                                let node = createSlopeNode(x: x,
-                                                           y: Int(gridPiece.level - 0.5),
-                                                           z: z,
-                                                           rotation: rotation(for: direction))
-                                terrainNode.addChildNode(node)
-                            }
+                guard let gridPiece = grid.get(point: GridPoint(x: x, z: z)) else { continue }
+                if gridPiece.isFloor {
+                    let node = createFloorNode(x: x,
+                                               y: Int(gridPiece.level - 1.0),
+                                               z: z)
+                    terrainNode.addChildNode(node)
+                    nodeMap.add(floorNode: node, for: gridPiece)
+                } else {
+                    for direction in GridDirection.allCases {
+                        if gridPiece.has(slopeDirection: direction) {
+                            let node = createSlopeNode(x: x,
+                                                       y: Int(gridPiece.level - 0.5),
+                                                       z: z,
+                                                       rotation: rotation(for: direction))
+                            terrainNode.addChildNode(node)
                         }
                     }
                 }
@@ -117,39 +116,10 @@ class NodeFactory {
         }
 
         addWallNodes(to: terrainNode, grid: grid)
-
-        if grid.get(point: grid.sentinelPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
-            var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
-            if initialAngle > radiansInCircle {
-                initialAngle -= radiansInCircle
-            }
-
-            let rightAngle = initialAngle.closestRightAngle
-            floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
-        }
-
-        for sentryPosition in grid.sentryPositions {
-            if grid.get(point: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
-                var initialAngle = grid.startPosition.angle(to: sentryPosition)
-                if initialAngle > radiansInCircle {
-                    initialAngle -= radiansInCircle
-                }
-
-                let rightAngle = initialAngle.closestRightAngle
-                floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
-            }
-        }
-
-        if grid.get(point: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
-            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
-        }
-
-        for treePosition in grid.treePositions {
-            if grid.get(point: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
-                floorNode.treeNode = createTreeNode(height: 0)
-            }
-        }
+        addSentinelNode(grid: grid, nodeMap: nodeMap)
+        addSentryNodes(grid: grid, nodeMap: nodeMap)
+        addSynthoidNode(grid: grid, nodeMap: nodeMap)
+        addTreeNodes(grid: grid, nodeMap: nodeMap)
 
         return terrainNode
     }
@@ -243,6 +213,47 @@ class NodeFactory {
             let wallNodes = createWallNodes(x: x, z: z, height: Int(height))
             for wallNode in wallNodes {
                 terrainNode.addChildNode(wallNode)
+            }
+        }
+    }
+
+    private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
+        if grid.get(point: grid.sentinelPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+            var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
+            if initialAngle > radiansInCircle {
+                initialAngle -= radiansInCircle
+            }
+
+            let rightAngle = initialAngle.closestRightAngle
+            floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
+        }
+    }
+
+    private func addSentryNodes(grid: Grid, nodeMap: NodeMap) {
+        for sentryPosition in grid.sentryPositions {
+            if grid.get(point: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+                var initialAngle = grid.startPosition.angle(to: sentryPosition)
+                if initialAngle > radiansInCircle {
+                    initialAngle -= radiansInCircle
+                }
+
+                let rightAngle = initialAngle.closestRightAngle
+                floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
+            }
+        }
+    }
+
+    private func addSynthoidNode(grid: Grid, nodeMap: NodeMap) {
+        if grid.get(point: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
+            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
+            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
+        }
+    }
+
+    private func addTreeNodes(grid: Grid, nodeMap: NodeMap) {
+        for treePosition in grid.treePositions {
+            if grid.get(point: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
+                floorNode.treeNode = createTreeNode(height: 0)
             }
         }
     }
