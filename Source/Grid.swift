@@ -42,7 +42,7 @@ enum GridDirection: Int, CaseIterable {
 
     static func allValues(except direction: GridDirection) -> [GridDirection] {
         var directions = allCases
-        if let index = directions.index(of: direction) {
+        if let index = directions.firstIndex(of: direction) {
             directions.remove(at: index)
         }
         return directions
