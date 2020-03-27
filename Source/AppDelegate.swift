@@ -3,11 +3,21 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    let window = UIWindow()
+    var window: UIWindow?
     let madog = Madog<RegistrationLocator>()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let window = UIWindow()
         window.makeKeyAndVisible()
+
+        self.window = window
+
+        #if DEBUG
+        if isRunningUnitTests {
+            window.rootViewController = UIViewController()
+            return true
+        }
+        #endif
 
         madog.resolve(resolver: RuntimeResolver())
         let initialRL = RegistrationLocator.createIntroRegistrationLocator()
@@ -16,10 +26,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return madog.renderUI(identifier: identifier, token: initialRL, in: window)
     }
-
-    func applicationWillResignActive(_ application: UIApplication) {}
-    func applicationDidEnterBackground(_ application: UIApplication) {}
-    func applicationWillEnterForeground(_ application: UIApplication) {}
-    func applicationDidBecomeActive(_ application: UIApplication) {}
-    func applicationWillTerminate(_ application: UIApplication) {}
 }
+
+#if DEBUG
+extension UIApplicationDelegate {
+    var isRunningUnitTests: Bool {
+        return NSClassFromString("XCTest") != nil
+    }
+}
+#endif
