@@ -44,7 +44,7 @@ class TerrainOperations {
     func absorbTreeNode(at point: GridPoint) -> Bool {
         guard
             nodeManipulator.absorbTree(at: point),
-            let index = grid.treePositions.index(of: point)
+            let index = grid.treePositions.firstIndex(of: point)
         else {
             return false
         }
@@ -54,7 +54,7 @@ class TerrainOperations {
     }
 
     func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
-        guard let index = grid.rockPositions.index(of: point) else {
+        guard let index = grid.rockPositions.firstIndex(of: point) else {
             return false
         }
 
@@ -76,7 +76,7 @@ class TerrainOperations {
     func absorbSynthoidNode(at point: GridPoint) -> Bool {
         guard
             nodeManipulator.absorbSynthoid(at: point),
-            let index = grid.synthoidPositions.index(of: point)
+            let index = grid.synthoidPositions.firstIndex(of: point)
         else {
             return false
         }
@@ -88,7 +88,7 @@ class TerrainOperations {
     func absorbSentryNode(at point: GridPoint) -> Bool {
         guard
             nodeManipulator.absorbSentry(at: point),
-            let index = grid.sentryPositions.index(of: point)
+            let index = grid.sentryPositions.firstIndex(of: point)
         else {
             return false
         }
