@@ -1,7 +1,6 @@
 import XCTest
 
 class GridPointTests: XCTestCase {
-
     let epsilon: Float = 0.0001
 
     func testAdjacentPointToRight() {
@@ -15,7 +14,7 @@ class GridPointTests: XCTestCase {
         let pointA = GridPoint(x: 0, z: 0)
         let pointB = GridPoint(x: 1, z: 1)
 
-        XCTAssertEqual(pointA.angle(to: pointB), Float.pi * 1.25 , accuracy: epsilon)
+        XCTAssertEqual(pointA.angle(to: pointB), Float.pi * 1.25, accuracy: epsilon)
     }
 
     func testAdjacentPointToFront() {
@@ -43,7 +42,7 @@ class GridPointTests: XCTestCase {
         let pointA = GridPoint(x: 0, z: 0)
         let pointB = GridPoint(x: -1, z: -1)
 
-        XCTAssertEqual(pointA.angle(to: pointB), Float.pi * 0.25 , accuracy: epsilon)
+        XCTAssertEqual(pointA.angle(to: pointB), Float.pi * 0.25, accuracy: epsilon)
     }
 
     func testAdjacentToBack() {

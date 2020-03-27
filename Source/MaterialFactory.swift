@@ -1,10 +1,10 @@
 import SceneKit
 
 protocol MaterialFactory {
-    var floor1Colour: UIColor {get}
-    var floor2Colour: UIColor {get}
-    var slope1Colour: UIColor {get}
-    var slope2Colour: UIColor {get}
+    var floor1Colour: UIColor { get }
+    var floor2Colour: UIColor { get }
+    var slope1Colour: UIColor { get }
+    var slope2Colour: UIColor { get }
 }
 
 class MainMaterialFactory: MaterialFactory {

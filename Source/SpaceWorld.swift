@@ -9,7 +9,7 @@ class SpaceWorld: World {
 
     init(nodeFactory: NodeFactory) {
         self.nodeFactory = nodeFactory
-        self.initialCameraNode = nodeFactory.createCameraNode()
+        initialCameraNode = nodeFactory.createCameraNode()
 
         setupScene()
     }

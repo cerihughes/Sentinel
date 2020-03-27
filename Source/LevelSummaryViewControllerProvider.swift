@@ -1,16 +1,15 @@
 import Madog
 import UIKit
 
-fileprivate let levelSummaryIdentifier = "levelSummaryIdentifier"
+private let levelSummaryIdentifier = "levelSummaryIdentifier"
 
 class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
-
     // MARK: TypedViewControllerProvider
 
     override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
         guard registrationLocator.identifier == levelSummaryIdentifier,
             let level = registrationLocator.level else {
-                return nil
+            return nil
         }
 
         let levelConfiguration = MainLevelConfiguration(level: level)

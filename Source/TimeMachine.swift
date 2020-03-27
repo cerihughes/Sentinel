@@ -15,7 +15,7 @@ import SceneKit
  over the run loop.
  */
 class TimeMachine {
-    private var timingFunctions: [UUID:TimeEngineData] = [:]
+    private var timingFunctions: [UUID: TimeEngineData] = [:]
     private var started = false
 
     func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID? {
@@ -78,10 +78,10 @@ class TimeMachine {
     private class TimeEngineData {
         let timeInterval: TimeInterval
         let function: (TimeInterval, SCNSceneRenderer, Any?) -> Any?
-        var lastResults: Any? = nil
+        var lastResults: Any?
         var initialOffset: TimeInterval = 0.0
 
-        private var nextTimeInterval: TimeInterval? = nil
+        private var nextTimeInterval: TimeInterval?
 
         init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) {
             self.timeInterval = timeInterval

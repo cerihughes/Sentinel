@@ -1,16 +1,15 @@
 import Madog
 import UIKit
 
-fileprivate let gameIdentifier = "gameIdentifier"
+private let gameIdentifier = "gameIdentifier"
 
 class GameViewControllerProvider: TypedViewControllerProvider {
-
     // MARK: TypedViewControllerProvider
 
     override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
         guard registrationLocator.identifier == gameIdentifier,
             let level = registrationLocator.level else {
-                return nil
+            return nil
         }
 
         let levelConfiguration = MainLevelConfiguration(level: level)

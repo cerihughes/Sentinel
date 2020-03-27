@@ -3,7 +3,7 @@ import SceneKit
 extension SCNNode {
     func firstPlaceableParent() -> PlaceableNode? {
         var placeableNode: SCNNode? = self
-        while placeableNode != nil && placeableNode as? PlaceableNode == nil {
+        while placeableNode != nil, placeableNode as? PlaceableNode == nil {
             placeableNode = placeableNode?.parent
         }
         return placeableNode as? PlaceableNode
@@ -16,12 +16,12 @@ extension SCNNode {
                 return (interactiveNode, noninteractiveTransparentNodeBitMask)
             }
 
-            if  interactiveNode.isNonInteractiveBlocking() {
+            if interactiveNode.isNonInteractiveBlocking() {
                 return (interactiveNode, noninteractiveBlockingNodeBitMask)
             }
 
             let parent = interactiveNode.parent
-            if (parent != nil) {
+            if parent != nil {
                 interactiveNode = parent!
             } else {
                 return nil

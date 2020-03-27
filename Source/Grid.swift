@@ -42,7 +42,7 @@ enum GridDirection: Int, CaseIterable {
 
     static func allValues(except direction: GridDirection) -> [GridDirection] {
         var directions = allCases
-        if let index = directions.index(of:direction) {
+        if let index = directions.index(of: direction) {
             directions.remove(at: index)
         }
         return directions
@@ -121,8 +121,8 @@ class Grid {
         guard
             0 ..< width ~= x,
             0 ..< depth ~= z
-            else {
-                return nil
+        else {
+            return nil
         }
 
         return grid[z][x]
@@ -166,7 +166,7 @@ class Grid {
                 return
             }
 
-            if (level - nextLevel == 1.0) {
+            if level - nextLevel == 1.0 {
                 buildFloor(point: nextPoint)
             }
 

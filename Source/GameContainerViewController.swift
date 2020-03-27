@@ -20,7 +20,7 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
         let overlay = viewModel.playerOperations.overlay
-        self.mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
+        mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -66,8 +66,16 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
                                                 constant: 0)
         let containerHeight = opponentViewContainer.heightAnchor.constraint(equalTo: view.heightAnchor)
 
-        NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight,
-                                     containerRight, containerTop, containerWidth, containerHeight])
+        NSLayoutConstraint.activate([
+            mainCenterX,
+            mainCenterY,
+            mainWidth,
+            mainHeight,
+            containerRight,
+            containerTop,
+            containerWidth,
+            containerHeight
+        ])
 
         inputHandler.addGestureRecognisers(to: sceneView)
         viewModel.playerOperations.preAnimationBlock = {
@@ -164,8 +172,8 @@ class OpponentViewContainer: UIView {
     }
 
     override func layoutSubviews() {
-        let availableVerticalSpace = self.frame.height - (topBottomSpacing * 2.0)
-        let width = self.frame.width
+        let availableVerticalSpace = frame.height - (topBottomSpacing * 2.0)
+        let width = frame.width
         let height = width / aspectRatio
         let usedVerticalSpace = height * CGFloat(maxViews)
         let freeVerticalSpace = availableVerticalSpace - usedVerticalSpace

@@ -30,7 +30,7 @@ class TerrainGenerator {
         grid.treePositions = generateTrees(gen: gen, levelConfiguration: levelConfiguration)
 
         normalise()
-        
+
         grid.processSlopes()
 
         return grid
@@ -113,9 +113,9 @@ class TerrainGenerator {
         }
 
         // Sort by level
-        sentryPieces = sentryPieces.sorted { return $0.level < $1.level }
+        sentryPieces = sentryPieces.sorted { $0.level < $1.level }
 
-        let points = sentryPieces.map { return $0.point }
+        let points = sentryPieces.map { $0.point }
         return Set(points.prefix(sentries))
     }
 
@@ -136,7 +136,7 @@ class TerrainGenerator {
         let index = gen.next(range: 0 ..< startPieces.count - 1)
         let point = startPieces[index].point
         grid.synthoidPositions.insert(point)
-        
+
         return point
     }
 
@@ -191,7 +191,7 @@ class TerrainGenerator {
 
         for i in x ... maxX {
             for j in z ... maxZ {
-                grid.build(at: GridPoint(x:i, z: j))
+                grid.build(at: GridPoint(x: i, z: j))
             }
         }
     }
@@ -204,7 +204,7 @@ class TerrainGenerator {
         var treePoints: Set<GridPoint> = []
 
         var count = gen.next(range: countRange) / 4
-        if (count > allPieces.count) {
+        if count > allPieces.count {
             count = allPieces.count
         }
 
@@ -223,7 +223,7 @@ class TerrainGenerator {
 
         for i in x ... maxX {
             for j in z ... maxZ {
-                grid.build(at: GridPoint(x:i, z: j))
+                grid.build(at: GridPoint(x: i, z: j))
             }
         }
     }

@@ -58,7 +58,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
 
     func visibleTreesOnRocks(in renderer: SCNSceneRenderer) -> [TreeNode] {
         let allTrees = visibleNodes(in: renderer, type: TreeNode.self)
-        return allTrees.filter { $0.floorNode != nil && $0.floorNode!.rockNodes.count > 0 } // only return trees that have rocks under them
+        return allTrees.filter { $0.floorNode != nil && !$0.floorNode!.rockNodes.isEmpty } // only return trees that have rocks under them
     }
 
     func rotate(by radians: Float, duration: TimeInterval) {
@@ -66,7 +66,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         let toValue = fromValue + radians
         SCNTransaction.begin()
         SCNTransaction.animationDuration = duration
-        rotation.w = toValue        
+        rotation.w = toValue
         SCNTransaction.commit()
     }
 
@@ -93,7 +93,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
             let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
             let endPosition = worldNode.convertPosition(detectionPresentationNode.worldPosition, to: nil)
 
-            let options: [String:Any] = [SCNHitTestOption.searchMode.rawValue:SCNHitTestSearchMode.all.rawValue]
+            let options: [String: Any] = [SCNHitTestOption.searchMode.rawValue: SCNHitTestSearchMode.all.rawValue]
             let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: options)
             for hit in hits {
                 if let placeableHit = hit.node.firstPlaceableParent() as? SCNNode {

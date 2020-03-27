@@ -1,10 +1,9 @@
 import Madog
 import UIKit
 
-fileprivate let introIdentifier = "introIdentifier"
+private let introIdentifier = "introIdentifier"
 
 class IntroViewControllerProvider: TypedViewControllerProvider {
-
     // MARK: TypedViewControllerProvider
 
     override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {

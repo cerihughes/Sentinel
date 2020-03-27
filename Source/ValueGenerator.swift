@@ -44,7 +44,7 @@ class ValueGenerator {
         return next(min: range.lowerBound, max: range.upperBound)
     }
 
-    func next(array: Array<Any>) -> Int {
+    func next(array: [Any]) -> Int {
         return next(min: 0, max: array.count - 1)
     }
 

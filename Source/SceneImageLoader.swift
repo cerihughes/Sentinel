@@ -20,12 +20,12 @@ class SceneImageLoader {
     func loadImage(level: Int, size: CGSize, completion: @escaping (UIImage, TimeInterval) -> Void) -> SceneImageLoaderToken {
         let operation = SceneImageLoaderOperation(cache: cache, level: level, size: size, completion: completion)
         operationQueue.addOperation(operation)
-        if level < 99 && cache[level + 1] == nil {
-            let nextCacheOperation = SceneImageLoaderOperation(cache: cache, level: level + 1, size: size) {_,_ in}
+        if level < 99, cache[level + 1] == nil {
+            let nextCacheOperation = SceneImageLoaderOperation(cache: cache, level: level + 1, size: size) { _, _ in }
             operationQueue.addOperation(nextCacheOperation)
         }
-        if level > 0 && cache[level - 1] == nil {
-            let previousCacheOperation = SceneImageLoaderOperation(cache: cache, level: level - 1, size: size) {_,_ in}
+        if level > 0, cache[level - 1] == nil {
+            let previousCacheOperation = SceneImageLoaderOperation(cache: cache, level: level - 1, size: size) { _, _ in }
             operationQueue.addOperation(previousCacheOperation)
         }
         return operation
@@ -41,7 +41,7 @@ class SceneImageLoader {
             self.cache = cache
             self.level = level
             self.completion = completion
-            self.view = SCNView(frame: CGRect(origin: CGPoint(x: 0.0, y: 0.0), size: size))
+            view = SCNView(frame: CGRect(origin: CGPoint(x: 0.0, y: 0.0), size: size))
 
             super.init()
         }

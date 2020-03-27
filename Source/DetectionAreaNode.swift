@@ -21,7 +21,7 @@ class DetectionAreaNode: SCNNode {
         sphere.firstMaterial = material
 
         geometry = sphere
-        
+
         name = detectionAreaNodeName
         categoryBitMask |= noninteractiveTransparentNodeBitMask
     }

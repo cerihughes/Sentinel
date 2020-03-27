@@ -27,7 +27,7 @@ class SkyBox {
     }
 
     private func crop(x: Int, y: Int, dimension: CGFloat, into images: inout [UIImage]) {
-        let origin = CGPoint(x: CGFloat(x) * dimension , y: CGFloat(y) * dimension)
+        let origin = CGPoint(x: CGFloat(x) * dimension, y: CGFloat(y) * dimension)
         let size = CGSize(width: dimension, height: dimension)
         let rect = CGRect(origin: origin, size: size)
         if let image = crop(rect: rect) {
@@ -41,6 +41,6 @@ class SkyBox {
             return nil
         }
 
-        return UIImage(cgImage:cgImage)
+        return UIImage(cgImage: cgImage)
     }
 }

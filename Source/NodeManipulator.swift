@@ -95,8 +95,8 @@ class NodeManipulator {
             let floorNode = nodeMap.getFloorNode(for: point),
             floorNode.treeNode == nil,
             floorNode.synthoidNode == nil
-            else {
-                return false
+        else {
+            return false
         }
         return absorb(node: floorNode.rockNodes.last)
     }
@@ -121,4 +121,3 @@ class NodeManipulator {
         return false
     }
 }
-

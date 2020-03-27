@@ -2,7 +2,7 @@ import SceneKit
 
 let synthoidNodeName = "synthoidNodeName"
 
-fileprivate let elevationLock = Float.pi / 6.0
+private let elevationLock = Float.pi / 6.0
 
 class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
     private var rotationRadians: Float = 0.0

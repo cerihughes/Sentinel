@@ -1,10 +1,9 @@
 import Madog
 import UIKit
 
-fileprivate let lobbyIdentifier = "lobbyIdentifier"
+private let lobbyIdentifier = "lobbyIdentifier"
 
 class LobbyViewControllerProvider: TypedViewControllerProvider {
-
     // MARK: TypedViewControllerProvider
 
     override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {

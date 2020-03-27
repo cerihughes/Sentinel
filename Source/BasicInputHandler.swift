@@ -21,7 +21,7 @@ class BasicInputHandler: GameInputHandler {
         let longPressRecogniser = UILongPressGestureRecognizer()
         let panRecogniser = UIPanGestureRecognizer()
 
-        self.gestureRecognisers = [tapRecogniser, longPressRecogniser, panRecogniser]
+        gestureRecognisers = [tapRecogniser, longPressRecogniser, panRecogniser]
 
         tapRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
 
@@ -110,10 +110,9 @@ class BasicInputHandler: GameInputHandler {
         return false
     }
 
-
     private func process(interaction: UserInteraction, node: SCNNode) -> Bool {
-        switch (interaction) {
-        case (.tap):
+        switch interaction {
+        case .tap:
             if let floorNode = node as? FloorNode,
                 let point = nodeManipulator.point(for: floorNode) {
                 return processTap(floorNode: floorNode, point: point)
@@ -121,7 +120,7 @@ class BasicInputHandler: GameInputHandler {
                 playerOperations.move(to: synthoidNode)
                 return true
             }
-        case (.longPress):
+        case .longPress:
             if let floorNode = node as? FloorNode,
                 let point = nodeManipulator.point(for: floorNode) {
                 return processLongPress(floorNode: floorNode, point: point)
@@ -138,7 +137,7 @@ class BasicInputHandler: GameInputHandler {
             return false
         } else if floorNode.treeNode != nil {
             playerOperations.buildRock(at: point)
-        } else if floorNode.rockNodes.count > 0 && floorNode.synthoidNode == nil {
+        } else if !floorNode.rockNodes.isEmpty, floorNode.synthoidNode == nil {
             playerOperations.buildRock(at: point)
         } else if let synthoidNode = floorNode.synthoidNode {
             playerOperations.move(to: synthoidNode)
@@ -182,5 +181,4 @@ class BasicInputHandler: GameInputHandler {
 
         return false
     }
-
 }

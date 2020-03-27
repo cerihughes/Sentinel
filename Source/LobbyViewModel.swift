@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-fileprivate let imageLoadThreshold: TimeInterval = 0.1
+private let imageLoadThreshold: TimeInterval = 0.1
 
 let lobbyViewModelReuseIdentifier = "lobbyViewModelReuseIdentifier"
 
@@ -11,7 +11,7 @@ protocol LobbyViewModelDelegate: class {
 
 class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDelegate {
     private let sceneImageLoader = SceneImageLoader()
-    private var sceneImageLoaderTokens: [IndexPath:SceneImageLoaderToken] = [:]
+    private var sceneImageLoaderTokens: [IndexPath: SceneImageLoaderToken] = [:]
 
     weak var delegate: LobbyViewModelDelegate?
 
@@ -40,7 +40,7 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
 
         cell.terrainIndex = level
 
-        let token = sceneImageLoader.loadImage(level: level, size: size) { (image, timeInterval) in
+        let token = sceneImageLoader.loadImage(level: level, size: size) { image, timeInterval in
             if cell.terrainIndex == level {
                 let duration = (timeInterval < imageLoadThreshold) ? 0.0 : 0.3
                 UIView.transition(with: cell.imageView,

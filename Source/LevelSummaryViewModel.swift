@@ -7,7 +7,7 @@ class LevelSummaryViewModel {
 
     init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
         self.world = world
-        self.level = levelConfiguration.level
+        level = levelConfiguration.level
 
         let tg = TerrainGenerator()
         let grid = tg.generate(levelConfiguration: levelConfiguration)
@@ -18,7 +18,7 @@ class LevelSummaryViewModel {
 
         let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
 
-        self.terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
+        terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
     }
 
     func startAnimations() {

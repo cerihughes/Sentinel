@@ -1,3 +1,3 @@
 protocol PlaceableNode {
-    var floorNode: FloorNode? {get}
+    var floorNode: FloorNode? { get }
 }

@@ -103,7 +103,7 @@ class FloorNode: SCNNode {
         return last
     }
 
-    var topmostNode: (SCNNode&PlaceableNode)? {
+    var topmostNode: (SCNNode & PlaceableNode)? {
         return treeNode ?? sentinelNode ?? sentryNode ?? synthoidNode ?? rockNodes.last
     }
 }

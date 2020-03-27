@@ -7,10 +7,10 @@ import SceneKit
 
  The "owning" view will be passed into the addGestureReconisers(view:) call, and these should be enabled / disabled on
  calls to setGestureRecognisersEnabled(_:)
-*/
+ */
 protocol GameInputHandler {
-    var playerOperations: PlayerOperations {get}
-    var opponentsOperations: OpponentsOperations {get}
+    var playerOperations: PlayerOperations { get }
+    var opponentsOperations: OpponentsOperations { get }
 
     func addGestureRecognisers(to view: UIView)
     func setGestureRecognisersEnabled(_ isEnabled: Bool)

@@ -15,7 +15,7 @@ class CameraNode: SCNNode {
         } else {
             camera.automaticallyAdjustsZRange = true
         }
-        self.name = cameraNodeName
+        name = cameraNodeName
         self.camera = camera
     }
 

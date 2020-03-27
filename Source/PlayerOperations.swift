@@ -36,16 +36,16 @@ class PlayerOperations {
         self.terrainOperations = terrainOperations
         self.initialCameraNode = initialCameraNode
 
-        self.nodeManipulator = terrainOperations.nodeManipulator
-        self.grid = terrainOperations.grid
+        nodeManipulator = terrainOperations.nodeManipulator
+        grid = terrainOperations.grid
         overlay.energy = 10
     }
 
     func adjustEnergy(delta: Int) {
         guard
             let delegate = delegate
-            else {
-                return
+        else {
+            return
         }
 
         overlay.energy += delta
@@ -81,8 +81,8 @@ class PlayerOperations {
     func move(to synthoidNode: SynthoidNode) {
         guard let floorNode = synthoidNode.floorNode,
             let point = nodeManipulator.point(for: floorNode)
-            else {
-                return
+        else {
+            return
         }
 
         moveCamera(to: synthoidNode, animationDuration: 1.0)
@@ -104,7 +104,7 @@ class PlayerOperations {
             return
         }
 
-        if (grid.treePositions.contains(point)) {
+        if grid.treePositions.contains(point) {
             adjustEnergy(delta: treeEnergyValue)
         }
 
@@ -208,8 +208,8 @@ class PlayerOperations {
         guard
             let delegate = delegate,
             let parent = from.parent
-            else {
-                return
+        else {
+            return
         }
 
         if let preAnimationBlock = preAnimationBlock {

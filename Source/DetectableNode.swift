@@ -1,5 +1,5 @@
 import SceneKit
 
 protocol DetectableNode {
-    var detectionNodes: [SCNNode] {get}
+    var detectionNodes: [SCNNode] { get }
 }

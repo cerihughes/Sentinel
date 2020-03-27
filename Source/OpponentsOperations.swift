@@ -21,8 +21,8 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
         self.levelConfiguration = levelConfiguration
         self.terrainOperations = terrainOperations
 
-        self.nodeManipulator = terrainOperations.nodeManipulator
-        self.grid = terrainOperations.grid
+        nodeManipulator = terrainOperations.nodeManipulator
+        grid = terrainOperations.grid
 
         super.init()
 
@@ -33,7 +33,7 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
         let gridIndex = GridIndex(grid: grid)
         let emptyPieces = gridIndex.allPieces()
 
-        guard emptyPieces.count > 0 else {
+        guard !emptyPieces.isEmpty else {
             return
         }
 
@@ -106,15 +106,15 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
         guard
             let delegate = delegate,
             let synthoidNode = nodeManipulator.currentSynthoidNode
-            else {
-                return lastResult
+        else {
+            return lastResult
         }
 
         let opponentNodes = nodeManipulator.terrainNode.opponentNodes
         let detectingOpponentNodes = nodes(opponentNodes, thatSee: synthoidNode, in: playerRenderer)
         let detectingCameraNodes = Set(detectingOpponentNodes.map { $0.cameraNode })
         let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
-        if detectingCameraNodes.intersection(lastCameraNodes).count > 0 {
+        if !detectingCameraNodes.intersection(lastCameraNodes).isEmpty {
             // Seen by a camera for more than 1 "cycle"...
             delegate.opponentsOperationsDidDepleteEnergy(self)
             buildRandomTree()

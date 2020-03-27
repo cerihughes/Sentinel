@@ -37,7 +37,7 @@ class EyeNode: SCNNode {
         if let detectionRadius = detectionRadius {
             camera.zFar = Double(detectionRadius)
             if useVisionNode {
-                let visionNode = VisionNode(camera: camera, aspectRatio: 1024.0/768.0)
+                let visionNode = VisionNode(camera: camera, aspectRatio: 1024.0 / 768.0)
                 visionNode.position = SCNVector3Make(0, 0, Float(-camera.zFar))
                 cameraNode.addChildNode(visionNode)
             }

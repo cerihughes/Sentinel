@@ -4,29 +4,29 @@ import Foundation
  Describes the level and what it's made up of (trees, terrain, opponents, opponent behaviour etc.)
  */
 protocol LevelConfiguration {
-    var level: Int {get}
+    var level: Int { get }
 
-    var opponentDetectionRadius: Float {get}
-    var opponentRotationSteps: Int {get}
-    var opponentRotationTime: TimeInterval {get}
-    var opponentRotationPause: TimeInterval {get}
+    var opponentDetectionRadius: Float { get }
+    var opponentRotationSteps: Int { get }
+    var opponentRotationTime: TimeInterval { get }
+    var opponentRotationPause: TimeInterval { get }
 
-    var gridWidth: Int {get}
-    var gridDepth: Int {get}
+    var gridWidth: Int { get }
+    var gridDepth: Int { get }
 
-    var sentinelPlatformHeight: Int {get}
-    var sentryCount: Int {get}
+    var sentinelPlatformHeight: Int { get }
+    var sentryCount: Int { get }
 
-    var largePlateauSizeRange: CountableRange<Int> {get}
-    var largePlateauCountRange: CountableRange<Int> {get}
-    var smallPlateauSizeRange: CountableRange<Int> {get}
-    var smallPlateauCountRange: CountableRange<Int> {get}
+    var largePlateauSizeRange: CountableRange<Int> { get }
+    var largePlateauCountRange: CountableRange<Int> { get }
+    var smallPlateauSizeRange: CountableRange<Int> { get }
+    var smallPlateauCountRange: CountableRange<Int> { get }
 
-    var largePeakCountRange: CountableRange<Int> {get}
-    var mediumPeakCountRange: CountableRange<Int> {get}
-    var smallPeakCountRange: CountableRange<Int> {get}
+    var largePeakCountRange: CountableRange<Int> { get }
+    var mediumPeakCountRange: CountableRange<Int> { get }
+    var smallPeakCountRange: CountableRange<Int> { get }
 
-    var treeCountRange: CountableRange<Int> {get}
+    var treeCountRange: CountableRange<Int> { get }
 }
 
 struct MainLevelConfiguration: LevelConfiguration {
@@ -98,7 +98,7 @@ struct MainLevelConfiguration: LevelConfiguration {
 
         let minCount = (16 - adjustment)
         let maxCount = (24 - adjustment)
-        return minCount..<maxCount
+        return minCount ..< maxCount
     }
 }
 

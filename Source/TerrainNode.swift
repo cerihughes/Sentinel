@@ -29,5 +29,4 @@ class TerrainNode: SCNNode {
         nodes.append(contentsOf: sentryNodes)
         return nodes
     }
-
 }

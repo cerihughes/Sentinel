@@ -1,8 +1,8 @@
 import XCTest
+
 @testable import Sentinel
 
 class GridIndexTests: XCTestCase {
-
     func testNoBuilding() {
         let grid = Grid(width: 1, depth: 1)
 

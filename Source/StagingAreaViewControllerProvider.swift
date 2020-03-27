@@ -1,10 +1,9 @@
 import Madog
 import UIKit
 
-fileprivate let stagingAreaIdentifier = "stagingAreaIdentifier"
+private let stagingAreaIdentifier = "stagingAreaIdentifier"
 
 class StagingAreaViewControllerProvider: TypedViewControllerProvider {
-
     // MARK: TypedViewControllerProvider
 
     override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {

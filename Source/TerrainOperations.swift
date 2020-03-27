@@ -35,7 +35,7 @@ class TerrainOperations {
                 return absorbRockNode(at: point, isFinalRockNode: topmostNode == floorNode.rockNodes.last)
             }
             if topmostNode is SynthoidNode {
-                return  absorbSynthoidNode(at: point)
+                return absorbSynthoidNode(at: point)
             }
         }
         return false
@@ -45,8 +45,8 @@ class TerrainOperations {
         guard
             nodeManipulator.absorbTree(at: point),
             let index = grid.treePositions.index(of: point)
-            else {
-                return false
+        else {
+            return false
         }
 
         grid.treePositions.remove(at: index)
@@ -77,8 +77,8 @@ class TerrainOperations {
         guard
             nodeManipulator.absorbSynthoid(at: point),
             let index = grid.synthoidPositions.index(of: point)
-            else {
-                return false
+        else {
+            return false
         }
 
         grid.synthoidPositions.remove(at: index)
@@ -89,8 +89,8 @@ class TerrainOperations {
         guard
             nodeManipulator.absorbSentry(at: point),
             let index = grid.sentryPositions.index(of: point)
-            else {
-                return false
+        else {
+            return false
         }
 
         grid.sentryPositions.remove(at: index)

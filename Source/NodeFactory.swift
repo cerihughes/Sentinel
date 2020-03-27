@@ -33,7 +33,7 @@ class NodeFactory {
     init(nodePositioning: NodePositioning,
          detectionRadius: Float,
          materialFactory: MaterialFactory,
-         options:[NodeFactoryOption] = []) {
+         options: [NodeFactoryOption] = []) {
         self.nodePositioning = nodePositioning
         self.options = options
 
@@ -202,7 +202,7 @@ class NodeFactory {
 
         if let visionNode = node.childNode(withName: visionNodeName, recursively: true),
             let gaussianBlurFilter = CIFilter(name: "CIGaussianBlur") {
-            visionNode.filters = [ gaussianBlurFilter ]
+            visionNode.filters = [gaussianBlurFilter]
         }
     }
 

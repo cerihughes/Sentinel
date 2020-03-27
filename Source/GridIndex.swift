@@ -45,7 +45,7 @@ enum GridQuadrant: CaseIterable {
  For a given Grid (or part of a Grid), this represents a read-only description of its contents.
  */
 struct GridIndex {
-    private let index: [Int:[GridPiece]]
+    private let index: [Int: [GridPiece]]
 
     init(grid: Grid) {
         self.init(grid: grid, minX: 0, maxX: grid.width, minZ: 0, maxZ: grid.depth)
@@ -62,7 +62,7 @@ struct GridIndex {
     }
 
     init(grid: Grid, minX: Int, maxX: Int, minZ: Int, maxZ: Int) {
-        var i: [Int:[GridPiece]] = [:]
+        var i: [Int: [GridPiece]] = [:]
 
         for z in minZ ..< maxZ {
             for x in minX ..< maxX {
@@ -116,7 +116,7 @@ struct GridIndex {
         for level in floorLevels() {
             allPieces.append(contentsOf: pieces(at: level))
         }
-        
+
         return allPieces
     }
 

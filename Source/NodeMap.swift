@@ -1,8 +1,8 @@
 import SceneKit
 
 class NodeMap {
-    private var nodeMap: [FloorNode:GridPiece] = [:]
-    private var pointMap: [GridPoint:FloorNode] = [:]
+    private var nodeMap: [FloorNode: GridPiece] = [:]
+    private var pointMap: [GridPoint: FloorNode] = [:]
 
     func add(floorNode: FloorNode, for piece: GridPiece) {
         nodeMap[floorNode] = piece

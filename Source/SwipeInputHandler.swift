@@ -35,7 +35,7 @@ enum SwipeState {
     }
 }
 
-fileprivate let threshold: CGFloat = 200.0
+private let threshold: CGFloat = 200.0
 
 class SwipeInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
@@ -44,25 +44,27 @@ class SwipeInputHandler: GameInputHandler {
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
 
-    private let hitTestOptions:[SCNHitTestOption:Any]
+    private let hitTestOptions: [SCNHitTestOption: Any]
 
-    private var startTapPoint: CGPoint? = nil
-    private var floorNode: FloorNode? = nil
+    private var startTapPoint: CGPoint?
+    private var floorNode: FloorNode?
 
     init(playerOperations: PlayerOperations, opponentsOperations: OpponentsOperations, nodeManipulator: NodeManipulator) {
         self.playerOperations = playerOperations
         self.opponentsOperations = opponentsOperations
         self.nodeManipulator = nodeManipulator
 
-        self.hitTestOptions = [SCNHitTestOption.searchMode:SCNHitTestSearchMode.all.rawValue,
-                               SCNHitTestOption.rootNode:nodeManipulator.terrainNode]
+        hitTestOptions = [
+            SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue,
+            SCNHitTestOption.rootNode: nodeManipulator.terrainNode
+        ]
 
         let tapRecogniser = UITapGestureRecognizer()
         let doubleTapRecogniser = UITapGestureRecognizer()
         let longPressRecogniser = UILongPressGestureRecognizer()
         let panRecogniser = UIPanGestureRecognizer()
 
-        self.gestureRecognisers = [tapRecogniser, doubleTapRecogniser, longPressRecogniser, panRecogniser]
+        gestureRecognisers = [tapRecogniser, doubleTapRecogniser, longPressRecogniser, panRecogniser]
 
         tapRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
 
@@ -139,11 +141,11 @@ class SwipeInputHandler: GameInputHandler {
         if state == .began {
             let hitTestResults = sceneView.hitTest(point, options: hitTestOptions)
             if let floorNode = floorNode(for: hitTestResults) {
-                self.startTapPoint = point
+                startTapPoint = point
                 self.floorNode = floorNode
             } else {
-                self.startTapPoint = nil
-                self.floorNode = nil
+                startTapPoint = nil
+                floorNode = nil
 
                 // Toggle the state to "cancel" the gesture
                 sender.isEnabled = false
@@ -161,7 +163,7 @@ class SwipeInputHandler: GameInputHandler {
         }
     }
 
-    private func swipe(from point1: CGPoint, to point2: CGPoint ) -> (direction: SwipeDirection, delta: CGFloat) {
+    private func swipe(from point1: CGPoint, to point2: CGPoint) -> (direction: SwipeDirection, delta: CGFloat) {
         let deltaX = point2.x - point1.x
         let deltaY = point2.y - point1.y
         let absDeltaX = deltaX < 0 ? -deltaX : deltaX
@@ -183,7 +185,6 @@ class SwipeInputHandler: GameInputHandler {
             }
         }
     }
-
 
     private func floorNode(for hitTestResults: [SCNHitTestResult]) -> FloorNode? {
         if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
@@ -235,9 +236,9 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processAbsorb(floorNode: FloorNode, swipeState: SwipeState) {
         switch swipeState {
-        case .building(let scale):
+        case let .building(scale):
             processInProgressAbsorb(floorNode: floorNode, scale: scale)
-        case .finished(let removeIt):
+        case let .finished(removeIt):
             processCompleteAbsorb(floorNode: floorNode, removeIt: removeIt)
         }
     }
@@ -269,9 +270,9 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, swipeState: SwipeState) {
         switch swipeState {
-        case .building(let scale):
+        case let .building(scale):
             processInProgressBuild(buildableType, floorNode: floorNode, scale: scale)
-        case .finished(let buildIt):
+        case let .finished(buildIt):
             processCompleteBuild(buildableType, floorNode: floorNode, buildIt: buildIt)
         }
     }
@@ -309,15 +310,15 @@ class SwipeInputHandler: GameInputHandler {
             temporaryNode.removeFromParentNode(animated: !buildIt)
 
             if buildIt {
-                switch (buildableType) {
-                case (.rock):
+                switch buildableType {
+                case .rock:
                     if let contents = temporaryNode.contents as? RockNode {
                         let w = contents.rotation.w
                         playerOperations.buildRock(at: point, rotation: w)
                     }
-                case (.tree):
+                case .tree:
                     playerOperations.buildTree(at: point)
-                case (.synthoid):
+                case .synthoid:
                     playerOperations.buildSynthoid(at: point)
                 }
 
@@ -334,8 +335,8 @@ class SwipeInputHandler: GameInputHandler {
         temporaryNode.removeFromParentNode(animated: true)
     }
 
-    private func createNode(for buildableType: BuildableType) -> (SCNNode&PlaceableNode) {
-        let node: SCNNode&PlaceableNode
+    private func createNode(for buildableType: BuildableType) -> (SCNNode & PlaceableNode) {
+        let node: SCNNode & PlaceableNode
         switch buildableType {
         case .tree:
             node = nodeManipulator.nodeFactory.createTreeNode(height: 0)
@@ -368,7 +369,7 @@ class SwipeInputHandler: GameInputHandler {
 }
 
 class TemporaryNode: SCNNode {
-    var contents: (SCNNode&PlaceableNode)? {
+    var contents: (SCNNode & PlaceableNode)? {
         didSet {
             for childNode in childNodes {
                 childNode.removeFromParentNode()
@@ -387,7 +388,7 @@ class TemporaryNode: SCNNode {
             if contents is RockNode {
                 return .rock
             }
-            if (contents is SynthoidNode) {
+            if contents is SynthoidNode {
                 return .synthoid
             }
         }
@@ -399,7 +400,7 @@ extension SCNNode {
     func scaleAllDimensions(by scale: Float) {
         let angle = Float.pi * 8.0 * scale
         let position = self.position
-        self.transform = SCNMatrix4MakeRotation(angle, 0, 1, 0)
+        transform = SCNMatrix4MakeRotation(angle, 0, 1, 0)
         self.position = position
         self.scale = SCNVector3Make(scale, scale, scale)
     }
@@ -434,7 +435,7 @@ extension SCNNode {
     }
 }
 
-fileprivate let temporaryNodeName = "temporaryNodeName"
+private let temporaryNodeName = "temporaryNodeName"
 
 extension NodeFactory {
     func createTemporaryNode(height: Int) -> TemporaryNode {

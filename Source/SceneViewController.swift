@@ -29,7 +29,7 @@ class SceneViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let sceneView = self.view as? SCNView else {
+        guard let sceneView = view as? SCNView else {
             return
         }
 
@@ -48,5 +48,4 @@ class SceneViewController: UIViewController {
 
         overlay.size = view.frame.size
     }
-
 }

@@ -3,7 +3,6 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     let window = UIWindow()
     let madog = Madog<RegistrationLocator>()
 
@@ -12,7 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         madog.resolve(resolver: RuntimeResolver())
         let initialRL = RegistrationLocator.createIntroRegistrationLocator()
-        let identifier = SingleUIIdentifier.createNavigationControllerIdentifier { (navigationController) in
+        let identifier = SingleUIIdentifier.createNavigationControllerIdentifier { navigationController in
             navigationController.isNavigationBarHidden = true
         }
         return madog.renderUI(identifier: identifier, token: initialRL, in: window)

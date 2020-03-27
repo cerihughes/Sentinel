@@ -35,7 +35,7 @@ class TypedViewControllerProvider: ViewControllerProviderObject {
     private func createViewController(token: Any, context: Context) -> UIViewController? {
         guard let registrationLocator = token as? RegistrationLocator,
             let navigationContext = context as? ForwardBackNavigationContext else {
-                return nil
+            return nil
         }
 
         return createViewController(registrationLocator: registrationLocator, navigationContext: navigationContext)
