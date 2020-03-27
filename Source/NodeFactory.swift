@@ -118,7 +118,7 @@ class NodeFactory {
 
         addWallNodes(to: terrainNode, grid: grid)
 
-        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+        if grid.get(point: grid.sentinelPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
             var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
             if initialAngle > radiansInCircle {
                 initialAngle -= radiansInCircle
@@ -129,7 +129,7 @@ class NodeFactory {
         }
 
         for sentryPosition in grid.sentryPositions {
-            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+            if grid.get(point: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
                 var initialAngle = grid.startPosition.angle(to: sentryPosition)
                 if initialAngle > radiansInCircle {
                     initialAngle -= radiansInCircle
@@ -140,13 +140,13 @@ class NodeFactory {
             }
         }
 
-        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
+        if grid.get(point: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
             let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
             floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
         }
 
         for treePosition in grid.treePositions {
-            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getFloorNode(for: treePosition) {
+            if grid.get(point: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
                 floorNode.treeNode = createTreeNode(height: 0)
             }
         }
