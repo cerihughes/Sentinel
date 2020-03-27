@@ -124,7 +124,7 @@ class NodeFactory {
                 initialAngle -= radiansInCircle
             }
 
-            let rightAngle = closestRightAngle(to: initialAngle)
+            let rightAngle = initialAngle.closestRightAngle
             floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
         }
 
@@ -135,7 +135,7 @@ class NodeFactory {
                     initialAngle -= radiansInCircle
                 }
 
-                let rightAngle = closestRightAngle(to: initialAngle)
+                let rightAngle = initialAngle.closestRightAngle
                 floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
             }
         }
@@ -154,21 +154,7 @@ class NodeFactory {
         return terrainNode
     }
 
-    private func closestRightAngle(to angle: Float) -> Float {
-        var closest = radiansInCircle
-        var smallestDelta = radiansInCircle
-        for i in 1 ... 4 {
-            let candidate = Float.pi / 2.0 * Float(i)
-            let delta = fabsf(candidate - angle)
-            if delta < smallestDelta {
-                closest = candidate
-                smallestDelta = delta
-            }
-        }
-        return closest
-    }
-
-    func createSentinelNode(initialAngle: Float) -> SentinelNode {
+    private func createSentinelNode(initialAngle: Float) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
@@ -177,7 +163,7 @@ class NodeFactory {
         return clone
     }
 
-    func createSentryNode(initialAngle: Float) -> SentryNode {
+    private func createSentryNode(initialAngle: Float) -> SentryNode {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
@@ -298,5 +284,21 @@ class NodeFactory {
             wallNodes.append(wallNode)
         }
         return wallNodes
+    }
+}
+
+private extension Float {
+    var closestRightAngle: Float {
+        var closest = radiansInCircle
+        var smallestDelta = radiansInCircle
+        for i in 1 ... 4 {
+            let candidate = Float.pi / 2.0 * Float(i)
+            let delta = fabsf(candidate - self)
+            if delta < smallestDelta {
+                closest = candidate
+                smallestDelta = delta
+            }
+        }
+        return closest
     }
 }
