@@ -154,7 +154,7 @@ class TerrainGenerator {
         if let lowestLevel = gridIndex.floorLevels().first, lowestLevel > 0 {
             for z in 0 ..< grid.depth {
                 for x in 0 ..< grid.width {
-                    if let piece = grid.get(point: GridPoint(x: x, z: z)) {
+                    if var piece = grid.get(point: GridPoint(x: x, z: z)) {
                         piece.level -= Float(lowestLevel)
                     }
                 }

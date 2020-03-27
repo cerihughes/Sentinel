@@ -1,6 +1,6 @@
 import Foundation
 
-class GridPiece: NSObject {
+struct GridPiece: Equatable {
     let point: GridPoint
 
     var isFloor = true
@@ -9,11 +9,9 @@ class GridPiece: NSObject {
 
     init(x: Int, z: Int) {
         point = GridPoint(x: x, z: z)
-
-        super.init()
     }
 
-    func buildFloor() -> Float {
+    mutating func buildFloor() -> Float {
         if isFloor {
             level += 1.0
         } else {
@@ -23,7 +21,7 @@ class GridPiece: NSObject {
         return level
     }
 
-    func buildSlope() -> Float {
+    mutating func buildSlope() -> Float {
         if isFloor {
             level += 0.5
             isFloor = false
@@ -33,7 +31,7 @@ class GridPiece: NSObject {
         return level
     }
 
-    func add(slopeDirection: GridDirection) {
+    mutating func add(slopeDirection: GridDirection) {
         slopes |= slopeDirection.rawValue
     }
 
@@ -42,7 +40,7 @@ class GridPiece: NSObject {
         return slopes & rawValue == rawValue
     }
 
-    override var description: String {
+    var description: String {
         let hex = String(slopes, radix: 16, uppercase: false)
         return "\(hex):\(level)"
     }

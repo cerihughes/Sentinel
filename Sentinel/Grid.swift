@@ -146,7 +146,7 @@ class Grid {
     }
 
     private func buildFloor(point: GridPoint) {
-        guard let piece = get(point: point) else {
+        guard var piece = get(point: point) else {
             return
         }
 
@@ -159,7 +159,7 @@ class Grid {
 
     private func buildSlope(from point: GridPoint, level: Float, direction: GridDirection) {
         let nextPoint = neighbour(of: point, direction: direction)
-        if let next = get(point: nextPoint) {
+        if var next = get(point: nextPoint) {
             let nextLevel = next.level
 
             if level <= nextLevel {
@@ -188,7 +188,7 @@ class Grid {
         var nextPoint = neighbour(of: point, direction: direction)
         var next = get(point: nextPoint)
         while next != nil {
-            let nextExists = next!
+            var nextExists = next!
             if nextExists.isFloor {
                 slopeLevel = nextExists.level - 0.5
             } else {
