@@ -84,6 +84,7 @@
 		65DCBC6321540C2900F5D2FB /* SceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DCBC6221540C2900F5D2FB /* SceneViewController.swift */; };
 		65EDA8F9213EFA7C00BEC738 /* ValueGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */; };
 		65F89CDA216256970031CFC0 /* SceneImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F89CD9216256970031CFC0 /* SceneImageLoader.swift */; };
+		F4347619242E44E7002D3A37 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4347618242E44E7002D3A37 /* SnapKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +173,7 @@
 		65DCBC6221540C2900F5D2FB /* SceneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewController.swift; sourceTree = "<group>"; };
 		65EDA8F8213EFA7C00BEC738 /* ValueGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueGenerator.swift; sourceTree = "<group>"; };
 		65F89CD9216256970031CFC0 /* SceneImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneImageLoader.swift; sourceTree = "<group>"; };
+		F4347618242E44E7002D3A37 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				659169BB21A8705E008237CA /* Madog.framework in Frameworks */,
+				F4347619242E44E7002D3A37 /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +252,7 @@
 				6546A84A213C0652009F0650 /* LaunchScreen.storyboard */,
 				6546A84D213C0652009F0650 /* Info.plist */,
 				659169BA21A8705E008237CA /* Madog.framework */,
+				F4347618242E44E7002D3A37 /* SnapKit.framework */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -552,12 +556,14 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Madog.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Madog.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
