@@ -450,9 +450,10 @@
 			buildConfigurationList = 6546A85B213C0652009F0650 /* Build configuration list for PBXNativeTarget "Sentinel" */;
 			buildPhases = (
 				6546A83A213C0651009F0650 /* Sources */,
+				F4FBDFAA242E2DC700D9FD47 /* Swiftlint */,
 				6546A83B213C0651009F0650 /* Frameworks */,
 				6546A83C213C0651009F0650 /* Resources */,
-				659169BE21A87732008237CA /* ShellScript */,
+				659169BE21A87732008237CA /* Carthage Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -541,7 +542,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		659169BE21A87732008237CA /* ShellScript */ = {
+		659169BE21A87732008237CA /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -551,6 +552,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Madog.framework",
 			);
+			name = "Carthage Copy Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -559,6 +561,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+		};
+		F4FBDFAA242E2DC700D9FD47 /* Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Swiftlint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "swiftlint\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
