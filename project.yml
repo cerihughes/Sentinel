@@ -1,0 +1,39 @@
+name: Sentinel
+schemes:
+  Sentinel:
+    build:
+      targets:
+        Sentinel: all
+        SentinelTests: [test]
+    test:
+      gatherCoverageData: true
+      coverageTargets:
+        - Sentinel
+      targets: 
+        - SentinelTests
+options:
+  bundleIdPrefix: uk.co.cerihughes
+targets:
+  Sentinel:
+    type: application
+    platform: iOS
+    deploymentTarget: "12.0"
+    settings:
+      INFOPLIST_FILE: Resources/Info.plist
+      DEVELOPMENT_TEAM: Y56955G4Q8
+    sources:
+      - Source
+      - Resources
+    dependencies:
+      - carthage: Madog
+      - carthage: SnapKit
+    postCompileScripts:
+      - script: swiftlint
+        name: Swift Lint
+  SentinelTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "12.0"
+    sources: Tests
+    dependencies:
+      - target: Sentinel

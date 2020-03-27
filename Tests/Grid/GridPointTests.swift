@@ -1,5 +1,7 @@
 import XCTest
 
+@testable import Sentinel
+
 class GridPointTests: XCTestCase {
     let epsilon: Float = 0.0001
 
