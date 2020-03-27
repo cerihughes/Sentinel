@@ -1,3 +1,4 @@
+import SnapKit
 import UIKit
 
 class LobbyCollectionViewCell: UICollectionViewCell {
@@ -8,15 +9,11 @@ class LobbyCollectionViewCell: UICollectionViewCell {
         imageView = UIImageView(frame: frame)
         super.init(frame: frame)
 
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
 
-        let mainCenterX = imageView.centerXAnchor.constraint(equalTo: centerXAnchor)
-        let mainCenterY = imageView.centerYAnchor.constraint(equalTo: centerYAnchor)
-        let mainWidth = imageView.widthAnchor.constraint(equalTo: widthAnchor)
-        let mainHeight = imageView.heightAnchor.constraint(equalTo: heightAnchor)
-
-        NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight])
+        imageView.snp.makeConstraints { make in
+            make.center.width.height.equalToSuperview()
+        }
     }
 
     override func prepareForReuse() {

@@ -1,5 +1,6 @@
 import Madog
 import SceneKit
+import SnapKit
 import UIKit
 
 class LobbyViewController: UIViewController, LobbyViewModelDelegate {
@@ -30,17 +31,13 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
         collectionView.delegate = lobbyViewModel
 
         collectionView.register(LobbyCollectionViewCell.self, forCellWithReuseIdentifier: lobbyViewModelReuseIdentifier)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.decelerationRate = .fast
 
         view.addSubview(collectionView)
 
-        let mainCenterX = collectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        let mainCenterY = collectionView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        let mainWidth = collectionView.widthAnchor.constraint(equalTo: view.widthAnchor)
-        let mainHeight = collectionView.heightAnchor.constraint(equalTo: view.heightAnchor)
-
-        NSLayoutConstraint.activate([mainCenterX, mainCenterY, mainWidth, mainHeight])
+        collectionView.snp.makeConstraints { make in
+            make.center.width.height.equalToSuperview()
+        }
     }
 
     private func configureCollectionViewLayout() {

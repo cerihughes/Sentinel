@@ -44,38 +44,18 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
         view.addSubview(mainViewController.view)
         mainViewController.didMove(toParent: self)
 
-        let mainView: UIView = mainViewController.view
-        mainView.translatesAutoresizingMaskIntoConstraints = false
-        let mainCenterX = mainView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        let mainCenterY = mainView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        let mainWidth = mainView.widthAnchor.constraint(equalTo: view.widthAnchor)
-        let mainHeight = mainView.heightAnchor.constraint(equalTo: view.heightAnchor)
+        mainViewController.view.snp.makeConstraints { make in
+            make.center.width.height.equalToSuperview()
+        }
 
         opponentViewContainer.isUserInteractionEnabled = false
         opponentViewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(opponentViewContainer)
 
-        let containerRight = opponentViewContainer.rightAnchor.constraint(equalTo: view.rightAnchor)
-        let containerTop = opponentViewContainer.topAnchor.constraint(equalTo: view.topAnchor)
-        let containerWidth = NSLayoutConstraint(item: opponentViewContainer,
-                                                attribute: .width,
-                                                relatedBy: .equal,
-                                                toItem: view,
-                                                attribute: .width,
-                                                multiplier: 0.2,
-                                                constant: 0)
-        let containerHeight = opponentViewContainer.heightAnchor.constraint(equalTo: view.heightAnchor)
-
-        NSLayoutConstraint.activate([
-            mainCenterX,
-            mainCenterY,
-            mainWidth,
-            mainHeight,
-            containerRight,
-            containerTop,
-            containerWidth,
-            containerHeight
-        ])
+        opponentViewContainer.snp.makeConstraints { make in
+            make.right.top.height.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.2)
+        }
 
         inputHandler.addGestureRecognisers(to: sceneView)
         viewModel.playerOperations.preAnimationBlock = {
