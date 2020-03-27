@@ -94,22 +94,21 @@ class NodeFactory {
 
         for z in 0 ..< depth {
             for x in 0 ..< width {
-                if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
-                    if gridPiece.isFloor {
-                        let node = createFloorNode(x: x,
-                                                   y: Int(gridPiece.level - 1.0),
-                                                   z: z)
-                        terrainNode.addChildNode(node)
-                        nodeMap.add(floorNode: node, for: gridPiece)
-                    } else {
-                        for direction in GridDirection.allCases {
-                            if gridPiece.has(slopeDirection: direction) {
-                                let node = createSlopeNode(x: x,
-                                                           y: Int(gridPiece.level - 0.5),
-                                                           z: z,
-                                                           rotation: rotation(for: direction))
-                                terrainNode.addChildNode(node)
-                            }
+                guard let gridPiece = grid.get(point: GridPoint(x: x, z: z)) else { continue }
+                if gridPiece.isFloor {
+                    let node = createFloorNode(x: x,
+                                               y: Int(gridPiece.level - 1.0),
+                                               z: z)
+                    terrainNode.addChildNode(node)
+                    nodeMap.add(floorNode: node, for: gridPiece)
+                } else {
+                    for direction in GridDirection.allCases {
+                        if gridPiece.has(slopeDirection: direction) {
+                            let node = createSlopeNode(x: x,
+                                                       y: Int(gridPiece.level - 0.5),
+                                                       z: z,
+                                                       rotation: rotation(for: direction))
+                            terrainNode.addChildNode(node)
                         }
                     }
                 }
@@ -117,58 +116,15 @@ class NodeFactory {
         }
 
         addWallNodes(to: terrainNode, grid: grid)
-
-        if let _ = grid.get(point: grid.sentinelPosition), let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
-            var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
-            if initialAngle > radiansInCircle {
-                initialAngle -= radiansInCircle
-            }
-
-            let rightAngle = closestRightAngle(to: initialAngle)
-            floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
-        }
-
-        for sentryPosition in grid.sentryPositions {
-            if let _ = grid.get(point: sentryPosition), let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
-                var initialAngle = grid.startPosition.angle(to: sentryPosition)
-                if initialAngle > radiansInCircle {
-                    initialAngle -= radiansInCircle
-                }
-
-                let rightAngle = closestRightAngle(to: initialAngle)
-                floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
-            }
-        }
-
-        if let _ = grid.get(point: grid.startPosition), let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
-            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
-        }
-
-        for treePosition in grid.treePositions {
-            if let _ = grid.get(point: treePosition), let floorNode = nodeMap.getFloorNode(for: treePosition) {
-                floorNode.treeNode = createTreeNode(height: 0)
-            }
-        }
+        addSentinelNode(grid: grid, nodeMap: nodeMap)
+        addSentryNodes(grid: grid, nodeMap: nodeMap)
+        addSynthoidNode(grid: grid, nodeMap: nodeMap)
+        addTreeNodes(grid: grid, nodeMap: nodeMap)
 
         return terrainNode
     }
 
-    private func closestRightAngle(to angle: Float) -> Float {
-        var closest = radiansInCircle
-        var smallestDelta = radiansInCircle
-        for i in 1 ... 4 {
-            let candidate = Float.pi / 2.0 * Float(i)
-            let delta = fabsf(candidate - angle)
-            if delta < smallestDelta {
-                closest = candidate
-                smallestDelta = delta
-            }
-        }
-        return closest
-    }
-
-    func createSentinelNode(initialAngle: Float) -> SentinelNode {
+    private func createSentinelNode(initialAngle: Float) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
@@ -177,7 +133,7 @@ class NodeFactory {
         return clone
     }
 
-    func createSentryNode(initialAngle: Float) -> SentryNode {
+    private func createSentryNode(initialAngle: Float) -> SentryNode {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
@@ -261,6 +217,47 @@ class NodeFactory {
         }
     }
 
+    private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
+        if grid.get(point: grid.sentinelPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+            var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
+            if initialAngle > radiansInCircle {
+                initialAngle -= radiansInCircle
+            }
+
+            let rightAngle = initialAngle.closestRightAngle
+            floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
+        }
+    }
+
+    private func addSentryNodes(grid: Grid, nodeMap: NodeMap) {
+        for sentryPosition in grid.sentryPositions {
+            if grid.get(point: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+                var initialAngle = grid.startPosition.angle(to: sentryPosition)
+                if initialAngle > radiansInCircle {
+                    initialAngle -= radiansInCircle
+                }
+
+                let rightAngle = initialAngle.closestRightAngle
+                floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
+            }
+        }
+    }
+
+    private func addSynthoidNode(grid: Grid, nodeMap: NodeMap) {
+        if grid.get(point: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
+            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
+            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
+        }
+    }
+
+    private func addTreeNodes(grid: Grid, nodeMap: NodeMap) {
+        for treePosition in grid.treePositions {
+            if grid.get(point: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
+                floorNode.treeNode = createTreeNode(height: 0)
+            }
+        }
+    }
+
     private func rotation(for direction: GridDirection) -> SCNVector4? {
         switch direction {
         case .north:
@@ -298,5 +295,21 @@ class NodeFactory {
             wallNodes.append(wallNode)
         }
         return wallNodes
+    }
+}
+
+private extension Float {
+    var closestRightAngle: Float {
+        var closest = radiansInCircle
+        var smallestDelta = radiansInCircle
+        for i in 1 ... 4 {
+            let candidate = Float.pi / 2.0 * Float(i)
+            let delta = fabsf(candidate - self)
+            if delta < smallestDelta {
+                closest = candidate
+                smallestDelta = delta
+            }
+        }
+        return closest
     }
 }

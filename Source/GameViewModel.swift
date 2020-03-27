@@ -21,7 +21,9 @@ class GameViewModel {
         let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
 
         terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
-        playerOperations = PlayerOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations, initialCameraNode: world.initialCameraNode)
+        playerOperations = PlayerOperations(levelConfiguration: levelConfiguration,
+                                            terrainOperations: terrainOperations,
+                                            initialCameraNode: world.initialCameraNode)
         opponentsOperations = OpponentsOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations)
     }
 }

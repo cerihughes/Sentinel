@@ -5,7 +5,7 @@ private let imageLoadThreshold: TimeInterval = 0.1
 
 let lobbyViewModelReuseIdentifier = "lobbyViewModelReuseIdentifier"
 
-protocol LobbyViewModelDelegate: class {
+protocol LobbyViewModelDelegate: AnyObject {
     func viewModel(_: LobbyViewModel, didSelect level: Int)
 }
 
