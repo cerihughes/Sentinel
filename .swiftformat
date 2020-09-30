@@ -1,13 +1,12 @@
---swiftversion 5
 --exclude Carthage
 
 --indent 4
+--tabwidth 4
 --ifdef no-indent
---stripunusedargs closure-only
 
 --wraparguments after-first
 --wrapcollections before-first
 
---enable isEmpty
+--stripunusedargs closure-only
+
 --disable trailingCommas
---tabwidth 4

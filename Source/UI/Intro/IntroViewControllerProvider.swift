@@ -1,22 +1,16 @@
 import Madog
 import UIKit
 
-private let introIdentifier = "introIdentifier"
-
 class IntroViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
-        guard registrationLocator.identifier == introIdentifier else {
+    override func createViewController(token: Navigation, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard
+            token == .intro
+        else {
             return nil
         }
 
         return IntroViewController(navigationContext: navigationContext)
-    }
-}
-
-extension RegistrationLocator {
-    static func createIntroRegistrationLocator() -> RegistrationLocator {
-        return RegistrationLocator(identifier: introIdentifier, level: nil)
     }
 }

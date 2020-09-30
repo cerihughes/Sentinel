@@ -4,7 +4,7 @@ let sentinelNodeName = "sentinelNodeName"
 let sentryNodeName = "sentryNodeName"
 
 class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
-    fileprivate override init() {
+    override fileprivate init() {
         super.init()
     }
 

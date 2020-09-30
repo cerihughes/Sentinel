@@ -1,0 +1,17 @@
+name: reviewdog
+
+on: [pull_request]
+
+jobs:
+  reviewdog:
+    name: reviewdog
+    runs-on: macOS-latest
+    steps:
+      - run: brew install swiftlint reviewdog/tap/reviewdog || true
+      - run: brew outdated swiftlint || brew upgrade swiftlint
+      - run: brew outdated reviewdog/tap/reviewdog || brew upgrade reviewdog/tap/reviewdog
+      - uses: actions/checkout@v2
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: 'swiftlint | reviewdog -reporter=github-pr-review -efm="%f:%l:%c: %m" -name="swiftlint" -diff="git diff"'

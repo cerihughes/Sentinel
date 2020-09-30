@@ -1,0 +1,36 @@
+name: Build and test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      # Xcode select
+      - run: sudo xcode-select -switch /Applications/Xcode_12.app
+
+      # Caching
+      - name: SPM Cache
+        uses: actions/cache@v2
+        with:
+          path: SPM
+          key: ${{ runner.os }}-spm-xcode12-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-xcode12-
+
+      # Install dependencies
+      - run: brew install xcodegen swiftlint || true
+      - run: brew outdated xcodegen || brew upgrade xcodegen
+      - run: brew outdated swiftlint || brew upgrade swiftlint
+
+      # Checkout
+      - uses: actions/checkout@v2
+      - run: mkdir build
+
+      # Build and test
+      - run: set -o pipefail
+      - run: xcodegen
+      - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -destination "OS=14.0,name=iPad (8th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
+      - name: Codecov
+        uses: codecov/codecov-action@v1.0.13

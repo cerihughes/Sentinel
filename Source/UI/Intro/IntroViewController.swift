@@ -9,6 +9,7 @@ class IntroViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -16,7 +17,6 @@ class IntroViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        let rl = RegistrationLocator.createLobbyRegistrationLocator()
-        _ = navigationContext.navigateForward(token: rl, animated: true)
+        _ = navigationContext.navigateForward(token: Navigation.lobby, animated: true)
     }
 }

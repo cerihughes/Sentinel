@@ -1,14 +1,13 @@
 import Madog
 import UIKit
 
-private let gameIdentifier = "gameIdentifier"
-
 class GameViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
-        guard registrationLocator.identifier == gameIdentifier,
-            let level = registrationLocator.level else {
+    override func createViewController(token: Navigation, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard
+            case let .game(level) = token
+        else {
             return nil
         }
 
@@ -28,11 +27,5 @@ class GameViewControllerProvider: TypedViewControllerProvider {
                                              opponentsOperations: viewModel.opponentsOperations,
                                              nodeManipulator: viewModel.terrainOperations.nodeManipulator)
         return GameContainerViewController(navigationContext: navigationContext, viewModel: viewModel, inputHandler: inputHandler)
-    }
-}
-
-extension RegistrationLocator {
-    static func createGameRegistrationLocator(level: Int) -> RegistrationLocator {
-        return RegistrationLocator(identifier: gameIdentifier, level: level)
     }
 }

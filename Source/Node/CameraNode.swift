@@ -3,7 +3,7 @@ import SceneKit
 let cameraNodeName = "cameraNodeName"
 
 class CameraNode: SCNNode {
-    private override init() {
+    override private init() {
         super.init()
     }
 
