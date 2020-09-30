@@ -4,7 +4,7 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
     var itemSize: CGSize = .zero
 
     private var collectionViewSize: CGSize = .zero
-    private var collectionViewContentOffset: CGPoint = CGPoint(x: 0, y: 0)
+    private var collectionViewContentOffset = CGPoint(x: 0, y: 0)
 
     private let peekOffsetPercentage: CGFloat = 0.1
     private let itemShrinkPercentage: CGFloat = 0.2

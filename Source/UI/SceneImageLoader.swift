@@ -11,7 +11,7 @@ protocol SceneImageLoaderToken {
  */
 class SceneImageLoader {
     private let operationQueue = OperationQueue()
-    private var cache: NSMutableDictionary = NSMutableDictionary()
+    private var cache = NSMutableDictionary()
 
     init() {
         operationQueue.maxConcurrentOperationCount = 1

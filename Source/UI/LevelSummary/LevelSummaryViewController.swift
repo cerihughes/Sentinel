@@ -16,10 +16,6 @@ class LevelSummaryViewController: SceneViewController {
         tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
