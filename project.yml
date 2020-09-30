@@ -18,10 +18,10 @@ options:
 packages:
   Madog:
     url: https://github.com/cerihughes/Madog
-    from: 5.0.0
+    majorVersion: 6.0.0
   SnapKit:
     url: https://github.com/SnapKit/SnapKit
-    from: 5.0.0
+    majorVersion: 5.0.0
 targets:
   Sentinel:
     type: application

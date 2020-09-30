@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/cerihughes/Madog",
         "state": {
           "branch": null,
-          "revision": "d0dc7931fc9b5933c9ee94f36d5927e34d40cf7f",
-          "version": "5.1.0"
+          "revision": "2d09f81b4e26a8c2f08e2d076ad76ba7861676ba",
+          "version": "6.0.0"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/cerihughes/provident.git",
         "state": {
           "branch": null,
-          "revision": "03dec1a8d8d413dd93fa9f24143d6072c6906ea3",
-          "version": "3.0.0"
+          "revision": "a45ebca07b6c60b119b50eb2719a5ff44734a583",
+          "version": "4.0.0"
         }
       },
       {
