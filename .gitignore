@@ -7,5 +7,5 @@ DerivedData/
 ## Generated Projects
 *.xcodeproj
 
-# Carthage
-Carthage
+# SPM
+SPM/

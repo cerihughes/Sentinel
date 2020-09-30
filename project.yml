@@ -15,6 +15,13 @@ schemes:
         "-isRunningUnitTests YES": true
 options:
   bundleIdPrefix: uk.co.cerihughes
+packages:
+  Madog:
+    url: https://github.com/cerihughes/Madog
+    from: 5.0.0
+  SnapKit:
+    url: https://github.com/SnapKit/SnapKit
+    from: 5.0.0
 targets:
   Sentinel:
     type: application
@@ -27,8 +34,8 @@ targets:
       - Source
       - Resources
     dependencies:
-      - carthage: Madog
-      - carthage: SnapKit
+      - package: Madog
+      - package: SnapKit
     postCompileScripts:
       - script: swiftlint
         name: Swift Lint
