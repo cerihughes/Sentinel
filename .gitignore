@@ -6,7 +6,7 @@ DerivedData/
 
 ## Generated Projects
 *.xcodeproj
-!Sentinel.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+!swiftpm/Package.resolved
 
 # SPM
 SPM/
