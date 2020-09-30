@@ -6,6 +6,7 @@ DerivedData/
 
 ## Generated Projects
 *.xcodeproj
+!swiftpm/Package.resolved
 
 # SPM
 SPM/

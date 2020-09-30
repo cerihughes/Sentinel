@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Madog",
+        "repositoryURL": "https://github.com/cerihughes/Madog",
+        "state": {
+          "branch": null,
+          "revision": "d0dc7931fc9b5933c9ee94f36d5927e34d40cf7f",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "Provident",
+        "repositoryURL": "https://github.com/cerihughes/provident.git",
+        "state": {
+          "branch": null,
+          "revision": "03dec1a8d8d413dd93fa9f24143d6072c6906ea3",
+          "version": "3.0.0"
+        }
+      },
+      {
+        "package": "SnapKit",
+        "repositoryURL": "https://github.com/SnapKit/SnapKit",
+        "state": {
+          "branch": null,
+          "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
+          "version": "5.0.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
