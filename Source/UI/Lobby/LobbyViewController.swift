@@ -55,7 +55,7 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
     // MARK: LobbyViewModelDelegate
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
-        let rl = RegistrationLocator.createLevelSummaryRegistrationLocator(level: level)
-        _ = navigationContext.navigateForward(token: rl, animated: true)
+        let token = Navigation.levelSummary(level: level)
+        _ = navigationContext.navigateForward(token: token, animated: true)
     }
 }

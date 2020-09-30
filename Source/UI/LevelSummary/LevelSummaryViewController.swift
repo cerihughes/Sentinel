@@ -46,7 +46,7 @@ class LevelSummaryViewController: SceneViewController {
     private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
 
-        let rl = RegistrationLocator.createGameRegistrationLocator(level: viewModel.level)
-        _ = navigationContext.navigateForward(token: rl, animated: true)
+        let token = Navigation.game(level: viewModel.level)
+        _ = navigationContext.navigateForward(token: token, animated: true)
     }
 }

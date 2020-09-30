@@ -4,7 +4,7 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    let madog = Madog<RegistrationLocator>()
+    let madog = Madog<Navigation>()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let window = UIWindow()
@@ -19,12 +19,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
 
-        madog.resolve(resolver: RuntimeResolver())
-        let initialRL = RegistrationLocator.createIntroRegistrationLocator()
-        let identifier = SingleUIIdentifier.createNavigationControllerIdentifier { navigationController in
-            navigationController.isNavigationBarHidden = true
+        madog.resolve(resolver: SentinelResolver())
+        let context = madog.renderUI(identifier: .navigation, tokenData: .single(Navigation.intro), in: window) {
+            $0.isNavigationBarHidden = true
         }
-        return madog.renderUI(identifier: identifier, token: initialRL, in: window)
+        return context != nil
     }
 }
 

@@ -16,7 +16,6 @@ class IntroViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        let rl = RegistrationLocator.createLobbyRegistrationLocator()
-        _ = navigationContext.navigateForward(token: rl, animated: true)
+        _ = navigationContext.navigateForward(token: Navigation.lobby, animated: true)
     }
 }

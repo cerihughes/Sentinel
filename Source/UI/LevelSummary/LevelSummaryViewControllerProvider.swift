@@ -1,14 +1,13 @@
 import Madog
 import UIKit
 
-private let levelSummaryIdentifier = "levelSummaryIdentifier"
-
 class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(registrationLocator: RegistrationLocator, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
-        guard registrationLocator.identifier == levelSummaryIdentifier,
-            let level = registrationLocator.level else {
+    override func createViewController(token: Navigation, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+        guard
+            case let .levelSummary(level) = token
+        else {
             return nil
         }
 
@@ -26,11 +25,5 @@ class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = LevelSummaryViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
         return LevelSummaryViewController(navigationContext: navigationContext, viewModel: viewModel)
-    }
-}
-
-extension RegistrationLocator {
-    static func createLevelSummaryRegistrationLocator(level: Int) -> RegistrationLocator {
-        return RegistrationLocator(identifier: levelSummaryIdentifier, level: level)
     }
 }
