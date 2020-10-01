@@ -25,11 +25,13 @@ jobs:
       - run: brew outdated swiftlint || brew upgrade swiftlint
 
       # Checkout
-      - uses: actions/checkout@v2
-      - run: mkdir build
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
 
       # Build and test
       - run: set -o pipefail
+      - run: mkdir build
       - run: xcodegen
       - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -destination "OS=14.0,name=iPad (8th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
       - name: Codecov
