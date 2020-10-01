@@ -10,7 +10,9 @@ jobs:
       - run: brew install swiftlint reviewdog/tap/reviewdog || true
       - run: brew outdated swiftlint || brew upgrade swiftlint
       - run: brew outdated reviewdog/tap/reviewdog || brew upgrade reviewdog/tap/reviewdog
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
       - name: Run reviewdog
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

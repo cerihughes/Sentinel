@@ -1,12 +1,1 @@
---exclude Carthage
-
---indent 4
---tabwidth 4
---ifdef no-indent
-
---wraparguments after-first
---wrapcollections before-first
-
---stripunusedargs closure-only
-
---disable trailingCommas
+ios-tools/.swiftformat
