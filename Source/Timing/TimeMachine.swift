@@ -64,12 +64,11 @@ class TimeMachine {
     }
 
     private func assignInitialOffsets() {
-        let count = timingFunctions.count
-        guard count > 0 else {
+        guard !timingFunctions.isEmpty else {
             return
         }
 
-        let interval: TimeInterval = 1.0 / TimeInterval(count)
+        let interval: TimeInterval = 1.0 / TimeInterval(timingFunctions.count)
         for (i, timingFunction) in timingFunctions.values.enumerated() {
             timingFunction.initialOffset = interval * TimeInterval(i)
         }

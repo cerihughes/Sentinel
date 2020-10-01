@@ -114,7 +114,7 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
         let detectingOpponentNodes = nodes(opponentNodes, thatSee: synthoidNode, in: playerRenderer)
         let detectingCameraNodes = Set(detectingOpponentNodes.map { $0.cameraNode })
         let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
-        if !detectingCameraNodes.intersection(lastCameraNodes).isEmpty {
+        if !detectingCameraNodes.isDisjoint(with: lastCameraNodes) {
             // Seen by a camera for more than 1 "cycle"...
             delegate.opponentsOperationsDidDepleteEnergy(self)
             buildRandomTree()
