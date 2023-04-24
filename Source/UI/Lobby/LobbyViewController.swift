@@ -31,6 +31,7 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
         collectionView.dataSource = lobbyViewModel
         collectionView.delegate = lobbyViewModel
 
+        collectionView.backgroundColor = .black
         collectionView.register(LobbyCollectionViewCell.self, forCellWithReuseIdentifier: lobbyViewModelReuseIdentifier)
         collectionView.decelerationRate = .fast
 
