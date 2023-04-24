@@ -37,8 +37,9 @@ targets:
       - package: Madog
       - package: SnapKit
     postCompileScripts:
-      - script: swiftlint
+      - script: export PATH="/opt/homebrew/bin:$PATH";swiftlint
         name: Swift Lint
+        basedOnDependencyAnalysis: false
   SentinelTests:
     type: bundle.unit-test
     platform: iOS
