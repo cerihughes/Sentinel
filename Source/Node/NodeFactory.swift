@@ -79,7 +79,7 @@ class NodeFactory {
     func createAmbientLightNode() -> SCNNode {
         let ambient = SCNLight()
         ambient.type = .omni
-        ambient.color = UIColor(red: 0.21, green: 0.17, blue: 0.17, alpha: 1.0)
+        ambient.color = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 0.75)
         let ambientNode = SCNNode()
         ambientNode.name = ambientLightNodeName
         ambientNode.light = ambient
