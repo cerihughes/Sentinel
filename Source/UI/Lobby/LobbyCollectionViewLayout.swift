@@ -52,13 +52,7 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        var layoutAttributes = [UICollectionViewLayoutAttributes]()
-        for attributes in cache {
-            if attributes.frame.intersects(rect) {
-                layoutAttributes.append(attributes)
-            }
-        }
-        return layoutAttributes
+        cache.filter { $0.frame.intersects(rect) }
     }
 
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
