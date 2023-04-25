@@ -15,6 +15,8 @@ schemes:
         "-isRunningUnitTests YES": true
 options:
   bundleIdPrefix: uk.co.cerihughes
+  deploymentTarget:
+    iOS: "16.0"
 packages:
   Madog:
     url: https://github.com/cerihughes/Madog
@@ -26,7 +28,6 @@ targets:
   Sentinel:
     type: application
     platform: iOS
-    deploymentTarget: "12.0"
     settings:
       INFOPLIST_FILE: Resources/Info.plist
       DEVELOPMENT_TEAM: Y56955G4Q8
@@ -39,10 +40,10 @@ targets:
     postCompileScripts:
       - script: export PATH="/opt/homebrew/bin:$PATH";swiftlint
         name: Swift Lint
+        basedOnDependencyAnalysis: false
   SentinelTests:
     type: bundle.unit-test
     platform: iOS
-    deploymentTarget: "12.0"
     sources: Tests
     dependencies:
       - target: Sentinel

@@ -79,7 +79,7 @@ class NodeFactory {
     func createAmbientLightNode() -> SCNNode {
         let ambient = SCNLight()
         ambient.type = .omni
-        ambient.color = UIColor(red: 0.21, green: 0.17, blue: 0.17, alpha: 1.0)
+        ambient.color = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 0.75)
         let ambientNode = SCNNode()
         ambientNode.name = ambientLightNodeName
         ambientNode.light = ambient
@@ -102,14 +102,12 @@ class NodeFactory {
                     terrainNode.addChildNode(node)
                     nodeMap.add(floorNode: node, for: gridPiece)
                 } else {
-                    for direction in GridDirection.allCases {
-                        if gridPiece.has(slopeDirection: direction) {
-                            let node = createSlopeNode(x: x,
-                                                       y: Int(gridPiece.level - 0.5),
-                                                       z: z,
-                                                       rotation: rotation(for: direction))
-                            terrainNode.addChildNode(node)
-                        }
+                    for direction in GridDirection.allCases where gridPiece.has(slopeDirection: direction) {
+                        let node = createSlopeNode(x: x,
+                                                   y: Int(gridPiece.level - 0.5),
+                                                   z: z,
+                                                   rotation: rotation(for: direction))
+                        terrainNode.addChildNode(node)
                     }
                 }
             }
@@ -182,7 +180,7 @@ class NodeFactory {
         if let rotation = rotation {
             w = rotation
         } else {
-            w = radiansInCircle * Float(drand48())
+            w = radiansInCircle * Float.random(in: 0.0..<1.0)
         }
 
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, w)

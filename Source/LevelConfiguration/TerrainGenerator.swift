@@ -104,18 +104,12 @@ class TerrainGenerator {
             return []
         }
 
-        var sentryPieces: [GridPiece] = []
-        for quadrant in GridQuadrant.allCases {
-            if !quadrant.contains(point: grid.sentinelPosition, grid: grid) {
-                let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
-                sentryPieces.append(highestPiece(in: gridIndex, gen: gen))
-            }
-        }
+        let points = GridQuadrant.allCases
+            .filter { !$0.contains(point: grid.sentinelPosition, grid: grid) }
+            .map { highestPiece(in: GridIndex(grid: grid, quadrant: $0), gen: gen) }
+            .sorted { $0.level < $1.level }
+            .map { $0.point }
 
-        // Sort by level
-        sentryPieces = sentryPieces.sorted { $0.level < $1.level }
-
-        let points = sentryPieces.map { $0.point }
         return Set(points.prefix(sentries))
     }
 
@@ -141,12 +135,8 @@ class TerrainGenerator {
     }
 
     private func quadrantOppositeSentinel() -> GridQuadrant? {
-        for quadrant in GridQuadrant.allCases {
-            if quadrant.contains(point: grid.sentinelPosition, grid: grid) {
-                return quadrant.opposite
-            }
-        }
-        return nil
+        GridQuadrant.allCases.first { $0.contains(point: grid.sentinelPosition, grid: grid) }
+            .map { $0.opposite }
     }
 
     private func normalise() {

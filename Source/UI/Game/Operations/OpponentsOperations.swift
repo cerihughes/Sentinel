@@ -120,15 +120,15 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
             buildRandomTree()
         }
 
-        for detectingCameraNode in detectingCameraNodes {
-            if !lastCameraNodes.contains(detectingCameraNode) {
-                delegate.opponentsOperations(self, didDetectOpponent: detectingCameraNode)
+        detectingCameraNodes.forEach {
+            if !lastCameraNodes.contains($0) {
+                delegate.opponentsOperations(self, didDetectOpponent: $0)
             }
         }
 
-        for lastCameraNode in lastCameraNodes {
-            if !detectingCameraNodes.contains(lastCameraNode) {
-                delegate.opponentsOperations(self, didEndDetectOpponent: lastCameraNode)
+        lastCameraNodes.forEach {
+            if !detectingCameraNodes.contains($0) {
+                delegate.opponentsOperations(self, didEndDetectOpponent: $0)
             }
         }
 
