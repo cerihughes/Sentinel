@@ -4,11 +4,11 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
       # Xcode select
-      - run: sudo xcode-select -switch /Applications/Xcode_12.app
+      - run: sudo xcode-select -switch /Applications/Xcode_14.2.app
 
       # Caching
       - name: SPM Cache
@@ -33,6 +33,6 @@ jobs:
       - run: set -o pipefail
       - run: mkdir build
       - run: xcodegen
-      - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -destination "OS=14.0,name=iPad (8th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
+      - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -destination "OS=16.0,name=iPad (10th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
       - name: Codecov
         uses: codecov/codecov-action@v1.0.13
