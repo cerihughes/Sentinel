@@ -17,7 +17,7 @@ jobs:
           path: SPM
           key: ${{ runner.os }}-spm-xcode14_2-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-xcode12-
+            ${{ runner.os }}-spm-xcode14_2-
 
       # Install dependencies
       - run: brew install xcodegen || true
