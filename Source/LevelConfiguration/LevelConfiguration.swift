@@ -101,29 +101,3 @@ struct MainLevelConfiguration: LevelConfiguration {
         return minCount ..< maxCount
     }
 }
-
-struct TestLevelConfiguration: LevelConfiguration {
-    let level: Int
-
-    let opponentDetectionRadius: Float = 100.0
-    let opponentRotationSteps: Int = 12
-    let opponentRotationTime: TimeInterval = 1.0
-    let opponentRotationPause: TimeInterval = 8.0
-
-    let gridWidth = 16
-    let gridDepth = 16
-
-    let sentinelPlatformHeight: Int
-    let sentryCount: Int
-
-    let largePlateauSizeRange = 8 ..< 12
-    let largePlateauCountRange = 0 ..< 0
-    let smallPlateauSizeRange = 5 ..< 7
-    let smallPlateauCountRange = 0 ..< 0
-
-    let largePeakCountRange = 0 ..< 0
-    let mediumPeakCountRange = 0 ..< 0
-    let smallPeakCountRange = 0 ..< 0
-
-    let treeCountRange = 10 ..< 10
-}

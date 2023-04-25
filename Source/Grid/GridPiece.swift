@@ -41,9 +41,4 @@ class GridPiece: NSObject {
         let rawValue = slopeDirection.rawValue
         return slopes & rawValue == rawValue
     }
-
-    override var description: String {
-        let hex = String(slopes, radix: 16, uppercase: false)
-        return "\(hex):\(level)"
-    }
 }
