@@ -132,19 +132,6 @@ class Grid {
         return get(point: currentPosition)
     }
 
-    var description: String {
-        var desc = ""
-        for z in 0 ..< depth {
-            for x in 0 ..< width {
-                if let piece = get(point: GridPoint(x: x, z: z)) {
-                    desc += "\(piece) "
-                }
-            }
-            desc += "\n"
-        }
-        return desc
-    }
-
     private func buildFloor(point: GridPoint) {
         guard let piece = get(point: point) else {
             return

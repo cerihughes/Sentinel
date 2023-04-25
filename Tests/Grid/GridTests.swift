@@ -9,7 +9,7 @@ class GridTests: XCTestCase {
         grid.build(at: point)
         grid.processSlopes()
 
-        assertPiece(in: grid, x: 0, z: 0, description: "0:1.0")
+        assertPiece(in: grid, x: 0, z: 0, description: "****:1.0")
     }
 
     func test_1x1_buildTwice() {
@@ -19,7 +19,7 @@ class GridTests: XCTestCase {
         grid.build(at: point)
         grid.processSlopes()
 
-        assertPiece(in: grid, x: 0, z: 0, description: "0:2.0")
+        assertPiece(in: grid, x: 0, z: 0, description: "****:2.0")
     }
 
     func test_2x2() {
@@ -28,8 +28,8 @@ class GridTests: XCTestCase {
         grid.build(at: point)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "0:1.0 2:0.5")
-        assertPiece(in: grid, z: 1, description: "4:0.5 0:0.0")
+        assertPiece(in: grid, z: 0, description: "****:1.0 *E**:0.5")
+        assertPiece(in: grid, z: 1, description: "**S*:0.5 ****:0.0")
     }
 
     func test_2x2_buildTwice() {
@@ -39,8 +39,8 @@ class GridTests: XCTestCase {
         grid.build(at: point)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "0:2.0 2:1.5")
-        assertPiece(in: grid, z: 1, description: "4:1.5 6:0.5")
+        assertPiece(in: grid, z: 0, description: "****:2.0 *E**:1.5")
+        assertPiece(in: grid, z: 1, description: "**S*:1.5 *ES*:0.5")
     }
 
     func test_2x2_adjacentHorizontalBuilds() {
@@ -51,8 +51,8 @@ class GridTests: XCTestCase {
         grid.build(at: point2)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "0:1.0 0:1.0")
-        assertPiece(in: grid, z: 1, description: "4:0.5 4:0.5")
+        assertPiece(in: grid, z: 0, description: "****:1.0 ****:1.0")
+        assertPiece(in: grid, z: 1, description: "**S*:0.5 **S*:0.5")
     }
 
     func test_3x3() {
@@ -61,9 +61,9 @@ class GridTests: XCTestCase {
         grid.build(at: point)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "0:0.0 1:0.5 0:0.0")
-        assertPiece(in: grid, z: 1, description: "8:0.5 0:1.0 2:0.5")
-        assertPiece(in: grid, z: 2, description: "0:0.0 4:0.5 0:0.0")
+        assertPiece(in: grid, z: 0, description: "****:0.0 N***:0.5 ****:0.0")
+        assertPiece(in: grid, z: 1, description: "***W:0.5 ****:1.0 *E**:0.5")
+        assertPiece(in: grid, z: 2, description: "****:0.0 **S*:0.5 ****:0.0")
     }
 
     func test_3x3_buildTwice() {
@@ -73,9 +73,9 @@ class GridTests: XCTestCase {
         grid.build(at: point)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "9:0.5 1:1.5 3:0.5")
-        assertPiece(in: grid, z: 1, description: "8:1.5 0:2.0 2:1.5")
-        assertPiece(in: grid, z: 2, description: "c:0.5 4:1.5 6:0.5")
+        assertPiece(in: grid, z: 0, description: "N**W:0.5 N***:1.5 NE**:0.5")
+        assertPiece(in: grid, z: 1, description: "***W:1.5 ****:2.0 *E**:1.5")
+        assertPiece(in: grid, z: 2, description: "**SW:0.5 **S*:1.5 *ES*:0.5")
     }
 
     func test_3x1_withSpacer() {
@@ -86,7 +86,7 @@ class GridTests: XCTestCase {
         grid.build(at: point2)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "0:1.0 a:0.5 0:1.0")
+        assertPiece(in: grid, z: 0, description: "****:1.0 *E*W:0.5 ****:1.0")
     }
 
     func test_3x3_withSpacer() {
@@ -101,9 +101,9 @@ class GridTests: XCTestCase {
         grid.build(at: point4)
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "9:0.5 0:1.0 3:0.5")
-        assertPiece(in: grid, z: 1, description: "0:1.0 f:0.5 0:1.0")
-        assertPiece(in: grid, z: 2, description: "c:0.5 0:1.0 6:0.5")
+        assertPiece(in: grid, z: 0, description: "N**W:0.5 ****:1.0 NE**:0.5")
+        assertPiece(in: grid, z: 1, description: "****:1.0 NESW:0.5 ****:1.0")
+        assertPiece(in: grid, z: 2, description: "**SW:0.5 ****:1.0 *ES*:0.5")
     }
 
     func testLargeGrid() {
@@ -113,13 +113,13 @@ class GridTests: XCTestCase {
         grid.build(at: GridPoint(x: 3, z: 3))
         grid.processSlopes()
 
-        assertPiece(in: grid, z: 0, description: "0:0.0 0:0.0 0:0.0 1:0.5 0:0.0 0:0.0 0:0.0")
-        assertPiece(in: grid, z: 1, description: "0:0.0 0:0.0 9:0.5 1:1.5 3:0.5 0:0.0 0:0.0")
-        assertPiece(in: grid, z: 2, description: "0:0.0 9:0.5 9:1.5 1:2.5 3:1.5 3:0.5 0:0.0")
-        assertPiece(in: grid, z: 3, description: "8:0.5 8:1.5 8:2.5 0:3.0 2:2.5 2:1.5 2:0.5")
-        assertPiece(in: grid, z: 4, description: "0:0.0 c:0.5 c:1.5 4:2.5 6:1.5 6:0.5 0:0.0")
-        assertPiece(in: grid, z: 5, description: "0:0.0 0:0.0 c:0.5 4:1.5 6:0.5 0:0.0 0:0.0")
-        assertPiece(in: grid, z: 6, description: "0:0.0 0:0.0 0:0.0 4:0.5 0:0.0 0:0.0 0:0.0")
+        assertPiece(in: grid, z: 0, description: "****:0.0 ****:0.0 ****:0.0 N***:0.5 ****:0.0 ****:0.0 ****:0.0")
+        assertPiece(in: grid, z: 1, description: "****:0.0 ****:0.0 N**W:0.5 N***:1.5 NE**:0.5 ****:0.0 ****:0.0")
+        assertPiece(in: grid, z: 2, description: "****:0.0 N**W:0.5 N**W:1.5 N***:2.5 NE**:1.5 NE**:0.5 ****:0.0")
+        assertPiece(in: grid, z: 3, description: "***W:0.5 ***W:1.5 ***W:2.5 ****:3.0 *E**:2.5 *E**:1.5 *E**:0.5")
+        assertPiece(in: grid, z: 4, description: "****:0.0 **SW:0.5 **SW:1.5 **S*:2.5 *ES*:1.5 *ES*:0.5 ****:0.0")
+        assertPiece(in: grid, z: 5, description: "****:0.0 ****:0.0 **SW:0.5 **S*:1.5 *ES*:0.5 ****:0.0 ****:0.0")
+        assertPiece(in: grid, z: 6, description: "****:0.0 ****:0.0 ****:0.0 **S*:0.5 ****:0.0 ****:0.0 ****:0.0")
     }
 
     private func assertPiece(in grid: Grid,
