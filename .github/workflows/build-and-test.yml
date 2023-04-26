@@ -36,5 +36,6 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v3
         with:
-            xtra_args: xcode
+            xcode: true
+            xcodeArchivePath: coverage.xcresult
             verbose: true
