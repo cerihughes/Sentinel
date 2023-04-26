@@ -37,4 +37,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
             xcode: true
+            --xcodeArchivePath: /Users/runner/Library/Developer/Xcode/DerivedData/
             verbose: true
