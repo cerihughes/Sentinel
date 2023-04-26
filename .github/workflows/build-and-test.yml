@@ -35,3 +35,5 @@ jobs:
       - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -destination "OS=16.2,name=iPad (10th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
       - name: Codecov
         uses: codecov/codecov-action@v3
+        with:
+            verbose: true
