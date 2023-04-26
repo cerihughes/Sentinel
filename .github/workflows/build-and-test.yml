@@ -34,7 +34,7 @@ jobs:
       - run: xcodegen
       - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -resultBundlePath coverage.xcresult -destination "OS=16.2,name=iPad (10th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
       - name: Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.1.0
         with:
             xcode: true
             xcode_archive_path: ${{ github.workspace }}/coverage.xcresult
