@@ -37,4 +37,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
             swift: true
+            xcode: true
             verbose: true
