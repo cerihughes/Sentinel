@@ -36,6 +36,5 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v3
         with:
-            xcode: true
-            xcode_archive_path: ${{ github.workspace }}/coverage.xcresult
+            xtra_args: '--xc --xcodeArchivePath coverage.xcresult'
             verbose: true
