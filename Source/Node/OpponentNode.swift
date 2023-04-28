@@ -12,7 +12,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         super.init(coder: aDecoder)
     }
 
-    fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor, options: [NodeFactoryOption]) {
+    fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor) {
         super.init()
 
         let material = SCNMaterial()
@@ -32,7 +32,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
             addChildNode(sphereNode)
         }
 
-        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: detectionRadius, options: options)
+        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: detectionRadius)
         eyeNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -6.0)
         eyeNode.position.z = floorSize / -5.0
         eyeNode.position.y = y
@@ -116,8 +116,8 @@ class SentinelNode: OpponentNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float, options: [NodeFactoryOption]) {
-        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue, options: options)
+    init(floorSize: Float, detectionRadius: Float) {
+        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue)
 
         name = sentinelNodeName
         categoryBitMask |= interactiveNodeBitMask
@@ -133,8 +133,8 @@ class SentryNode: OpponentNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float, options: [NodeFactoryOption]) {
-        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green, options: options)
+    init(floorSize: Float, detectionRadius: Float) {
+        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green)
 
         name = sentryNodeName
         categoryBitMask |= interactiveNodeBitMask

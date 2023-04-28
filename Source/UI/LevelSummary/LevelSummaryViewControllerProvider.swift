@@ -19,8 +19,7 @@ class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
         let materialFactory = MainMaterialFactory(level: levelConfiguration.level)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
-                                      materialFactory: materialFactory,
-                                      options: [.showDetectionNode, .showVisionNode(false)])
+                                      materialFactory: materialFactory)
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
         let viewModel = LevelSummaryViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)

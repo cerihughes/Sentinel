@@ -7,7 +7,7 @@ class StagingAreaViewModel {
     init() {
         scene = SCNScene()
 
-        let opponentNode = SentinelNode(floorSize: 10.0, detectionRadius: 100.0, options: [])
+        let opponentNode = SentinelNode(floorSize: 10.0, detectionRadius: 100.0)
 
         scene.rootNode.addChildNode(opponentNode)
 
