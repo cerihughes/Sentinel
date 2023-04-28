@@ -1,5 +1,4 @@
 import SceneKit
-import SpriteKit
 
 class GameViewModel {
     let world: World

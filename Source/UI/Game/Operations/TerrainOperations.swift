@@ -1,5 +1,4 @@
 import SceneKit
-import SpriteKit
 
 class TerrainOperations {
     let grid: Grid

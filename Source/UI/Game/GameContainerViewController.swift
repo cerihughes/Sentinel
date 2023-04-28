@@ -1,6 +1,5 @@
 import Madog
 import SceneKit
-import SpriteKit
 import UIKit
 
 class GameContainerViewController: UIViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
@@ -120,7 +119,9 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
     }
 
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
-        viewModel.playerOperations.adjustEnergy(delta: -treeEnergyValue)
+        DispatchQueue.main.async {
+            self.viewModel.playerOperations.adjustEnergy(delta: -treeEnergyValue)
+        }
     }
 
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {

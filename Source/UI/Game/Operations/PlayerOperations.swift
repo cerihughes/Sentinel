@@ -1,5 +1,4 @@
 import SceneKit
-import SpriteKit
 
 let treeEnergyValue = 1
 let rockEnergyValue = 2
