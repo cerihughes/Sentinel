@@ -9,17 +9,9 @@ let interactiveNodeBitMask = 2
 let noninteractiveTransparentNodeBitMask = 4
 let noninteractiveBlockingNodeBitMask = 8
 
-enum NodeFactoryOption: Equatable {
-    case showDetectionNode
-    case showVisionNode(Bool)
-}
-
 class NodeFactory {
     let nodePositioning: NodePositioning
 
-    private let options: [NodeFactoryOption]
-
-    private let detectionNode: DetectionAreaNode
     private let cube1: FloorNode
     private let cube2: FloorNode
     private let slope1: SlopeNode
@@ -32,20 +24,17 @@ class NodeFactory {
 
     init(nodePositioning: NodePositioning,
          detectionRadius: Float,
-         materialFactory: MaterialFactory,
-         options: [NodeFactoryOption] = []) {
+         materialFactory: MaterialFactory) {
         self.nodePositioning = nodePositioning
-        self.options = options
 
         let floorSize = nodePositioning.floorSize
 
-        detectionNode = DetectionAreaNode(detectionRadius: detectionRadius)
         cube1 = FloorNode(floorSize: floorSize, colour: materialFactory.floor1Colour)
         cube2 = FloorNode(floorSize: floorSize, colour: materialFactory.floor2Colour)
         slope1 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope1Colour)
         slope2 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope2Colour)
-        sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius, options: options)
-        sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius, options: options)
+        sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius)
+        sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius)
         synthoid = SynthoidNode(floorSize: floorSize)
         tree = TreeNode(floorSize: floorSize)
         rock = RockNode(floorSize: floorSize)
@@ -126,8 +115,6 @@ class NodeFactory {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
-        addDetectionNode(to: clone)
-        addBlurFilter(to: clone)
         return clone
     }
 
@@ -135,29 +122,7 @@ class NodeFactory {
         let clone = sentry.clone()
         clone.position = nodePositioning.calculateObjectPosition()
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, initialAngle)
-        addDetectionNode(to: clone)
-        addBlurFilter(to: clone)
         return clone
-    }
-
-    private func addDetectionNode(to node: SCNNode) {
-        guard options.contains(.showDetectionNode) else {
-            return
-        }
-
-        let clone = detectionNode.clone()
-        node.addChildNode(clone)
-    }
-
-    private func addBlurFilter(to node: SCNNode) {
-        guard options.contains(.showVisionNode(true)) else {
-            return
-        }
-
-        if let visionNode = node.childNode(withName: visionNodeName, recursively: true),
-            let gaussianBlurFilter = CIFilter(name: "CIGaussianBlur") {
-            visionNode.filters = [gaussianBlurFilter]
-        }
     }
 
     func createSynthoidNode(height: Int, viewingAngle: Float) -> SynthoidNode {
