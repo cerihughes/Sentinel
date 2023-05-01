@@ -17,7 +17,7 @@ class TerrainGenerator {
 
         grid = Grid(width: width, depth: depth)
 
-        let gen = ValueGenerator(input: levelConfiguration.level)
+        let gen = CosineValueGenerator(input: levelConfiguration.level)
         generateLargePlateaus(gen: gen, levelConfiguration: levelConfiguration)
         generateSmallPlateaus(gen: gen, levelConfiguration: levelConfiguration)
         generateLargePeaks(gen: gen, levelConfiguration: levelConfiguration)
@@ -81,21 +81,17 @@ class TerrainGenerator {
 
     private func generateSentinel(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
-        let sentinelPosition = highestPiece(in: gridIndex, gen: gen).point
+        guard let highestPiece = highestPiece(in: gridIndex, gen: gen) else { return undefinedPosition }
+        let sentinelPosition = highestPiece.point
         for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
         }
         return sentinelPosition
     }
 
-    private func highestPiece(in gridIndex: GridIndex, gen: ValueGenerator) -> GridPiece {
+    private func highestPiece(in gridIndex: GridIndex, gen: ValueGenerator) -> GridPiece? {
         let pieces = gridIndex.highestFloorPieces()
-        if pieces.count == 1 {
-            return pieces[0]
-        }
-
-        let index = gen.next(array: pieces)
-        return pieces[index]
+        return gen.randomItem(array: pieces)
     }
 
     private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> Set<GridPoint> {
@@ -106,7 +102,7 @@ class TerrainGenerator {
 
         let points = GridQuadrant.allCases
             .filter { !$0.contains(point: grid.sentinelPosition, grid: grid) }
-            .map { highestPiece(in: GridIndex(grid: grid, quadrant: $0), gen: gen) }
+            .compactMap { highestPiece(in: GridIndex(grid: grid, quadrant: $0), gen: gen) }
             .sorted { $0.level < $1.level }
             .map { $0.point }
 
@@ -199,7 +195,7 @@ class TerrainGenerator {
         }
 
         for _ in 0 ..< count {
-            let index = gen.next(array: allPieces)
+            let index = gen.index(array: allPieces)
             let piece = allPieces.remove(at: index)
             treePoints.insert(piece.point)
         }

@@ -3,7 +3,32 @@ import Foundation
 /**
  Produces pseudo-random values for a given input. Output shouldn't be predictable, but be repeatable for the same input.
  */
-class ValueGenerator {
+protocol ValueGenerator {
+
+    /// Returns a pseudo-rndom number between value1 and value2 _inclusive_ (i.e. it could return value1 or value2).
+    func next(value1: Int, value2: Int) -> Int
+}
+
+extension ValueGenerator {
+    func next(range: CountableRange<Int>) -> Int {
+        next(value1: range.lowerBound, value2: range.upperBound)
+    }
+
+    func index(array: [Any]) -> Int {
+        next(value1: 0, value2: array.count - 1)
+    }
+
+    func randomItem<T>(array: [T]) -> T? {
+        let index = index(array: array)
+        if array.indices.contains(index) {
+            return array[index]
+        } else {
+            return nil
+        }
+    }
+}
+
+class CosineValueGenerator: ValueGenerator {
     private var seeds: [Int] = []
     private var genCount = 0
 
@@ -34,21 +59,15 @@ class ValueGenerator {
         self.init(seeds: [m1, m2, m3, m4, m5])
     }
 
-    init(seeds: [Int]) {
+    private init(seeds: [Int]) {
         for _ in 0 ..< 3 {
             self.seeds.append(contentsOf: seeds)
         }
     }
 
-    func next(range: CountableRange<Int>) -> Int {
-        return next(min: range.lowerBound, max: range.upperBound)
-    }
-
-    func next(array: [Any]) -> Int {
-        return next(min: 0, max: array.count - 1)
-    }
-
-    private func next(min: Int, max: Int) -> Int {
+    func next(value1: Int, value2: Int) -> Int {
+        let min = Swift.min(value1, value2)
+        let max = Swift.max(value1, value2)
         genCount += 1
 
         var seed = seeds.remove(at: 0)

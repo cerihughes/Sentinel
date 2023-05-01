@@ -76,7 +76,7 @@ final class TerrainGeneratorTests: XCTestCase {
         XCTAssertEqual(grid.width, 34)
         XCTAssertEqual(grid.depth, 26)
 
-        XCTAssertEqual(grid.treePositions.count, 9)
+        XCTAssertEqual(grid.treePositions.count, 12)
         XCTAssertEqual(grid.sentryPositions.count, 3)
         XCTAssertEqual(grid.rockPositions.count, 0)
 
