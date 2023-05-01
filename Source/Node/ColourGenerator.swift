@@ -10,7 +10,7 @@ class ColourGenerator {
     private var lastHue: CGFloat = 0.0
 
     init(level: Int) {
-        gen = ValueGenerator(input: level)
+        gen = CosineValueGenerator(input: level)
     }
 
     func nextHue() -> CGFloat {
