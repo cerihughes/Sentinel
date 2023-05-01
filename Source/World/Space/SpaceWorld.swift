@@ -9,7 +9,7 @@ class SpaceWorld: World {
 
     init(nodeFactory: NodeFactory) {
         self.nodeFactory = nodeFactory
-        initialCameraNode = nodeFactory.createCameraNode()
+        initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
 
         setupScene()
     }
@@ -20,7 +20,7 @@ class SpaceWorld: World {
             scene.background.contents = components
         }
 
-        initialCameraNode.position = SCNVector3Make(25.0, 200.0, 225.0)
+        initialCameraNode.position = SCNVector3Make(0.0, 250, 275)
 
         orbitNode.name = "orbitNodeName"
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
@@ -47,6 +47,6 @@ class SpaceWorld: World {
 
     func set(terrainNode: TerrainNode) {
         orbitNode.addChildNode(terrainNode)
-        initialCameraNode.look(at: terrainNode.worldPosition)
+        initialCameraNode.look(at: terrainNode.position)
     }
 }
