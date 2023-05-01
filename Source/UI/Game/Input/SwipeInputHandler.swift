@@ -116,7 +116,7 @@ class SwipeInputHandler: GameInputHandler {
 
         let point = sender.location(in: sceneView)
         let hitTestResults = sceneView.hitTest(point, options: hitTestOptions)
-        if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
+        if let interactiveNode = hitTestResults.firstInteractiveNode() {
             processDoubleTap(node: interactiveNode)
         }
     }
@@ -192,7 +192,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func floorNode(for hitTestResults: [SCNHitTestResult]) -> FloorNode? {
-        if let interactiveNode = firstInteractiveNode(for: hitTestResults) {
+        if let interactiveNode = hitTestResults.firstInteractiveNode() {
             if let floorNode = interactiveNode as? FloorNode {
                 return floorNode
             }

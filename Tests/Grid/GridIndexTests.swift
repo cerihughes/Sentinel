@@ -100,3 +100,9 @@ class GridIndexTests: XCTestCase {
         XCTAssertEqual(index.highestFloorPieces().count, 1)
     }
 }
+
+extension GridPiece: Equatable {
+    public static func == (lhs: GridPiece, rhs: GridPiece) -> Bool {
+        lhs.point == rhs.point && lhs.isFloor == rhs.isFloor && lhs.level == rhs.level && lhs.slopes == rhs.slopes
+    }
+}

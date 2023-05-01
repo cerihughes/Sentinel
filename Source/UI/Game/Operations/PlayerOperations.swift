@@ -60,7 +60,7 @@ class PlayerOperations {
     }
 
     func hasEnteredScene() -> Bool {
-        return grid.currentPosition != undefinedPosition
+        return grid.currentPosition != .undefined
     }
 
     func enterScene() -> Bool {

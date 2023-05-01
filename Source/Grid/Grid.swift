@@ -62,7 +62,9 @@ enum GridDirection: Int, CaseIterable {
     }
 }
 
-let undefinedPosition = GridPoint(x: -1, z: -1)
+extension GridPoint {
+    static let undefined = GridPoint(x: -1, z: -1)
+}
 
 /**
  Describes the playing grid.
@@ -73,13 +75,13 @@ class Grid {
 
     private var grid: [[GridPiece]] = []
 
-    var sentinelPosition: GridPoint = undefinedPosition
+    var sentinelPosition = GridPoint.undefined
     var sentryPositions: Set<GridPoint> = []
-    var startPosition: GridPoint = undefinedPosition
+    var startPosition = GridPoint.undefined
     var treePositions: Set<GridPoint> = []
     var rockPositions: Set<GridPoint> = []
     var synthoidPositions: Set<GridPoint> = []
-    var currentPosition = undefinedPosition
+    var currentPosition = GridPoint.undefined
 
     init(width: Int, depth: Int) {
         self.width = width

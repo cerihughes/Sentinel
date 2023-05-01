@@ -22,7 +22,7 @@ extension GridPiece {
             .joined()
     }
 
-    open override var description: String {
+    var description: String {
         "\(slopesString):\(level)"
     }
 }
