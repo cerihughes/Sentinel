@@ -81,7 +81,7 @@ class TerrainGenerator {
 
     private func generateSentinel(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> GridPoint {
         let gridIndex = GridIndex(grid: grid)
-        guard let highestPiece = highestPiece(in: gridIndex, gen: gen) else { return undefinedPosition }
+        guard let highestPiece = highestPiece(in: gridIndex, gen: gen) else { return .undefined }
         let sentinelPosition = highestPiece.point
         for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)

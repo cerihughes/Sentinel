@@ -102,7 +102,7 @@ class TerrainOperations {
             return false
         }
 
-        grid.sentinelPosition = undefinedPosition
+        grid.sentinelPosition = .undefined
         return true
     }
 }
