@@ -71,7 +71,7 @@ class SwipeInputHandler: GameInputHandler {
         doubleTapRecogniser.numberOfTapsRequired = 2
         doubleTapRecogniser.addTarget(self, action: #selector(doubleTapGesture(sender:)))
 
-        longPressRecogniser.minimumPressDuration = 0.1
+        longPressRecogniser.minimumPressDuration = 0.5
         longPressRecogniser.addTarget(self, action: #selector(longPressGesture(sender:)))
         longPressRecogniser.isEnabled = false
 
@@ -143,6 +143,7 @@ class SwipeInputHandler: GameInputHandler {
             if let floorNode = floorNode(for: hitTestResults) {
                 startTapPoint = point
                 self.floorNode = floorNode
+                processBuildStart(floorNode: floorNode)
             } else {
                 startTapPoint = nil
                 floorNode = nil
@@ -160,6 +161,10 @@ class SwipeInputHandler: GameInputHandler {
                              delta: swipe.delta,
                              finished: state == .ended)
             }
+        }
+
+        if state == .ended || state == .cancelled || state == .failed, let floorNode {
+            processBuildEnd(floorNode: floorNode)
         }
     }
 
@@ -262,10 +267,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func cancelAbsorb(floorNode: FloorNode) {
-        guard let topmostNode = floorNode.topmostNode else {
-            return
-        }
-        topmostNode.scaleAllDimensions(by: 1.0, animated: true)
+        floorNode.topmostNode?.scaleAllDimensions(by: 1.0, animated: true)
     }
 
     private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, swipeState: SwipeState) {
@@ -277,6 +279,11 @@ class SwipeInputHandler: GameInputHandler {
         }
     }
 
+    private func processBuildStart(floorNode: FloorNode) {
+        let height = buildHeight(for: floorNode)
+        floorNode.selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
+    }
+
     private func processInProgressBuild(_ buildableType: BuildableType, floorNode: FloorNode, scale: Float) {
         let temporaryNode: TemporaryNode
         if let node = floorNode.temporaryNode {
@@ -284,7 +291,7 @@ class SwipeInputHandler: GameInputHandler {
         } else {
             let height = buildHeight(for: floorNode)
             temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: height)
-            floorNode.addChildNode(temporaryNode)
+            floorNode.temporaryNode = temporaryNode
         }
 
         if let existingType = temporaryNode.buildableType, existingType == buildableType {
@@ -328,11 +335,11 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func cancelBuild(floorNode: FloorNode) {
-        guard let temporaryNode = floorNode.temporaryNode else {
-            return
-        }
+        floorNode.temporaryNode?.removeFromParentNode(animated: true)
+    }
 
-        temporaryNode.removeFromParentNode(animated: true)
+    private func processBuildEnd(floorNode: FloorNode) {
+        floorNode.selectionNode?.removeFromParentNode()
     }
 
     private func createNode(for buildableType: BuildableType) -> (SCNNode & PlaceableNode) {
@@ -368,13 +375,11 @@ class SwipeInputHandler: GameInputHandler {
     }
 }
 
-class TemporaryNode: SCNNode {
+private class TemporaryNode: SCNNode {
     var contents: (SCNNode & PlaceableNode)? {
         didSet {
-            for childNode in childNodes {
-                childNode.removeFromParentNode()
-            }
-            if let contents = contents {
+            oldValue?.removeFromParentNode()
+            if let contents {
                 addChildNode(contents)
             }
         }
@@ -393,6 +398,28 @@ class TemporaryNode: SCNNode {
             }
         }
         return nil
+    }
+}
+
+private class SelectionNode: SCNNode {
+    override init() {
+        super.init()
+
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.white.withAlphaComponent(0.5)
+        material.specular.contents = UIColor.white
+
+        let sideLength = CGFloat(floorSize)
+        let box = SCNBox(width: CGFloat(sideLength),
+                         height: sideLength / 50,
+                         length: CGFloat(sideLength),
+                         chamferRadius: sideLength)
+        box.firstMaterial = material
+        geometry = box
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 }
 
@@ -436,23 +463,51 @@ extension SCNNode {
 }
 
 private let temporaryNodeName = "temporaryNodeName"
+private let selectionNodeName = "selectionNodeName"
 
-extension NodeFactory {
+private extension NodeFactory {
     func createTemporaryNode(height: Int) -> TemporaryNode {
         let node = TemporaryNode()
         node.name = temporaryNodeName
         node.position = nodePositioning.calculateObjectPosition(height: height)
         return node
     }
+
+    func createSelectionNode(height: Int) -> SelectionNode {
+        let node = SelectionNode()
+        node.name = selectionNodeName
+        node.position = nodePositioning.calculateSelectionPosition(height: height)
+        return node
+    }
 }
 
-extension FloorNode {
+private extension NodePositioning {
+    func calculateSelectionPosition(height: Int = 0) -> SCNVector3 {
+        let position = calculateObjectPosition(height: height)
+        return SCNVector3Make(
+            position.x,
+            position.y * 1.1,
+            position.z
+        )
+    }
+}
+
+private extension FloorNode {
     var temporaryNode: TemporaryNode? {
         get {
             return get(name: temporaryNodeName) as? TemporaryNode
         }
         set {
             set(instance: newValue, name: temporaryNodeName)
+        }
+    }
+
+    var selectionNode: SelectionNode? {
+        get {
+            get(name: selectionNodeName) as? SelectionNode
+        }
+        set {
+            set(instance: newValue, name: selectionNodeName)
         }
     }
 }
