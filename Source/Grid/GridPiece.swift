@@ -1,16 +1,14 @@
 import Foundation
 
-class GridPiece: NSObject {
+class GridPiece {
     let point: GridPoint
 
     var isFloor = true
     var level: Float = 0.0
-    private var slopes: Int = 0
+    var slopes: Int = 0
 
     init(x: Int, z: Int) {
         point = GridPoint(x: x, z: z)
-
-        super.init()
     }
 
     func buildFloor() -> Float {
