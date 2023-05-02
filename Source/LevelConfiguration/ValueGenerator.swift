@@ -4,22 +4,22 @@ import Foundation
  Produces pseudo-random values for a given input. Output shouldn't be predictable, but be repeatable for the same input.
  */
 protocol ValueGenerator {
-
     /// Returns a pseudo-rndom number between value1 and value2 _inclusive_ (i.e. it could return value1 or value2).
-    func next(value1: Int, value2: Int) -> Int
+    func nextValue(between value1: Int, and value2: Int) -> Int
 }
 
 extension ValueGenerator {
-    func next(range: CountableRange<Int>) -> Int {
-        next(value1: range.lowerBound, value2: range.upperBound)
+    func nextValue(in range: CountableRange<Int>) -> Int {
+        nextValue(between: range.lowerBound, and: range.upperBound)
     }
 
-    func index(array: [Any]) -> Int {
-        next(value1: 0, value2: array.count - 1)
+    func nextIndex(array: [Any]) -> Int? {
+        guard !array.isEmpty else { return nil }
+        return nextValue(between: 0, and: array.count - 1)
     }
 
-    func randomItem<T>(array: [T]) -> T? {
-        let index = index(array: array)
+    func nextItem<T>(array: [T]) -> T? {
+        guard let index = nextIndex(array: array) else { return nil }
         if array.indices.contains(index) {
             return array[index]
         } else {
@@ -65,9 +65,9 @@ class CosineValueGenerator: ValueGenerator {
         }
     }
 
-    func next(value1: Int, value2: Int) -> Int {
-        let min = Swift.min(value1, value2)
-        let max = Swift.max(value1, value2)
+    func nextValue(between value1: Int, and value2: Int) -> Int {
+        let min = min(value1, value2)
+        let max = max(value1, value2)
         genCount += 1
 
         var seed = seeds.remove(at: 0)
