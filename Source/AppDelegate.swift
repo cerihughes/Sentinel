@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
 
-        madog.resolve(resolver: SentinelResolver())
+        madog.resolve(resolver: DefaultResolver())
         let context = madog.renderUI(identifier: .navigation, tokenData: .single(Navigation.intro), in: window) {
             $0.isNavigationBarHidden = true
         }

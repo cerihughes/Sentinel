@@ -3,13 +3,15 @@ import SpriteKit
 
 class GameViewModel {
     let world: World
-
     let terrainOperations: TerrainOperations
     let playerOperations: PlayerOperations
     let opponentsOperations: OpponentsOperations
+    let gameScore: GameScore
+    var levelScore = LevelScore()
 
-    init(levelConfiguration: LevelConfiguration, nodeFactory: NodeFactory, world: World) {
+    init(levelConfiguration: LevelConfiguration, gameScore: GameScore, nodeFactory: NodeFactory, world: World) {
         self.world = world
+        self.gameScore = gameScore
 
         let tg = TerrainGenerator()
         let grid = tg.generate(levelConfiguration: levelConfiguration)

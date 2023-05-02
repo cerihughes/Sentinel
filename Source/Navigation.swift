@@ -1,10 +1,3 @@
-//
-//  Navigation.swift
-//  Sentinel
-//
-//  Created by Ceri Hughes on 30/09/2020.
-//
-
 import Foundation
 
 enum Navigation: Equatable {
