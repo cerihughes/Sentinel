@@ -36,7 +36,11 @@ class TreeNode: SCNNode, PlaceableNode, DetectableNode {
         for i in 0 ..< numberOfLevels {
             let bottomRadius = initialLeafRadius - (radiusDelta * CGFloat(i))
             let topRadius = bottomRadius - (radiusDelta * 2.0)
-            let leavesNode = SCNNode(geometry: SCNCone(topRadius: topRadius, bottomRadius: bottomRadius, height: sectionHeight))
+            let leavesNode = SCNNode(geometry: SCNCone(
+                topRadius: topRadius,
+                bottomRadius: bottomRadius,
+                height: sectionHeight
+            ))
             leavesNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
             leavesNode.position.y = y
 

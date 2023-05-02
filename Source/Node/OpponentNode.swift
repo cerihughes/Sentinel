@@ -58,7 +58,8 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
 
     func visibleTreesOnRocks(in renderer: SCNSceneRenderer) -> [TreeNode] {
         let allTrees = visibleNodes(in: renderer, type: TreeNode.self)
-        return allTrees.filter { $0.floorNode != nil && !$0.floorNode!.rockNodes.isEmpty } // only return trees that have rocks under them
+        // only return trees that have rocks under them
+        return allTrees.filter { $0.floorNode != nil && !$0.floorNode!.rockNodes.isEmpty }
     }
 
     func rotate(by radians: Float, duration: TimeInterval) {
@@ -82,10 +83,12 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         return compacted.filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
     }
 
-    private func hasLineOfSight(from cameraPresentationNode: SCNNode, to otherNode: SCNNode, in scene: SCNScene) -> Bool {
-        guard let otherDetectableNode = otherNode as? DetectableNode else {
-            return false
-        }
+    private func hasLineOfSight(
+        from cameraPresentationNode: SCNNode,
+        to otherNode: SCNNode,
+        in scene: SCNScene
+    ) -> Bool {
+        guard let otherDetectableNode = otherNode as? DetectableNode else { return false }
 
         let worldNode = scene.rootNode
         for otherDetectionNode in otherDetectableNode.detectionNodes {

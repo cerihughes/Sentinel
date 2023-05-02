@@ -181,7 +181,8 @@ class NodeFactory {
     }
 
     private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
-        if grid.get(point: grid.sentinelPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+        if grid.get(point: grid.sentinelPosition) != nil,
+            let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
             var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
             if initialAngle > radiansInCircle {
                 initialAngle -= radiansInCircle

@@ -50,7 +50,10 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
 
     private func setupTimingFunctions() {
         _ = timeMachine.add(timeInterval: 2.0, function: absorbObjects(timeInterval:playerRenderer:lastResult:))
-        _ = timeMachine.add(timeInterval: levelConfiguration.opponentRotationPause, function: rotation(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(
+            timeInterval: levelConfiguration.opponentRotationPause,
+            function: rotation(timeInterval:playerRenderer:lastResult:)
+        )
         _ = timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:playerRenderer:lastResult:))
     }
 

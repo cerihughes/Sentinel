@@ -4,7 +4,10 @@ import UIKit
 class GameViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(token: Navigation, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
+    override func createViewController(
+        token: Navigation,
+        navigationContext: ForwardBackNavigationContext
+    ) -> UIViewController? {
         guard
             let localDataSource = services?.localDataSource,
             case let .game(level) = token
@@ -34,6 +37,10 @@ class GameViewControllerProvider: TypedViewControllerProvider {
         let inputHandler = SwipeInputHandler(playerOperations: viewModel.playerOperations,
                                              opponentsOperations: viewModel.opponentsOperations,
                                              nodeManipulator: viewModel.terrainOperations.nodeManipulator)
-        return GameContainerViewController(navigationContext: navigationContext, viewModel: viewModel, inputHandler: inputHandler)
+        return GameContainerViewController(
+            navigationContext: navigationContext,
+            viewModel: viewModel,
+            inputHandler: inputHandler
+        )
     }
 }

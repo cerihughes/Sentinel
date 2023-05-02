@@ -9,6 +9,9 @@ protocol SceneImageLoaderToken {
  Converts a scene into a UIImage for rendering in a Collection View Cell. The image generation is done on a background
  thread to keep things snappy.
  */
+
+typealias SceneImageLoaderCompletion = (UIImage, TimeInterval) -> Void
+
 class SceneImageLoader {
     private let operationQueue = OperationQueue()
     private var cache = NSMutableDictionary()
@@ -17,15 +20,15 @@ class SceneImageLoader {
         operationQueue.maxConcurrentOperationCount = 1
     }
 
-    func loadImage(level: Int, size: CGSize, completion: @escaping (UIImage, TimeInterval) -> Void) -> SceneImageLoaderToken {
+    func loadImage(level: Int, size: CGSize, completion: SceneImageLoaderCompletion? = nil) -> SceneImageLoaderToken {
         let operation = SceneImageLoaderOperation(cache: cache, level: level, size: size, completion: completion)
         operationQueue.addOperation(operation)
         if level < 99, cache[level + 1] == nil {
-            let nextCacheOperation = SceneImageLoaderOperation(cache: cache, level: level + 1, size: size) { _, _ in }
+            let nextCacheOperation = SceneImageLoaderOperation(cache: cache, level: level + 1, size: size)
             operationQueue.addOperation(nextCacheOperation)
         }
         if level > 0, cache[level - 1] == nil {
-            let previousCacheOperation = SceneImageLoaderOperation(cache: cache, level: level - 1, size: size) { _, _ in }
+            let previousCacheOperation = SceneImageLoaderOperation(cache: cache, level: level - 1, size: size)
             operationQueue.addOperation(previousCacheOperation)
         }
         return operation
@@ -35,9 +38,9 @@ class SceneImageLoader {
         private let cache: NSMutableDictionary
         let level: Int
         let view: SCNView
-        let completion: (UIImage, TimeInterval) -> Void
+        let completion: SceneImageLoaderCompletion?
 
-        init(cache: NSMutableDictionary, level: Int, size: CGSize, completion: @escaping (UIImage, TimeInterval) -> Void) {
+        init(cache: NSMutableDictionary, level: Int, size: CGSize, completion: SceneImageLoaderCompletion? = nil) {
             self.cache = cache
             self.level = level
             self.completion = completion
@@ -87,7 +90,7 @@ class SceneImageLoader {
             let ns = now.uptimeNanoseconds - start.uptimeNanoseconds
             let timeInterval = Double(ns) / 1_000_000_000
             DispatchQueue.main.async {
-                self.completion(image, timeInterval)
+                self.completion?(image, timeInterval)
             }
         }
     }
