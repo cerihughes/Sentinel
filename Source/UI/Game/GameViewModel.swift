@@ -1,13 +1,25 @@
+import Combine
 import SceneKit
-import SpriteKit
+
+protocol GameViewModelDelegate: AnyObject {
+    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState)
+}
 
 class GameViewModel {
+    enum EndState {
+        case victory, defeat
+    }
+
     let world: World
     let terrainOperations: TerrainOperations
     let playerOperations: PlayerOperations
     let opponentsOperations: OpponentsOperations
+    let synthoidEnergy: SynthoidEnergy = SynthoidEnergyMonitor()
     let gameScore: GameScore
+    weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
+
+    private var cancellables: Set<AnyCancellable> = []
 
     init(levelConfiguration: LevelConfiguration, gameScore: GameScore, nodeFactory: NodeFactory, world: World) {
         self.world = world
@@ -25,7 +37,17 @@ class GameViewModel {
         terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
         playerOperations = PlayerOperations(levelConfiguration: levelConfiguration,
                                             terrainOperations: terrainOperations,
+                                            synthoidEnergy: synthoidEnergy,
                                             initialCameraNode: world.initialCameraNode)
         opponentsOperations = OpponentsOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations)
+        synthoidEnergy.energyPublisher
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: energyUpdated(_:))
+            .store(in: &cancellables)
+    }
+
+    private func energyUpdated(_ energy: Int) {
+        guard energy <= 0 else { return }
+        delegate?.gameViewModel(self, levelDidEndWith: .defeat)
     }
 }

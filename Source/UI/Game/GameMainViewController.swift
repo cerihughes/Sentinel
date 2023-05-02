@@ -2,7 +2,10 @@ import SceneKit
 import UIKit
 
 class GameMainViewController: SceneViewController {
-    init(scene: SCNScene, cameraNode: SCNNode?, overlay: OverlayScene) {
+    private let synthoidEnergy: SynthoidEnergy
+
+    init(scene: SCNScene, cameraNode: SCNNode?, overlay: OverlayScene, synthoidEnergy: SynthoidEnergy) {
+        self.synthoidEnergy = synthoidEnergy
         super.init(scene: scene, cameraNode: cameraNode, overlay: overlay)
     }
 
@@ -23,6 +26,6 @@ class GameMainViewController: SceneViewController {
             return
         }
 
-        overlay.updateEnergyUI()
+        overlay.updateEnergyUI(energy: synthoidEnergy.energy)
     }
 }

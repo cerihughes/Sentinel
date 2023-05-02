@@ -7,18 +7,12 @@ class OverlayScene: SKScene {
     private let spriteFactory = SpriteFactory()
     private let energyContainer = SKNode()
 
-    var energy: Int = 0 {
-        didSet {
-            updateEnergyUI()
-        }
-    }
-
     override func sceneDidLoad() {
         scaleMode = .aspectFit
         addChild(energyContainer)
     }
 
-    func updateEnergyUI() {
+    func updateEnergyUI(energy: Int) {
         energyContainer.removeAllChildren()
 
         var residualEnergy = energy

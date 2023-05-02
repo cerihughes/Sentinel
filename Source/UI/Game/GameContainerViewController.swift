@@ -1,16 +1,18 @@
+import Combine
 import Madog
 import SceneKit
 import SpriteKit
 import UIKit
 
-class GameContainerViewController: UIViewController, PlayerOperationsDelegate, OpponentsOperationsDelegate {
+class GameContainerViewController: UIViewController {
     private let navigationContext: ForwardBackNavigationContext
     private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
+    private let overlay = OverlayScene()
     private let mainViewController: GameMainViewController
     private let opponentViewContainer = OpponentViewContainer()
 
-    var completionData: Bool = false
+    private var cancellables: Set<AnyCancellable> = []
 
     init(navigationContext: ForwardBackNavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
         self.navigationContext = navigationContext
@@ -19,10 +21,20 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
 
         let scene = viewModel.world.scene
         let cameraNode = viewModel.world.initialCameraNode
-        let overlay = viewModel.playerOperations.overlay
-        mainViewController = GameMainViewController(scene: scene, cameraNode: cameraNode, overlay: overlay)
+        mainViewController = GameMainViewController(
+            scene: scene,
+            cameraNode: cameraNode,
+            overlay: overlay,
+            synthoidEnergy: viewModel.synthoidEnergy
+        )
 
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.delegate = self
+        viewModel.synthoidEnergy.energyPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] energy in self?.overlay.updateEnergyUI(energy: energy) }
+            .store(in: &cancellables)
     }
 
     @available(*, unavailable)
@@ -84,10 +96,12 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
         opponentViewController.view.removeFromSuperview()
         opponentViewController.removeFromParent()
     }
+}
 
-    // MARK: PlayerViewModelDelegate
+extension GameContainerViewController: PlayerOperationsDelegate {
+    // MARK: PlayerOperationsDelegate
 
-    func playerOperations(_: PlayerOperations, didChange cameraNode: SCNNode) {
+    func playerOperations(_ playerOperations: PlayerOperations, didChange cameraNode: SCNNode) {
         guard let sceneView = mainViewController.view as? SCNView else {
             return
         }
@@ -95,15 +109,20 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
         sceneView.pointOfView = cameraNode
     }
 
-    func playerOperations(_: PlayerOperations, levelDidEndWith state: GameEndState) {
-        completionData = state == .victory
+    func playerOperationsDidAbsorbSentinel(_ playerOperations: PlayerOperations) {
         DispatchQueue.main.async {
-            self.viewModel.opponentsOperations.timeMachine.stop()
-            _ = self.navigationContext.navigateBack(animated: true)
+            self.levelFinished()
         }
     }
 
-    // MARK: OpponentsViewModelDelegate
+    private func levelFinished() {
+        viewModel.opponentsOperations.timeMachine.stop()
+        _ = navigationContext.navigateBack(animated: true)
+    }
+}
+
+extension GameContainerViewController: OpponentsOperationsDelegate {
+    // MARK: OpponentsOperationsDelegate
 
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
@@ -120,7 +139,7 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
     }
 
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
-        viewModel.playerOperations.adjustEnergy(delta: -treeEnergyValue)
+        viewModel.synthoidEnergy.adjust(delta: -treeEnergyValue)
     }
 
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {
@@ -139,6 +158,12 @@ class GameContainerViewController: UIViewController, PlayerOperationsDelegate, O
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }
+    }
+}
+
+extension GameContainerViewController: GameViewModelDelegate {
+    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState) {
+        levelFinished()
     }
 }
 
