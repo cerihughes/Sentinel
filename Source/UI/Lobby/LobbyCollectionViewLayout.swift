@@ -20,7 +20,9 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
 
         let numberOfItems = collectionView.numberOfItems(inSection: 0)
 
-        let contentWidth = (itemSize.width * CGFloat(numberOfItems)) + (spacing * CGFloat(numberOfItems + 2)) + (peekOffset * 2.0)
+        let contentWidth = (itemSize.width * CGFloat(numberOfItems))
+            + (spacing * CGFloat(numberOfItems + 2))
+            + (peekOffset * 2.0)
         let contentHeight = collectionView.bounds.height
         return CGSize(width: contentWidth, height: contentHeight)
     }
@@ -55,7 +57,10 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
         cache.filter { $0.frame.intersects(rect) }
     }
 
-    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+    override func targetContentOffset(
+        forProposedContentOffset proposedContentOffset: CGPoint,
+        withScrollingVelocity velocity: CGPoint
+    ) -> CGPoint {
         let offset = peekOffset + spacing
         let width = itemSize.width + spacing
         let x = proposedContentOffset.x

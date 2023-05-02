@@ -21,17 +21,21 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
         return 100
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: lobbyViewModelReuseIdentifier, for: indexPath)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        collectionView.dequeueReusableCell(withReuseIdentifier: lobbyViewModelReuseIdentifier, for: indexPath)
     }
 
     // MARK: UICollectionViewDelegate
 
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let cell = cell as? LobbyCollectionViewCell else {
-            return
-        }
-
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        guard let cell = cell as? LobbyCollectionViewCell else { return }
         let level = indexPath.row
         var size = collectionView.frame.size
         if let collectionViewLayout = collectionView.collectionViewLayout as? LobbyCollectionViewLayout {
@@ -54,10 +58,12 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
         sceneImageLoaderTokens[indexPath] = token
     }
 
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if let token = sceneImageLoaderTokens[indexPath] {
-            token.cancel()
-        }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplaying cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        sceneImageLoaderTokens[indexPath]?.cancel()
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

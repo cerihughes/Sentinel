@@ -39,7 +39,10 @@ class GameViewModel {
                                             terrainOperations: terrainOperations,
                                             synthoidEnergy: synthoidEnergy,
                                             initialCameraNode: world.initialCameraNode)
-        opponentsOperations = OpponentsOperations(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations)
+        opponentsOperations = OpponentsOperations(
+            levelConfiguration: levelConfiguration,
+            terrainOperations: terrainOperations
+        )
         synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
             .sink(receiveValue: energyUpdated(_:))

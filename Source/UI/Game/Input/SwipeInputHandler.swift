@@ -49,7 +49,11 @@ class SwipeInputHandler: GameInputHandler {
     private var startTapPoint: CGPoint?
     private var floorNode: FloorNode?
 
-    init(playerOperations: PlayerOperations, opponentsOperations: OpponentsOperations, nodeManipulator: NodeManipulator) {
+    init(
+        playerOperations: PlayerOperations,
+        opponentsOperations: OpponentsOperations,
+        nodeManipulator: NodeManipulator
+    ) {
         self.playerOperations = playerOperations
         self.opponentsOperations = opponentsOperations
         self.nodeManipulator = nodeManipulator
@@ -371,7 +375,11 @@ class SwipeInputHandler: GameInputHandler {
         let deltaXRadians = deltaXDegrees * Float.pi / 180.0
         let deltaYDegrees = deltaY / 10.0
         let deltaYRadians = deltaYDegrees * Float.pi / 180.0
-        nodeManipulator.rotateCurrentSynthoid(rotationDelta: deltaXRadians, elevationDelta: deltaYRadians, persist: finished)
+        nodeManipulator.rotateCurrentSynthoid(
+            rotationDelta: deltaXRadians,
+            elevationDelta: deltaYRadians,
+            persist: finished
+        )
     }
 }
 

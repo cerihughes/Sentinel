@@ -17,11 +17,36 @@ class OverlayScene: SKScene {
 
         var residualEnergy = energy
         var index = 0
-        addSprites(for: &residualEnergy, at: &index, spriteEnergy: sentinelEnergyValue * 4, spriteNode: spriteFactory.sentinel4SpriteNode)
-        addSprites(for: &residualEnergy, at: &index, spriteEnergy: synthoidEnergyValue * 4, spriteNode: spriteFactory.synthoid4SpriteNode)
-        addSprites(for: &residualEnergy, at: &index, spriteEnergy: synthoidEnergyValue, spriteNode: spriteFactory.synthoidSpriteNode)
-        addSprites(for: &residualEnergy, at: &index, spriteEnergy: rockEnergyValue, spriteNode: spriteFactory.rockSpriteNode)
-        addSprites(for: &residualEnergy, at: &index, spriteEnergy: treeEnergyValue, spriteNode: spriteFactory.treeSpriteNode)
+        addSprites(
+            for: &residualEnergy,
+            at: &index,
+            spriteEnergy: sentinelEnergyValue * 4,
+            spriteNode: spriteFactory.sentinel4SpriteNode
+        )
+        addSprites(
+            for: &residualEnergy,
+            at: &index,
+            spriteEnergy: synthoidEnergyValue * 4,
+            spriteNode: spriteFactory.synthoid4SpriteNode
+        )
+        addSprites(
+            for: &residualEnergy,
+            at: &index,
+            spriteEnergy: synthoidEnergyValue,
+            spriteNode: spriteFactory.synthoidSpriteNode
+        )
+        addSprites(
+            for: &residualEnergy,
+            at: &index,
+            spriteEnergy: rockEnergyValue,
+            spriteNode: spriteFactory.rockSpriteNode
+        )
+        addSprites(
+            for: &residualEnergy,
+            at: &index,
+            spriteEnergy: treeEnergyValue,
+            spriteNode: spriteFactory.treeSpriteNode
+        )
     }
 
     private func addSprites(for energy: inout Int, at index: inout Int, spriteEnergy: Int, spriteNode: SKSpriteNode) {
