@@ -32,7 +32,7 @@ class ColourGenerator {
     }
 
     private func nextValue(range: CountableRange<Int>) -> CGFloat {
-        let next = gen.next(range: range)
+        let next = gen.nextValue(in: range)
         return CGFloat(next) / 255.0
     }
 }

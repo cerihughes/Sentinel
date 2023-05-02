@@ -91,7 +91,7 @@ class TerrainGenerator {
 
     private func highestPiece(in gridIndex: GridIndex, gen: ValueGenerator) -> GridPiece? {
         let pieces = gridIndex.highestFloorPieces()
-        return gen.randomItem(array: pieces)
+        return gen.nextItem(array: pieces)
     }
 
     private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> Set<GridPoint> {
@@ -123,7 +123,7 @@ class TerrainGenerator {
             return startPieces[0].point
         }
 
-        let index = gen.next(range: 0 ..< startPieces.count - 1)
+        let index = gen.nextValue(in: 0 ..< startPieces.count - 1)
         let point = startPieces[index].point
         grid.synthoidPositions.insert(point)
 
@@ -151,11 +151,11 @@ class TerrainGenerator {
     private func generatePlateaus(sizeRange: CountableRange<Int>,
                                   countRange: CountableRange<Int>,
                                   gen: ValueGenerator) {
-        let count = gen.next(range: countRange)
+        let count = gen.nextValue(in: countRange)
         for _ in 0 ..< count {
-            let size = gen.next(range: sizeRange)
-            let x = gen.next(range: 0 ..< grid.width - 1)
-            let z = gen.next(range: 0 ..< grid.depth - 1)
+            let size = gen.nextValue(in: sizeRange)
+            let x = gen.nextValue(in: 0 ..< grid.width - 1)
+            let z = gen.nextValue(in: 0 ..< grid.depth - 1)
             generatePlateau(x: x, z: z, size: size)
         }
     }
@@ -163,10 +163,10 @@ class TerrainGenerator {
     private func generatePeaks(summitSize: Int,
                                countRange: CountableRange<Int>,
                                gen: ValueGenerator) {
-        let count = gen.next(range: countRange)
+        let count = gen.nextValue(in: countRange)
         for _ in 0 ..< count {
-            let x = gen.next(range: 0 ..< grid.width - 1)
-            let z = gen.next(range: 0 ..< grid.depth - 1)
+            let x = gen.nextValue(in: 0 ..< grid.width - 1)
+            let z = gen.nextValue(in: 0 ..< grid.depth - 1)
             generatePeak(x: x, z: z, summitSize: summitSize)
         }
     }
@@ -189,13 +189,13 @@ class TerrainGenerator {
         var allPieces = gridIndex.allPieces()
         var treePoints: Set<GridPoint> = []
 
-        var count = gen.next(range: countRange) / 4
+        var count = gen.nextValue(in: countRange) / 4
         if count > allPieces.count {
             count = allPieces.count
         }
 
         for _ in 0 ..< count {
-            let index = gen.index(array: allPieces)
+            guard let index = gen.nextIndex(array: allPieces) else { continue }
             let piece = allPieces.remove(at: index)
             treePoints.insert(piece.point)
         }
