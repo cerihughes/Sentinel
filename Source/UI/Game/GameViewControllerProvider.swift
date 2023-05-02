@@ -6,10 +6,13 @@ class GameViewControllerProvider: TypedViewControllerProvider {
 
     override func createViewController(token: Navigation, navigationContext: ForwardBackNavigationContext) -> UIViewController? {
         guard
+            let localDataSource = services?.localDataSource,
             case let .game(level) = token
         else {
             return nil
         }
+
+        let gameScore = localDataSource.localStorage.gameScore ?? .init()
 
         let levelConfiguration = MainLevelConfiguration(level: level)
         let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
@@ -22,7 +25,12 @@ class GameViewControllerProvider: TypedViewControllerProvider {
                                       materialFactory: materialFactory)
 
         let world = SpaceWorld(nodeFactory: nodeFactory)
-        let viewModel = GameViewModel(levelConfiguration: levelConfiguration, nodeFactory: nodeFactory, world: world)
+        let viewModel = GameViewModel(
+            levelConfiguration: levelConfiguration,
+            gameScore: gameScore,
+            nodeFactory: nodeFactory,
+            world: world
+        )
         let inputHandler = SwipeInputHandler(playerOperations: viewModel.playerOperations,
                                              opponentsOperations: viewModel.opponentsOperations,
                                              nodeManipulator: viewModel.terrainOperations.nodeManipulator)

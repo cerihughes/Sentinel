@@ -1,13 +1,11 @@
-//
-//  SentinelResolver.swift
-//  Sentinel
-//
-//  Created by Ceri Hughes on 30/09/2020.
-//
-
 import Madog
 
-class SentinelResolver: Resolver<Navigation> {
+class DefaultResolver: Resolver<Navigation> {
+    override func serviceProviderFunctions() -> [(ServiceProviderCreationContext) -> ServiceProvider] {
+        return [
+            DefaultServices.init(context:)
+        ]
+    }
     override func viewControllerProviderFunctions() -> [() -> ViewControllerProvider<Navigation>] {
         return [
             IntroViewControllerProvider.init,

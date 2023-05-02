@@ -1,16 +1,16 @@
-//
-//  TypedViewControllerProvider.swift
-//  Sentinel
-//
-//  Created by Ceri Hughes on 06/01/2019.
-//  Copyright © 2019 Ceri Hughes. All rights reserved.
-//
-
 import Madog
 import UIKit
 
 class TypedViewControllerProvider: SingleViewControllerProvider<Navigation> {
+    var services: Services?
+
     // MARK: SingleViewControllerProvider
+
+    override final func configure(with serviceProviders: [String: ServiceProvider]) {
+        super.configure(with: serviceProviders)
+
+        services = serviceProviders[serviceProviderName] as? Services
+    }
 
     override func createViewController(token: Navigation, context: Context) -> UIViewController? {
         guard
