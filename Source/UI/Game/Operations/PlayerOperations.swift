@@ -7,13 +7,9 @@ let synthoidEnergyValue = 3
 let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
-enum GameEndState {
-    case victory, defeat
-}
-
 protocol PlayerOperationsDelegate: AnyObject {
-    func playerOperations(_: PlayerOperations, didChange cameraNode: SCNNode)
-    func playerOperations(_: PlayerOperations, levelDidEndWith state: GameEndState)
+    func playerOperations(_ playerOperations: PlayerOperations, didChange cameraNode: SCNNode)
+    func playerOperationsDidAbsorbSentinel(_ playerOperations: PlayerOperations)
 }
 
 class PlayerOperations {
@@ -23,40 +19,26 @@ class PlayerOperations {
 
     private let nodeManipulator: NodeManipulator
     private let grid: Grid
-
-    let overlay = OverlayScene()
+    private let synthoidEnergy: SynthoidEnergy
 
     weak var delegate: PlayerOperationsDelegate?
 
     var preAnimationBlock: (() -> Void)?
     var postAnimationBlock: (() -> Void)?
 
-    init(levelConfiguration: LevelConfiguration, terrainOperations: TerrainOperations, initialCameraNode: SCNNode) {
+    init(
+        levelConfiguration: LevelConfiguration,
+        terrainOperations: TerrainOperations,
+        synthoidEnergy: SynthoidEnergy,
+        initialCameraNode: SCNNode
+    ) {
         self.levelConfiguration = levelConfiguration
         self.terrainOperations = terrainOperations
+        self.synthoidEnergy = synthoidEnergy
         self.initialCameraNode = initialCameraNode
 
         nodeManipulator = terrainOperations.nodeManipulator
         grid = terrainOperations.grid
-        overlay.energy = 10
-    }
-
-    func adjustEnergy(delta: Int) {
-        guard
-            let delegate = delegate
-        else {
-            return
-        }
-
-        overlay.energy += delta
-
-        if overlay.energy <= 0 {
-            delegate.playerOperations(self, levelDidEndWith: .defeat)
-        }
-    }
-
-    private func hasEnergy(required: Int) -> Bool {
-        return overlay.energy > required
     }
 
     func hasEnteredScene() -> Bool {
@@ -91,38 +73,38 @@ class PlayerOperations {
     }
 
     func buildTree(at point: GridPoint) {
-        guard hasEnergy(required: treeEnergyValue) else {
+        guard synthoidEnergy.has(energy: treeEnergyValue) else {
             return
         }
 
-        adjustEnergy(delta: -treeEnergyValue)
+        synthoidEnergy.adjust(delta: -treeEnergyValue)
         terrainOperations.buildTree(at: point)
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {
-        guard hasEnergy(required: treeEnergyValue) else {
+        guard synthoidEnergy.has(energy: treeEnergyValue) else {
             return
         }
 
         if grid.treePositions.contains(point) {
-            adjustEnergy(delta: treeEnergyValue)
+            synthoidEnergy.adjust(delta: treeEnergyValue)
         }
 
-        guard hasEnergy(required: rockEnergyValue) else {
+        guard synthoidEnergy.has(energy: rockEnergyValue) else {
             return
         }
 
-        adjustEnergy(delta: -rockEnergyValue)
+        synthoidEnergy.adjust(delta: -rockEnergyValue)
         terrainOperations.buildRock(at: point, rotation: rotation)
     }
 
     func buildSynthoid(at point: GridPoint) {
-        guard hasEnergy(required: synthoidEnergyValue) else {
+        guard synthoidEnergy.has(energy: synthoidEnergyValue) else {
             return
         }
 
         let viewingAngle = point.angle(to: grid.currentPosition)
-        adjustEnergy(delta: -synthoidEnergyValue)
+        synthoidEnergy.adjust(delta: -synthoidEnergyValue)
         terrainOperations.buildSynthoid(at: point, viewingAngle: viewingAngle)
     }
 
@@ -148,46 +130,46 @@ class PlayerOperations {
         return false
     }
 
-    func absorbTreeNode(at point: GridPoint) -> Bool {
+    private func absorbTreeNode(at point: GridPoint) -> Bool {
         if terrainOperations.absorbTreeNode(at: point) {
-            adjustEnergy(delta: treeEnergyValue)
+            synthoidEnergy.adjust(delta: treeEnergyValue)
             return true
         }
         return false
     }
 
-    func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
+    private func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
         if terrainOperations.absorbRockNode(at: point, isFinalRockNode: isFinalRockNode) {
-            adjustEnergy(delta: rockEnergyValue)
+            synthoidEnergy.adjust(delta: rockEnergyValue)
             return true
         }
         return false
     }
 
-    func absorbSynthoidNode(at point: GridPoint) -> Bool {
+    private func absorbSynthoidNode(at point: GridPoint) -> Bool {
         if terrainOperations.absorbSynthoidNode(at: point) {
-            adjustEnergy(delta: synthoidEnergyValue)
+            synthoidEnergy.adjust(delta: synthoidEnergyValue)
             return true
         }
         return false
     }
 
-    func absorbSentryNode(at point: GridPoint) -> Bool {
+    private func absorbSentryNode(at point: GridPoint) -> Bool {
         if nodeManipulator.absorbSentry(at: point) {
-            adjustEnergy(delta: sentryEnergyValue)
+            synthoidEnergy.adjust(delta: sentryEnergyValue)
             return true
         }
         return false
     }
 
-    func absorbSentinelNode(at point: GridPoint) -> Bool {
+    private func absorbSentinelNode(at point: GridPoint) -> Bool {
         guard let delegate = delegate else {
             return false
         }
 
         if nodeManipulator.absorbSentinel(at: point) {
-            adjustEnergy(delta: sentinelEnergyValue)
-            delegate.playerOperations(self, levelDidEndWith: .victory)
+            synthoidEnergy.adjust(delta: sentinelEnergyValue)
+            delegate.playerOperationsDidAbsorbSentinel(self)
             return true
         }
 
