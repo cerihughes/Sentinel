@@ -109,9 +109,11 @@ extension GameContainerViewController: PlayerOperationsDelegate {
         sceneView.pointOfView = cameraNode
     }
 
-    func playerOperationsDidAbsorbSentinel(_ playerOperations: PlayerOperations) {
-        DispatchQueue.main.async {
-            self.levelFinished()
+    func playerOperations(_ playerOperations: PlayerOperations, didPerform operation: PlayerOperation) {
+        if case let .absorb(absorbableItem) = operation, absorbableItem == .sentinel {
+            DispatchQueue.main.async {
+                self.levelFinished()
+            }
         }
     }
 
