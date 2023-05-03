@@ -13,6 +13,9 @@ protocol PlayerOperationsDelegate: AnyObject {
 }
 
 class PlayerOperations {
+    enum Item {
+        case tree, rock, synthoid, sentry, sentinel
+    }
     private let levelConfiguration: LevelConfiguration
     private let terrainOperations: TerrainOperations
     private let initialCameraNode: SCNNode
