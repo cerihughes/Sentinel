@@ -138,6 +138,8 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
         }
     }
 
+    func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
+
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
         viewModel.synthoidEnergy.adjust(delta: -treeEnergyValue)
     }

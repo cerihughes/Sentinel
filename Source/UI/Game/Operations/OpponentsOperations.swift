@@ -2,6 +2,7 @@ import SceneKit
 
 protocol OpponentsOperationsDelegate: AnyObject {
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
+    func opponentsOperationsDidAbsorb(_: OpponentsOperations)
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations)
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
@@ -71,6 +72,7 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
                 let point = nodeManipulator.point(for: floorNode) {
                 if terrainOperations.absorbSynthoidNode(at: point) {
                     terrainOperations.buildRock(at: point)
+                    delegate?.opponentsOperationsDidAbsorb(self)
                     buildRandomTree()
                     return nil
                 }
@@ -81,6 +83,7 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
                 let point = nodeManipulator.point(for: floorNode) {
                 if terrainOperations.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1) {
                     terrainOperations.buildTree(at: point)
+                    delegate?.opponentsOperationsDidAbsorb(self)
                     buildRandomTree()
                     return nil
                 }
@@ -90,6 +93,7 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
                 let floorNode = visibleTree.floorNode,
                 let point = nodeManipulator.point(for: floorNode) {
                 if terrainOperations.absorbTreeNode(at: point) {
+                    delegate?.opponentsOperationsDidAbsorb(self)
                     buildRandomTree()
                     return nil
                 }
