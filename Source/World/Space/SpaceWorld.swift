@@ -1,17 +1,16 @@
 import SceneKit
 
 class SpaceWorld: World {
-    private let nodeFactory: NodeFactory
-    internal let initialCameraNode: SCNNode
     internal let scene = SCNScene()
 
     private let orbitNode = SCNNode()
 
-    init(nodeFactory: NodeFactory) {
-        self.nodeFactory = nodeFactory
-        initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
-
+    init() {
         setupScene()
+    }
+
+    func set(terrainNode: TerrainNode) {
+        orbitNode.addChildNode(terrainNode)
     }
 
     private func setupScene() {
@@ -19,8 +18,6 @@ class SpaceWorld: World {
         if let components = skyBox.componentImages() {
             scene.background.contents = components
         }
-
-        initialCameraNode.position = SCNVector3Make(0.0, 250, 275)
 
         orbitNode.name = "orbitNodeName"
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
@@ -31,22 +28,47 @@ class SpaceWorld: World {
         orbit.repeatCount = Float.infinity
         orbitNode.addAnimation(orbit, forKey: "orbit")
 
-        orbitNode.addChildNode(initialCameraNode)
         addAmbientLights(to: orbitNode)
 
         scene.rootNode.addChildNode(orbitNode)
     }
 
     private func addAmbientLights(to node: SCNNode) {
-        let ambientLightNodes = nodeFactory.createAmbientLightNodes(distance: 200.0)
+        let ambientLightNodes = createAmbientLightNodes(distance: 200.0)
 
         for ambientLightNode in ambientLightNodes {
             node.addChildNode(ambientLightNode)
         }
     }
 
-    func set(terrainNode: TerrainNode) {
-        orbitNode.addChildNode(terrainNode)
-        initialCameraNode.look(at: terrainNode.position)
+    private func createAmbientLightNodes(distance: Float) -> [SCNNode] {
+        var ambientLightNodes: [SCNNode] = []
+        var ambientLightNode = createAmbientLightNode()
+        for x in -1 ... 1 {
+            for z in -1 ... 1 {
+                if abs(x + z) == 1 {
+                    continue
+                }
+
+                let xf = Float(x) * distance
+                let yf = distance
+                let zf = Float(z) * distance
+                ambientLightNode.position = SCNVector3Make(xf, yf, zf)
+                ambientLightNodes.append(ambientLightNode)
+
+                ambientLightNode = ambientLightNode.clone()
+            }
+        }
+        return ambientLightNodes
+    }
+
+    func createAmbientLightNode() -> SCNNode {
+        let ambient = SCNLight()
+        ambient.type = .omni
+        ambient.color = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 0.75)
+        let ambientNode = SCNNode()
+        ambientNode.name = ambientLightNodeName
+        ambientNode.light = ambient
+        return ambientNode
     }
 }

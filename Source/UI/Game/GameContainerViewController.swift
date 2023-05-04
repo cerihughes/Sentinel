@@ -19,19 +19,19 @@ class GameContainerViewController: UIViewController {
         self.viewModel = viewModel
         self.inputHandler = inputHandler
 
-        let scene = viewModel.world.scene
-        let cameraNode = viewModel.world.initialCameraNode
+        let scene = viewModel.worldBuilder.world.scene
+        let cameraNode = viewModel.built.initialCameraNode
         mainViewController = GameMainViewController(
             scene: scene,
             cameraNode: cameraNode,
             overlay: overlay,
-            synthoidEnergy: viewModel.synthoidEnergy
+            synthoidEnergy: viewModel.built.synthoidEnergy
         )
 
         super.init(nibName: nil, bundle: nil)
 
         viewModel.delegate = self
-        viewModel.synthoidEnergy.energyPublisher
+        viewModel.built.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] energy in self?.overlay.updateEnergyUI(energy: energy) }
             .store(in: &cancellables)
@@ -49,8 +49,8 @@ class GameContainerViewController: UIViewController {
             return
         }
 
-        sceneView.delegate = viewModel.opponentsOperations
-        viewModel.opponentsOperations.delegate = self
+        sceneView.delegate = viewModel.built.opponentsOperations
+        viewModel.built.opponentsOperations.delegate = self
 
         addChild(mainViewController)
         view.addSubview(mainViewController.view)
@@ -70,11 +70,11 @@ class GameContainerViewController: UIViewController {
         }
 
         inputHandler.addGestureRecognisers(to: sceneView)
-        viewModel.playerOperations.preAnimationBlock = {
+        viewModel.built.playerOperations.preAnimationBlock = {
             self.inputHandler.setGestureRecognisersEnabled(false)
         }
 
-        viewModel.playerOperations.postAnimationBlock = {
+        viewModel.built.playerOperations.postAnimationBlock = {
             self.inputHandler.setGestureRecognisersEnabled(true)
         }
     }
@@ -102,7 +102,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
-            let scene = self.viewModel.world.scene
+            let scene = self.viewModel.worldBuilder.world.scene
             let opponentViewController = SceneViewController(scene: scene, cameraNode: cameraNode)
             self.add(opponentViewController: opponentViewController)
 
@@ -117,7 +117,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
     func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
 
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
-        viewModel.synthoidEnergy.adjust(delta: -treeEnergyValue)
+        viewModel.built.synthoidEnergy.adjust(delta: -treeEnergyValue)
     }
 
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {
@@ -150,7 +150,7 @@ extension GameContainerViewController: GameViewModelDelegate {
     }
 
     private func levelFinished() {
-        viewModel.opponentsOperations.timeMachine.stop()
+        viewModel.built.opponentsOperations.timeMachine.stop()
         _ = navigationContext.navigateBack(animated: true)
     }
 }

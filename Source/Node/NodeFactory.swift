@@ -44,37 +44,6 @@ class NodeFactory {
         return CameraNode(zFar: nil)
     }
 
-    func createAmbientLightNodes(distance: Float) -> [SCNNode] {
-        var ambientLightNodes: [SCNNode] = []
-        var ambientLightNode = createAmbientLightNode()
-        for x in -1 ... 1 {
-            for z in -1 ... 1 {
-                if abs(x + z) == 1 {
-                    continue
-                }
-
-                let xf = Float(x) * distance
-                let yf = distance
-                let zf = Float(z) * distance
-                ambientLightNode.position = SCNVector3Make(xf, yf, zf)
-                ambientLightNodes.append(ambientLightNode)
-
-                ambientLightNode = ambientLightNode.clone()
-            }
-        }
-        return ambientLightNodes
-    }
-
-    func createAmbientLightNode() -> SCNNode {
-        let ambient = SCNLight()
-        ambient.type = .omni
-        ambient.color = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 0.75)
-        let ambientNode = SCNNode()
-        ambientNode.name = ambientLightNodeName
-        ambientNode.light = ambient
-        return ambientNode
-    }
-
     func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> TerrainNode {
         let terrainNode = TerrainNode()
 

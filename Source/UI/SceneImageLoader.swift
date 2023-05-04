@@ -59,25 +59,10 @@ class SceneImageLoader {
                 return
             }
 
-            let levelConfiguration = DefaultLevelConfiguration(level: level)
-            let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
-                                                  gridDepth: levelConfiguration.gridDepth,
-                                                  floorSize: floorSize)
-
-            let materialFactory = DefaultMaterialFactory(level: levelConfiguration.level)
-            let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
-                                          detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
-                                          materialFactory: materialFactory)
-
-            let world = SpaceWorld(nodeFactory: nodeFactory)
-
-            let tg = DefaultTerrainGenerator()
-            let grid = tg.generate(levelConfiguration: levelConfiguration)
-            let nodeMap = NodeMap()
-            let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-            world.set(terrainNode: terrainNode)
-
-            view.scene = world.scene
+            let worldBuilder = WorldBuilder.createDefault(level: level)
+            let built = worldBuilder.build()
+            view.scene = worldBuilder.world.scene
+            view.pointOfView = built.initialCameraNode
 
             let snapshot = view.snapshot()
             cache[level] = snapshot

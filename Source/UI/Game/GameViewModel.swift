@@ -11,52 +11,25 @@ class GameViewModel {
         case victory, defeat
     }
 
-    let world: World
-    private let grid: Grid
-    private let nodeManipulator: NodeManipulator
-    let terrainOperations: TerrainOperations
-    let playerOperations: PlayerOperations
-    let opponentsOperations: OpponentsOperations
-    let synthoidEnergy: SynthoidEnergy = SynthoidEnergyMonitor()
+    let worldBuilder: WorldBuilder
+    let built: WorldBuilder.Built
     let gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(
-        levelConfiguration: LevelConfiguration,
-        gameScore: GameScore,
-        nodeFactory: NodeFactory,
-        world: World
-    ) {
-        self.world = world
+    init(worldBuilder: WorldBuilder, gameScore: GameScore) {
+        self.worldBuilder = worldBuilder
         self.gameScore = gameScore
+        built = worldBuilder.build()
 
-        let tg = DefaultTerrainGenerator()
-        grid = tg.generate(levelConfiguration: levelConfiguration)
-
-        let nodeMap = NodeMap()
-        let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-        world.set(terrainNode: terrainNode)
-
-        nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
-
-        terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
-        playerOperations = PlayerOperations(levelConfiguration: levelConfiguration,
-                                            terrainOperations: terrainOperations,
-                                            synthoidEnergy: synthoidEnergy,
-                                            initialCameraNode: world.initialCameraNode)
-        opponentsOperations = OpponentsOperations(
-            levelConfiguration: levelConfiguration,
-            terrainOperations: terrainOperations
-        )
-        synthoidEnergy.energyPublisher
+        built.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
             .sink(receiveValue: energyUpdated(_:))
             .store(in: &cancellables)
 
-        playerOperations.delegate = self
+        built.playerOperations.delegate = self
     }
 
     private func energyUpdated(_ energy: Int) {
@@ -96,8 +69,8 @@ extension GameViewModel: PlayerOperationsDelegate {
 
     private func playerOperationsDidTeleport(to gridPoint: GridPoint) {
         guard
-            let floorNode = nodeManipulator.floorNode(for: gridPoint),
-            let gridPiece = grid.get(point: gridPoint),
+            let floorNode = built.nodeManipulator.floorNode(for: gridPoint),
+            let gridPiece = built.grid.get(point: gridPoint),
             gridPiece.isFloor
         else {
             return
