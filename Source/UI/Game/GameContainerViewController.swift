@@ -50,7 +50,6 @@ class GameContainerViewController: UIViewController {
         }
 
         sceneView.delegate = viewModel.opponentsOperations
-        viewModel.playerOperations.delegate = self
         viewModel.opponentsOperations.delegate = self
 
         addChild(mainViewController)
@@ -98,29 +97,6 @@ class GameContainerViewController: UIViewController {
     }
 }
 
-extension GameContainerViewController: PlayerOperationsDelegate {
-    // MARK: PlayerOperationsDelegate
-
-    func playerOperations(_ playerOperations: PlayerOperations, didChange cameraNode: SCNNode) {
-        guard let sceneView = mainViewController.view as? SCNView else {
-            return
-        }
-
-        sceneView.pointOfView = cameraNode
-    }
-
-    func playerOperationsDidAbsorbSentinel(_ playerOperations: PlayerOperations) {
-        DispatchQueue.main.async {
-            self.levelFinished()
-        }
-    }
-
-    private func levelFinished() {
-        viewModel.opponentsOperations.timeMachine.stop()
-        _ = navigationContext.navigateBack(animated: true)
-    }
-}
-
 extension GameContainerViewController: OpponentsOperationsDelegate {
     // MARK: OpponentsOperationsDelegate
 
@@ -137,6 +113,8 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
             }
         }
     }
+
+    func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
 
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
         viewModel.synthoidEnergy.adjust(delta: -treeEnergyValue)
@@ -162,8 +140,18 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 }
 
 extension GameContainerViewController: GameViewModelDelegate {
+    func gameViewModel(_ gameViewModel: GameViewModel, changeCameraNodeTo node: SCNNode) {
+        guard let sceneView = mainViewController.view as? SCNView else { return }
+        sceneView.pointOfView = node
+    }
+
     func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState) {
         levelFinished()
+    }
+
+    private func levelFinished() {
+        viewModel.opponentsOperations.timeMachine.stop()
+        _ = navigationContext.navigateBack(animated: true)
     }
 }
 

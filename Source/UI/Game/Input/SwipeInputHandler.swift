@@ -4,7 +4,7 @@ import UIKit
 enum SwipeDirection: CaseIterable {
     case up, down, left, right
 
-    var buildableType: BuildableType? {
+    var buildableItem: BuildableItem? {
         switch self {
         case .left:
             return .tree
@@ -16,10 +16,6 @@ enum SwipeDirection: CaseIterable {
             return nil
         }
     }
-}
-
-enum BuildableType {
-    case tree, rock, synthoid
 }
 
 enum SwipeState {
@@ -223,9 +219,9 @@ class SwipeInputHandler: GameInputHandler {
             processAbsorb(floorNode: floorNode, swipeState: swipeState)
         default:
             cancelAbsorb(floorNode: floorNode)
-            if let buildableType = swipeDirection.buildableType {
+            if let buildableItem = swipeDirection.buildableItem {
                 if validBuildSwipeDirections(for: floorNode).contains(swipeDirection) {
-                    processBuild(buildableType, floorNode: floorNode, swipeState: swipeState)
+                    processBuild(buildableItem, floorNode: floorNode, swipeState: swipeState)
                 }
             }
         }
@@ -274,12 +270,12 @@ class SwipeInputHandler: GameInputHandler {
         floorNode.topmostNode?.scaleAllDimensions(by: 1.0, animated: true)
     }
 
-    private func processBuild(_ buildableType: BuildableType, floorNode: FloorNode, swipeState: SwipeState) {
+    private func processBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, swipeState: SwipeState) {
         switch swipeState {
         case let .building(scale):
-            processInProgressBuild(buildableType, floorNode: floorNode, scale: scale)
+            processInProgressBuild(buildableItem, floorNode: floorNode, scale: scale)
         case let .finished(buildIt):
-            processCompleteBuild(buildableType, floorNode: floorNode, buildIt: buildIt)
+            processCompleteBuild(buildableItem, floorNode: floorNode, buildIt: buildIt)
         }
     }
 
@@ -288,7 +284,7 @@ class SwipeInputHandler: GameInputHandler {
         floorNode.selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
     }
 
-    private func processInProgressBuild(_ buildableType: BuildableType, floorNode: FloorNode, scale: Float) {
+    private func processInProgressBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, scale: Float) {
         let temporaryNode: TemporaryNode
         if let node = floorNode.temporaryNode {
             temporaryNode = node
@@ -298,9 +294,9 @@ class SwipeInputHandler: GameInputHandler {
             floorNode.temporaryNode = temporaryNode
         }
 
-        if let existingType = temporaryNode.buildableType, existingType == buildableType {
+        if let existingItem = temporaryNode.buildableItem, existingItem == buildableItem {
         } else {
-            temporaryNode.contents = createNode(for: buildableType)
+            temporaryNode.contents = createNode(for: buildableItem)
         }
 
         temporaryNode.scaleAllDimensions(by: scale)
@@ -315,13 +311,13 @@ class SwipeInputHandler: GameInputHandler {
         return 0
     }
 
-    private func processCompleteBuild(_ buildableType: BuildableType, floorNode: FloorNode, buildIt: Bool) {
+    private func processCompleteBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, buildIt: Bool) {
         if let point = nodeManipulator.point(for: floorNode),
             let temporaryNode = floorNode.temporaryNode {
             temporaryNode.removeFromParentNode(animated: !buildIt)
 
             if buildIt {
-                switch buildableType {
+                switch buildableItem {
                 case .rock:
                     if let contents = temporaryNode.contents as? RockNode {
                         let w = contents.rotation.w
@@ -346,9 +342,9 @@ class SwipeInputHandler: GameInputHandler {
         floorNode.selectionNode?.removeFromParentNode()
     }
 
-    private func createNode(for buildableType: BuildableType) -> (SCNNode & PlaceableNode) {
+    private func createNode(for buildableItem: BuildableItem) -> (SCNNode & PlaceableNode) {
         let node: SCNNode & PlaceableNode
-        switch buildableType {
+        switch buildableItem {
         case .tree:
             node = nodeManipulator.nodeFactory.createTreeNode(height: 0)
         case .rock:
@@ -393,7 +389,7 @@ private class TemporaryNode: SCNNode {
         }
     }
 
-    var buildableType: BuildableType? {
+    var buildableItem: BuildableItem? {
         if let contents = contents {
             if contents is TreeNode {
                 return .tree

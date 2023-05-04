@@ -5,11 +5,11 @@ struct GameScore: Codable {
 }
 
 struct LevelScore: Codable {
-    var treesCreated = 0
+    var treesBuilt = 0
     var treesAbsorbed = 0
-    var rocksCreated = 0
+    var rocksBuilt = 0
     var rocksAbsorbed = 0
-    var synthoidsCreated = 0
+    var synthoidsBuilt = 0
     var synthoidsAbsorbed = 0
     var teleports = 0
     var highestPoint = 0
@@ -17,7 +17,7 @@ struct LevelScore: Codable {
 }
 
 extension LevelScore {
-    mutating func pointReached(_ point: Int) {
-        highestPoint = max(point, highestPoint)
+    mutating func heightReached(_ height: Int) {
+        highestPoint = max(height, highestPoint)
     }
 }
