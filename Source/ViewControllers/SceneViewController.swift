@@ -9,6 +9,7 @@ class SceneViewController: UIViewController {
     let scene: SCNScene
     let cameraNode: SCNNode?
     let overlay: SKScene?
+    let sceneView = SCNView()
 
     init(scene: SCNScene, cameraNode: SCNNode?, overlay: SKScene? = nil) {
         self.scene = scene
@@ -24,15 +25,11 @@ class SceneViewController: UIViewController {
     }
 
     override func loadView() {
-        view = SCNView()
+        view = sceneView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        guard let sceneView = view as? SCNView else {
-            return
-        }
 
         sceneView.scene = scene
         sceneView.backgroundColor = UIColor.black
@@ -42,11 +39,6 @@ class SceneViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        guard let overlay = overlay else {
-            return
-        }
-
-        overlay.size = view.frame.size
+        overlay?.size = view.frame.size
     }
 }
