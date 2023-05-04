@@ -47,6 +47,8 @@ extension GameViewModel: PlayerOperationsDelegate {
 
     func playerOperations(_ playerOperations: PlayerOperations, didPerform operation: PlayerOperation) {
         switch operation {
+        case .enterScene(let gridPoint):
+            playerOperationsDidEnterScene(at: gridPoint)
         case .build(let buildableItem):
             playerOperationsDidBuild(buildableItem)
         case .absorb(let absorbableItem):
@@ -54,6 +56,19 @@ extension GameViewModel: PlayerOperationsDelegate {
         case .teleport(let gridPoint):
             playerOperationsDidTeleport(to: gridPoint)
         }
+    }
+
+    private func playerOperationsDidEnterScene(at gridPoint: GridPoint) {
+        guard
+            let floorNode = built.nodeManipulator.floorNode(for: gridPoint),
+            let gridPiece = built.grid.get(point: gridPoint),
+            gridPiece.isFloor
+        else {
+            return
+        }
+
+        let floorHeight = Int(gridPiece.level)
+        levelScore.didEnterScene(at: gridPoint, height: floorHeight)
     }
 
     private func playerOperationsDidBuild(_ buildableItem: BuildableItem) {
@@ -83,6 +98,10 @@ extension GameViewModel: PlayerOperationsDelegate {
 }
 
 private extension LevelScore {
+    mutating func didEnterScene(at gridPoint: GridPoint, height: Int) {
+        heightReached(height)
+    }
+
     mutating func didBuildItem(_ buildableItem: BuildableItem) {
         switch buildableItem {
         case .tree:

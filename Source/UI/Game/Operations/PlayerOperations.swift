@@ -8,6 +8,7 @@ let sentryEnergyValue = 3
 let sentinelEnergyValue = 4
 
 enum PlayerOperation {
+    case enterScene(GridPoint)
     case build(BuildableItem)
     case absorb(AbsorbableItem)
     case teleport(GridPoint)
@@ -63,7 +64,7 @@ class PlayerOperations {
                    to: synthoidNode.cameraNode,
                    animationDuration: 3.0)
         grid.currentPosition = grid.startPosition
-        delegate?.playerOperations(self, didPerform: .teleport(grid.currentPosition))
+        delegate?.playerOperations(self, didPerform: .enterScene(grid.currentPosition))
 
         nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
 
