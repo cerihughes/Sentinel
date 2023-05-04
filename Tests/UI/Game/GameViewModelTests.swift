@@ -6,7 +6,6 @@ final class GameViewModelTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-
         viewModel = GameViewModel(worldBuilder: WorldBuilder.createMock(), gameScore: GameScore())
     }
 
@@ -15,9 +14,12 @@ final class GameViewModelTests: XCTestCase {
         try super.tearDownWithError()
     }
 
+    func testInitiallyHasNoTeleportsAfterEnteringScene() {
+        viewModel.built.playerOperations.enterScene()
+        XCTAssertEqual(viewModel.levelScore.teleports, 0)
+    }
+
     func testTreeBuilt() {
-        let delegate = MockGameViewModelDelegate()
-        viewModel.delegate = delegate
         viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .build(.tree))
         XCTAssertEqual(viewModel.levelScore.treesBuilt, 1)
     }

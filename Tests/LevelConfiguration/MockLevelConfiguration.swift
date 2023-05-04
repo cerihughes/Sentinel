@@ -14,12 +14,12 @@ class MockLevelConfiguration: LevelConfiguration {
     var sentinelPlatformHeight = 2
     var sentryCount = 0
 
-    var largePlateauSizeRange = 1 ..< 1
-    var largePlateauCountRange = 1 ..< 1
-    var smallPlateauSizeRange = 1 ..< 1
-    var smallPlateauCountRange = 1 ..< 1
-    var largePeakCountRange = 1 ..< 1
-    var mediumPeakCountRange = 1 ..< 1
-    var smallPeakCountRange = 1 ..< 1
+    var largePlateauSizeRange = 0 ..< 0
+    var largePlateauCountRange = 0 ..< 0
+    var smallPlateauSizeRange = 0 ..< 0
+    var smallPlateauCountRange = 0 ..< 0
+    var largePeakCountRange = 0 ..< 0
+    var mediumPeakCountRange = 0 ..< 0
+    var smallPeakCountRange = 0 ..< 0
     var treeCountRange = 5 ..< 5
 }
