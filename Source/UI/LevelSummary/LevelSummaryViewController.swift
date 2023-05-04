@@ -18,6 +18,7 @@ class LevelSummaryViewController: SceneViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        sceneView.allowsCameraControl = true
 
         view.addGestureRecognizer(tapGestureRecogniser)
     }
