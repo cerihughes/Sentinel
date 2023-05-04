@@ -29,7 +29,7 @@ protocol LevelConfiguration {
     var treeCountRange: CountableRange<Int> { get }
 }
 
-struct MainLevelConfiguration: LevelConfiguration {
+struct DefaultLevelConfiguration: LevelConfiguration {
     let level: Int
     let opponentRotationSteps: Int = 12
     let opponentRotationTime: TimeInterval = 0.3

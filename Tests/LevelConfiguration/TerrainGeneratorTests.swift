@@ -16,7 +16,7 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel0() throws {
-        let config = MainLevelConfiguration(level: 0)
+        let config = DefaultLevelConfiguration(level: 0)
         let grid = tg.generate(levelConfiguration: config)
 
         XCTAssertEqual(grid.width, 32)
@@ -34,7 +34,7 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel10() throws {
-        let config = MainLevelConfiguration(level: 10)
+        let config = DefaultLevelConfiguration(level: 10)
         let grid = tg.generate(levelConfiguration: config)
 
         XCTAssertEqual(grid.width, 32)
@@ -52,7 +52,7 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel20() throws {
-        let config = MainLevelConfiguration(level: 20)
+        let config = DefaultLevelConfiguration(level: 20)
         let grid = tg.generate(levelConfiguration: config)
 
         XCTAssertEqual(grid.width, 33)
@@ -70,7 +70,7 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel30() throws {
-        let config = MainLevelConfiguration(level: 30)
+        let config = DefaultLevelConfiguration(level: 30)
         let grid = tg.generate(levelConfiguration: config)
 
         XCTAssertEqual(grid.width, 34)
@@ -88,7 +88,7 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel40() throws {
-        let config = MainLevelConfiguration(level: 40)
+        let config = DefaultLevelConfiguration(level: 40)
         let grid = tg.generate(levelConfiguration: config)
 
         XCTAssertEqual(grid.width, 35)

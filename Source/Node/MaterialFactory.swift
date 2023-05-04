@@ -7,7 +7,7 @@ protocol MaterialFactory {
     var slope2Colour: UIColor { get }
 }
 
-class MainMaterialFactory: MaterialFactory {
+class DefaultMaterialFactory: MaterialFactory {
     var floor1Colour: UIColor
     var floor2Colour: UIColor
     var slope1Colour: UIColor

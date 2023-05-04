@@ -12,7 +12,7 @@ final class GameViewModelTests: XCTestCase {
                                               gridDepth: levelConfiguration.gridDepth,
                                               floorSize: floorSize)
 
-        let materialFactory = MainMaterialFactory(level: levelConfiguration.level)
+        let materialFactory = DefaultMaterialFactory(level: levelConfiguration.level)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
                                       materialFactory: materialFactory)
