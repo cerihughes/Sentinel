@@ -1,4 +1,4 @@
-import SceneKit
+import UIKit
 
 protocol MaterialFactory {
     var floor1Colour: UIColor { get }

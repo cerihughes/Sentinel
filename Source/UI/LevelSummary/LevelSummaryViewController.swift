@@ -11,7 +11,7 @@ class LevelSummaryViewController: SceneViewController {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
-        super.init(scene: viewModel.world.scene, cameraNode: viewModel.world.initialCameraNode)
+        super.init(scene: viewModel.worldBuilder.world.scene, cameraNode: viewModel.built.initialCameraNode)
 
         tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
     }
@@ -42,7 +42,7 @@ class LevelSummaryViewController: SceneViewController {
     private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
 
-        let token = Navigation.game(level: viewModel.level)
+        let token = Navigation.game(level: viewModel.worldBuilder.levelConfiguration.level)
         _ = navigationContext.navigateForward(token: token, animated: true)
     }
 }

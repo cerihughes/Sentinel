@@ -8,35 +8,21 @@ class GameViewControllerProvider: TypedViewControllerProvider {
         token: Navigation,
         navigationContext: ForwardBackNavigationContext
     ) -> UIViewController? {
-        guard
-            let localDataSource = services?.localDataSource,
-            case let .game(level) = token
-        else {
+        guard let localDataSource = services?.localDataSource, case let .game(level) = token else {
             return nil
         }
 
         let gameScore = localDataSource.localStorage.gameScore ?? .init()
-
-        let levelConfiguration = DefaultLevelConfiguration(level: level)
-        let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
-                                              gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: floorSize)
-
-        let materialFactory = DefaultMaterialFactory(level: levelConfiguration.level)
-        let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
-                                      detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
-                                      materialFactory: materialFactory)
-
-        let world = SpaceWorld(nodeFactory: nodeFactory)
+        let worldBuilder = WorldBuilder.createDefault(level: level)
         let viewModel = GameViewModel(
-            levelConfiguration: levelConfiguration,
-            gameScore: gameScore,
-            nodeFactory: nodeFactory,
-            world: world
+            worldBuilder: worldBuilder,
+            gameScore: gameScore
         )
-        let inputHandler = SwipeInputHandler(playerOperations: viewModel.playerOperations,
-                                             opponentsOperations: viewModel.opponentsOperations,
-                                             nodeManipulator: viewModel.terrainOperations.nodeManipulator)
+        let inputHandler = SwipeInputHandler(
+            playerOperations: viewModel.built.playerOperations,
+            opponentsOperations: viewModel.built.opponentsOperations,
+            nodeManipulator: viewModel.built.nodeManipulator
+        )
         return GameContainerViewController(
             navigationContext: navigationContext,
             viewModel: viewModel,

@@ -7,21 +7,7 @@ final class GameViewModelTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        let levelConfiguration = MockLevelConfiguration()
-        let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
-                                              gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: floorSize)
-
-        let materialFactory = DefaultMaterialFactory(level: levelConfiguration.level)
-        let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
-                                      detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
-                                      materialFactory: materialFactory)
-        viewModel = GameViewModel(
-            levelConfiguration: levelConfiguration,
-            gameScore: GameScore(),
-            nodeFactory: nodeFactory,
-            world: MockWorld()
-        )
+        viewModel = GameViewModel(worldBuilder: WorldBuilder.createMock(), gameScore: GameScore())
     }
 
     override func tearDownWithError() throws {
@@ -32,14 +18,14 @@ final class GameViewModelTests: XCTestCase {
     func testTreeBuilt() {
         let delegate = MockGameViewModelDelegate()
         viewModel.delegate = delegate
-        viewModel.playerOperations(viewModel.playerOperations, didPerform: .build(.tree))
+        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .build(.tree))
         XCTAssertEqual(viewModel.levelScore.treesBuilt, 1)
     }
 
     func testSentinelAbsorbed() {
         let delegate = MockGameViewModelDelegate()
         viewModel.delegate = delegate
-        viewModel.playerOperations(viewModel.playerOperations, didPerform: .absorb(.sentinel))
+        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
         XCTAssertEqual(delegate.endState, .victory)
     }
 }

@@ -7,7 +7,7 @@ protocol OpponentsOperationsDelegate: AnyObject {
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
 
-class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
+class OpponentsOperations: NSObject {
     private let levelConfiguration: LevelConfiguration
     private let terrainOperations: TerrainOperations
 
@@ -41,12 +41,6 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
         if let randomPiece = emptyPieces.randomElement() {
             terrainOperations.buildTree(at: randomPiece.point)
         }
-    }
-
-    // MARK: SCNSceneRendererDelegate
-
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        timeMachine.handle(currentTimeInterval: time, renderer: renderer)
     }
 
     private func setupTimingFunctions() {
@@ -153,5 +147,13 @@ class OpponentsOperations: NSObject, SCNSceneRendererDelegate {
             }
         }
         return detectingOpponentNodes
+    }
+}
+
+extension OpponentsOperations: SCNSceneRendererDelegate {
+    // MARK: SCNSceneRendererDelegate
+
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        timeMachine.handle(currentTimeInterval: time, renderer: renderer)
     }
 }

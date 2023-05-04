@@ -11,3 +11,14 @@ class MockWorld: World {
         self.terrainNode = terrainNode
     }
 }
+
+extension WorldBuilder {
+    static func createMock(terrainGenerator: TerrainGenerator = DefaultTerrainGenerator()) -> WorldBuilder {
+        .init(
+            levelConfiguration: MockLevelConfiguration(),
+            terrainGenerator: terrainGenerator,
+            materialFactory: MockMaterialFactory(),
+            world: MockWorld()
+        )
+    }
+}
