@@ -59,19 +59,19 @@ class SceneImageLoader {
                 return
             }
 
-            let levelConfiguration = MainLevelConfiguration(level: level)
+            let levelConfiguration = DefaultLevelConfiguration(level: level)
             let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                                   gridDepth: levelConfiguration.gridDepth,
                                                   floorSize: floorSize)
 
-            let materialFactory = MainMaterialFactory(level: levelConfiguration.level)
+            let materialFactory = DefaultMaterialFactory(level: levelConfiguration.level)
             let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                           detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
                                           materialFactory: materialFactory)
 
             let world = SpaceWorld(nodeFactory: nodeFactory)
 
-            let tg = TerrainGenerator()
+            let tg = DefaultTerrainGenerator()
             let grid = tg.generate(levelConfiguration: levelConfiguration)
             let nodeMap = NodeMap()
             let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)

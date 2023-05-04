@@ -10,12 +10,12 @@ class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
     ) -> UIViewController? {
         guard case let .levelSummary(level) = token else { return nil }
 
-        let levelConfiguration = MainLevelConfiguration(level: level)
+        let levelConfiguration = DefaultLevelConfiguration(level: level)
         let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                               gridDepth: levelConfiguration.gridDepth,
                                               floorSize: floorSize)
 
-        let materialFactory = MainMaterialFactory(level: levelConfiguration.level)
+        let materialFactory = DefaultMaterialFactory(level: levelConfiguration.level)
         let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
                                       detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
                                       materialFactory: materialFactory)

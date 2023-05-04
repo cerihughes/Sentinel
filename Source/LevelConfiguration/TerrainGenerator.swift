@@ -8,8 +8,12 @@ import Foundation
 
  The LevelGenerator should also make sure this class creates increasingly difficult terrains to play with.
  */
-class TerrainGenerator {
-    var grid: Grid!
+protocol TerrainGenerator {
+    func generate(levelConfiguration: LevelConfiguration) -> Grid
+}
+
+class DefaultTerrainGenerator: TerrainGenerator {
+    private var grid: Grid!
 
     func generate(levelConfiguration: LevelConfiguration) -> Grid {
         let width = levelConfiguration.gridWidth
