@@ -29,6 +29,17 @@ final class GameViewModelTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testExample() throws {
+    func testTreeBuilt() {
+        let delegate = MockGameViewModelDelegate()
+        viewModel.delegate = delegate
+        viewModel.playerOperations(viewModel.playerOperations, didPerform: .build(.tree))
+        XCTAssertEqual(viewModel.levelScore.treesBuilt, 1)
+    }
+
+    func testSentinelAbsorbed() {
+        let delegate = MockGameViewModelDelegate()
+        viewModel.delegate = delegate
+        viewModel.playerOperations(viewModel.playerOperations, didPerform: .absorb(.sentinel))
+        XCTAssertEqual(delegate.endState, .victory)
     }
 }
