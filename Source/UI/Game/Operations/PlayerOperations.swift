@@ -10,7 +10,7 @@ let sentinelEnergyValue = 4
 enum PlayerOperation {
     case build(BuildableItem)
     case absorb(AbsorbableItem)
-    case teleport
+    case teleport(GridPoint)
 }
 
 protocol PlayerOperationsDelegate: AnyObject {
@@ -63,6 +63,7 @@ class PlayerOperations {
                    to: synthoidNode.cameraNode,
                    animationDuration: 3.0)
         grid.currentPosition = grid.startPosition
+        delegate?.playerOperations(self, didPerform: .teleport(grid.currentPosition))
 
         nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
 
@@ -70,13 +71,11 @@ class PlayerOperations {
     }
 
     func move(to synthoidNode: SynthoidNode) {
-        guard let floorNode = synthoidNode.floorNode,
-            let point = nodeManipulator.point(for: floorNode)
-        else {
+        guard let floorNode = synthoidNode.floorNode, let point = nodeManipulator.point(for: floorNode) else {
             return
         }
 
-        moveCamera(to: synthoidNode, animationDuration: 1.0)
+        moveCamera(to: synthoidNode, gridPoint: point, animationDuration: 1.0)
         grid.currentPosition = point
         nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
     }
@@ -180,14 +179,18 @@ class PlayerOperations {
         return false
     }
 
-    private func moveCamera(to nextSynthoidNode: SynthoidNode, animationDuration: CFTimeInterval) {
-        guard let currentSynthoidNode = nodeManipulator.currentSynthoidNode else {
-            return
-        }
-
-        moveCamera(from: currentSynthoidNode.cameraNode,
-                   to: nextSynthoidNode.cameraNode,
-                   animationDuration: animationDuration)
+    private func moveCamera(
+        to nextSynthoidNode: SynthoidNode,
+        gridPoint: GridPoint,
+        animationDuration: CFTimeInterval
+    ) {
+        guard let currentSynthoidNode = nodeManipulator.currentSynthoidNode else { return }
+        moveCamera(
+            from: currentSynthoidNode.cameraNode,
+            to: nextSynthoidNode.cameraNode,
+            animationDuration: animationDuration
+        )
+        self.delegate?.playerOperations(self, didPerform: .teleport(gridPoint))
     }
 
     private func moveCamera(from: SCNNode, to: SCNNode, animationDuration: CFTimeInterval) {
@@ -205,7 +208,6 @@ class PlayerOperations {
             self.delegate?.playerOperations(self, didChange: to)
             transitionCameraNode.removeFromParentNode()
             self.postAnimationBlock?()
-            self.delegate?.playerOperations(self, didPerform: .teleport)
         }
 
         transitionCameraNode.setWorldTransform(to.worldTransform)
