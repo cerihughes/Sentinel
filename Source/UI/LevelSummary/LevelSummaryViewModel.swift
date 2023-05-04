@@ -9,7 +9,7 @@ class LevelSummaryViewModel {
         self.world = world
         level = levelConfiguration.level
 
-        let tg = TerrainGenerator()
+        let tg = DefaultTerrainGenerator()
         let grid = tg.generate(levelConfiguration: levelConfiguration)
 
         let nodeMap = NodeMap()

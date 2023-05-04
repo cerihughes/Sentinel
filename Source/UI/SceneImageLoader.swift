@@ -71,7 +71,7 @@ class SceneImageLoader {
 
             let world = SpaceWorld(nodeFactory: nodeFactory)
 
-            let tg = TerrainGenerator()
+            let tg = DefaultTerrainGenerator()
             let grid = tg.generate(levelConfiguration: levelConfiguration)
             let nodeMap = NodeMap()
             let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)

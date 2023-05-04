@@ -7,7 +7,7 @@ final class TerrainGeneratorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        tg = TerrainGenerator()
+        tg = DefaultTerrainGenerator()
     }
 
     override func tearDown() {

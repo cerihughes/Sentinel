@@ -33,7 +33,7 @@ class GameViewModel {
         self.world = world
         self.gameScore = gameScore
 
-        let tg = TerrainGenerator()
+        let tg = DefaultTerrainGenerator()
         grid = tg.generate(levelConfiguration: levelConfiguration)
 
         let nodeMap = NodeMap()
