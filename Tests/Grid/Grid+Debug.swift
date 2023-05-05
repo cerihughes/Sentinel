@@ -1,18 +1,55 @@
 @testable import Sentinel
 
 extension Grid {
-    var description: String {
+    var slopesDescription: String {
         var desc = ""
         for z in 0 ..< depth {
             for x in 0 ..< width {
                 if let piece = get(point: GridPoint(x: x, z: z)) {
-                    desc += "\(piece) "
+                    desc += "\(piece.slopesDescription) "
                 }
             }
             desc += "\n"
         }
         return desc
     }
+
+    var contentsDescription: String {
+        var desc = ""
+        for z in 0 ..< depth {
+            for x in 0 ..< width {
+                desc += (contentsDescription(at: .init(x: x, z: z)))
+            }
+            desc += "\n"
+        }
+        return desc
+    }
+
+    func contentsDescription(at point: GridPoint) -> String {
+        if treePositions.contains(point) {
+            return "T"
+        }
+        if rockPositions.contains(point) {
+            return "R"
+        }
+        if currentPosition == point {
+            return "*"
+        }
+        if synthoidPositions.contains(point) {
+            return "P"
+        }
+        if sentinelPosition == point {
+            return "S"
+        }
+        if sentryPositions.contains(point) {
+            return "s"
+        }
+        if startPosition == point {
+            return "i"
+        }
+        return "."
+    }
+
 }
 
 extension GridPiece {
@@ -22,7 +59,7 @@ extension GridPiece {
             .joined()
     }
 
-    var description: String {
+    var slopesDescription: String {
         "\(slopesString):\(level)"
     }
 }
