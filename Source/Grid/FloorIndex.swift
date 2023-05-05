@@ -44,7 +44,7 @@ enum GridQuadrant: CaseIterable {
 /**
  For a given Grid (or part of a Grid), this represents a read-only description of its contents.
  */
-struct GridIndex {
+struct FloorIndex {
     private let index: [Int: [GridPiece]]
 
     init(grid: Grid) {
@@ -66,17 +66,14 @@ struct GridIndex {
 
         for z in minZ ..< maxZ {
             for x in minX ..< maxX {
-                if let piece = grid.get(point: GridPoint(x: x, z: z)) {
-                    if GridIndex.isValid(piece: piece, in: grid) {
-                        let level = Int(piece.level)
-
-                        var array = i[level]
-                        if array == nil {
-                            i[level] = [piece]
-                        } else {
-                            array!.append(piece)
-                            i[level] = array! // Need to reassign as arrays (structs) are passed by value
-                        }
+                if let piece = grid.get(point: GridPoint(x: x, z: z)), FloorIndex.isEmptyFloor(piece: piece, in: grid) {
+                    let level = Int(piece.level)
+                    var array = i[level]
+                    if array == nil {
+                        i[level] = [piece]
+                    } else {
+                        array!.append(piece)
+                        i[level] = array! // Need to reassign as arrays (structs) are passed by value
                     }
                 }
             }
@@ -86,49 +83,42 @@ struct GridIndex {
     }
 
     func floorLevels() -> [Int] {
-        return index.keys.sorted()
+        index.keys.sorted()
     }
 
-    func pieces(at level: Int) -> [GridPiece] {
-        if let array = index[level] {
-            return array
-        }
-
-        return []
+    func emptyFloorPieces(at level: Int) -> [GridPiece] {
+        index[level] ?? []
     }
 
-    func highestFloorPieces() -> [GridPiece] {
+    func highestEmptyFloorPieces() -> [GridPiece] {
         if let level = floorLevels().last {
-            return pieces(at: level)
+            return emptyFloorPieces(at: level)
         }
         return []
     }
 
-    func lowestFloorPieces() -> [GridPiece] {
+    func lowestEmptyFloorPieces() -> [GridPiece] {
         if let level = floorLevels().first {
-            return pieces(at: level)
+            return emptyFloorPieces(at: level)
         }
         return []
     }
 
-    func allPieces() -> [GridPiece] {
+    func allEmptyFloorPieces() -> [GridPiece] {
         var allPieces: [GridPiece] = []
         for level in floorLevels() {
-            allPieces.append(contentsOf: pieces(at: level))
+            allPieces.append(contentsOf: emptyFloorPieces(at: level))
         }
 
         return allPieces
     }
 
-    private static func isValid(piece: GridPiece, in grid: Grid) -> Bool {
-        if !piece.isFloor {
-            return false
-        }
+    private static func isEmptyFloor(piece: GridPiece, in grid: Grid) -> Bool {
+        guard piece.isFloor else { return false }
 
         let point = piece.point
 
-        var invalidPositions: [GridPoint] = [grid.currentPosition]
-        invalidPositions.append(grid.startPosition)
+        var invalidPositions: [GridPoint] = [grid.currentOrStartPosition]
         invalidPositions.append(grid.sentinelPosition)
         invalidPositions.append(contentsOf: grid.sentryPositions)
         invalidPositions.append(contentsOf: grid.synthoidPositions)
@@ -136,5 +126,11 @@ struct GridIndex {
         invalidPositions.append(contentsOf: grid.treePositions)
 
         return !invalidPositions.contains(point)
+    }
+}
+
+private extension Grid {
+    var currentOrStartPosition: GridPoint {
+        currentPosition == .undefined ? startPosition : currentPosition
     }
 }

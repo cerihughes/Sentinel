@@ -2,23 +2,23 @@ import XCTest
 
 @testable import Sentinel
 
-class GridIndexTests: XCTestCase {
+class FloorIndexTests: XCTestCase {
     func testNoBuilding() {
         let grid = Grid(width: 1, depth: 1)
 
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [0])
-        XCTAssertEqual(index.pieces(at: 0).count, 1)
-        XCTAssertEqual(index.lowestFloorPieces().count, 1)
-        XCTAssertEqual(index.highestFloorPieces().count, 1)
+        XCTAssertEqual(index.emptyFloorPieces(at: 0).count, 1)
+        XCTAssertEqual(index.lowestEmptyFloorPieces().count, 1)
+        XCTAssertEqual(index.highestEmptyFloorPieces().count, 1)
     }
 
     func testInvalidLevel() {
         let grid = Grid(width: 1, depth: 1)
 
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [0])
-        XCTAssertEqual(index.pieces(at: 1), [])
+        XCTAssertEqual(index.emptyFloorPieces(at: 1), [])
     }
 
     func test_1x1() {
@@ -27,11 +27,11 @@ class GridIndexTests: XCTestCase {
         grid.build(at: point)
 
         let piece = grid.get(point: point)!
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [1])
-        XCTAssertEqual(index.pieces(at: 1), [piece])
-        XCTAssertEqual(index.lowestFloorPieces(), [piece])
-        XCTAssertEqual(index.highestFloorPieces(), [piece])
+        XCTAssertEqual(index.emptyFloorPieces(at: 1), [piece])
+        XCTAssertEqual(index.lowestEmptyFloorPieces(), [piece])
+        XCTAssertEqual(index.highestEmptyFloorPieces(), [piece])
     }
 
     func test_1x1_buildTwice() {
@@ -41,11 +41,11 @@ class GridIndexTests: XCTestCase {
         grid.build(at: point)
 
         let piece = grid.get(point: point)!
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [2])
-        XCTAssertEqual(index.pieces(at: 2), [piece])
-        XCTAssertEqual(index.lowestFloorPieces(), [piece])
-        XCTAssertEqual(index.highestFloorPieces(), [piece])
+        XCTAssertEqual(index.emptyFloorPieces(at: 2), [piece])
+        XCTAssertEqual(index.lowestEmptyFloorPieces(), [piece])
+        XCTAssertEqual(index.highestEmptyFloorPieces(), [piece])
     }
 
     func test_2x2() {
@@ -53,12 +53,12 @@ class GridIndexTests: XCTestCase {
         let point = GridPoint(x: 0, z: 0)
         grid.build(at: point)
 
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [0, 1])
-        XCTAssertEqual(index.pieces(at: 0).count, 1)
-        XCTAssertEqual(index.pieces(at: 1).count, 1)
-        XCTAssertEqual(index.lowestFloorPieces().count, 1)
-        XCTAssertEqual(index.highestFloorPieces().count, 1)
+        XCTAssertEqual(index.emptyFloorPieces(at: 0).count, 1)
+        XCTAssertEqual(index.emptyFloorPieces(at: 1).count, 1)
+        XCTAssertEqual(index.lowestEmptyFloorPieces().count, 1)
+        XCTAssertEqual(index.highestEmptyFloorPieces().count, 1)
     }
 
     func test_2x2_buildTwice() {
@@ -67,11 +67,11 @@ class GridIndexTests: XCTestCase {
         grid.build(at: point)
         grid.build(at: point)
 
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [2])
-        XCTAssertEqual(index.pieces(at: 2).count, 1)
-        XCTAssertEqual(index.lowestFloorPieces().count, 1)
-        XCTAssertEqual(index.highestFloorPieces().count, 1)
+        XCTAssertEqual(index.emptyFloorPieces(at: 2).count, 1)
+        XCTAssertEqual(index.lowestEmptyFloorPieces().count, 1)
+        XCTAssertEqual(index.highestEmptyFloorPieces().count, 1)
     }
 
     func test_3x3() {
@@ -79,12 +79,12 @@ class GridIndexTests: XCTestCase {
         let point = GridPoint(x: 1, z: 1)
         grid.build(at: point)
 
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [0, 1])
-        XCTAssertEqual(index.pieces(at: 0).count, 4)
-        XCTAssertEqual(index.pieces(at: 1).count, 1)
-        XCTAssertEqual(index.lowestFloorPieces().count, 4)
-        XCTAssertEqual(index.highestFloorPieces().count, 1)
+        XCTAssertEqual(index.emptyFloorPieces(at: 0).count, 4)
+        XCTAssertEqual(index.emptyFloorPieces(at: 1).count, 1)
+        XCTAssertEqual(index.lowestEmptyFloorPieces().count, 4)
+        XCTAssertEqual(index.highestEmptyFloorPieces().count, 1)
     }
 
     func test_3x3_buildTwice() {
@@ -93,11 +93,11 @@ class GridIndexTests: XCTestCase {
         grid.build(at: point)
         grid.build(at: point)
 
-        let index = GridIndex(grid: grid)
+        let index = FloorIndex(grid: grid)
         XCTAssertEqual(index.floorLevels(), [2])
-        XCTAssertEqual(index.pieces(at: 2).count, 1)
-        XCTAssertEqual(index.lowestFloorPieces().count, 1)
-        XCTAssertEqual(index.highestFloorPieces().count, 1)
+        XCTAssertEqual(index.emptyFloorPieces(at: 2).count, 1)
+        XCTAssertEqual(index.lowestEmptyFloorPieces().count, 1)
+        XCTAssertEqual(index.highestEmptyFloorPieces().count, 1)
     }
 }
 

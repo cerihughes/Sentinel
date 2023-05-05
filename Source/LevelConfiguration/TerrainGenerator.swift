@@ -84,8 +84,8 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateSentinel(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> GridPoint {
-        let gridIndex = GridIndex(grid: grid)
-        guard let highestPiece = highestPiece(in: gridIndex, gen: gen) else { return .undefined }
+        let floorIndex = FloorIndex(grid: grid)
+        guard let highestPiece = highestPiece(in: floorIndex, gen: gen) else { return .undefined }
         let sentinelPosition = highestPiece.point
         for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
@@ -93,8 +93,8 @@ class DefaultTerrainGenerator: TerrainGenerator {
         return sentinelPosition
     }
 
-    private func highestPiece(in gridIndex: GridIndex, gen: ValueGenerator) -> GridPiece? {
-        let pieces = gridIndex.highestFloorPieces()
+    private func highestPiece(in floorIndex: FloorIndex, gen: ValueGenerator) -> GridPiece? {
+        let pieces = floorIndex.highestEmptyFloorPieces()
         return gen.nextItem(array: pieces)
     }
 
@@ -106,7 +106,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
 
         let points = GridQuadrant.allCases
             .filter { !$0.contains(point: grid.sentinelPosition, grid: grid) }
-            .compactMap { highestPiece(in: GridIndex(grid: grid, quadrant: $0), gen: gen) }
+            .compactMap { highestPiece(in: FloorIndex(grid: grid, quadrant: $0), gen: gen) }
             .sorted { $0.level < $1.level }
             .map { $0.point }
 
@@ -114,34 +114,29 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateStartPosition(gen: ValueGenerator) -> GridPoint {
-        let gridIndex: GridIndex
+        let floorIndex: FloorIndex
         if let opposite = quadrantOppositeSentinel() {
-            gridIndex = GridIndex(grid: grid, quadrant: opposite)
+            floorIndex = FloorIndex(grid: grid, quadrant: opposite)
         } else {
             // Fallback, although this should never happen unless my maths is off :O
-            gridIndex = GridIndex(grid: grid)
+            floorIndex = FloorIndex(grid: grid)
         }
 
-        let startPieces = gridIndex.lowestFloorPieces()
-        if startPieces.count == 1 {
-            return startPieces[0].point
-        }
-
-        let index = gen.nextValue(in: 0 ..< startPieces.count - 1)
-        let point = startPieces[index].point
+        let startPieces = floorIndex.lowestEmptyFloorPieces()
+        let point = gen.nextItem(array: startPieces)?.point ?? .undefined
         grid.synthoidPositions.insert(point)
-
         return point
     }
 
     private func quadrantOppositeSentinel() -> GridQuadrant? {
-        GridQuadrant.allCases.first { $0.contains(point: grid.sentinelPosition, grid: grid) }
+        GridQuadrant.allCases
+            .first { $0.contains(point: grid.sentinelPosition, grid: grid) }
             .map { $0.opposite }
     }
 
     private func normalise() {
-        let gridIndex = GridIndex(grid: grid)
-        if let lowestLevel = gridIndex.floorLevels().first, lowestLevel > 0 {
+        let floorIndex = FloorIndex(grid: grid)
+        if let lowestLevel = floorIndex.floorLevels().first, lowestLevel > 0 {
             for z in 0 ..< grid.depth {
                 for x in 0 ..< grid.width {
                     if let piece = grid.get(point: GridPoint(x: x, z: z)) {
@@ -189,8 +184,8 @@ class DefaultTerrainGenerator: TerrainGenerator {
     private func generateTrees(countRange: CountableRange<Int>,
                                quadrant: GridQuadrant,
                                gen: ValueGenerator) -> Set<GridPoint> {
-        let gridIndex = GridIndex(grid: grid, quadrant: quadrant)
-        var allPieces = gridIndex.allPieces()
+        let floorIndex = FloorIndex(grid: grid, quadrant: quadrant)
+        var allPieces = floorIndex.allEmptyFloorPieces()
         var treePoints: Set<GridPoint> = []
 
         var count = gen.nextValue(in: countRange) / 4

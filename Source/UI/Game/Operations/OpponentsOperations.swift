@@ -31,8 +31,8 @@ class OpponentsOperations: NSObject {
     }
 
     private func buildRandomTree() {
-        let gridIndex = GridIndex(grid: grid)
-        let emptyPieces = gridIndex.allPieces()
+        let floorIndex = FloorIndex(grid: grid)
+        let emptyPieces = floorIndex.allEmptyFloorPieces()
 
         guard !emptyPieces.isEmpty else {
             return
