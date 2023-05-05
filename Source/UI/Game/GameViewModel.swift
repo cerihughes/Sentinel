@@ -59,13 +59,7 @@ extension GameViewModel: PlayerOperationsDelegate {
     }
 
     private func playerOperationsDidEnterScene(at gridPoint: GridPoint) {
-        guard
-            let gridPiece = built.grid.get(point: gridPoint),
-            gridPiece.isFloor
-        else {
-            return
-        }
-
+        guard let gridPiece = built.grid.get(point: gridPoint), gridPiece.isFloor else { return }
         let floorHeight = Int(gridPiece.level)
         levelScore.didEnterScene(at: gridPoint, height: floorHeight)
     }

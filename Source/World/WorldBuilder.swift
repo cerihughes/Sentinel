@@ -19,7 +19,7 @@ struct WorldBuilder {
     let world: World
 
     func build() -> Built {
-        let grid = terrainGenerator.generate(levelConfiguration: levelConfiguration)
+        let grid = terrainGenerator.generate()
         let nodeMap = NodeMap()
         let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
                                               gridDepth: levelConfiguration.gridDepth,
@@ -61,9 +61,10 @@ struct WorldBuilder {
 
 extension WorldBuilder {
     static func createDefault(level: Int, world: World = SpaceWorld()) -> WorldBuilder {
-        .init(
-            levelConfiguration: DefaultLevelConfiguration(level: level),
-            terrainGenerator: DefaultTerrainGenerator(),
+        let levelConfiguration = DefaultLevelConfiguration(level: level)
+        return .init(
+            levelConfiguration: levelConfiguration,
+            terrainGenerator: DefaultTerrainGenerator(levelConfiguration: levelConfiguration),
             materialFactory: DefaultMaterialFactory(level: level),
             world: world
         )
