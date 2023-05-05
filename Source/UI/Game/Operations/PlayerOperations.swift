@@ -68,7 +68,7 @@ class PlayerOperations {
 
         nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
 
-        return false
+        return true
     }
 
     func move(to synthoidNode: SynthoidNode) {

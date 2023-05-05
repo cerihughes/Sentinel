@@ -15,7 +15,7 @@ final class GameViewModelTests: XCTestCase {
     }
 
     func testInitiallyHasNoTeleportsAfterEnteringScene() {
-        viewModel.built.playerOperations.enterScene()
+        XCTAssertTrue(viewModel.built.playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.teleports, 0)
     }
 
