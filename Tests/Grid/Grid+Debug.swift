@@ -18,7 +18,11 @@ extension Grid {
         var desc = ""
         for z in 0 ..< depth {
             for x in 0 ..< width {
-                desc += (contentsDescription(at: .init(x: x, z: z)))
+                if let piece = get(point: GridPoint(x: x, z: z)) {
+                    desc += (contentsDescription(at: piece.point))
+                } else {
+                    desc += "!"
+                }
             }
             desc += "\n"
         }
