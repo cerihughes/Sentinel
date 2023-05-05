@@ -68,8 +68,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateSentinel() -> GridPoint {
-        let floorIndex = FloorIndex(grid: grid)
-        guard let highestPiece = highestPiece(in: floorIndex) else { return .undefined }
+        guard let highestPiece = highestPiece(in: grid.createFloorIndex()) else { return .undefined }
         let sentinelPosition = highestPiece.point
         for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
@@ -90,7 +89,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
 
         let points = GridQuadrant.allCases
             .filter { !$0.contains(point: grid.sentinelPosition, grid: grid) }
-            .compactMap { highestPiece(in: FloorIndex(grid: grid, quadrant: $0)) }
+            .compactMap { highestPiece(in: grid.createFloorIndex(for: $0)) }
             .sorted { $0.level < $1.level }
             .map { $0.point }
 
@@ -98,29 +97,23 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateStartPosition() -> GridPoint {
-        let floorIndex: FloorIndex
-        if let opposite = quadrantOppositeSentinel() {
-            floorIndex = FloorIndex(grid: grid, quadrant: opposite)
-        } else {
-            // Fallback, although this should never happen unless my maths is off :O
-            floorIndex = FloorIndex(grid: grid)
-        }
-
+        let floorIndex = grid.createFloorIndex(for: quadrantOppositeSentinel())
         let startPieces = floorIndex.lowestEmptyFloorPieces()
         let point = gen.nextItem(array: startPieces)?.point ?? .undefined
         grid.synthoidPositions.insert(point)
         return point
     }
 
-    private func quadrantOppositeSentinel() -> GridQuadrant? {
-        GridQuadrant.allCases
-            .first { $0.contains(point: grid.sentinelPosition, grid: grid) }
-            .map { $0.opposite }
+    private func quadrantOppositeSentinel() -> GridQuadrant {
+        quadrantContainingSentinel().opposite
+    }
+
+    private func quadrantContainingSentinel() -> GridQuadrant {
+        GridQuadrant.allCases.first { $0.contains(point: grid.sentinelPosition, grid: grid) } ?? .northEast
     }
 
     private func normalise() {
-        let floorIndex = FloorIndex(grid: grid)
-        if let lowestLevel = floorIndex.floorLevels().first, lowestLevel > 0 {
+        if let lowestLevel = grid.createFloorIndex().floorLevels().first, lowestLevel > 0 {
             for z in 0 ..< grid.depth {
                 for x in 0 ..< grid.width {
                     if let piece = grid.get(point: GridPoint(x: x, z: z)) {
@@ -162,8 +155,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateTrees(countRange: CountableRange<Int>, quadrant: GridQuadrant) -> Set<GridPoint> {
-        let floorIndex = FloorIndex(grid: grid, quadrant: quadrant)
-        var allPieces = floorIndex.allEmptyFloorPieces()
+        var allPieces = grid.createFloorIndex(for: quadrant).allEmptyFloorPieces()
         var treePoints: Set<GridPoint> = []
 
         var count = gen.nextValue(in: countRange) / 4
@@ -329,33 +321,7 @@ private extension GridPiece {
     }
 }
 
-private enum GridQuadrant: CaseIterable {
-    case northWest, northEast, southWest, southEast
-
-    func xRange(grid: Grid) -> Range<Int> {
-        switch self {
-        case .northWest, .southWest:
-            return 0 ..< grid.width / 2
-        default:
-            return grid.width / 2 ..< grid.width
-        }
-    }
-
-    func zRange(grid: Grid) -> Range<Int> {
-        switch self {
-        case .northWest, .northEast:
-            return 0 ..< grid.depth / 2
-        default:
-            return grid.depth / 2 ..< grid.depth
-        }
-    }
-
-    func contains(point: GridPoint, grid: Grid) -> Bool {
-        let x = xRange(grid: grid)
-        let z = zRange(grid: grid)
-        return x.contains(point.x) && z.contains(point.z)
-    }
-
+private extension GridQuadrant {
     var opposite: GridQuadrant {
         switch self {
         case .northWest:
@@ -367,18 +333,6 @@ private enum GridQuadrant: CaseIterable {
         case .southEast:
             return .northWest
         }
-    }
-}
-
-private extension FloorIndex {
-    init(grid: Grid, quadrant: GridQuadrant) {
-        let xRange = quadrant.xRange(grid: grid)
-        let zRange = quadrant.zRange(grid: grid)
-        self.init(grid: grid,
-                  minX: xRange.lowerBound,
-                  maxX: xRange.upperBound,
-                  minZ: zRange.lowerBound,
-                  maxZ: zRange.upperBound)
     }
 }
 
