@@ -3,21 +3,9 @@ import XCTest
 
 final class TerrainGeneratorTests: XCTestCase {
 
-    private var tg: TerrainGenerator!
-
-    override func setUp() {
-        super.setUp()
-        tg = DefaultTerrainGenerator()
-    }
-
-    override func tearDown() {
-        tg = nil
-        super.tearDown()
-    }
-
     func testLevel0() throws {
-        let config = DefaultLevelConfiguration(level: 0)
-        let grid = tg.generate(levelConfiguration: config)
+        let tg = DefaultTerrainGenerator(level: 0)
+        let grid = tg.generate()
 
         XCTAssertEqual(grid.width, 32)
         XCTAssertEqual(grid.depth, 24)
@@ -34,8 +22,8 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel10() throws {
-        let config = DefaultLevelConfiguration(level: 10)
-        let grid = tg.generate(levelConfiguration: config)
+        let tg = DefaultTerrainGenerator(level: 10)
+        let grid = tg.generate()
 
         XCTAssertEqual(grid.width, 32)
         XCTAssertEqual(grid.depth, 24)
@@ -52,8 +40,8 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel20() throws {
-        let config = DefaultLevelConfiguration(level: 20)
-        let grid = tg.generate(levelConfiguration: config)
+        let tg = DefaultTerrainGenerator(level: 20)
+        let grid = tg.generate()
 
         XCTAssertEqual(grid.width, 33)
         XCTAssertEqual(grid.depth, 25)
@@ -70,8 +58,8 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel30() throws {
-        let config = DefaultLevelConfiguration(level: 30)
-        let grid = tg.generate(levelConfiguration: config)
+        let tg = DefaultTerrainGenerator(level: 30)
+        let grid = tg.generate()
 
         XCTAssertEqual(grid.width, 34)
         XCTAssertEqual(grid.depth, 26)
@@ -88,8 +76,8 @@ final class TerrainGeneratorTests: XCTestCase {
     }
 
     func testLevel40() throws {
-        let config = DefaultLevelConfiguration(level: 40)
-        let grid = tg.generate(levelConfiguration: config)
+        let tg = DefaultTerrainGenerator(level: 40)
+        let grid = tg.generate()
 
         XCTAssertEqual(grid.width, 35)
         XCTAssertEqual(grid.depth, 27)
@@ -103,5 +91,11 @@ final class TerrainGeneratorTests: XCTestCase {
 
         let piece = try XCTUnwrap(grid.get(point: expectedSentinelPosition))
         XCTAssertEqual(piece.level, 8)
+    }
+}
+
+private extension DefaultTerrainGenerator {
+    convenience init(level: Int) {
+        self.init(levelConfiguration: DefaultLevelConfiguration(level: level))
     }
 }

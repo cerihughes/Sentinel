@@ -1,37 +1,27 @@
 import Foundation
 
-/**
- Generates the game Grid from a given LevelConfiguration.
-
- Levels should be psuedo-random - i.e. they shouldn't be predicatable, but they should be reproducible. The level
- number is used as a kind of "seed" to make sure the same values are returned for the same input every time.
-
- The LevelGenerator should also make sure this class creates increasingly difficult terrains to play with.
- */
-protocol TerrainGenerator {
-    func generate(levelConfiguration: LevelConfiguration) -> Grid
-}
-
 class DefaultTerrainGenerator: TerrainGenerator {
-    private var grid: Grid!
+    private let levelConfiguration: LevelConfiguration
+    private let grid: Grid
+    private let gen: ValueGenerator
 
-    func generate(levelConfiguration: LevelConfiguration) -> Grid {
-        let width = levelConfiguration.gridWidth
-        let depth = levelConfiguration.gridDepth
+    init(levelConfiguration: LevelConfiguration) {
+        self.levelConfiguration = levelConfiguration
+        grid = Grid(width: levelConfiguration.gridWidth, depth: levelConfiguration.gridDepth)
+        gen = CosineValueGenerator(input: levelConfiguration.level)
+    }
 
-        grid = Grid(width: width, depth: depth)
+    func generate() -> Grid {
+        generateLargePlateaus()
+        generateSmallPlateaus()
+        generateLargePeaks()
+        generateMediumPeaks()
+        generateSmallPeaks()
 
-        let gen = CosineValueGenerator(input: levelConfiguration.level)
-        generateLargePlateaus(gen: gen, levelConfiguration: levelConfiguration)
-        generateSmallPlateaus(gen: gen, levelConfiguration: levelConfiguration)
-        generateLargePeaks(gen: gen, levelConfiguration: levelConfiguration)
-        generateMediumPeaks(gen: gen, levelConfiguration: levelConfiguration)
-        generateSmallPeaks(gen: gen, levelConfiguration: levelConfiguration)
-
-        grid.sentinelPosition = generateSentinel(gen: gen, levelConfiguration: levelConfiguration)
-        grid.sentryPositions = generateSentries(gen: gen, levelConfiguration: levelConfiguration)
-        grid.startPosition = generateStartPosition(gen: gen)
-        grid.treePositions = generateTrees(gen: gen, levelConfiguration: levelConfiguration)
+        grid.sentinelPosition = generateSentinel()
+        grid.sentryPositions = generateSentries()
+        grid.startPosition = generateStartPosition()
+        grid.treePositions = generateTrees()
 
         normalise()
 
@@ -40,52 +30,46 @@ class DefaultTerrainGenerator: TerrainGenerator {
         return grid
     }
 
-    private func generateLargePlateaus(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
-        generatePlateaus(sizeRange: levelConfiguration.largePlateauSizeRange,
-                         countRange: levelConfiguration.largePlateauCountRange,
-                         gen: gen)
+    private func generateLargePlateaus() {
+        generatePlateaus(
+            sizeRange: levelConfiguration.largePlateauSizeRange,
+            countRange: levelConfiguration.largePlateauCountRange
+        )
     }
 
-    private func generateSmallPlateaus(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
-        generatePlateaus(sizeRange: levelConfiguration.smallPlateauSizeRange,
-                         countRange: levelConfiguration.smallPlateauCountRange,
-                         gen: gen)
+    private func generateSmallPlateaus() {
+        generatePlateaus(
+            sizeRange: levelConfiguration.smallPlateauSizeRange,
+            countRange: levelConfiguration.smallPlateauCountRange
+        )
     }
 
-    private func generateLargePeaks(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
-        generatePeaks(summitSize: 3,
-                      countRange: levelConfiguration.largePeakCountRange,
-                      gen: gen)
+    private func generateLargePeaks() {
+        generatePeaks(summitSize: 3, countRange: levelConfiguration.largePeakCountRange)
     }
 
-    private func generateMediumPeaks(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
-        generatePeaks(summitSize: 2,
-                      countRange: levelConfiguration.mediumPeakCountRange,
-                      gen: gen)
+    private func generateMediumPeaks() {
+        generatePeaks(summitSize: 2, countRange: levelConfiguration.mediumPeakCountRange)
     }
 
-    private func generateSmallPeaks(gen: ValueGenerator, levelConfiguration: LevelConfiguration) {
-        generatePeaks(summitSize: 1,
-                      countRange: levelConfiguration.smallPeakCountRange,
-                      gen: gen)
+    private func generateSmallPeaks() {
+        generatePeaks(summitSize: 1, countRange: levelConfiguration.smallPeakCountRange)
     }
 
-    private func generateTrees(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> Set<GridPoint> {
+    private func generateTrees() -> Set<GridPoint> {
         var trees: Set<GridPoint> = []
         let countRange = levelConfiguration.treeCountRange
         for quadrant in GridQuadrant.allCases {
-            let treesInQuadrant = generateTrees(countRange: countRange,
-                                                quadrant: quadrant,
-                                                gen: gen)
+            let treesInQuadrant = generateTrees(countRange: countRange, quadrant: quadrant)
             trees = trees.union(treesInQuadrant)
         }
 
         return trees
     }
 
-    private func generateSentinel(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> GridPoint {
+    private func generateSentinel() -> GridPoint {
         let floorIndex = FloorIndex(grid: grid)
-        guard let highestPiece = highestPiece(in: floorIndex, gen: gen) else { return .undefined }
+        guard let highestPiece = highestPiece(in: floorIndex) else { return .undefined }
         let sentinelPosition = highestPiece.point
         for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
@@ -93,12 +77,12 @@ class DefaultTerrainGenerator: TerrainGenerator {
         return sentinelPosition
     }
 
-    private func highestPiece(in floorIndex: FloorIndex, gen: ValueGenerator) -> GridPiece? {
+    private func highestPiece(in floorIndex: FloorIndex) -> GridPiece? {
         let pieces = floorIndex.highestEmptyFloorPieces()
         return gen.nextItem(array: pieces)
     }
 
-    private func generateSentries(gen: ValueGenerator, levelConfiguration: LevelConfiguration) -> Set<GridPoint> {
+    private func generateSentries() -> Set<GridPoint> {
         let sentries = levelConfiguration.sentryCount
         guard 1 ... 3 ~= sentries else {
             return []
@@ -106,14 +90,14 @@ class DefaultTerrainGenerator: TerrainGenerator {
 
         let points = GridQuadrant.allCases
             .filter { !$0.contains(point: grid.sentinelPosition, grid: grid) }
-            .compactMap { highestPiece(in: FloorIndex(grid: grid, quadrant: $0), gen: gen) }
+            .compactMap { highestPiece(in: FloorIndex(grid: grid, quadrant: $0)) }
             .sorted { $0.level < $1.level }
             .map { $0.point }
 
         return Set(points.prefix(sentries))
     }
 
-    private func generateStartPosition(gen: ValueGenerator) -> GridPoint {
+    private func generateStartPosition() -> GridPoint {
         let floorIndex: FloorIndex
         if let opposite = quadrantOppositeSentinel() {
             floorIndex = FloorIndex(grid: grid, quadrant: opposite)
@@ -147,9 +131,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
         }
     }
 
-    private func generatePlateaus(sizeRange: CountableRange<Int>,
-                                  countRange: CountableRange<Int>,
-                                  gen: ValueGenerator) {
+    private func generatePlateaus(sizeRange: CountableRange<Int>, countRange: CountableRange<Int>) {
         let count = gen.nextValue(in: countRange)
         for _ in 0 ..< count {
             let size = gen.nextValue(in: sizeRange)
@@ -159,9 +141,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
         }
     }
 
-    private func generatePeaks(summitSize: Int,
-                               countRange: CountableRange<Int>,
-                               gen: ValueGenerator) {
+    private func generatePeaks(summitSize: Int, countRange: CountableRange<Int>) {
         let count = gen.nextValue(in: countRange)
         for _ in 0 ..< count {
             let x = gen.nextValue(in: 0 ..< grid.width - 1)
@@ -181,9 +161,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
         }
     }
 
-    private func generateTrees(countRange: CountableRange<Int>,
-                               quadrant: GridQuadrant,
-                               gen: ValueGenerator) -> Set<GridPoint> {
+    private func generateTrees(countRange: CountableRange<Int>, quadrant: GridQuadrant) -> Set<GridPoint> {
         let floorIndex = FloorIndex(grid: grid, quadrant: quadrant)
         var allPieces = floorIndex.allEmptyFloorPieces()
         var treePoints: Set<GridPoint> = []
@@ -227,5 +205,58 @@ class DefaultTerrainGenerator: TerrainGenerator {
             maxZ = grid.depth - 1
         }
         return maxZ
+    }
+}
+
+private enum GridQuadrant: CaseIterable {
+    case northWest, northEast, southWest, southEast
+
+    func xRange(grid: Grid) -> Range<Int> {
+        switch self {
+        case .northWest, .southWest:
+            return 0 ..< grid.width / 2
+        default:
+            return grid.width / 2 ..< grid.width
+        }
+    }
+
+    func zRange(grid: Grid) -> Range<Int> {
+        switch self {
+        case .northWest, .northEast:
+            return 0 ..< grid.depth / 2
+        default:
+            return grid.depth / 2 ..< grid.depth
+        }
+    }
+
+    func contains(point: GridPoint, grid: Grid) -> Bool {
+        let x = xRange(grid: grid)
+        let z = zRange(grid: grid)
+        return x.contains(point.x) && z.contains(point.z)
+    }
+
+    var opposite: GridQuadrant {
+        switch self {
+        case .northWest:
+            return .southEast
+        case .northEast:
+            return .southWest
+        case .southWest:
+            return .northEast
+        case .southEast:
+            return .northWest
+        }
+    }
+}
+
+private extension FloorIndex {
+    init(grid: Grid, quadrant: GridQuadrant) {
+        let xRange = quadrant.xRange(grid: grid)
+        let zRange = quadrant.zRange(grid: grid)
+        self.init(grid: grid,
+                  minX: xRange.lowerBound,
+                  maxX: xRange.upperBound,
+                  minZ: zRange.lowerBound,
+                  maxZ: zRange.upperBound)
     }
 }

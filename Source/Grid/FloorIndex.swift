@@ -1,46 +1,5 @@
 import Foundation
 
-enum GridQuadrant: CaseIterable {
-    case northWest, northEast, southWest, southEast
-
-    func xRange(grid: Grid) -> Range<Int> {
-        switch self {
-        case .northWest, .southWest:
-            return 0 ..< grid.width / 2
-        default:
-            return grid.width / 2 ..< grid.width
-        }
-    }
-
-    func zRange(grid: Grid) -> Range<Int> {
-        switch self {
-        case .northWest, .northEast:
-            return 0 ..< grid.depth / 2
-        default:
-            return grid.depth / 2 ..< grid.depth
-        }
-    }
-
-    func contains(point: GridPoint, grid: Grid) -> Bool {
-        let x = xRange(grid: grid)
-        let z = zRange(grid: grid)
-        return x.contains(point.x) && z.contains(point.z)
-    }
-
-    var opposite: GridQuadrant {
-        switch self {
-        case .northWest:
-            return .southEast
-        case .northEast:
-            return .southWest
-        case .southWest:
-            return .northEast
-        case .southEast:
-            return .northWest
-        }
-    }
-}
-
 /**
  For a given Grid (or part of a Grid), this represents a read-only description of its contents.
  */
@@ -49,16 +8,6 @@ struct FloorIndex {
 
     init(grid: Grid) {
         self.init(grid: grid, minX: 0, maxX: grid.width, minZ: 0, maxZ: grid.depth)
-    }
-
-    init(grid: Grid, quadrant: GridQuadrant) {
-        let xRange = quadrant.xRange(grid: grid)
-        let zRange = quadrant.zRange(grid: grid)
-        self.init(grid: grid,
-                  minX: xRange.lowerBound,
-                  maxX: xRange.upperBound,
-                  minZ: zRange.lowerBound,
-                  maxZ: zRange.upperBound)
     }
 
     init(grid: Grid, minX: Int, maxX: Int, minZ: Int, maxZ: Int) {
