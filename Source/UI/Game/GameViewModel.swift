@@ -60,7 +60,6 @@ extension GameViewModel: PlayerOperationsDelegate {
 
     private func playerOperationsDidEnterScene(at gridPoint: GridPoint) {
         guard
-            let floorNode = built.nodeManipulator.floorNode(for: gridPoint),
             let gridPiece = built.grid.get(point: gridPoint),
             gridPiece.isFloor
         else {
