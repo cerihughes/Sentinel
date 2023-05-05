@@ -292,8 +292,14 @@ extension Grid {
     }
 
     private func neighbour(of point: GridPoint, direction: GridDirection) -> GridPoint {
-        let deltas = direction.toDeltas()
+        let deltas = direction.toDelta()
         return point.transform(deltaX: deltas.x, deltaZ: deltas.z)
+    }
+}
+
+private extension GridPoint {
+    func transform(deltaX: Int, deltaZ: Int) -> GridPoint {
+        return GridPoint(x: x + deltaX, z: z + deltaZ)
     }
 }
 
@@ -373,5 +379,33 @@ private extension FloorIndex {
                   maxX: xRange.upperBound,
                   minZ: zRange.lowerBound,
                   maxZ: zRange.upperBound)
+    }
+}
+
+private extension GridDirection {
+    var opposite: GridDirection {
+        switch self {
+        case .north:
+            return .south
+        case .east:
+            return .west
+        case .south:
+            return .north
+        case .west:
+            return .east
+        }
+    }
+
+    func toDelta() -> (x: Int, z: Int) {
+        switch self {
+        case .north:
+            return (x: 0, z: -1)
+        case .east:
+            return (x: 1, z: 0)
+        case .south:
+            return (x: 0, z: 1)
+        case .west:
+            return (x: -1, z: 0)
+        }
     }
 }
