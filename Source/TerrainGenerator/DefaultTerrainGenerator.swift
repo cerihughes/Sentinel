@@ -68,7 +68,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateSentinel() -> GridPoint {
-        guard let highestPiece = highestPiece(in: grid.createFloorIndex()) else { return .undefined }
+        guard let highestPiece = highestPiece(in: grid.emptyFloorPiecesByLevel()) else { return .undefined }
         let sentinelPosition = highestPiece.point
         for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             grid.build(at: sentinelPosition)
@@ -76,7 +76,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
         return sentinelPosition
     }
 
-    private func highestPiece(in floorIndex: FloorIndex) -> GridPiece? {
+    private func highestPiece(in floorIndex: [Int: [GridPiece]]) -> GridPiece? {
         let pieces = floorIndex.highestEmptyFloorPieces()
         return gen.nextItem(array: pieces)
     }
@@ -89,7 +89,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
 
         let points = GridQuadrant.allCases
             .filter { !$0.contains(point: grid.sentinelPosition, grid: grid) }
-            .compactMap { highestPiece(in: grid.createFloorIndex(for: $0)) }
+            .compactMap { highestPiece(in: grid.emptyFloorPiecesByLevel(in: $0)) }
             .sorted { $0.level < $1.level }
             .map { $0.point }
 
@@ -97,7 +97,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateStartPosition() -> GridPoint {
-        let floorIndex = grid.createFloorIndex(for: quadrantOppositeSentinel())
+        let floorIndex = grid.emptyFloorPiecesByLevel(in: quadrantOppositeSentinel())
         let startPieces = floorIndex.lowestEmptyFloorPieces()
         let point = gen.nextItem(array: startPieces)?.point ?? .undefined
         grid.synthoidPositions.insert(point)
@@ -113,7 +113,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func normalise() {
-        if let lowestLevel = grid.createFloorIndex().floorLevels().first, lowestLevel > 0 {
+        if let lowestLevel = grid.emptyFloorPiecesByLevel().floorLevels().first, lowestLevel > 0 {
             for z in 0 ..< grid.depth {
                 for x in 0 ..< grid.width {
                     if let piece = grid.get(point: GridPoint(x: x, z: z)) {
@@ -155,7 +155,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateTrees(countRange: CountableRange<Int>, quadrant: GridQuadrant) -> Set<GridPoint> {
-        var allPieces = grid.createFloorIndex(for: quadrant).allEmptyFloorPieces()
+        var allPieces = grid.emptyFloorPiecesByLevel(in: quadrant).allEmptyFloorPieces()
         var treePoints: Set<GridPoint> = []
 
         var count = gen.nextValue(in: countRange) / 4

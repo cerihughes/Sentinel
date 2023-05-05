@@ -27,3 +27,13 @@ enum GridQuadrant: CaseIterable {
         return x.contains(point.x) && z.contains(point.z)
     }
 }
+
+extension Grid {
+    func point(_ point: GridPoint, isInQuadrant quadrant: GridQuadrant) -> Bool {
+        quadrant.contains(point: point, grid: self)
+    }
+
+    func piece(_ piece: GridPiece, isInQuadrant quadrant: GridQuadrant) -> Bool {
+        point(piece.point, isInQuadrant: quadrant)
+    }
+}

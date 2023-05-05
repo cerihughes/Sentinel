@@ -47,7 +47,6 @@ final class TerrainGeneratorTests: XCTestCase {
 
         let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 8)
-
         XCTAssertEqual(grid.contentsDescription, .expectedGrid40)
     }
 }
