@@ -258,7 +258,7 @@ extension Grid {
 
             let nextSlopeLevel = next.buildSlope() - 1.0
 
-            for direction in GridDirection.allValues(except: direction.opposite) {
+            for direction in GridDirection.allCases(except: direction.opposite) {
                 buildSlope(from: nextPoint, level: nextSlopeLevel, direction: direction)
             }
         }
