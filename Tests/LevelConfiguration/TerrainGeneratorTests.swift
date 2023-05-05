@@ -6,73 +6,36 @@ final class TerrainGeneratorTests: XCTestCase {
     func testLevel0() throws {
         let tg = DefaultTerrainGenerator(level: 0)
         let grid = tg.generate()
-
-        XCTAssertEqual(grid.width, 32)
-        XCTAssertEqual(grid.depth, 24)
-
-        XCTAssertEqual(grid.treePositions.count, 17)
-        XCTAssertEqual(grid.sentryPositions.count, 0)
-        XCTAssertEqual(grid.rockPositions.count, 0)
-
-        let expectedSentinelPosition = GridPoint(x: 31, z: 17)
-        XCTAssertEqual(grid.sentinelPosition, expectedSentinelPosition)
-
-        let piece = try XCTUnwrap(grid.get(point: expectedSentinelPosition))
+        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 7)
+        XCTAssertEqual(grid.contentsDescription, .expectedGrid0)
     }
 
     func testLevel10() throws {
         let tg = DefaultTerrainGenerator(level: 10)
         let grid = tg.generate()
 
-        XCTAssertEqual(grid.width, 32)
-        XCTAssertEqual(grid.depth, 24)
-
-        XCTAssertEqual(grid.treePositions.count, 16)
-        XCTAssertEqual(grid.sentryPositions.count, 1)
-        XCTAssertEqual(grid.rockPositions.count, 0)
-
-        let expectedSentinelPosition = GridPoint(x: 30, z: 23)
-        XCTAssertEqual(grid.sentinelPosition, expectedSentinelPosition)
-
-        let piece = try XCTUnwrap(grid.get(point: expectedSentinelPosition))
+        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 8)
+        XCTAssertEqual(grid.contentsDescription, .expectedGrid10)
     }
 
     func testLevel20() throws {
         let tg = DefaultTerrainGenerator(level: 20)
         let grid = tg.generate()
 
-        XCTAssertEqual(grid.width, 33)
-        XCTAssertEqual(grid.depth, 25)
-
-        XCTAssertEqual(grid.treePositions.count, 15)
-        XCTAssertEqual(grid.sentryPositions.count, 2)
-        XCTAssertEqual(grid.rockPositions.count, 0)
-
-        let expectedSentinelPosition = GridPoint(x: 24, z: 24)
-        XCTAssertEqual(grid.sentinelPosition, expectedSentinelPosition)
-
-        let piece = try XCTUnwrap(grid.get(point: expectedSentinelPosition))
+        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 9)
+        XCTAssertEqual(grid.contentsDescription, .expectedGrid20)
     }
 
     func testLevel30() throws {
         let tg = DefaultTerrainGenerator(level: 30)
         let grid = tg.generate()
 
-        XCTAssertEqual(grid.width, 34)
-        XCTAssertEqual(grid.depth, 26)
-
-        XCTAssertEqual(grid.treePositions.count, 12)
-        XCTAssertEqual(grid.sentryPositions.count, 3)
-        XCTAssertEqual(grid.rockPositions.count, 0)
-
-        let expectedSentinelPosition = GridPoint(x: 17, z: 12)
-        XCTAssertEqual(grid.sentinelPosition, expectedSentinelPosition)
-
-        let piece = try XCTUnwrap(grid.get(point: expectedSentinelPosition))
+        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 11)
+        XCTAssertEqual(grid.contentsDescription, .expectedGrid30)
     }
 
     func testLevel40() throws {
@@ -82,15 +45,10 @@ final class TerrainGeneratorTests: XCTestCase {
         XCTAssertEqual(grid.width, 35)
         XCTAssertEqual(grid.depth, 27)
 
-        XCTAssertEqual(grid.treePositions.count, 13)
-        XCTAssertEqual(grid.sentryPositions.count, 3)
-        XCTAssertEqual(grid.rockPositions.count, 0)
-
-        let expectedSentinelPosition = GridPoint(x: 15, z: 11)
-        XCTAssertEqual(grid.sentinelPosition, expectedSentinelPosition)
-
-        let piece = try XCTUnwrap(grid.get(point: expectedSentinelPosition))
+        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 8)
+
+        XCTAssertEqual(grid.contentsDescription, .expectedGrid40)
     }
 }
 
