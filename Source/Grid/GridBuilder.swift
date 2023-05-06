@@ -124,6 +124,7 @@ extension GridBuilder {
     func emptyFloorPiecesByLevel(in quadrant: GridQuadrant? = nil) -> [Int: [GridPiece]] {
         var sorted: [Int: [GridPiece]] = [:]
 
+        let occupiedPositions = occupiedPositions()
         for row in pieces {
             for piece in row {
                 if piece.isFloor, !occupiedPositions.contains(piece.point) {
@@ -154,18 +155,18 @@ extension GridBuilder {
 }
 
 private extension GridBuilder {
-    var occupiedPositions: [GridPoint] {
-        var invalidPositions = [GridPoint]()
+    func occupiedPositions() -> [GridPoint] {
+        var positions = [GridPoint]()
         if let startPosition {
-            invalidPositions.append(startPosition)
+            positions.append(startPosition)
         }
         if let sentinelPosition {
-            invalidPositions.append(sentinelPosition)
+            positions.append(sentinelPosition)
         }
-        invalidPositions.append(contentsOf: sentryPositions)
-        invalidPositions.append(contentsOf: synthoidPositions)
-        invalidPositions.append(contentsOf: treePositions)
-        return invalidPositions
+        positions.append(contentsOf: sentryPositions)
+        positions.append(contentsOf: synthoidPositions)
+        positions.append(contentsOf: treePositions)
+        return positions
     }
 }
 
