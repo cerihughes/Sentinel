@@ -28,7 +28,7 @@ class PlayerOperations {
     private let initialCameraNode: SCNNode
 
     private let nodeManipulator: NodeManipulator
-    private let grid: Grid
+    private var grid: Grid
     private let synthoidEnergy: SynthoidEnergy
 
     weak var delegate: PlayerOperationsDelegate?
@@ -56,9 +56,7 @@ class PlayerOperations {
     }
 
     func enterScene() -> Bool {
-        guard let synthoidNode = nodeManipulator.synthoidNode(at: grid.startPosition) else {
-            return false
-        }
+        guard let synthoidNode = nodeManipulator.synthoidNode(at: grid.startPosition) else { return false }
 
         moveCamera(from: initialCameraNode,
                    to: synthoidNode.cameraNode,
@@ -102,9 +100,7 @@ class PlayerOperations {
     }
 
     func buildSynthoid(at point: GridPoint) {
-        guard synthoidEnergy.has(energy: synthoidEnergyValue) else {
-            return
-        }
+        guard synthoidEnergy.has(energy: synthoidEnergyValue) else { return }
 
         let viewingAngle = point.angle(to: grid.currentPosition)
         synthoidEnergy.adjust(delta: -synthoidEnergyValue)
