@@ -59,8 +59,8 @@ extension GameViewModel: PlayerOperationsDelegate {
     }
 
     private func playerOperationsDidEnterScene(at gridPoint: GridPoint) {
-        guard let gridPiece = built.grid.get(point: gridPoint), gridPiece.isFloor else { return }
-        let floorHeight = Int(gridPiece.level)
+        guard let piece = built.grid.piece(at: gridPoint), piece.isFloor else { return }
+        let floorHeight = Int(piece.level)
         levelScore.didEnterScene(at: gridPoint, height: floorHeight)
     }
 
@@ -78,13 +78,13 @@ extension GameViewModel: PlayerOperationsDelegate {
     private func playerOperationsDidTeleport(to gridPoint: GridPoint) {
         guard
             let floorNode = built.nodeManipulator.floorNode(for: gridPoint),
-            let gridPiece = built.grid.get(point: gridPoint),
-            gridPiece.isFloor
+            let piece = built.grid.piece(at: gridPoint),
+            piece.isFloor
         else {
             return
         }
 
-        let floorHeight = Int(gridPiece.level)
+        let floorHeight = Int(piece.level)
         let rockCount = floorNode.rockNodes.count
         levelScore.didTeleport(to: gridPoint, height: floorHeight + rockCount)
     }

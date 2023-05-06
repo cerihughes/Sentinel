@@ -31,7 +31,7 @@ class OpponentsOperations: NSObject {
     }
 
     private func buildRandomTree() {
-        let emptyPieces = grid.emptyFloorPiecesByLevel().allEmptyFloorPieces()
+        let emptyPieces = grid.emptyFloorPieces()
         if let randomPiece = emptyPieces.randomElement() {
             terrainOperations.buildTree(at: randomPiece.point)
         }

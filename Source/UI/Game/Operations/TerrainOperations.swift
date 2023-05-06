@@ -2,7 +2,7 @@ import SceneKit
 import SpriteKit
 
 class TerrainOperations {
-    let grid: Grid
+    var grid: Grid
     let nodeManipulator: NodeManipulator
 
     init(grid: Grid, nodeManipulator: NodeManipulator) {
@@ -11,17 +11,17 @@ class TerrainOperations {
     }
 
     func buildTree(at point: GridPoint) {
-        grid.treePositions.insert(point)
+        grid.treePositions.append(point)
         nodeManipulator.buildTree(at: point)
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {
-        grid.rockPositions.insert(point)
+        grid.rockPositions.append(point)
         nodeManipulator.buildRock(at: point, rotation: rotation)
     }
 
     func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
-        grid.synthoidPositions.insert(point)
+        grid.synthoidPositions.append(point)
         nodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
     }
 
@@ -98,11 +98,6 @@ class TerrainOperations {
     }
 
     func absorbSentinelNode(at point: GridPoint) -> Bool {
-        guard nodeManipulator.absorbSentinel(at: point) else {
-            return false
-        }
-
-        grid.sentinelPosition = .undefined
-        return true
+        nodeManipulator.absorbSentinel(at: point)
     }
 }

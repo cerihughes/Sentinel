@@ -3,34 +3,34 @@ import Foundation
 enum GridQuadrant: CaseIterable {
     case northWest, northEast, southWest, southEast
 
-    func xRange(grid: Grid) -> Range<Int> {
+    func xRange(for sizeable: Sizeable) -> Range<Int> {
         switch self {
         case .northWest, .southWest:
-            return 0 ..< grid.width / 2
+            return 0 ..< sizeable.width / 2
         default:
-            return grid.width / 2 ..< grid.width
+            return sizeable.width / 2 ..< sizeable.width
         }
     }
 
-    func zRange(grid: Grid) -> Range<Int> {
+    func zRange(for sizeable: Sizeable) -> Range<Int> {
         switch self {
         case .northWest, .northEast:
-            return 0 ..< grid.depth / 2
+            return 0 ..< sizeable.depth / 2
         default:
-            return grid.depth / 2 ..< grid.depth
+            return sizeable.depth / 2 ..< sizeable.depth
         }
     }
 
-    func contains(point: GridPoint, grid: Grid) -> Bool {
-        let x = xRange(grid: grid)
-        let z = zRange(grid: grid)
+    func contains(point: GridPoint, sizeable: Sizeable) -> Bool {
+        let x = xRange(for: sizeable)
+        let z = zRange(for: sizeable)
         return x.contains(point.x) && z.contains(point.z)
     }
 }
 
-extension Grid {
+extension Sizeable {
     func point(_ point: GridPoint, isInQuadrant quadrant: GridQuadrant) -> Bool {
-        quadrant.contains(point: point, grid: self)
+        quadrant.contains(point: point, sizeable: self)
     }
 
     func piece(_ piece: GridPiece, isInQuadrant quadrant: GridQuadrant) -> Bool {

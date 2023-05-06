@@ -52,19 +52,15 @@ class NodeFactory {
 
         for z in 0 ..< depth {
             for x in 0 ..< width {
-                guard let gridPiece = grid.get(point: GridPoint(x: x, z: z)) else { continue }
-                if gridPiece.isFloor {
-                    let node = createFloorNode(x: x,
-                                               y: Int(gridPiece.level - 1.0),
-                                               z: z)
+                guard let piece = grid.piece(at: GridPoint(x: x, z: z)) else { continue }
+                if piece.isFloor {
+                    let node = createFloorNode(x: x, y: Int(piece.level - 1.0), z: z)
                     terrainNode.addChildNode(node)
-                    nodeMap.add(floorNode: node, for: gridPiece)
+                    nodeMap.add(floorNode: node, for: piece)
                 } else {
-                    for direction in GridDirection.allCases where gridPiece.has(slopeDirection: direction) {
-                        let node = createSlopeNode(x: x,
-                                                   y: Int(gridPiece.level - 0.5),
-                                                   z: z,
-                                                   rotation: rotation(for: direction))
+                    for direction in GridDirection.allCases where piece.has(slopeDirection: direction) {
+                        let rotation = rotation(for: direction)
+                        let node = createSlopeNode( x: x, y: Int(piece.level - 0.5), z: z, rotation: rotation)
                         terrainNode.addChildNode(node)
                     }
                 }
@@ -133,9 +129,9 @@ class NodeFactory {
     }
 
     private func addWallNodes(to terrainNode: SCNNode, grid: Grid, x: Int, z: Int) {
-        if let gridPiece = grid.get(point: GridPoint(x: x, z: z)) {
-            var height = gridPiece.level
-            if !gridPiece.isFloor {
+        if let piece = grid.piece(at: GridPoint(x: x, z: z)) {
+            var height = piece.level
+            if !piece.isFloor {
                 height += 0.5
             }
 
@@ -150,7 +146,7 @@ class NodeFactory {
     }
 
     private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
-        if grid.get(point: grid.sentinelPosition) != nil,
+        if grid.piece(at: grid.sentinelPosition) != nil,
             let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
             var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
             if initialAngle > radiansInCircle {
@@ -164,7 +160,7 @@ class NodeFactory {
 
     private func addSentryNodes(grid: Grid, nodeMap: NodeMap) {
         for sentryPosition in grid.sentryPositions {
-            if grid.get(point: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+            if grid.piece(at: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
                 var initialAngle = grid.startPosition.angle(to: sentryPosition)
                 if initialAngle > radiansInCircle {
                     initialAngle -= radiansInCircle
@@ -177,7 +173,7 @@ class NodeFactory {
     }
 
     private func addSynthoidNode(grid: Grid, nodeMap: NodeMap) {
-        if grid.get(point: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
+        if grid.piece(at: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
             let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
             floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
         }
@@ -185,7 +181,7 @@ class NodeFactory {
 
     private func addTreeNodes(grid: Grid, nodeMap: NodeMap) {
         for treePosition in grid.treePositions {
-            if grid.get(point: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
+            if grid.piece(at: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
                 floorNode.treeNode = createTreeNode(height: 0)
             }
         }
