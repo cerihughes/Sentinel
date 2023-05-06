@@ -24,12 +24,12 @@ class Grid {
         }
     }
 
-    func get(point: GridPoint) -> GridPiece? {
+    func piece(at point: GridPoint) -> GridPiece? {
         pieces[safe: point.z]?[safe: point.x]
     }
 
     var currentPiece: GridPiece? {
-        return get(point: currentPosition)
+        piece(at: currentPosition)
     }
 }
 

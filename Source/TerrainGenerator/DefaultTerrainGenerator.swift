@@ -116,7 +116,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
         if let lowestLevel = grid.emptyFloorPiecesByLevel().floorLevels().first, lowestLevel > 0 {
             for z in 0 ..< grid.depth {
                 for x in 0 ..< grid.width {
-                    if let piece = grid.get(point: GridPoint(x: x, z: z)) {
+                    if let piece = grid.piece(at: GridPoint(x: x, z: z)) {
                         piece.level -= Float(lowestLevel)
                     }
                 }
@@ -224,12 +224,9 @@ extension Grid {
     }
 
     private func buildFloor(point: GridPoint) {
-        guard let piece = get(point: point) else {
-            return
-        }
+        guard let piece = piece(at: point) else { return }
 
         let slopeLevel = piece.buildFloor() - 0.5
-
         for direction in GridDirection.allCases {
             buildSlope(from: point, level: slopeLevel, direction: direction)
         }
@@ -237,8 +234,8 @@ extension Grid {
 
     private func buildSlope(from point: GridPoint, level: Float, direction: GridDirection) {
         let nextPoint = neighbour(of: point, direction: direction)
-        if let next = get(point: nextPoint) {
-            let nextLevel = next.level
+        if let nextPiece = piece(at: nextPoint) {
+            let nextLevel = nextPiece.level
 
             if level <= nextLevel {
                 return
@@ -248,7 +245,7 @@ extension Grid {
                 buildFloor(point: nextPoint)
             }
 
-            let nextSlopeLevel = next.buildSlope() - 1.0
+            let nextSlopeLevel = nextPiece.buildSlope() - 1.0
 
             for direction in GridDirection.allCases(except: direction.opposite) {
                 buildSlope(from: nextPoint, level: nextSlopeLevel, direction: direction)
@@ -257,16 +254,13 @@ extension Grid {
     }
 
     private func processSlopes(from point: GridPoint, direction: GridDirection) {
-        guard let firstPiece = get(point: point) else {
-            return
-        }
+        guard let firstPiece = piece(at: point) else { return }
 
         var slopeLevel = firstPiece.isFloor ? firstPiece.level - 0.5 : firstPiece.level - 1.0
-
         var nextPoint = neighbour(of: point, direction: direction)
-        var next = get(point: nextPoint)
-        while next != nil {
-            let nextExists = next!
+        var nextPiece = piece(at: nextPoint)
+        while nextPiece != nil {
+            let nextExists = nextPiece!
             if nextExists.isFloor {
                 slopeLevel = nextExists.level - 0.5
             } else {
@@ -279,7 +273,7 @@ extension Grid {
             }
 
             nextPoint = neighbour(of: nextPoint, direction: direction)
-            next = get(point: nextPoint)
+            nextPiece = piece(at: nextPoint)
         }
     }
 

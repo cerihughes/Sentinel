@@ -155,7 +155,7 @@ class GridTests: XCTestCase {
         line: UInt = #line
     ) {
         let point = GridPoint(x: x, z: z)
-        guard let piece = grid.get(point: point) else {
+        guard let piece = grid.piece(at: point) else {
             XCTFail("No piece at \(point.x), \(point.z)")
             return
         }

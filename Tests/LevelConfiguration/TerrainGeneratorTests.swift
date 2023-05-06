@@ -6,7 +6,7 @@ final class TerrainGeneratorTests: XCTestCase {
     func testLevel0() throws {
         let tg = DefaultTerrainGenerator(level: 0)
         let grid = tg.generate()
-        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
+        let piece = try XCTUnwrap(grid.piece(at: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 7)
         XCTAssertEqual(grid.contentsDescription, .expectedGrid0)
     }
@@ -15,7 +15,7 @@ final class TerrainGeneratorTests: XCTestCase {
         let tg = DefaultTerrainGenerator(level: 10)
         let grid = tg.generate()
 
-        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
+        let piece = try XCTUnwrap(grid.piece(at: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 8)
         XCTAssertEqual(grid.contentsDescription, .expectedGrid10)
     }
@@ -24,7 +24,7 @@ final class TerrainGeneratorTests: XCTestCase {
         let tg = DefaultTerrainGenerator(level: 20)
         let grid = tg.generate()
 
-        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
+        let piece = try XCTUnwrap(grid.piece(at: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 9)
         XCTAssertEqual(grid.contentsDescription, .expectedGrid20)
     }
@@ -33,7 +33,7 @@ final class TerrainGeneratorTests: XCTestCase {
         let tg = DefaultTerrainGenerator(level: 30)
         let grid = tg.generate()
 
-        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
+        let piece = try XCTUnwrap(grid.piece(at: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 11)
         XCTAssertEqual(grid.contentsDescription, .expectedGrid30)
     }
@@ -45,7 +45,7 @@ final class TerrainGeneratorTests: XCTestCase {
         XCTAssertEqual(grid.width, 35)
         XCTAssertEqual(grid.depth, 27)
 
-        let piece = try XCTUnwrap(grid.get(point: grid.sentinelPosition))
+        let piece = try XCTUnwrap(grid.piece(at: grid.sentinelPosition))
         XCTAssertEqual(piece.level, 8)
         XCTAssertEqual(grid.contentsDescription, .expectedGrid40)
     }

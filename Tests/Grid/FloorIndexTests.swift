@@ -21,12 +21,12 @@ class FloorIndexTests: XCTestCase {
         XCTAssertEqual(index.emptyFloorPieces(at: 1), [])
     }
 
-    func test_1x1() {
+    func test_1x1() throws {
         let grid = Grid(width: 1, depth: 1)
         let point = GridPoint(x: 0, z: 0)
         grid.build(at: point)
 
-        let piece = grid.get(point: point)!
+        let piece = try XCTUnwrap(grid.piece(at: point))
         let index = grid.emptyFloorPiecesByLevel()
         XCTAssertEqual(index.floorLevels(), [1])
         XCTAssertEqual(index.emptyFloorPieces(at: 1), [piece])
@@ -34,13 +34,13 @@ class FloorIndexTests: XCTestCase {
         XCTAssertEqual(index.highestEmptyFloorPieces(), [piece])
     }
 
-    func test_1x1_buildTwice() {
+    func test_1x1_buildTwice() throws {
         let grid = Grid(width: 1, depth: 1)
         let point = GridPoint(x: 0, z: 0)
         grid.build(at: point)
         grid.build(at: point)
 
-        let piece = grid.get(point: point)!
+        let piece = try XCTUnwrap(grid.piece(at: point))
         let index = grid.emptyFloorPiecesByLevel()
         XCTAssertEqual(index.floorLevels(), [2])
         XCTAssertEqual(index.emptyFloorPieces(at: 2), [piece])
