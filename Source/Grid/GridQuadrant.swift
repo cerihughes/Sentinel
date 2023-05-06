@@ -1,10 +1,5 @@
 import Foundation
 
-protocol Sizeable {
-    var width: Int { get }
-    var depth: Int { get }
-}
-
 enum GridQuadrant: CaseIterable {
     case northWest, northEast, southWest, southEast
 
@@ -42,6 +37,3 @@ extension Sizeable {
         point(piece.point, isInQuadrant: quadrant)
     }
 }
-
-extension Grid: Sizeable {}
-extension GridBuilder: Sizeable {}
