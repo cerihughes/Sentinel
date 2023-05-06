@@ -23,7 +23,6 @@ class PlayerOperations {
     enum Item {
         case tree, rock, synthoid, sentry, sentinel
     }
-    private let levelConfiguration: LevelConfiguration
     private let terrainOperations: TerrainOperations
     private let initialCameraNode: SCNNode
 
@@ -37,12 +36,10 @@ class PlayerOperations {
     var postAnimationBlock: (() -> Void)?
 
     init(
-        levelConfiguration: LevelConfiguration,
         terrainOperations: TerrainOperations,
         synthoidEnergy: SynthoidEnergy,
         initialCameraNode: SCNNode
     ) {
-        self.levelConfiguration = levelConfiguration
         self.terrainOperations = terrainOperations
         self.synthoidEnergy = synthoidEnergy
         self.initialCameraNode = initialCameraNode
