@@ -32,8 +32,4 @@ extension Sizeable {
     func point(_ point: GridPoint, isInQuadrant quadrant: GridQuadrant) -> Bool {
         quadrant.contains(point: point, sizeable: self)
     }
-
-    func piece(_ piece: GridPiece, isInQuadrant quadrant: GridQuadrant) -> Bool {
-        point(piece.point, isInQuadrant: quadrant)
-    }
 }

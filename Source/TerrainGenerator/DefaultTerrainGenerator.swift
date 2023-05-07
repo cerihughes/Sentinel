@@ -70,7 +70,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
         return sentinelPosition
     }
 
-    private func highestPiece(in floorIndex: [Int: [GridPiece]]) -> GridPiece? {
+    private func highestPiece(in floorIndex: [Int: [GridPieceBuilder]]) -> GridPieceBuilder? {
         let pieces = floorIndex.highestEmptyFloorPieces()
         return gen.nextItem(array: pieces)
     }
