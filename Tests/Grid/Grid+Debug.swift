@@ -56,7 +56,12 @@ extension Grid {
 
 }
 
-extension GridPiece {
+protocol Slopeable {
+    var level: Float { get }
+    func has(slopeDirection: GridDirection) -> Bool
+}
+
+extension Slopeable {
     var slopesString: String {
         GridDirection.allCases
             .map { has(slopeDirection: $0) ? $0.debugString : "*" }
@@ -67,6 +72,9 @@ extension GridPiece {
         "\(slopesString):\(level)"
     }
 }
+
+extension GridPiece: Slopeable {}
+extension GridPieceBuilder: Slopeable {}
 
 extension GridDirection {
     var debugString: String {

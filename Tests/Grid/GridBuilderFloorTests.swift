@@ -115,8 +115,8 @@ class GridBuilderFloorTests: XCTestCase {
     }
 }
 
-extension GridPiece: Equatable {
-    public static func == (lhs: GridPiece, rhs: GridPiece) -> Bool {
+extension GridPieceBuilder: Equatable {
+    public static func == (lhs: GridPieceBuilder, rhs: GridPieceBuilder) -> Bool {
         lhs.point == rhs.point && lhs.isFloor == rhs.isFloor && lhs.level == rhs.level && lhs.slopes == rhs.slopes
     }
 }

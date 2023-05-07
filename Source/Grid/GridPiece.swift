@@ -1,14 +1,16 @@
 import Foundation
 
-class GridPiece {
+struct GridPiece {
     let point: GridPoint
+    let isFloor: Bool
+    let level: Float
+    private let slopes: Int
 
-    var isFloor = true
-    var level: Float = 0.0
-    var slopes: Int = 0
-
-    init(x: Int, z: Int) {
-        point = GridPoint(x: x, z: z)
+    init(point: GridPoint, isFloor: Bool, level: Float, slopes: Int) {
+        self.point = point
+        self.isFloor = isFloor
+        self.level = level
+        self.slopes = slopes
     }
 
     func has(slopeDirection: GridDirection) -> Bool {

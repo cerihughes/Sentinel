@@ -3,7 +3,7 @@ import Foundation
 class GridBuilder {
     let width: Int
     let depth: Int
-    private let pieces: [[GridPiece]]
+    private let pieces: [[GridPieceBuilder]]
 
     var sentinelPosition: GridPoint?
     var sentryPositions = [GridPoint]()
@@ -45,7 +45,7 @@ class GridBuilder {
         .init(
             width: width,
             depth: depth,
-            pieces: pieces,
+            pieces: pieces.map { $0.buildPieces() },
             sentinelPosition: sentinelPosition ?? .undefined,
             sentryPositions: sentryPositions,
             startPosition: startPosition ?? .undefined,
@@ -56,7 +56,7 @@ class GridBuilder {
         )
     }
 
-    func piece(at point: GridPoint) -> GridPiece? {
+    func piece(at point: GridPoint) -> GridPieceBuilder? {
         pieces[safe: point.z]?[safe: point.x]
     }
 
@@ -121,8 +121,8 @@ class GridBuilder {
 }
 
 extension GridBuilder {
-    func emptyFloorPiecesByLevel(in quadrant: GridQuadrant? = nil) -> [Int: [GridPiece]] {
-        var sorted: [Int: [GridPiece]] = [:]
+    func emptyFloorPiecesByLevel(in quadrant: GridQuadrant? = nil) -> [Int: [GridPieceBuilder]] {
+        var sorted: [Int: [GridPieceBuilder]] = [:]
 
         let occupiedPositions = occupiedPositions()
         for row in pieces {
@@ -170,64 +170,38 @@ private extension GridBuilder {
     }
 }
 
-extension Dictionary where Key == Int, Value == [GridPiece] {
+extension Dictionary where Key == Int, Value == [GridPieceBuilder] {
     func floorLevels() -> [Int] {
         keys.sorted()
     }
 
-    func emptyFloorPieces(at level: Int) -> [GridPiece] {
+    func emptyFloorPieces(at level: Int) -> [GridPieceBuilder] {
         self[level] ?? []
     }
 
-    func highestEmptyFloorPieces() -> [GridPiece] {
+    func highestEmptyFloorPieces() -> [GridPieceBuilder] {
         guard let highestLevel = floorLevels().last else { return [] }
         return emptyFloorPieces(at: highestLevel)
     }
 
-    func lowestEmptyFloorPieces() -> [GridPiece] {
+    func lowestEmptyFloorPieces() -> [GridPieceBuilder] {
         guard let lowest = floorLevels().first else { return [] }
         return emptyFloorPieces(at: lowest)
     }
 
-    func allEmptyFloorPieces() -> [GridPiece] {
+    func allEmptyFloorPieces() -> [GridPieceBuilder] {
         floorLevels().flatMap { emptyFloorPieces(at: $0) }
     }
 }
 
-private extension Array where Element == GridPiece {
-    func intersected(quadrant: GridQuadrant, sizeable: Sizeable) -> [GridPiece] {
-        filter { sizeable.piece($0, isInQuadrant: quadrant) }
+private extension Array where Element == GridPieceBuilder {
+    func intersected(quadrant: GridQuadrant, sizeable: Sizeable) -> [GridPieceBuilder] {
+        filter { sizeable.point($0.point, isInQuadrant: quadrant) }
     }
 }
 private extension GridPoint {
     func transform(deltaX: Int, deltaZ: Int) -> GridPoint {
         return GridPoint(x: x + deltaX, z: z + deltaZ)
-    }
-}
-
-private extension GridPiece {
-    func buildFloor() -> Float {
-        if isFloor {
-            level += 1.0
-        } else {
-            isFloor = true
-            level += 0.5
-        }
-        return level
-    }
-
-    func buildSlope() -> Float {
-        if isFloor {
-            level += 0.5
-            isFloor = false
-        } else {
-            level += 1.0
-        }
-        return level
-    }
-
-    func add(slopeDirection: GridDirection) {
-        slopes |= slopeDirection.rawValue
     }
 }
 
