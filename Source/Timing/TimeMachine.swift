@@ -15,34 +15,34 @@ import SceneKit
  over the run loop.
  */
 class TimeMachine {
-    private var timingFunctions: [UUID: TimeEngineData] = [:]
+    private var timingTokens = [UUID]()
+    private var timingFunctions = [UUID: TimeEngineData]()
     private var started = false
 
     func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID? {
-        guard started == false else {
-            return nil
-        }
+        guard started == false else { return nil }
 
         let data = TimeEngineData(timeInterval: timeInterval, function: function)
         let token = UUID()
+        timingTokens.append(token)
         timingFunctions[token] = data
         return token
     }
 
     func remove(token: UUID) {
-        guard started == false else {
-            return
-        }
+        guard started == false else { return }
 
+        if let index = timingTokens.firstIndex(of: token) {
+            timingTokens.remove(at: index)
+        }
         timingFunctions.removeValue(forKey: token)
     }
 
     func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) {
-        guard started else {
-            return
-        }
+        guard started else { return }
 
-        for data in timingFunctions.values {
+        for token in timingTokens {
+            guard let data = timingFunctions[token] else { continue }
             if data.handle(currentTimeInterval: currentTimeInterval, renderer: renderer) {
                 // Only run 1 operation per time "slice" - the rest will run in subsequent iterations
                 return
@@ -51,11 +51,8 @@ class TimeMachine {
     }
 
     func start() {
-        guard started == false else {
-            return
-        }
+        guard started == false else { return }
 
-        assignInitialOffsets()
         started = true
     }
 
@@ -63,24 +60,12 @@ class TimeMachine {
         started = false
     }
 
-    private func assignInitialOffsets() {
-        guard !timingFunctions.isEmpty else {
-            return
-        }
-
-        let interval: TimeInterval = 1.0 / TimeInterval(timingFunctions.count)
-        for (i, timingFunction) in timingFunctions.values.enumerated() {
-            timingFunction.initialOffset = interval * TimeInterval(i)
-        }
-    }
-
     private class TimeEngineData {
         let timeInterval: TimeInterval
         let function: (TimeInterval, SCNSceneRenderer, Any?) -> Any?
         var lastResults: Any?
-        var initialOffset: TimeInterval = 0.0
 
-        private var nextTimeInterval: TimeInterval?
+        private var nextTimeInterval: TimeInterval = 0.0
 
         init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) {
             self.timeInterval = timeInterval
@@ -88,14 +73,10 @@ class TimeMachine {
         }
 
         func handle(currentTimeInterval: TimeInterval, renderer: SCNSceneRenderer) -> Bool {
-            if let nextTimeInterval = nextTimeInterval {
-                if currentTimeInterval >= nextTimeInterval {
-                    lastResults = function(currentTimeInterval, renderer, lastResults)
-                    self.nextTimeInterval = currentTimeInterval + timeInterval
-                    return true
-                }
-            } else {
-                nextTimeInterval = currentTimeInterval + initialOffset
+            if currentTimeInterval >= nextTimeInterval {
+                lastResults = function(currentTimeInterval, renderer, lastResults)
+                nextTimeInterval = currentTimeInterval + timeInterval
+                return true
             }
             return false
         }
