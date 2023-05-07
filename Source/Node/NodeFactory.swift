@@ -72,6 +72,7 @@ class NodeFactory {
         addSentryNodes(grid: grid, nodeMap: nodeMap)
         addSynthoidNode(grid: grid, nodeMap: nodeMap)
         addTreeNodes(grid: grid, nodeMap: nodeMap)
+        addRockNodes(grid: grid, nodeMap: nodeMap)
 
         return terrainNode
     }
@@ -183,6 +184,14 @@ class NodeFactory {
         for treePosition in grid.treePositions {
             if grid.piece(at: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
                 floorNode.treeNode = createTreeNode(height: 0)
+            }
+        }
+    }
+
+    private func addRockNodes(grid: Grid, nodeMap: NodeMap) {
+        for rockPosition in grid.rockPositions {
+            if grid.piece(at: rockPosition) != nil, let floorNode = nodeMap.getFloorNode(for: rockPosition) {
+                floorNode.add(rockNode: createRockNode(height: 0))
             }
         }
     }
