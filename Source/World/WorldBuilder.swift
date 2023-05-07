@@ -49,12 +49,11 @@ struct WorldBuilder {
             initialCameraNode: initialCameraNode,
             synthoidEnergy: synthoidEnergy,
             playerOperations: .init(
-                levelConfiguration: levelConfiguration,
                 terrainOperations: terrainOperations,
                 synthoidEnergy: synthoidEnergy,
                 initialCameraNode: initialCameraNode
             ),
-            opponentsOperations: .init(levelConfiguration: levelConfiguration, terrainOperations: terrainOperations)
+            opponentsOperations: .init(opponentConfiguration: levelConfiguration, terrainOperations: terrainOperations)
         )
     }
 }
@@ -64,7 +63,7 @@ extension WorldBuilder {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
         return .init(
             levelConfiguration: levelConfiguration,
-            terrainGenerator: DefaultTerrainGenerator(levelConfiguration: levelConfiguration),
+            terrainGenerator: DefaultTerrainGenerator(gridConfiguration: levelConfiguration),
             materialFactory: DefaultMaterialFactory(level: level),
             world: world
         )

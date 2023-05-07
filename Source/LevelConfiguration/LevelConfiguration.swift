@@ -1,15 +1,17 @@
 import Foundation
 
-/**
- Describes the level and what it's made up of (trees, terrain, opponents, opponent behaviour etc.)
- */
-protocol LevelConfiguration {
-    var level: Int { get }
-
+protocol OpponentConfiguration {
     var opponentDetectionRadius: Float { get }
     var opponentRotationSteps: Int { get }
     var opponentRotationTime: TimeInterval { get }
     var opponentRotationPause: TimeInterval { get }
+}
+
+/**
+ Describes the level and what it's made up of (trees, terrain, opponents, opponent behaviour etc.)
+ */
+protocol GridConfiguration {
+    var level: Int { get }
 
     var gridWidth: Int { get }
     var gridDepth: Int { get }
@@ -28,6 +30,8 @@ protocol LevelConfiguration {
 
     var treeCountRange: CountableRange<Int> { get }
 }
+
+typealias LevelConfiguration = OpponentConfiguration & GridConfiguration
 
 struct DefaultLevelConfiguration: LevelConfiguration {
     let level: Int

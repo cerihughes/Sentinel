@@ -8,22 +8,19 @@ protocol OpponentsOperationsDelegate: AnyObject {
 }
 
 class OpponentsOperations: NSObject {
-    private let levelConfiguration: LevelConfiguration
+    private let opponentConfiguration: OpponentConfiguration
     private let terrainOperations: TerrainOperations
-
     private let nodeManipulator: NodeManipulator
-    private let grid: Grid
 
     weak var delegate: OpponentsOperationsDelegate?
 
     let timeMachine = TimeMachine()
 
-    init(levelConfiguration: LevelConfiguration, terrainOperations: TerrainOperations) {
-        self.levelConfiguration = levelConfiguration
+    init(opponentConfiguration: OpponentConfiguration, terrainOperations: TerrainOperations) {
+        self.opponentConfiguration = opponentConfiguration
         self.terrainOperations = terrainOperations
 
         nodeManipulator = terrainOperations.nodeManipulator
-        grid = terrainOperations.grid
 
         super.init()
 
@@ -31,7 +28,7 @@ class OpponentsOperations: NSObject {
     }
 
     private func buildRandomTree() {
-        let emptyPieces = grid.emptyFloorPieces()
+        let emptyPieces = terrainOperations.grid.emptyFloorPieces()
         if let randomPiece = emptyPieces.randomElement() {
             terrainOperations.buildTree(at: randomPiece.point)
         }
@@ -40,7 +37,7 @@ class OpponentsOperations: NSObject {
     private func setupTimingFunctions() {
         _ = timeMachine.add(timeInterval: 2.0, function: absorbObjects(timeInterval:playerRenderer:lastResult:))
         _ = timeMachine.add(
-            timeInterval: levelConfiguration.opponentRotationPause,
+            timeInterval: opponentConfiguration.opponentRotationPause,
             function: rotation(timeInterval:playerRenderer:lastResult:)
         )
         _ = timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:playerRenderer:lastResult:))
@@ -91,8 +88,8 @@ class OpponentsOperations: NSObject {
     }
 
     private func rotation(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
-        let radians = 2.0 * Float.pi / Float(levelConfiguration.opponentRotationSteps)
-        let duration = levelConfiguration.opponentRotationTime
+        let radians = 2.0 * Float.pi / Float(opponentConfiguration.opponentRotationSteps)
+        let duration = opponentConfiguration.opponentRotationTime
         nodeManipulator.rotateAllOpponents(by: radians, duration: duration)
         return nil
     }
