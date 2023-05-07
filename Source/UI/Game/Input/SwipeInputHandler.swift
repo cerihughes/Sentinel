@@ -413,7 +413,7 @@ private class SelectionNode: SCNNode {
         material.diffuse.contents = UIColor.white.withAlphaComponent(0.5)
         material.specular.contents = UIColor.white
 
-        let sideLength = CGFloat(floorSize)
+        let sideLength = CGFloat.floorSize
         let box = SCNBox(width: CGFloat(sideLength),
                          height: sideLength / 50,
                          length: CGFloat(sideLength),

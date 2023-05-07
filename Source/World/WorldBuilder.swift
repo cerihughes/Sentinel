@@ -21,12 +21,15 @@ struct WorldBuilder {
     func build() -> Built {
         let grid = terrainGenerator.generate()
         let nodeMap = NodeMap()
-        let nodePositioning = NodePositioning(gridWidth: levelConfiguration.gridWidth,
-                                              gridDepth: levelConfiguration.gridDepth,
-                                              floorSize: floorSize)
-        let nodeFactory = NodeFactory(nodePositioning: nodePositioning,
-                                      detectionRadius: levelConfiguration.opponentDetectionRadius * floorSize,
-                                      materialFactory: materialFactory)
+        let nodePositioning = NodePositioning(
+            gridWidth: levelConfiguration.gridWidth,
+            gridDepth: levelConfiguration.gridDepth
+        )
+        let nodeFactory = NodeFactory(
+            nodePositioning: nodePositioning,
+            detectionRadius: levelConfiguration.opponentDetectionRadius * .floorSize,
+            materialFactory: materialFactory
+        )
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
         world.set(terrainNode: terrainNode)
 

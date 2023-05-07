@@ -11,16 +11,16 @@ class SlopeNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, colour: UIColor) {
+    init(colour: UIColor) {
         super.init()
 
-        geometry = createGeometry(floorSize: floorSize, colour: colour)
+        geometry = createGeometry(colour: colour)
         name = slopeNodeName
         categoryBitMask |= noninteractiveBlockingNodeBitMask
     }
 
-    func createGeometry(floorSize: Float, colour: UIColor) -> SCNGeometry {
-        let halfSide = CGFloat(floorSize / 2.0)
+    func createGeometry(colour: UIColor) -> SCNGeometry {
+        let halfSide = CGFloat.floorSize / 2.0
 
         let material = SCNMaterial()
         material.diffuse.contents = colour
@@ -31,7 +31,7 @@ class SlopeNode: SCNNode {
         bezierPath.addLine(to: CGPoint(x: -halfSide, y: halfSide))
         bezierPath.addLine(to: CGPoint(x: halfSide, y: -halfSide))
         bezierPath.close()
-        let slope = SCNShape(path: bezierPath, extrusionDepth: CGFloat(floorSize))
+        let slope = SCNShape(path: bezierPath, extrusionDepth: .floorSize)
         slope.firstMaterial = material
 
         return slope

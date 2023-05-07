@@ -3,23 +3,20 @@ import SceneKit
 let rockNodeName = "rockNodeName"
 
 class RockNode: SCNNode, PlaceableNode, DetectableNode {
-    override init() {
-        super.init()
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float) {
+    override init() {
         super.init()
 
         let rockNode = SCNNode()
-        let height = floorSize / 2.0
+        let height = Float.floorSize / 2.0
 
-        var sectionNode = RockSectionNode(floorSize: floorSize,
-                                          position: SCNVector3Make(0, 0, height / 6.0),
-                                          rotation: SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 1.14))
+        var sectionNode = RockSectionNode(
+            position: SCNVector3Make(0, 0, height / 6.0),
+            rotation: SCNVector4Make(0.0, 0.0, 1.0, Float.pi / 1.14)
+        )
         rockNode.addChildNode(sectionNode)
 
         sectionNode = sectionNode.clone()
@@ -66,10 +63,10 @@ class RockNode: SCNNode, PlaceableNode, DetectableNode {
             super.init(coder: aDecoder)
         }
 
-        init(floorSize: Float, position: SCNVector3, rotation: SCNVector4) {
+        init(position: SCNVector3, rotation: SCNVector4) {
             super.init()
 
-            geometry = createRockGeometry(floorSize: floorSize, extrusionDepth: floorSize / 3.0, colour: .darkGray)
+            geometry = createRockGeometry(floorSize: .floorSize, extrusionDepth: .floorSize / 3.0, colour: .darkGray)
             self.position = position
             self.rotation = rotation
         }

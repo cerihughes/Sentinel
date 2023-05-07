@@ -3,8 +3,6 @@ import SceneKit
 
 let ambientLightNodeName = "ambientLightNodeName"
 
-let radiansInCircle = Float.pi * 2.0
-
 let interactiveNodeBitMask = 2
 let noninteractiveTransparentNodeBitMask = 4
 let noninteractiveBlockingNodeBitMask = 8
@@ -27,17 +25,15 @@ class NodeFactory {
          materialFactory: MaterialFactory) {
         self.nodePositioning = nodePositioning
 
-        let floorSize = nodePositioning.floorSize
-
-        cube1 = FloorNode(floorSize: floorSize, colour: materialFactory.floor1Colour)
-        cube2 = FloorNode(floorSize: floorSize, colour: materialFactory.floor2Colour)
-        slope1 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope1Colour)
-        slope2 = SlopeNode(floorSize: floorSize, colour: materialFactory.slope2Colour)
-        sentinel = SentinelNode(floorSize: floorSize, detectionRadius: detectionRadius)
-        sentry = SentryNode(floorSize: floorSize, detectionRadius: detectionRadius)
-        synthoid = SynthoidNode(floorSize: floorSize)
-        tree = TreeNode(floorSize: floorSize)
-        rock = RockNode(floorSize: floorSize)
+        cube1 = FloorNode(colour: materialFactory.floor1Colour)
+        cube2 = FloorNode(colour: materialFactory.floor2Colour)
+        slope1 = SlopeNode(colour: materialFactory.slope1Colour)
+        slope2 = SlopeNode(colour: materialFactory.slope2Colour)
+        sentinel = SentinelNode(detectionRadius: detectionRadius)
+        sentry = SentryNode(detectionRadius: detectionRadius)
+        synthoid = SynthoidNode()
+        tree = TreeNode()
+        rock = RockNode()
     }
 
     func createCameraNode() -> SCNNode {
@@ -111,7 +107,7 @@ class NodeFactory {
         if let rotation = rotation {
             w = rotation
         } else {
-            w = radiansInCircle * Float.random(in: 0.0..<1.0)
+            w = .radiansInCircle * Float.random(in: 0.0..<1.0)
         }
 
         clone.rotation = SCNVector4Make(0.0, 1.0, 0.0, w)
@@ -149,11 +145,7 @@ class NodeFactory {
     private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
         if grid.piece(at: grid.sentinelPosition) != nil,
             let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
-            var initialAngle = grid.startPosition.angle(to: grid.sentinelPosition)
-            if initialAngle > radiansInCircle {
-                initialAngle -= radiansInCircle
-            }
-
+            let initialAngle = min(grid.startPosition.angle(to: grid.sentinelPosition), .radiansInCircle)
             let rightAngle = initialAngle.closestRightAngle
             floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
         }
@@ -162,11 +154,7 @@ class NodeFactory {
     private func addSentryNodes(grid: Grid, nodeMap: NodeMap) {
         for sentryPosition in grid.sentryPositions {
             if grid.piece(at: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
-                var initialAngle = grid.startPosition.angle(to: sentryPosition)
-                if initialAngle > radiansInCircle {
-                    initialAngle -= radiansInCircle
-                }
-
+                let initialAngle = min(grid.startPosition.angle(to: sentryPosition), .radiansInCircle)
                 let rightAngle = initialAngle.closestRightAngle
                 floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
             }
@@ -238,8 +226,8 @@ class NodeFactory {
 
 private extension Float {
     var closestRightAngle: Float {
-        var closest = radiansInCircle
-        var smallestDelta = radiansInCircle
+        var closest = Float.radiansInCircle
+        var smallestDelta = Float.radiansInCircle
         for i in 1 ... 4 {
             let candidate = Float.pi / 2.0 * Float(i)
             let delta = fabsf(candidate - self)
@@ -250,4 +238,14 @@ private extension Float {
         }
         return closest
     }
+}
+
+extension Float {
+    static let floorSize = Float(10.0)
+    static let radiansInCircle = Float.pi * 2.0
+}
+
+extension CGFloat {
+    static let floorSize = CGFloat(Float.floorSize)
+    static let radiansInCircle = CGFloat(Float.radiansInCircle)
 }

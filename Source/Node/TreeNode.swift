@@ -3,18 +3,14 @@ import SceneKit
 let treeNodeName = "treeNodeName"
 
 class TreeNode: SCNNode, PlaceableNode, DetectableNode {
-    override init() {
-        super.init()
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float) {
+    override init() {
         super.init()
 
-        let width = CGFloat(floorSize)
+        let width = CGFloat.floorSize
         let height = width * 1.5
         let maxRadius = width / 3.0
 
