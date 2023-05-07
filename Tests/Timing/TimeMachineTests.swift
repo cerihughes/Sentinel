@@ -31,6 +31,53 @@ final class TimeMachineTests: XCTestCase, TimeMachineTest {
         try super.tearDownWithError()
     }
 
+    func testAddingFunctionReturnsToken() {
+        var numbers = [Int]()
+        let token = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+            numbers.append(1)
+            return true
+        }
+        XCTAssertNotNil(token)
+
+        timeMachine.start()
+        pumpRunLoop(timeDelta: 2.0)
+        XCTAssertEqual(numbers, [1])
+    }
+
+    func testAddingFunctionAfterStartDoesntReturnToken() {
+        timeMachine.start()
+        let token = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+            return true
+        }
+        XCTAssertNil(token)
+    }
+
+    func testRemove() {
+        var numbers = [Int]()
+        let token = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+            numbers.append(1)
+            return true
+        }
+        timeMachine.remove(token: token!)
+        timeMachine.start()
+
+        pumpRunLoop(timeDelta: 2.0)
+        XCTAssertEqual(numbers, []) // Function did not run
+    }
+
+    func testRemoveWhileRunning() {
+        var numbers = [Int]()
+        let token = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+            numbers.append(1)
+            return true
+        }
+        timeMachine.start()
+        timeMachine.remove(token: token!)
+
+        pumpRunLoop(timeDelta: 2.0)
+        XCTAssertEqual(numbers, [1]) // Function was not removed
+    }
+
     func testFunctionsRunInOrder() {
         var numbers = [Int]()
 

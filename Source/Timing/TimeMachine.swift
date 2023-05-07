@@ -7,19 +7,20 @@ import SceneKit
  interesting to route these into an entity that registers different functions along with the time intervals that those
  functions should be fired under. A bit like an NSTimer, but integrated with, and driven by the SceneKit run loop.
 
- The TimeMachine has been written so that functions aren't all run at the same time: it does this by delaying the
- initial invocation of a function by a small delta, and also by ensuring only 1 function is invoked per invocation
- of the TimeMachine.
+ The TimeMachine has been written so that functions aren't all run at the same time: it does this ensuring only
+ 1 function is invoked per invocation of the TimeMachine.
 
  The goal here is to keep a 60/120 fps refresh rate as much as possible by distributing the work as much as possible
  over the run loop.
  */
+
+typealias TimeMachineFunction = (TimeInterval, SCNSceneRenderer, Any?) -> Any?
 class TimeMachine {
     private var timingTokens = [UUID]()
     private var timingFunctions = [UUID: TimeEngineData]()
     private var started = false
 
-    func add(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) -> UUID? {
+    func add(timeInterval: TimeInterval, function: @escaping TimeMachineFunction) -> UUID? {
         guard started == false else { return nil }
 
         let data = TimeEngineData(timeInterval: timeInterval, function: function)
@@ -62,12 +63,12 @@ class TimeMachine {
 
     private class TimeEngineData {
         let timeInterval: TimeInterval
-        let function: (TimeInterval, SCNSceneRenderer, Any?) -> Any?
+        let function: TimeMachineFunction
         var lastResults: Any?
 
         private var nextTimeInterval: TimeInterval = 0.0
 
-        init(timeInterval: TimeInterval, function: @escaping (TimeInterval, SCNSceneRenderer, Any?) -> Any?) {
+        init(timeInterval: TimeInterval, function: @escaping TimeMachineFunction) {
             self.timeInterval = timeInterval
             self.function = function
         }
