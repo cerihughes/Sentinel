@@ -47,21 +47,6 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         return childNode(withName: cameraNodeName, recursively: true)!
     }
 
-    func visibleSynthoids(in renderer: SCNSceneRenderer) -> [SynthoidNode] {
-        return visibleNodes(in: renderer, type: SynthoidNode.self)
-    }
-
-    func visibleRocks(in renderer: SCNSceneRenderer) -> [RockNode] {
-        let allRocks = visibleNodes(in: renderer, type: RockNode.self)
-        return allRocks.filter { $0.floorNode?.topmostNode == $0 } // only return rocks that have nothing on top of them
-    }
-
-    func visibleTreesOnRocks(in renderer: SCNSceneRenderer) -> [TreeNode] {
-        let allTrees = visibleNodes(in: renderer, type: TreeNode.self)
-        // only return trees that have rocks under them
-        return allTrees.filter { $0.floorNode != nil && !$0.floorNode!.rockNodes.isEmpty }
-    }
-
     func rotate(by radians: Float, duration: TimeInterval) {
         let fromValue = rotation.w
         let toValue = fromValue + radians
