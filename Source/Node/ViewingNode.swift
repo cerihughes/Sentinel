@@ -28,8 +28,8 @@ extension ViewingNode {
         let cameraPresentation = cameraNode.presentation
         let frustrumNodes = renderer.nodesInsideFrustum(of: cameraPresentation)
         let interactiveNodes = Set(frustrumNodes.compactMap { $0.findInteractiveParent()?.node })
-        let compacted = interactiveNodes.compactMap { $0 as? T }
-        return compacted.filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
+        return interactiveNodes.compactMap { $0 as? T }
+            .filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
     }
 
     private func hasLineOfSight(
