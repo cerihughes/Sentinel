@@ -12,7 +12,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         super.init(coder: aDecoder)
     }
 
-    fileprivate init(floorSize: Float, detectionRadius: Float, colour: UIColor) {
+    fileprivate init(detectionRadius: Float, colour: UIColor) {
         super.init()
 
         let material = SCNMaterial()
@@ -21,8 +21,7 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         let segments = 3
         var y: Float = 0.0
         for i in 0 ..< segments {
-            let fi = Float(i)
-            let radius = (floorSize / 2.0) - fi
+            let radius = (.floorSize / 2.0) - Float(i)
             let sphere = SCNSphere(radius: CGFloat(radius))
             sphere.firstMaterial = material
             let sphereNode = SCNNode(geometry: sphere)
@@ -32,9 +31,9 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
             addChildNode(sphereNode)
         }
 
-        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: detectionRadius)
+        let eyeNode = EyeNode(detectionRadius: detectionRadius)
         eyeNode.rotation = SCNVector4Make(1.0, 0.0, 0.0, Float.pi / -6.0)
-        eyeNode.position.z = floorSize / -5.0
+        eyeNode.position.z = .floorSize / -5.0
         eyeNode.position.y = y
         addChildNode(eyeNode)
     }
@@ -66,8 +65,8 @@ class SentinelNode: OpponentNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float) {
-        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .blue)
+    init(detectionRadius: Float) {
+        super.init(detectionRadius: detectionRadius, colour: .blue)
 
         name = sentinelNodeName
         categoryBitMask |= interactiveNodeBitMask
@@ -83,8 +82,8 @@ class SentryNode: OpponentNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float) {
-        super.init(floorSize: floorSize, detectionRadius: detectionRadius, colour: .green)
+    init(detectionRadius: Float) {
+        super.init(detectionRadius: detectionRadius, colour: .green)
 
         name = sentryNodeName
         categoryBitMask |= interactiveNodeBitMask

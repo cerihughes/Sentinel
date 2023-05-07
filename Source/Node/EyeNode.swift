@@ -11,11 +11,11 @@ class EyeNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float, detectionRadius: Float? = nil) {
+    init(detectionRadius: Float? = nil) {
         super.init()
 
-        let width = CGFloat(floorSize / 3.0)
-        let height = CGFloat(floorSize / 10.0)
+        let width = CGFloat.floorSize / 3.0
+        let height = CGFloat.floorSize / 10.0
 
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.red
@@ -30,7 +30,7 @@ class EyeNode: SCNNode {
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
-        cameraNode.position = SCNVector3Make(0.0, 0.0, floorSize / -10.0)
+        cameraNode.position = SCNVector3Make(0.0, 0.0, .floorSize / -10.0)
 
         if let detectionRadius = detectionRadius {
             camera.zFar = Double(detectionRadius)

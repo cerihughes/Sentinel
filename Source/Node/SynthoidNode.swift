@@ -8,34 +8,30 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
     private var rotationRadians: Float = 0.0
     private var elevationRadians: Float = 0.0
 
-    override init() {
-        super.init()
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
-    init(floorSize: Float) {
+    override init() {
         super.init()
 
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.purple
-        let radius = floorSize / 3.0
-        let capsule = SCNCapsule(capRadius: CGFloat(radius), height: CGFloat(floorSize))
+        let radius = Float.floorSize / 3.0
+        let capsule = SCNCapsule(capRadius: CGFloat(radius), height: .floorSize)
         capsule.firstMaterial = material
 
         let capsuleNode = SCNNode(geometry: capsule)
         addChildNode(capsuleNode)
 
-        let eyeNode = EyeNode(floorSize: floorSize, detectionRadius: nil)
-        eyeNode.position.y += floorSize / 4.0
+        let eyeNode = EyeNode(detectionRadius: nil)
+        eyeNode.position.y += .floorSize / 4.0
         eyeNode.position.z = -radius
         addChildNode(eyeNode)
 
         name = synthoidNodeName
         categoryBitMask |= interactiveNodeBitMask
-        pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * floorSize, 0.0)
+        pivot = SCNMatrix4MakeTranslation(0.0, -0.5 * .floorSize, 0.0)
     }
 
     var floorNode: FloorNode? {
