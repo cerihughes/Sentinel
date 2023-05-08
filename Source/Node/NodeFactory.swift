@@ -171,7 +171,7 @@ class NodeFactory {
     private func addTreeNodes(grid: Grid, nodeMap: NodeMap) {
         for treePosition in grid.treePositions {
             if grid.piece(at: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
-                floorNode.treeNode = createTreeNode(height: 0)
+                floorNode.treeNode = createTreeNode(height: grid.rockCount(at: treePosition))
             }
         }
     }

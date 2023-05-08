@@ -100,6 +100,12 @@ class GameContainerViewController: UIViewController {
 extension GameContainerViewController: OpponentsOperationsDelegate {
     // MARK: OpponentsOperationsDelegate
 
+    func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
+
+    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
+        viewModel.built.synthoidEnergy.adjust(delta: -treeEnergyValue)
+    }
+
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             let scene = self.viewModel.worldBuilder.world.scene
@@ -112,12 +118,6 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }
-    }
-
-    func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
-
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
-        viewModel.built.synthoidEnergy.adjust(delta: -treeEnergyValue)
     }
 
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {

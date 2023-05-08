@@ -1,9 +1,9 @@
 import SceneKit
 
 protocol OpponentsOperationsDelegate: AnyObject {
-    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
     func opponentsOperationsDidAbsorb(_: OpponentsOperations)
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations)
+    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
 
