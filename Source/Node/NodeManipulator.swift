@@ -41,10 +41,8 @@ class NodeManipulator {
         return nodeMap.getFloorNode(for: point)
     }
 
-    func rotateAllOpponents(by radians: Float, duration: TimeInterval) {
-        for opponentNode in terrainNode.opponentNodes {
-            opponentNode.rotate(by: radians, duration: duration)
-        }
+    func rotate(opponentNode: OpponentNode, by radians: Float, duration: TimeInterval) {
+        opponentNode.rotate(by: radians, duration: duration)
     }
 
     func rotateCurrentSynthoid(rotationDelta: Float, elevationDelta: Float, persist: Bool = false) {

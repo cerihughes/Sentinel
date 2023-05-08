@@ -35,49 +35,58 @@ class OpponentsOperations: NSObject {
     }
 
     private func setupTimingFunctions() {
-        _ = timeMachine.add(timeInterval: 2.0, function: absorbObjects(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: 2.0, function: absorbObjects(timeInterval:renderer:lastResult:))
         _ = timeMachine.add(
             timeInterval: opponentConfiguration.opponentRotationPause,
-            function: rotation(timeInterval:playerRenderer:lastResult:)
+            function: rotation(timeInterval:renderer:lastResult:)
         )
-        _ = timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:playerRenderer:lastResult:))
+        _ = timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:renderer:lastResult:))
     }
 
-    private func absorbObjects(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
+    private func absorbObjects(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
         guard let synthoidNode = nodeManipulator.currentSynthoidNode else {
             return nil
         }
 
         for opponentNode in nodeManipulator.terrainNode.opponentNodes {
+            nodeManipulator.rotate(opponentNode: opponentNode, by: 0, duration: 0)
+
             // Don't absorb the player - this is handled by a separate timing function
-            let visibleSynthoids = opponentNode.visibleSynthoids(in: playerRenderer).filter { $0 != synthoidNode }
+            let visibleSynthoidPoints = opponentNode.visibleSynthoids(in: renderer).filter { $0 != synthoidNode }
+                .compactMap { $0.floorNode }
+                .compactMap { nodeManipulator.point(for: $0) }
+                .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
-            if let visibleSynthoid = visibleSynthoids.randomElement(),
-               let floorNode = visibleSynthoid.floorNode,
-               let point = nodeManipulator.point(for: floorNode) {
-                terrainOperations.absorbSynthoidNode(at: point, animated: true) { [weak self] in
-                    self?.terrainOperations.buildRock(at: point, animated: true)
+            if let visibleSynthoidPoint = visibleSynthoidPoints.first {
+                terrainOperations.absorbSynthoidNode(at: visibleSynthoidPoint, animated: true) { [weak self] in
+                    self?.terrainOperations.buildRock(at: visibleSynthoidPoint, animated: true)
                     self?.buildRandomTree()
                 }
                 delegate?.opponentsOperationsDidAbsorb(self)
                 return nil
             }
 
-            if let visibleRock = opponentNode.visibleRocks(in: playerRenderer).randomElement(),
-               let floorNode = visibleRock.floorNode,
-               let point = nodeManipulator.point(for: floorNode) {
-                terrainOperations.absorbRockNode(at: point, animated: true) { [weak self] in
-                    self?.terrainOperations.buildTree(at: point, animated: true)
+            let visibleRockPoints = opponentNode.visibleRocks(in: renderer)
+                .compactMap { $0.floorNode }
+                .compactMap { nodeManipulator.point(for: $0) }
+                .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
+
+            if let visibleRockPoint = visibleRockPoints.first {
+                terrainOperations.absorbRockNode(at: visibleRockPoint, animated: true) { [weak self] in
+                    self?.terrainOperations.buildTree(at: visibleRockPoint, animated: true)
                     self?.buildRandomTree()
                 }
                 delegate?.opponentsOperationsDidAbsorb(self)
                 return nil
             }
 
-            if let visibleTree = opponentNode.visibleTreesOnRocks(in: playerRenderer).randomElement(),
-                let floorNode = visibleTree.floorNode,
-                let point = nodeManipulator.point(for: floorNode) {
-                terrainOperations.absorbTreeNode(at: point, animated: true) { [weak self] in
+            let visibleTreePoints = opponentNode.visibleTreesOnRocks(in: renderer)
+                .compactMap { $0.floorNode }
+                .compactMap { nodeManipulator.point(for: $0) }
+                .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
+
+            if let visibleTreePoint = visibleTreePoints.first {
+                terrainOperations.absorbTreeNode(at: visibleTreePoint, animated: true) { [weak self] in
                     self?.buildRandomTree()
                 }
                 delegate?.opponentsOperationsDidAbsorb(self)
@@ -87,14 +96,17 @@ class OpponentsOperations: NSObject {
         return nil
     }
 
-    private func rotation(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
+    private func rotation(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
         let radians = 2.0 * Float.pi / Float(opponentConfiguration.opponentRotationSteps)
         let duration = opponentConfiguration.opponentRotationTime
-        nodeManipulator.rotateAllOpponents(by: radians, duration: duration)
+        for opponentNode in nodeManipulator.terrainNode.opponentNodes {
+            guard opponentNode.hasVisibleItemsToAbsorb(in: renderer) == false else { continue }
+            nodeManipulator.rotate(opponentNode: opponentNode, by: radians, duration: duration)
+        }
         return nil
     }
 
-    private func detection(timeInterval: TimeInterval, playerRenderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
+    private func detection(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
         guard
             let delegate = delegate,
             let synthoidNode = nodeManipulator.currentSynthoidNode
@@ -103,7 +115,7 @@ class OpponentsOperations: NSObject {
         }
 
         let opponentNodes = nodeManipulator.terrainNode.opponentNodes
-        let detectingOpponentNodes = nodes(opponentNodes, thatSee: synthoidNode, in: playerRenderer)
+        let detectingOpponentNodes = nodes(opponentNodes, thatSee: synthoidNode, in: renderer)
         let detectingCameraNodes = Set(detectingOpponentNodes.map { $0.cameraNode })
         let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
         if !detectingCameraNodes.isDisjoint(with: lastCameraNodes) {
@@ -127,12 +139,14 @@ class OpponentsOperations: NSObject {
         return detectingCameraNodes
     }
 
-    private func nodes(_ opponentNodes: [OpponentNode],
-                       thatSee synthoidNode: SynthoidNode,
-                       in playerRenderer: SCNSceneRenderer) -> [OpponentNode] {
+    private func nodes(
+        _ opponentNodes: [OpponentNode],
+        thatSee synthoidNode: SynthoidNode,
+        in renderer: SCNSceneRenderer
+    ) -> [OpponentNode] {
         var detectingOpponentNodes: [OpponentNode] = []
         for opponentNode in opponentNodes {
-            let detectableSynthoids = opponentNode.visibleSynthoids(in: playerRenderer)
+            let detectableSynthoids = opponentNode.visibleSynthoids(in: renderer)
             if detectableSynthoids.contains(synthoidNode) {
                 detectingOpponentNodes.append(opponentNode)
             }
@@ -147,4 +161,23 @@ extension OpponentsOperations: SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         timeMachine.handle(currentTimeInterval: time, renderer: renderer)
     }
+}
+
+private extension ViewingNode {
+    func hasVisibleItemsToAbsorb(in renderer: SCNSceneRenderer) -> Bool {
+        if visibleSynthoids(in: renderer).isNotEmpty {
+            return true
+        }
+        if visibleRocks(in: renderer).isNotEmpty {
+            return true
+        }
+        if visibleTreesOnRocks(in: renderer).isNotEmpty {
+            return true
+        }
+        return false
+    }
+}
+
+private extension Collection {
+    var isNotEmpty: Bool { !isEmpty }
 }
