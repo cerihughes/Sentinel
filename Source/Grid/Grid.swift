@@ -12,7 +12,7 @@ struct Grid {
     var sentryPositions: [GridPoint]
     let startPosition: GridPoint
     var treePositions: [GridPoint]
-    var rockPositions: [GridPoint]
+    private (set) var rockPositions: [GridPoint: Int]
     var synthoidPositions: [GridPoint]
     var currentPosition: GridPoint
 
@@ -29,6 +29,20 @@ struct Grid {
         return floorPieces.filter { !occupiedPositions.contains($0.point) }
     }
 
+    mutating func addRock(at point: GridPoint) {
+        if let count = rockPositions[point] {
+            rockPositions[point] = count + 1
+        } else {
+            rockPositions[point] = 1
+        }
+    }
+
+    mutating func removeRock(at point: GridPoint) {
+        if let count = rockPositions[point] {
+            rockPositions[point] = count == 1 ? nil : count - 1
+        }
+    }
+
     private var flatPieces: [GridPiece] {
         pieces.flatMap { $0 }
     }
@@ -38,6 +52,6 @@ struct Grid {
     }
 
     private func occupiedPositions() -> [GridPoint] {
-        [sentinelPosition] + sentryPositions + treePositions + rockPositions + synthoidPositions
+        [sentinelPosition] + sentryPositions + treePositions + rockPositions.keys + synthoidPositions
     }
 }

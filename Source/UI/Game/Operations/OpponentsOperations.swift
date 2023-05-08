@@ -53,35 +53,35 @@ class OpponentsOperations: NSObject {
             let visibleSynthoids = opponentNode.visibleSynthoids(in: playerRenderer).filter { $0 != synthoidNode }
 
             if let visibleSynthoid = visibleSynthoids.randomElement(),
-                let floorNode = visibleSynthoid.floorNode,
-                let point = nodeManipulator.point(for: floorNode) {
-                if terrainOperations.absorbSynthoidNode(at: point) {
-                    terrainOperations.buildRock(at: point)
-                    delegate?.opponentsOperationsDidAbsorb(self)
-                    buildRandomTree()
-                    return nil
+               let floorNode = visibleSynthoid.floorNode,
+               let point = nodeManipulator.point(for: floorNode) {
+                terrainOperations.absorbSynthoidNode(at: point, animated: true) { [weak self] in
+                    self?.terrainOperations.buildRock(at: point)
+                    self?.buildRandomTree()
                 }
+                delegate?.opponentsOperationsDidAbsorb(self)
+                return nil
             }
 
             if let visibleRock = opponentNode.visibleRocks(in: playerRenderer).randomElement(),
-                let floorNode = visibleRock.floorNode,
-                let point = nodeManipulator.point(for: floorNode) {
-                if terrainOperations.absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1) {
-                    terrainOperations.buildTree(at: point)
-                    delegate?.opponentsOperationsDidAbsorb(self)
-                    buildRandomTree()
-                    return nil
+               let floorNode = visibleRock.floorNode,
+               let point = nodeManipulator.point(for: floorNode) {
+                terrainOperations.absorbRockNode(at: point, animated: true) { [weak self] in
+                    self?.terrainOperations.buildTree(at: point)
+                    self?.buildRandomTree()
                 }
+                delegate?.opponentsOperationsDidAbsorb(self)
+                return nil
             }
 
             if let visibleTree = opponentNode.visibleTreesOnRocks(in: playerRenderer).randomElement(),
                 let floorNode = visibleTree.floorNode,
                 let point = nodeManipulator.point(for: floorNode) {
-                if terrainOperations.absorbTreeNode(at: point) {
-                    delegate?.opponentsOperationsDidAbsorb(self)
-                    buildRandomTree()
-                    return nil
+                terrainOperations.absorbTreeNode(at: point, animated: true) { [weak self] in
+                    self?.buildRandomTree()
                 }
+                delegate?.opponentsOperationsDidAbsorb(self)
+                return nil
             }
         }
         return nil

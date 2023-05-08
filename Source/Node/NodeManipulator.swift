@@ -4,16 +4,16 @@ class NodeManipulator {
     let terrainNode: TerrainNode
     private let nodeMap: NodeMap
     let nodeFactory: NodeFactory
-
     var currentSynthoidNode: SynthoidNode?
+    private let animatable: Bool
 
-    init(terrainNode: TerrainNode, nodeMap: NodeMap, nodeFactory: NodeFactory) {
+    init(terrainNode: TerrainNode, nodeMap: NodeMap, nodeFactory: NodeFactory, animatable: Bool) {
         self.terrainNode = terrainNode
         self.nodeMap = nodeMap
         self.nodeFactory = nodeFactory
+        self.animatable = animatable
     }
 
-    // TODO: Should these methods be in a different place? Maybe this class shouldn't know about the node map?
     func synthoidNode(at point: GridPoint) -> SynthoidNode? {
         return nodeMap.getFloorNode(for: point)?.synthoidNode
     }
@@ -69,10 +69,6 @@ class NodeManipulator {
             return
         }
 
-        if floorNode.treeNode != nil {
-            _ = absorbTree(at: point)
-        }
-
         let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count, rotation: rotation)
         floorNode.add(rockNode: rockNode)
     }
@@ -86,38 +82,35 @@ class NodeManipulator {
         floorNode.synthoidNode = synthoidNode
     }
 
-    func absorbTree(at point: GridPoint) -> Bool {
-        return absorb(node: nodeMap.getFloorNode(for: point)?.treeNode)
+    func absorbTree(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
+        absorb(node: nodeMap.getFloorNode(for: point)?.treeNode, animated: animated, completion: completion)
     }
 
-    func absorbRock(at point: GridPoint) -> Bool {
+    func absorbRock(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
         guard
             let floorNode = nodeMap.getFloorNode(for: point),
             floorNode.treeNode == nil,
             floorNode.synthoidNode == nil
         else {
-            return false
+            return
         }
-        return absorb(node: floorNode.rockNodes.last)
+        absorb(node: floorNode.rockNodes.last, animated: animated, completion: completion)
     }
 
-    func absorbSynthoid(at point: GridPoint) -> Bool {
-        return absorb(node: nodeMap.getFloorNode(for: point)?.synthoidNode)
+    func absorbSynthoid(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
+        absorb(node: nodeMap.getFloorNode(for: point)?.synthoidNode, animated: animated, completion: completion)
     }
 
-    func absorbSentry(at point: GridPoint) -> Bool {
-        return absorb(node: nodeMap.getFloorNode(for: point)?.sentryNode)
+    func absorbSentry(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
+        absorb(node: nodeMap.getFloorNode(for: point)?.sentryNode, animated: animated, completion: completion)
     }
 
-    func absorbSentinel(at point: GridPoint) -> Bool {
-        return absorb(node: nodeMap.getFloorNode(for: point)?.sentinelNode)
+    func absorbSentinel(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
+        absorb(node: nodeMap.getFloorNode(for: point)?.sentinelNode, animated: animated, completion: completion)
     }
 
-    private func absorb(node: SCNNode?) -> Bool {
-        if let node = node {
-            node.removeFromParentNode()
-            return true
-        }
-        return false
+    private func absorb(node: SCNNode?, animated: Bool, completion: (() -> Void)? = nil) {
+        guard let node else { return }
+        node.removeFromParentNode(animated: animated && animatable, completion: completion)
     }
 }

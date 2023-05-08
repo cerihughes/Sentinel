@@ -17,6 +17,7 @@ struct WorldBuilder {
     let terrainGenerator: TerrainGenerator
     let materialFactory: MaterialFactory
     let world: World
+    let animatable: Bool
 
     func build() -> Built {
         let grid = terrainGenerator.generate()
@@ -36,7 +37,12 @@ struct WorldBuilder {
 
         terrainNode.addChildNode(initialCameraNode)
 
-        let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
+        let nodeManipulator = NodeManipulator(
+            terrainNode: terrainNode,
+            nodeMap: nodeMap,
+            nodeFactory: nodeFactory,
+            animatable: animatable
+        )
         let terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
         let synthoidEnergy = SynthoidEnergyMonitor()
         return .init(
@@ -65,7 +71,8 @@ extension WorldBuilder {
             levelConfiguration: levelConfiguration,
             terrainGenerator: DefaultTerrainGenerator(gridConfiguration: levelConfiguration),
             materialFactory: DefaultMaterialFactory(level: level),
-            world: world
+            world: world,
+            animatable: true
         )
     }
 }

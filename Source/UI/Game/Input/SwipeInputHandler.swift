@@ -256,9 +256,8 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
-            if removeIt,
-                let point = nodeManipulator.point(for: floorNode),
-                playerOperations.absorbTopmostNode(at: point) {
+            if removeIt, let point = nodeManipulator.point(for: floorNode) {
+                playerOperations.absorbTopmostNode(at: point)
                 topmostNode.removeFromParentNode()
             } else {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
@@ -449,12 +448,13 @@ extension SCNNode {
         SCNTransaction.commit()
     }
 
-    func removeFromParentNode(animated: Bool) {
+    func removeFromParentNode(animated: Bool, completion: (() -> Void)? = nil) {
         if animated {
             SCNTransaction.begin()
             SCNTransaction.animationDuration = 0.3
             SCNTransaction.completionBlock = {
                 self.removeFromParentNode()
+                completion?()
             }
 
             scaleAllDimensions(by: 0.0)
@@ -462,6 +462,7 @@ extension SCNNode {
             SCNTransaction.commit()
         } else {
             removeFromParentNode()
+            completion?()
         }
     }
 }

@@ -65,7 +65,7 @@ private extension Grid {
         builder.synthoidPositions.append(startPosition)
         builder.sentinelPosition = .init(x: 2, z: 2)
         var grid = builder.buildGrid()
-        grid.rockPositions.append(.init(x: 4, z: 2))
+        grid.addRock(at: .init(x: 4, z: 2))
         return grid
     }
 }

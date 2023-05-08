@@ -23,7 +23,8 @@ extension WorldBuilder {
             levelConfiguration: levelConfiguration,
             terrainGenerator: terrainGenerator,
             materialFactory: MockMaterialFactory(),
-            world: world
+            world: world,
+            animatable: false
         )
     }
 
@@ -37,7 +38,8 @@ extension WorldBuilder {
             levelConfiguration: levelConfiguration,
             terrainGenerator: terrainGenerator,
             materialFactory: MockMaterialFactory(),
-            world: world
+            world: world,
+            animatable: false
         )
     }
 }

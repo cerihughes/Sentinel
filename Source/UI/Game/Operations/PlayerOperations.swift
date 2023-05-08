@@ -105,72 +105,51 @@ class PlayerOperations {
         delegate?.playerOperations(self, didPerform: .build(.synthoid))
     }
 
-    func absorbTopmostNode(at point: GridPoint) -> Bool {
+    func absorbTopmostNode(at point: GridPoint) {
         if let floorNode = nodeManipulator.floorNode(for: point),
             let topmostNode = floorNode.topmostNode {
             if topmostNode is TreeNode {
-                return absorbTreeNode(at: point)
-            }
-            if topmostNode is RockNode {
-                return absorbRockNode(at: point, isFinalRockNode: floorNode.rockNodes.count == 1)
-            }
-            if topmostNode is SynthoidNode {
-                return absorbSynthoidNode(at: point)
-            }
-            if topmostNode is SentryNode {
-                return absorbSentryNode(at: point)
-            }
-            if topmostNode is SentinelNode {
-                return absorbSentinelNode(at: point)
+                absorbTreeNode(at: point)
+            } else if topmostNode is RockNode {
+                absorbRockNode(at: point)
+            } else if topmostNode is SynthoidNode {
+                absorbSynthoidNode(at: point)
+            } else if topmostNode is SentryNode {
+                absorbSentryNode(at: point)
+            } else if topmostNode is SentinelNode {
+                absorbSentinelNode(at: point)
             }
         }
-        return false
     }
 
-    private func absorbTreeNode(at point: GridPoint) -> Bool {
-        if terrainOperations.absorbTreeNode(at: point) {
-            synthoidEnergy.adjust(delta: treeEnergyValue)
-            delegate?.playerOperations(self, didPerform: .absorb(.tree))
-            return true
-        }
-        return false
+    private func absorbTreeNode(at point: GridPoint) {
+        terrainOperations.absorbTreeNode(at: point)
+        synthoidEnergy.adjust(delta: treeEnergyValue)
+        delegate?.playerOperations(self, didPerform: .absorb(.tree))
     }
 
-    private func absorbRockNode(at point: GridPoint, isFinalRockNode: Bool) -> Bool {
-        if terrainOperations.absorbRockNode(at: point, isFinalRockNode: isFinalRockNode) {
-            synthoidEnergy.adjust(delta: rockEnergyValue)
-            delegate?.playerOperations(self, didPerform: .absorb(.rock))
-            return true
-        }
-        return false
+    private func absorbRockNode(at point: GridPoint) {
+        terrainOperations.absorbRockNode(at: point)
+        synthoidEnergy.adjust(delta: rockEnergyValue)
+        delegate?.playerOperations(self, didPerform: .absorb(.rock))
     }
 
-    private func absorbSynthoidNode(at point: GridPoint) -> Bool {
-        if terrainOperations.absorbSynthoidNode(at: point) {
-            synthoidEnergy.adjust(delta: synthoidEnergyValue)
-            delegate?.playerOperations(self, didPerform: .absorb(.synthoid))
-            return true
-        }
-        return false
+    private func absorbSynthoidNode(at point: GridPoint) {
+        terrainOperations.absorbSynthoidNode(at: point)
+        synthoidEnergy.adjust(delta: synthoidEnergyValue)
+        delegate?.playerOperations(self, didPerform: .absorb(.synthoid))
     }
 
-    private func absorbSentryNode(at point: GridPoint) -> Bool {
-        if nodeManipulator.absorbSentry(at: point) {
-            synthoidEnergy.adjust(delta: sentryEnergyValue)
-            delegate?.playerOperations(self, didPerform: .absorb(.sentry))
-            return true
-        }
-        return false
+    private func absorbSentryNode(at point: GridPoint) {
+        nodeManipulator.absorbSentry(at: point, animated: false)
+        synthoidEnergy.adjust(delta: sentryEnergyValue)
+        delegate?.playerOperations(self, didPerform: .absorb(.sentry))
     }
 
-    private func absorbSentinelNode(at point: GridPoint) -> Bool {
-        if nodeManipulator.absorbSentinel(at: point) {
-            synthoidEnergy.adjust(delta: sentinelEnergyValue)
-            delegate?.playerOperations(self, didPerform: .absorb(.sentinel))
-            return true
-        }
-
-        return false
+    private func absorbSentinelNode(at point: GridPoint) {
+        nodeManipulator.absorbSentinel(at: point, animated: false)
+        synthoidEnergy.adjust(delta: sentinelEnergyValue)
+        delegate?.playerOperations(self, didPerform: .absorb(.sentinel))
     }
 
     private func moveCamera(
