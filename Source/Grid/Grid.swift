@@ -12,9 +12,31 @@ struct Grid {
     var sentryPositions: [GridPoint]
     let startPosition: GridPoint
     var treePositions: [GridPoint]
-    var rockPositions: [GridPoint]
+    private var rockPositions = [GridPoint: Int]()
     var synthoidPositions: [GridPoint]
     var currentPosition: GridPoint
+
+    init(
+        width: Int,
+        depth: Int,
+        pieces: [[GridPiece]],
+        sentinelPosition: GridPoint,
+        sentryPositions: [GridPoint],
+        startPosition: GridPoint,
+        treePositions: [GridPoint],
+        synthoidPositions: [GridPoint],
+        currentPosition: GridPoint
+    ) {
+        self.width = width
+        self.depth = depth
+        self.pieces = pieces
+        self.sentinelPosition = sentinelPosition
+        self.sentryPositions = sentryPositions
+        self.startPosition = startPosition
+        self.treePositions = treePositions
+        self.synthoidPositions = synthoidPositions
+        self.currentPosition = currentPosition
+    }
 
     func piece(at point: GridPoint) -> GridPiece? {
         pieces[safe: point.z]?[safe: point.x]
@@ -29,6 +51,28 @@ struct Grid {
         return floorPieces.filter { !occupiedPositions.contains($0.point) }
     }
 
+    func allRockPositions() -> [GridPoint] {
+        Array(rockPositions.keys)
+    }
+
+    func rockCount(at point: GridPoint) -> Int {
+        rockPositions[point] ?? 0
+    }
+
+    mutating func addRock(at point: GridPoint) {
+        if let count = rockPositions[point] {
+            rockPositions[point] = count + 1
+        } else {
+            rockPositions[point] = 1
+        }
+    }
+
+    mutating func removeRock(at point: GridPoint) {
+        if let count = rockPositions[point] {
+            rockPositions[point] = count == 1 ? nil : count - 1
+        }
+    }
+
     private var flatPieces: [GridPiece] {
         pieces.flatMap { $0 }
     }
@@ -38,6 +82,6 @@ struct Grid {
     }
 
     private func occupiedPositions() -> [GridPoint] {
-        [sentinelPosition] + sentryPositions + treePositions + rockPositions + synthoidPositions
+        [sentinelPosition] + sentryPositions + treePositions + rockPositions.keys + synthoidPositions
     }
 }

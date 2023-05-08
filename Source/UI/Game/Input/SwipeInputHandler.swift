@@ -256,9 +256,8 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
-            if removeIt,
-                let point = nodeManipulator.point(for: floorNode),
-                playerOperations.absorbTopmostNode(at: point) {
+            if removeIt, let point = nodeManipulator.point(for: floorNode) {
+                playerOperations.absorbTopmostNode(at: point)
                 topmostNode.removeFromParentNode()
             } else {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
@@ -436,33 +435,41 @@ extension SCNNode {
         self.scale = SCNVector3Make(scale, scale, scale)
     }
 
-    func scaleAllDimensions(by scale: Float, animated: Bool) {
-        if !animated {
+    func scaleAllDimensions(by scale: Float, animated: Bool, completion: (() -> Void)? = nil) {
+        guard animated else {
             scaleAllDimensions(by: scale)
+            completion?()
+            return
         }
 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 0.3
+        SCNTransaction.completionBlock = {
+            completion?()
+        }
 
         scaleAllDimensions(by: scale)
 
         SCNTransaction.commit()
     }
 
-    func removeFromParentNode(animated: Bool) {
-        if animated {
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.3
-            SCNTransaction.completionBlock = {
-                self.removeFromParentNode()
-            }
-
-            scaleAllDimensions(by: 0.0)
-
-            SCNTransaction.commit()
-        } else {
+    func removeFromParentNode(animated: Bool, completion: (() -> Void)? = nil) {
+        guard animated else {
             removeFromParentNode()
+            completion?()
+            return
         }
+
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = 0.3
+        SCNTransaction.completionBlock = { [weak self] in
+            self?.removeFromParentNode()
+            completion?()
+        }
+
+        scaleAllDimensions(by: 0.0)
+
+        SCNTransaction.commit()
     }
 }
 

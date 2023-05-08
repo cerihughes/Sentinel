@@ -50,7 +50,6 @@ class GridBuilder {
             sentryPositions: sentryPositions,
             startPosition: startPosition ?? .undefined,
             treePositions: treePositions,
-            rockPositions: [],
             synthoidPositions: synthoidPositions,
             currentPosition: .undefined
         )

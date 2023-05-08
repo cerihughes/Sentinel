@@ -41,7 +41,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
             return true
         }
 
-        XCTAssertEqual(built.terrainOperations.grid.rockPositions.count, 1)
+        XCTAssertEqual(built.terrainOperations.grid.allRockPositions().count, 1)
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 0)
 
         operations.timeMachine.start()
@@ -52,7 +52,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         }
 
         // A rock should have been detected and absorbed down to a tree, creating another tree in the process
-        XCTAssertEqual(built.terrainOperations.grid.rockPositions.count, 0)
+        XCTAssertEqual(built.terrainOperations.grid.allRockPositions().count, 0)
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 2)
     }
 }
@@ -65,7 +65,7 @@ private extension Grid {
         builder.synthoidPositions.append(startPosition)
         builder.sentinelPosition = .init(x: 2, z: 2)
         var grid = builder.buildGrid()
-        grid.rockPositions.append(.init(x: 4, z: 2))
+        grid.addRock(at: .init(x: 4, z: 2))
         return grid
     }
 }

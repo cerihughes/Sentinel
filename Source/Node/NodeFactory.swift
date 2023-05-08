@@ -66,7 +66,7 @@ class NodeFactory {
         addWallNodes(to: terrainNode, grid: grid)
         addSentinelNode(grid: grid, nodeMap: nodeMap)
         addSentryNodes(grid: grid, nodeMap: nodeMap)
-        addSynthoidNode(grid: grid, nodeMap: nodeMap)
+        addSynthoidNodes(grid: grid, nodeMap: nodeMap)
         addTreeNodes(grid: grid, nodeMap: nodeMap)
         addRockNodes(grid: grid, nodeMap: nodeMap)
 
@@ -161,25 +161,32 @@ class NodeFactory {
         }
     }
 
-    private func addSynthoidNode(grid: Grid, nodeMap: NodeMap) {
-        if grid.piece(at: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
-            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
+    private func addSynthoidNodes(grid: Grid, nodeMap: NodeMap) {
+        for synthoidPosition in grid.synthoidPositions {
+            if grid.piece(at: synthoidPosition) != nil, let floorNode = nodeMap.getFloorNode(for: synthoidPosition) {
+                let angleToSentinel = synthoidPosition.angle(to: grid.sentinelPosition)
+                floorNode.synthoidNode = createSynthoidNode(
+                    height: grid.rockCount(at: synthoidPosition),
+                    viewingAngle: angleToSentinel
+                )
+            }
         }
     }
 
     private func addTreeNodes(grid: Grid, nodeMap: NodeMap) {
         for treePosition in grid.treePositions {
             if grid.piece(at: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
-                floorNode.treeNode = createTreeNode(height: 0)
+                floorNode.treeNode = createTreeNode(height: grid.rockCount(at: treePosition))
             }
         }
     }
 
     private func addRockNodes(grid: Grid, nodeMap: NodeMap) {
-        for rockPosition in grid.rockPositions {
+        for rockPosition in grid.allRockPositions() {
             if grid.piece(at: rockPosition) != nil, let floorNode = nodeMap.getFloorNode(for: rockPosition) {
-                floorNode.add(rockNode: createRockNode(height: 0))
+                for height in 0 ..< grid.rockCount(at: rockPosition) {
+                    floorNode.add(rockNode: createRockNode(height: height))
+                }
             }
         }
     }

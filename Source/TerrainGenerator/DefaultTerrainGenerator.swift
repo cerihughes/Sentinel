@@ -91,8 +91,9 @@ class DefaultTerrainGenerator: TerrainGenerator {
         let sentinelPoint = builder.sentinelPosition ?? .undefined
         let floorIndex = builder.emptyFloorPiecesByLevel(in: quadrantOppositeSentinel())
         let startPieces = floorIndex.lowestEmptyFloorPieces()
-            .sorted { $0.point.distance(from: sentinelPoint) > $1.point.distance(from: sentinelPoint) }
-        let point = startPieces.first?.point ?? .undefined
+            .map { $0.point }
+            .sortedByDistance(from: sentinelPoint, ascending: false)
+        let point = startPieces.first ?? .undefined
         builder.synthoidPositions.append(point)
         return point
     }
@@ -210,19 +211,5 @@ private extension GridDirection {
         case .west:
             return .east
         }
-    }
-}
-
-private extension GridPoint {
-    func distance(from other: GridPoint) -> Float {
-        let xSquared = (x - other.x).squared()
-        let zSquared = (z - other.z).squared()
-        return sqrtf(.init(xSquared + zSquared))
-    }
-}
-
-private extension Int {
-    func squared() -> Int {
-        self * self
     }
 }

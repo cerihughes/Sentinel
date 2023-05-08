@@ -20,3 +20,27 @@ struct GridPoint: Equatable, Hashable {
 extension GridPoint {
     static let undefined = GridPoint(x: -1, z: -1)
 }
+
+extension Array where Element == GridPoint {
+    func sortedByDistance(from other: GridPoint, ascending: Bool) -> Array {
+        sorted {
+            let first = ascending ? $1 : $0
+            let second = ascending ? $0 : $1
+            return first.distance(from: other) > second.distance(from: other)
+        }
+    }
+}
+
+private extension GridPoint {
+    func distance(from other: GridPoint) -> Float {
+        let xSquared = (x - other.x).squared()
+        let zSquared = (z - other.z).squared()
+        return sqrtf(.init(xSquared + zSquared))
+    }
+}
+
+private extension Int {
+    func squared() -> Int {
+        self * self
+    }
+}

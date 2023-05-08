@@ -33,7 +33,7 @@ extension Grid {
         if treePositions.contains(point) {
             return "T"
         }
-        if rockPositions.contains(point) {
+        if allRockPositions().contains(point) {
             return "R"
         }
         if currentPosition == point {
