@@ -56,7 +56,7 @@ class OpponentsOperations: NSObject {
                let floorNode = visibleSynthoid.floorNode,
                let point = nodeManipulator.point(for: floorNode) {
                 terrainOperations.absorbSynthoidNode(at: point, animated: true) { [weak self] in
-                    self?.terrainOperations.buildRock(at: point)
+                    self?.terrainOperations.buildRock(at: point, animated: true)
                     self?.buildRandomTree()
                 }
                 delegate?.opponentsOperationsDidAbsorb(self)

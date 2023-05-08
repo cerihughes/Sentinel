@@ -66,13 +66,15 @@ class NodeManipulator {
         treeNode.scaleAllDimensions(by: 1.0, animated: animated, completion: completion)
     }
 
-    func buildRock(at point: GridPoint, rotation: Float? = nil) {
+    func buildRock(at point: GridPoint, rotation: Float? = nil, animated: Bool, completion: (() -> Void)? = nil) {
         guard let floorNode = nodeMap.getFloorNode(for: point) else {
             return
         }
 
         let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count, rotation: rotation)
+        rockNode.scaleAllDimensions(by: 0.0)
         floorNode.add(rockNode: rockNode)
+        rockNode.scaleAllDimensions(by: 1.0, animated: animated, completion: completion)
     }
 
     func buildSynthoid(at point: GridPoint, viewingAngle: Float) {

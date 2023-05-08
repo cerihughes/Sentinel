@@ -15,9 +15,14 @@ class TerrainOperations {
         nodeManipulator.buildTree(at: point, animated: animated, completion: completion)
     }
 
-    func buildRock(at point: GridPoint, rotation: Float? = nil) {
+    func buildRock(
+        at point: GridPoint,
+        rotation: Float? = nil,
+        animated: Bool = false,
+        completion: (() -> Void)? = nil
+    ) {
         grid.addRock(at: point)
-        nodeManipulator.buildRock(at: point, rotation: rotation)
+        nodeManipulator.buildRock(at: point, rotation: rotation, animated: animated, completion: completion)
     }
 
     func buildSynthoid(at point: GridPoint, viewingAngle: Float) {

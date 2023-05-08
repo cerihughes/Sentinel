@@ -67,6 +67,6 @@ private extension Grid {
             addRock(at: $0)
             addRock(at: $0)
         }
-        treePositions.append(contentsOf: points)
+        synthoidPositions.append(contentsOf: points)
     }
 }

@@ -66,7 +66,7 @@ class NodeFactory {
         addWallNodes(to: terrainNode, grid: grid)
         addSentinelNode(grid: grid, nodeMap: nodeMap)
         addSentryNodes(grid: grid, nodeMap: nodeMap)
-        addSynthoidNode(grid: grid, nodeMap: nodeMap)
+        addSynthoidNodes(grid: grid, nodeMap: nodeMap)
         addTreeNodes(grid: grid, nodeMap: nodeMap)
         addRockNodes(grid: grid, nodeMap: nodeMap)
 
@@ -161,10 +161,15 @@ class NodeFactory {
         }
     }
 
-    private func addSynthoidNode(grid: Grid, nodeMap: NodeMap) {
-        if grid.piece(at: grid.startPosition) != nil, let floorNode = nodeMap.getFloorNode(for: grid.startPosition) {
-            let angleToSentinel = grid.startPosition.angle(to: grid.sentinelPosition)
-            floorNode.synthoidNode = createSynthoidNode(height: 0, viewingAngle: angleToSentinel)
+    private func addSynthoidNodes(grid: Grid, nodeMap: NodeMap) {
+        for synthoidPosition in grid.synthoidPositions {
+            if grid.piece(at: synthoidPosition) != nil, let floorNode = nodeMap.getFloorNode(for: synthoidPosition) {
+                let angleToSentinel = synthoidPosition.angle(to: grid.sentinelPosition)
+                floorNode.synthoidNode = createSynthoidNode(
+                    height: grid.rockCount(at: synthoidPosition),
+                    viewingAngle: angleToSentinel
+                )
+            }
         }
     }
 
