@@ -23,7 +23,7 @@ class StagingAreaViewModel {
         world.set(terrainNode: terrainNode)
 
         initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
-        initialCameraNode.position = SCNVector3Make(50.0, 200, 175)
+        initialCameraNode.position = SCNVector3Make(50.0, 175, 150)
         initialCameraNode.look(at: terrainNode.sentinelNode!.worldPosition)
 
         terrainNode.addChildNode(initialCameraNode)
@@ -47,8 +47,12 @@ class StagingAreaViewModel {
 
 private extension Grid {
     mutating func addRockNodesToLowestLevel() {
-        emptyFloorPieces()
+        let points = emptyFloorPieces()
             .filter { Int($0.level) > 3 }
-            .forEach { addRock(at: $0.point) }
+            .map { $0.point }
+        points.forEach {
+            addRock(at: $0)
+            addRock(at: $0)
+        }
     }
 }
