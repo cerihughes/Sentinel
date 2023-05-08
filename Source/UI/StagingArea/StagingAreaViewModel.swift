@@ -3,6 +3,7 @@ import SceneKit
 class StagingAreaViewModel {
     let world = SpaceWorld()
     let initialCameraNode: SCNNode
+    let opponentsOperations: OpponentsOperations
 
     init(level: Int = 4) {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
@@ -26,6 +27,16 @@ class StagingAreaViewModel {
         initialCameraNode.look(at: terrainNode.position)
 
         terrainNode.addChildNode(initialCameraNode)
+
+        let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
+        nodeManipulator.makeSynthoidCurrent(at: grid.startPosition)
+
+        let terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
+        opponentsOperations = .init(
+            opponentConfiguration: levelConfiguration,
+            terrainOperations: terrainOperations
+        )
+        opponentsOperations.timeMachine.start()
     }
 }
 
