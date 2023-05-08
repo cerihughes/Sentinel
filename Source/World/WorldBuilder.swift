@@ -21,10 +21,7 @@ struct WorldBuilder {
     func build() -> Built {
         let grid = terrainGenerator.generate()
         let nodeMap = NodeMap()
-        let nodePositioning = NodePositioning(
-            gridWidth: levelConfiguration.gridWidth,
-            gridDepth: levelConfiguration.gridDepth
-        )
+        let nodePositioning = levelConfiguration.createNodePositioning()
         let nodeFactory = NodeFactory(
             nodePositioning: nodePositioning,
             detectionRadius: levelConfiguration.opponentDetectionRadius * .floorSize,

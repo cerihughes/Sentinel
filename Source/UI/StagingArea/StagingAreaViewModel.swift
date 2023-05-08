@@ -1,16 +1,49 @@
 import SceneKit
 
 class StagingAreaViewModel {
-    let scene: SCNScene
+    let world = SpaceWorld()
     let initialCameraNode: SCNNode
+    let opponentsOperations: OpponentsOperations
 
-    init() {
-        scene = SCNScene()
+    init(level: Int = 4) {
+        let levelConfiguration = DefaultLevelConfiguration(level: level)
+        let terrainGenerator = DefaultTerrainGenerator(gridConfiguration: levelConfiguration)
+        let materialFactory = DefaultMaterialFactory(level: level)
+        var grid = terrainGenerator.generate()
+        grid.addRockNodesToLowestLevel()
 
-        let opponentNode = SentinelNode(detectionRadius: 100.0)
+        let nodeMap = NodeMap()
+        let nodePositioning = levelConfiguration.createNodePositioning()
+        let nodeFactory = NodeFactory(
+            nodePositioning: nodePositioning,
+            detectionRadius: levelConfiguration.opponentDetectionRadius * .floorSize,
+            materialFactory: materialFactory
+        )
+        let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
+        world.set(terrainNode: terrainNode)
 
-        scene.rootNode.addChildNode(opponentNode)
+        initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
+        initialCameraNode.position = SCNVector3Make(0.0, 250, 275)
+        initialCameraNode.look(at: terrainNode.position)
 
-        initialCameraNode = opponentNode.cameraNode
+        terrainNode.addChildNode(initialCameraNode)
+
+        let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeMap: nodeMap, nodeFactory: nodeFactory)
+        nodeManipulator.makeSynthoidCurrent(at: grid.startPosition)
+
+        let terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
+        opponentsOperations = .init(
+            opponentConfiguration: levelConfiguration,
+            terrainOperations: terrainOperations
+        )
+        opponentsOperations.timeMachine.start()
+    }
+}
+
+private extension Grid {
+    mutating func addRockNodesToLowestLevel() {
+        rockPositions = emptyFloorPieces()
+            .filter { Int($0.level) > 3 }
+            .map { $0.point }
     }
 }

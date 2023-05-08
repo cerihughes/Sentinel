@@ -2,8 +2,11 @@ import SceneKit
 import UIKit
 
 class StagingAreaViewController: SceneViewController {
+    private let viewModel: StagingAreaViewModel
+
     init(viewModel: StagingAreaViewModel) {
-        super.init(scene: viewModel.scene, cameraNode: viewModel.initialCameraNode)
+        self.viewModel = viewModel
+        super.init(scene: viewModel.world.scene, cameraNode: viewModel.initialCameraNode)
     }
 
     override func viewDidLoad() {
@@ -13,6 +16,7 @@ class StagingAreaViewController: SceneViewController {
 
         super.viewDidLoad()
 
+        sceneView.delegate = viewModel.opponentsOperations
         sceneView.allowsCameraControl = true
 //        sceneView.debugOptions = [.renderAsWireframe, .showCameras]
         sceneView.showsStatistics = true
