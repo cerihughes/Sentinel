@@ -55,13 +55,15 @@ class NodeManipulator {
         synthoidNode.apply(rotationDelta: rotationDelta, elevationDelta: elevationDelta, persist: persist)
     }
 
-    func buildTree(at point: GridPoint) {
+    func buildTree(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
         guard let floorNode = nodeMap.getFloorNode(for: point) else {
             return
         }
 
         let treeNode = nodeFactory.createTreeNode(height: floorNode.rockNodes.count)
+        treeNode.scaleAllDimensions(by: 0.0)
         floorNode.treeNode = treeNode
+        treeNode.scaleAllDimensions(by: 1.0, animated: animated, completion: completion)
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {

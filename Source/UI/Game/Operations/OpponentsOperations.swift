@@ -30,7 +30,7 @@ class OpponentsOperations: NSObject {
     private func buildRandomTree() {
         let emptyPieces = terrainOperations.grid.emptyFloorPieces()
         if let randomPiece = emptyPieces.randomElement() {
-            terrainOperations.buildTree(at: randomPiece.point)
+            terrainOperations.buildTree(at: randomPiece.point, animated: true)
         }
     }
 
@@ -67,7 +67,7 @@ class OpponentsOperations: NSObject {
                let floorNode = visibleRock.floorNode,
                let point = nodeManipulator.point(for: floorNode) {
                 terrainOperations.absorbRockNode(at: point, animated: true) { [weak self] in
-                    self?.terrainOperations.buildTree(at: point)
+                    self?.terrainOperations.buildTree(at: point, animated: true)
                     self?.buildRandomTree()
                 }
                 delegate?.opponentsOperationsDidAbsorb(self)

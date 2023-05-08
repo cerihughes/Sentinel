@@ -435,13 +435,18 @@ extension SCNNode {
         self.scale = SCNVector3Make(scale, scale, scale)
     }
 
-    func scaleAllDimensions(by scale: Float, animated: Bool) {
-        if !animated {
+    func scaleAllDimensions(by scale: Float, animated: Bool, completion: (() -> Void)? = nil) {
+        guard animated else {
             scaleAllDimensions(by: scale)
+            completion?()
+            return
         }
 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 0.3
+        SCNTransaction.completionBlock = {
+            completion?()
+        }
 
         scaleAllDimensions(by: scale)
 
@@ -449,21 +454,22 @@ extension SCNNode {
     }
 
     func removeFromParentNode(animated: Bool, completion: (() -> Void)? = nil) {
-        if animated {
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.3
-            SCNTransaction.completionBlock = {
-                self.removeFromParentNode()
-                completion?()
-            }
-
-            scaleAllDimensions(by: 0.0)
-
-            SCNTransaction.commit()
-        } else {
+        guard animated else {
             removeFromParentNode()
             completion?()
+            return
         }
+
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = 0.3
+        SCNTransaction.completionBlock = { [weak self] in
+            self?.removeFromParentNode()
+            completion?()
+        }
+
+        scaleAllDimensions(by: 0.0)
+
+        SCNTransaction.commit()
     }
 }
 

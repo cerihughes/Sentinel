@@ -10,9 +10,9 @@ class TerrainOperations {
         self.nodeManipulator = nodeManipulator
     }
 
-    func buildTree(at point: GridPoint) {
+    func buildTree(at point: GridPoint, animated: Bool = false, completion: (() -> Void)? = nil) {
         grid.treePositions.append(point)
-        nodeManipulator.buildTree(at: point)
+        nodeManipulator.buildTree(at: point, animated: animated, completion: completion)
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {
