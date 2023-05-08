@@ -177,9 +177,11 @@ class NodeFactory {
     }
 
     private func addRockNodes(grid: Grid, nodeMap: NodeMap) {
-        for rockPosition in grid.rockPositions.keys {
+        for rockPosition in grid.allRockPositions() {
             if grid.piece(at: rockPosition) != nil, let floorNode = nodeMap.getFloorNode(for: rockPosition) {
-                floorNode.add(rockNode: createRockNode(height: 0))
+                for height in 0 ..< grid.rockCount(at: rockPosition) {
+                    floorNode.add(rockNode: createRockNode(height: height))
+                }
             }
         }
     }
