@@ -3,7 +3,7 @@ import UIKit
 
 class StagingAreaViewController: SceneViewController {
     init(viewModel: StagingAreaViewModel) {
-        super.init(scene: viewModel.scene, cameraNode: viewModel.initialCameraNode)
+        super.init(scene: viewModel.world.scene, cameraNode: viewModel.initialCameraNode)
     }
 
     override func viewDidLoad() {
