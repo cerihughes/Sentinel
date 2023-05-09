@@ -1,3 +1,4 @@
+#if DEBUG
 import Madog
 import UIKit
 
@@ -13,3 +14,4 @@ class StagingAreaViewControllerProvider: TypedViewControllerProvider {
         return StagingAreaViewController(viewModel: viewModel)
     }
 }
+#endif

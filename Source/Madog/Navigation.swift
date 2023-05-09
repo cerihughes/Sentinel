@@ -6,6 +6,11 @@ enum Navigation: Equatable {
     case levelSummary(level: Int)
     case game(level: Int)
 
+    #if DEBUG
     // Debug
     case stagingArea
+
+    // Scenario Test
+    case multipleOpponentAbsorbScenario
+    #endif
 }
