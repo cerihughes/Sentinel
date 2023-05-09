@@ -5,7 +5,8 @@ import SceneKit
 class MultipleOpponentAbsorbViewModel {
     let world = SpaceWorld()
     let initialCameraNode: SCNNode
-    let opponentsOperations: OpponentsOperations
+    let timeMachine: TimeMachine
+    private let opponentsOperations: OpponentsOperations
     private let terrainOperations: TerrainOperations
     private let initialTrees: Int
     private let rocksCreated: Int
@@ -40,9 +41,14 @@ class MultipleOpponentAbsorbViewModel {
         nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.startPosition)
 
         terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
-        opponentsOperations = .init(opponentConfiguration: levelConfiguration, terrainOperations: terrainOperations)
+        timeMachine = .init()
+        opponentsOperations = .init(
+            opponentConfiguration: levelConfiguration,
+            terrainOperations: terrainOperations,
+            timeMachine: timeMachine
+        )
         opponentsOperations.delegate = self
-        opponentsOperations.timeMachine.start()
+        timeMachine.start()
     }
 }
 

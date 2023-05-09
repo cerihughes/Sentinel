@@ -7,19 +7,17 @@ protocol OpponentsOperationsDelegate: AnyObject {
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
 
-class OpponentsOperations: NSObject {
+class OpponentsOperations {
     private let opponentConfiguration: OpponentConfiguration
     private let terrainOperations: TerrainOperations
+    private let timeMachine: TimeMachine
 
     weak var delegate: OpponentsOperationsDelegate?
 
-    let timeMachine = TimeMachine()
-
-    init(opponentConfiguration: OpponentConfiguration, terrainOperations: TerrainOperations) {
+    init(opponentConfiguration: OpponentConfiguration, terrainOperations: TerrainOperations, timeMachine: TimeMachine) {
         self.opponentConfiguration = opponentConfiguration
         self.terrainOperations = terrainOperations
-
-        super.init()
+        self.timeMachine = timeMachine
 
         setupTimingFunctions()
     }
@@ -143,14 +141,6 @@ class OpponentsOperations: NSObject {
             }
         }
         return detectingOpponentNodes
-    }
-}
-
-extension OpponentsOperations: SCNSceneRendererDelegate {
-    // MARK: SCNSceneRendererDelegate
-
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        timeMachine.handle(currentTimeInterval: time, renderer: renderer)
     }
 }
 

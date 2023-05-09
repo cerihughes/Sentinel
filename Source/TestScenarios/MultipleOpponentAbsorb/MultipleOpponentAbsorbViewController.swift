@@ -18,8 +18,7 @@ class MultipleOpponentAbsorbViewController: SceneViewController {
 
         super.viewDidLoad()
 
-        sceneView.delegate = viewModel.opponentsOperations
-//        sceneView.debugOptions = [.renderAsWireframe, .showCameras]
+        sceneView.delegate = viewModel.timeMachine
         sceneView.showsStatistics = true
     }
 }

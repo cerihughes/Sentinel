@@ -49,6 +49,7 @@ extension GameViewModel: PlayerOperationsDelegate {
         switch operation {
         case .enterScene(let gridPoint):
             playerOperationsDidEnterScene(at: gridPoint)
+            built.timeMachine.start()
         case .build(let buildableItem):
             playerOperationsDidBuild(buildableItem)
         case .absorb(let absorbableItem):

@@ -17,7 +17,7 @@ class StagingAreaViewController: SceneViewController {
 
         super.viewDidLoad()
 
-        sceneView.delegate = viewModel.opponentsOperations
+        sceneView.delegate = viewModel.timeMachine
         sceneView.allowsCameraControl = true
 //        sceneView.debugOptions = [.renderAsWireframe, .showCameras]
         sceneView.showsStatistics = true

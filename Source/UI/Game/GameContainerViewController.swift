@@ -49,7 +49,7 @@ class GameContainerViewController: UIViewController {
             return
         }
 
-        sceneView.delegate = viewModel.built.opponentsOperations
+        sceneView.delegate = viewModel.built.timeMachine
         viewModel.built.opponentsOperations.delegate = self
 
         addChild(mainViewController)
@@ -152,7 +152,7 @@ extension GameContainerViewController: GameViewModelDelegate {
     }
 
     private func levelFinished() {
-        viewModel.built.opponentsOperations.timeMachine.stop()
+        viewModel.built.timeMachine.stop()
         _ = navigationContext.navigateBack(animated: true)
     }
 }
