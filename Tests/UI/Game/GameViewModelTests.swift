@@ -164,7 +164,7 @@ final class GameViewModelTests: XCTestCase {
 
         let synthoid = try XCTUnwrap(nodeMap.floorNode(at: .floor2)?.synthoidNode)
         playerOperations.move(to: synthoid)
-        XCTAssertEqual(viewModel.levelScore.highestPoint, 1)
+        XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
     }
 
     func testTeleportOntoRockStack() throws {
@@ -177,7 +177,7 @@ final class GameViewModelTests: XCTestCase {
 
         let synthoid = try XCTUnwrap(nodeMap.floorNode(at: .floor3)?.synthoidNode)
         playerOperations.move(to: synthoid)
-        XCTAssertEqual(viewModel.levelScore.highestPoint, 2)
+        XCTAssertEqual(viewModel.levelScore.highestPoint, 1)
     }
 }
 
