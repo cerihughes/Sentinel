@@ -29,7 +29,7 @@ class StagingAreaViewModel {
         terrainNode.addChildNode(initialCameraNode)
 
         let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeFactory: nodeFactory, animatable: true)
-        nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
+        nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.startPosition)
 
         let terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
         opponentsOperations = .init(

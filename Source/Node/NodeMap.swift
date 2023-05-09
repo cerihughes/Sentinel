@@ -19,6 +19,19 @@ class NodeMap {
 }
 
 extension NodeMap {
+    func canBuild(at point: GridPoint) -> Bool {
+        guard
+            let floorNode = floorNode(at: point),
+            floorNode.treeNode == nil,
+            floorNode.synthoidNode == nil,
+            floorNode.sentryNode == nil,
+            floorNode.sentinelNode == nil
+        else {
+            return false
+        }
+        return true
+    }
+
     func synthoidNode(at point: GridPoint) -> SynthoidNode? {
         floorNode(at: point)?.synthoidNode
     }

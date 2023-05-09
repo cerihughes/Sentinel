@@ -84,9 +84,7 @@ class PlayerOperations {
     }
 
     func buildTree(at point: GridPoint) {
-        guard synthoidEnergy.has(energy: .treeEnergyValue) else {
-            return
-        }
+        guard synthoidEnergy.has(energy: .treeEnergyValue), nodeMap.canBuild(at: point) else { return }
 
         synthoidEnergy.adjust(delta: -.treeEnergyValue)
         terrainOperations.buildTree(at: point)
@@ -94,9 +92,7 @@ class PlayerOperations {
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {
-        guard synthoidEnergy.has(energy: .rockEnergyValue) else {
-            return
-        }
+        guard synthoidEnergy.has(energy: .rockEnergyValue), nodeMap.canBuild(at: point) else { return }
 
         synthoidEnergy.adjust(delta: -.rockEnergyValue)
         terrainOperations.buildRock(at: point, rotation: rotation)
@@ -104,7 +100,7 @@ class PlayerOperations {
     }
 
     func buildSynthoid(at point: GridPoint) {
-        guard synthoidEnergy.has(energy: .synthoidEnergyValue) else { return }
+        guard synthoidEnergy.has(energy: .synthoidEnergyValue), nodeMap.canBuild(at: point) else { return }
 
         let viewingAngle = point.angle(to: grid.currentPosition)
         synthoidEnergy.adjust(delta: -.synthoidEnergyValue)
