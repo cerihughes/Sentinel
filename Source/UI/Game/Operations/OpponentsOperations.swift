@@ -2,7 +2,7 @@ import SceneKit
 
 protocol OpponentsOperationsDelegate: AnyObject {
     func opponentsOperationsDidAbsorb(_: OpponentsOperations)
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations)
+    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) -> Bool
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
@@ -47,9 +47,7 @@ class OpponentsOperations: NSObject {
     }
 
     private func absorbObjects(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
-        guard let synthoidNode = nodeManipulator.currentSynthoidNode else {
-            return nil
-        }
+        guard let synthoidNode = nodeManipulator.currentSynthoidNode else { return nil }
 
         for opponentNode in nodeManipulator.terrainNode.opponentNodes {
             // Don't absorb the player - this is handled by a separate timing function
@@ -104,12 +102,7 @@ class OpponentsOperations: NSObject {
     }
 
     private func detection(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
-        guard
-            let delegate = delegate,
-            let synthoidNode = nodeManipulator.currentSynthoidNode
-        else {
-            return lastResult
-        }
+        guard let delegate, let synthoidNode = nodeManipulator.currentSynthoidNode else { return lastResult }
 
         let opponentNodes = nodeManipulator.terrainNode.opponentNodes
         let detectingOpponentNodes = nodes(opponentNodes, thatSee: synthoidNode, in: renderer)
@@ -117,8 +110,9 @@ class OpponentsOperations: NSObject {
         let lastCameraNodes = lastResult as? Set<SCNNode> ?? []
         if !detectingCameraNodes.isDisjoint(with: lastCameraNodes) {
             // Seen by a camera for more than 1 "cycle"...
-            delegate.opponentsOperationsDidDepleteEnergy(self)
-            buildRandomTree()
+            if delegate.opponentsOperationsDidDepleteEnergy(self) {
+                buildRandomTree()
+            }
         }
 
         detectingCameraNodes.forEach {

@@ -10,7 +10,7 @@ class StagingAreaViewModel {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
         let terrainGenerator = DefaultTerrainGenerator(gridConfiguration: levelConfiguration)
         let materialFactory = DefaultMaterialFactory(level: level)
-        var grid = terrainGenerator.generate()
+        let grid = terrainGenerator.generate()
 
         let nodeMap = NodeMap()
         let nodePositioning = levelConfiguration.createNodePositioning()

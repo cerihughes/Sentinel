@@ -1,10 +1,14 @@
 #if DEBUG
 import SceneKit
 
+/// A test scenario to make sure multiple opponents don't try and absorb the same objects at the same time.
 class MultipleOpponentAbsorbViewModel {
     let world = SpaceWorld()
     let initialCameraNode: SCNNode
     let opponentsOperations: OpponentsOperations
+    private let terrainOperations: TerrainOperations
+    private let initialTrees: Int
+    private let rocksCreated: Int
     private var absorbed = 0
 
     init() {
@@ -13,7 +17,8 @@ class MultipleOpponentAbsorbViewModel {
         let terrainGenerator = DefaultTerrainGenerator(gridConfiguration: levelConfiguration)
         let materialFactory = DefaultMaterialFactory(level: level)
         var grid = terrainGenerator.generate()
-        grid.addRockNodesToLowestLevel()
+        initialTrees = grid.treePositions.count
+        rocksCreated = grid.addRockNodesToLowestLevel()
 
         let nodeMap = NodeMap()
         let nodePositioning = levelConfiguration.createNodePositioning()
@@ -39,7 +44,7 @@ class MultipleOpponentAbsorbViewModel {
         )
         nodeManipulator.makeSynthoidCurrent(at: grid.startPosition)
 
-        let terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
+        terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
         opponentsOperations = .init(
             opponentConfiguration: levelConfiguration,
             terrainOperations: terrainOperations
@@ -53,21 +58,36 @@ class MultipleOpponentAbsorbViewModel {
 extension MultipleOpponentAbsorbViewModel: OpponentsOperationsDelegate {
     func opponentsOperationsDidAbsorb(_: OpponentsOperations) {
         absorbed += 1
+
+        if absorbed == expectedAbsorptions {
+            assert(terrainOperations.grid.allRockPositions().isEmpty)
+            assert(terrainOperations.grid.treePositions.count == expectedTrees)
+        }
     }
 
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {}
+    private var expectedAbsorptions: Int {
+        rocksCreated
+    }
+
+    private var expectedTrees: Int {
+        (rocksCreated * 2) + initialTrees
+    }
+
+    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) -> Bool {
+        false // Don't create trees from player energy
+    }
+
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {}
     func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {}
 }
 
 private extension Grid {
-    mutating func addRockNodesToLowestLevel() {
+    mutating func addRockNodesToLowestLevel() -> Int {
         let points = emptyFloorPieces()
             .filter { Int($0.level) > 1 }
             .map { $0.point }
-        points.forEach {
-            addRock(at: $0)
-        }
+        points.forEach { addRock(at: $0) }
+        return points.count
     }
 }
 #endif

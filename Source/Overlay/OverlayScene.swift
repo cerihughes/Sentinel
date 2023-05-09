@@ -20,31 +20,31 @@ class OverlayScene: SKScene {
         addSprites(
             for: &residualEnergy,
             at: &index,
-            spriteEnergy: sentinelEnergyValue * 4,
+            spriteEnergy: .sentinelEnergyValue * 4,
             spriteNode: spriteFactory.sentinel4SpriteNode
         )
         addSprites(
             for: &residualEnergy,
             at: &index,
-            spriteEnergy: synthoidEnergyValue * 4,
+            spriteEnergy: .synthoidEnergyValue * 4,
             spriteNode: spriteFactory.synthoid4SpriteNode
         )
         addSprites(
             for: &residualEnergy,
             at: &index,
-            spriteEnergy: synthoidEnergyValue,
+            spriteEnergy: .synthoidEnergyValue,
             spriteNode: spriteFactory.synthoidSpriteNode
         )
         addSprites(
             for: &residualEnergy,
             at: &index,
-            spriteEnergy: rockEnergyValue,
+            spriteEnergy: .rockEnergyValue,
             spriteNode: spriteFactory.rockSpriteNode
         )
         addSprites(
             for: &residualEnergy,
             at: &index,
-            spriteEnergy: treeEnergyValue,
+            spriteEnergy: .treeEnergyValue,
             spriteNode: spriteFactory.treeSpriteNode
         )
     }
