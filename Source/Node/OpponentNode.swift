@@ -46,11 +46,11 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
         return childNode(withName: cameraNodeName, recursively: true)!
     }
 
-    func rotate(by radians: Float, duration: TimeInterval) {
+    func rotate(by radians: Float) {
         let fromValue = rotation.w
         let toValue = fromValue + radians
         SCNTransaction.begin()
-        SCNTransaction.animationDuration = duration
+        SCNTransaction.animationDuration = .animationDuration
         rotation.w = toValue
         SCNTransaction.commit()
     }

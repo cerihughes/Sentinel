@@ -8,7 +8,7 @@ class MultipleOpponentAbsorbViewModel {
     private var absorbed = 0
 
     init() {
-        let level = 4
+        let level = 45
         let levelConfiguration = DefaultLevelConfiguration(level: level)
         let terrainGenerator = DefaultTerrainGenerator(gridConfiguration: levelConfiguration)
         let materialFactory = DefaultMaterialFactory(level: level)
@@ -26,8 +26,8 @@ class MultipleOpponentAbsorbViewModel {
         world.set(terrainNode: terrainNode)
 
         initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
-        initialCameraNode.position = SCNVector3Make(50.0, 175, 150)
-        initialCameraNode.look(at: terrainNode.sentinelNode!.worldPosition)
+        initialCameraNode.position = SCNVector3Make(50.0, 300, 250)
+        initialCameraNode.look(at: terrainNode.worldPosition)
 
         terrainNode.addChildNode(initialCameraNode)
 
@@ -63,13 +63,11 @@ extension MultipleOpponentAbsorbViewModel: OpponentsOperationsDelegate {
 private extension Grid {
     mutating func addRockNodesToLowestLevel() {
         let points = emptyFloorPieces()
-            .filter { Int($0.level) > 5 }
+            .filter { Int($0.level) > 1 }
             .map { $0.point }
         points.forEach {
             addRock(at: $0)
-            addRock(at: $0)
         }
-        synthoidPositions.append(contentsOf: points)
     }
 }
 #endif

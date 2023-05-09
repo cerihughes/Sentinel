@@ -5,7 +5,6 @@ class MockLevelConfiguration: LevelConfiguration {
     var level = 1
     var opponentDetectionRadius = Float(5.0)
     var opponentRotationSteps = 12
-    var opponentRotationTime = 1.0
     var opponentRotationPause = 5.0
 
     var gridWidth = 8

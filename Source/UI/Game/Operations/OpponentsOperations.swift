@@ -35,7 +35,10 @@ class OpponentsOperations: NSObject {
     }
 
     private func setupTimingFunctions() {
-        _ = timeMachine.add(timeInterval: 2.0, function: absorbObjects(timeInterval:renderer:lastResult:))
+        _ = timeMachine.add(
+            timeInterval: .animationDuration * 2.0,
+            function: absorbObjects(timeInterval:renderer:lastResult:)
+        )
         _ = timeMachine.add(
             timeInterval: opponentConfiguration.opponentRotationPause,
             function: rotation(timeInterval:renderer:lastResult:)
@@ -49,8 +52,6 @@ class OpponentsOperations: NSObject {
         }
 
         for opponentNode in nodeManipulator.terrainNode.opponentNodes {
-            nodeManipulator.rotate(opponentNode: opponentNode, by: 0, duration: 0)
-
             // Don't absorb the player - this is handled by a separate timing function
             let visibleSynthoidPoints = opponentNode.visibleSynthoids(in: renderer).filter { $0 != synthoidNode }
                 .compactMap { $0.floorNode }
@@ -58,10 +59,9 @@ class OpponentsOperations: NSObject {
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleSynthoidPoint = visibleSynthoidPoints.first {
-                terrainOperations.absorbSynthoidNode(at: visibleSynthoidPoint, animated: true) { [weak self] in
-                    self?.terrainOperations.buildRock(at: visibleSynthoidPoint, animated: true)
-                    self?.buildRandomTree()
-                }
+                terrainOperations.absorbSynthoidNode(at: visibleSynthoidPoint, animated: true)
+                terrainOperations.buildRock(at: visibleSynthoidPoint, animated: true)
+                buildRandomTree()
                 delegate?.opponentsOperationsDidAbsorb(self)
                 return nil
             }
@@ -72,10 +72,9 @@ class OpponentsOperations: NSObject {
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleRockPoint = visibleRockPoints.first {
-                terrainOperations.absorbRockNode(at: visibleRockPoint, animated: true) { [weak self] in
-                    self?.terrainOperations.buildTree(at: visibleRockPoint, animated: true)
-                    self?.buildRandomTree()
-                }
+                terrainOperations.absorbRockNode(at: visibleRockPoint, animated: true)
+                terrainOperations.buildTree(at: visibleRockPoint, animated: true)
+                buildRandomTree()
                 delegate?.opponentsOperationsDidAbsorb(self)
                 return nil
             }
@@ -86,9 +85,8 @@ class OpponentsOperations: NSObject {
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleTreePoint = visibleTreePoints.first {
-                terrainOperations.absorbTreeNode(at: visibleTreePoint, animated: true) { [weak self] in
-                    self?.buildRandomTree()
-                }
+                terrainOperations.absorbTreeNode(at: visibleTreePoint, animated: true)
+                buildRandomTree()
                 delegate?.opponentsOperationsDidAbsorb(self)
                 return nil
             }
@@ -98,10 +96,9 @@ class OpponentsOperations: NSObject {
 
     private func rotation(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
         let radians = 2.0 * Float.pi / Float(opponentConfiguration.opponentRotationSteps)
-        let duration = opponentConfiguration.opponentRotationTime
         for opponentNode in nodeManipulator.terrainNode.opponentNodes {
             guard opponentNode.hasVisibleItemsToAbsorb(in: renderer) == false else { continue }
-            nodeManipulator.rotate(opponentNode: opponentNode, by: radians, duration: duration)
+            nodeManipulator.rotate(opponentNode: opponentNode, by: radians)
         }
         return nil
     }

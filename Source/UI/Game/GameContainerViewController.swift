@@ -114,7 +114,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
             self.opponentViewContainer.setNeedsLayout()
 
-            UIView.animate(withDuration: 0.3) {
+            UIView.animate(withDuration: .animationDuration) {
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }
@@ -132,7 +132,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
             self.opponentViewContainer.setNeedsLayout()
 
-            UIView.animate(withDuration: 0.3) {
+            UIView.animate(withDuration: .animationDuration) {
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }

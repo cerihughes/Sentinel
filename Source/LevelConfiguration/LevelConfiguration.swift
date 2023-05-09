@@ -3,7 +3,6 @@ import Foundation
 protocol OpponentConfiguration {
     var opponentDetectionRadius: Float { get }
     var opponentRotationSteps: Int { get }
-    var opponentRotationTime: TimeInterval { get }
     var opponentRotationPause: TimeInterval { get }
 }
 
@@ -36,7 +35,6 @@ typealias LevelConfiguration = OpponentConfiguration & GridConfiguration
 struct DefaultLevelConfiguration: LevelConfiguration {
     let level: Int
     let opponentRotationSteps: Int = 12
-    let opponentRotationTime: TimeInterval = 0.3
 
     private let detectionRadiusRange = 16.0 ..< 32.0
     private let rotationPauseRange = 5.0 ..< 8.0
