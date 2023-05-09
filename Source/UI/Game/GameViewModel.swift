@@ -77,7 +77,7 @@ extension GameViewModel: PlayerOperationsDelegate {
 
     private func playerOperationsDidTeleport(to gridPoint: GridPoint) {
         guard
-            let floorNode = built.nodeManipulator.floorNode(for: gridPoint),
+            let floorNode = built.nodeMap.floorNode(at: gridPoint),
             let piece = built.grid.piece(at: gridPoint),
             piece.isFloor
         else {

@@ -144,7 +144,7 @@ class NodeFactory {
 
     private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
         if grid.piece(at: grid.sentinelPosition) != nil,
-            let floorNode = nodeMap.getFloorNode(for: grid.sentinelPosition) {
+            let floorNode = nodeMap.floorNode(at: grid.sentinelPosition) {
             let initialAngle = min(grid.startPosition.angle(to: grid.sentinelPosition), .radiansInCircle)
             let rightAngle = initialAngle.closestRightAngle
             floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)
@@ -153,7 +153,7 @@ class NodeFactory {
 
     private func addSentryNodes(grid: Grid, nodeMap: NodeMap) {
         for sentryPosition in grid.sentryPositions {
-            if grid.piece(at: sentryPosition) != nil, let floorNode = nodeMap.getFloorNode(for: sentryPosition) {
+            if grid.piece(at: sentryPosition) != nil, let floorNode = nodeMap.floorNode(at: sentryPosition) {
                 let initialAngle = min(grid.startPosition.angle(to: sentryPosition), .radiansInCircle)
                 let rightAngle = initialAngle.closestRightAngle
                 floorNode.sentryNode = createSentryNode(initialAngle: rightAngle)
@@ -163,7 +163,7 @@ class NodeFactory {
 
     private func addSynthoidNodes(grid: Grid, nodeMap: NodeMap) {
         for synthoidPosition in grid.synthoidPositions {
-            if grid.piece(at: synthoidPosition) != nil, let floorNode = nodeMap.getFloorNode(for: synthoidPosition) {
+            if grid.piece(at: synthoidPosition) != nil, let floorNode = nodeMap.floorNode(at: synthoidPosition) {
                 let angleToSentinel = synthoidPosition.angle(to: grid.sentinelPosition)
                 floorNode.synthoidNode = createSynthoidNode(
                     height: grid.rockCount(at: synthoidPosition),
@@ -175,7 +175,7 @@ class NodeFactory {
 
     private func addTreeNodes(grid: Grid, nodeMap: NodeMap) {
         for treePosition in grid.treePositions {
-            if grid.piece(at: treePosition) != nil, let floorNode = nodeMap.getFloorNode(for: treePosition) {
+            if grid.piece(at: treePosition) != nil, let floorNode = nodeMap.floorNode(at: treePosition) {
                 floorNode.treeNode = createTreeNode(height: grid.rockCount(at: treePosition))
             }
         }
@@ -183,7 +183,7 @@ class NodeFactory {
 
     private func addRockNodes(grid: Grid, nodeMap: NodeMap) {
         for rockPosition in grid.allRockPositions() {
-            if grid.piece(at: rockPosition) != nil, let floorNode = nodeMap.getFloorNode(for: rockPosition) {
+            if grid.piece(at: rockPosition) != nil, let floorNode = nodeMap.floorNode(at: rockPosition) {
                 for height in 0 ..< grid.rockCount(at: rockPosition) {
                     floorNode.add(rockNode: createRockNode(height: height))
                 }

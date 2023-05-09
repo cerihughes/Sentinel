@@ -7,6 +7,23 @@ extension Grid {
             for x in 0 ..< width {
                 if let piece = piece(at: .init(x: x, z: z)) {
                     desc += "\(piece.slopesDescription) "
+                } else {
+                    desc += "!"
+                }
+            }
+            desc += "\n"
+        }
+        return desc
+    }
+
+    var floorDescription: String {
+        var desc = ""
+        for z in 0 ..< depth {
+            for x in 0 ..< width {
+                if let piece = piece(at: .init(x: x, z: z)) {
+                    desc += "\(piece.floorDescription)"
+                } else {
+                    desc += "!"
                 }
             }
             desc += "\n"
@@ -57,6 +74,7 @@ extension Grid {
 }
 
 protocol Slopeable {
+    var isFloor: Bool { get }
     var level: Float { get }
     func has(slopeDirection: GridDirection) -> Bool
 }
@@ -70,6 +88,11 @@ extension Slopeable {
 
     var slopesDescription: String {
         "\(slopesString):\(level)"
+    }
+
+    var floorDescription: String {
+        guard isFloor else { return "." }
+        return "\(Int(level))"
     }
 }
 

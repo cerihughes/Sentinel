@@ -3,17 +3,20 @@ import SpriteKit
 
 class TerrainOperations {
     var grid: Grid
+    let nodeMap: NodeMap
     let nodeManipulator: NodeManipulator
 
-    init(grid: Grid, nodeManipulator: NodeManipulator) {
+    init(grid: Grid, nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
         self.grid = grid
+        self.nodeMap = nodeMap
         self.nodeManipulator = nodeManipulator
     }
 
     func buildTree(at point: GridPoint, animated: Bool = false, completion: (() -> Void)? = nil) {
+        guard let floorNode = nodeMap.floorNode(at: point) else { return }
         let height = grid.rockCount(at: point)
         grid.treePositions.append(point)
-        nodeManipulator.buildTree(at: point, height: height, animated: animated, completion: completion)
+        nodeManipulator.buildTree(on: floorNode, height: height, animated: animated, completion: completion)
     }
 
     func buildRock(
@@ -22,10 +25,11 @@ class TerrainOperations {
         animated: Bool = false,
         completion: (() -> Void)? = nil
     ) {
+        guard let floorNode = nodeMap.floorNode(at: point) else { return }
         let height = grid.rockCount(at: point)
         grid.addRock(at: point)
         nodeManipulator.buildRock(
-            at: point,
+            on: floorNode,
             height: height,
             rotation: rotation,
             animated: animated,
@@ -34,15 +38,21 @@ class TerrainOperations {
     }
 
     func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
+        guard let floorNode = nodeMap.floorNode(at: point) else { return }
         let height = grid.rockCount(at: point)
         grid.synthoidPositions.append(point)
-        nodeManipulator.buildSynthoid(at: point, height: height, viewingAngle: viewingAngle)
+        nodeManipulator.buildSynthoid(on: floorNode, height: height, viewingAngle: viewingAngle)
     }
 
     func absorbTreeNode(at point: GridPoint, animated: Bool = false, completion: (() -> Void)? = nil) {
-        guard let index = grid.treePositions.firstIndex(of: point) else { return }
+        guard
+            let floorNode = nodeMap.floorNode(at: point),
+            let index = grid.treePositions.firstIndex(of: point)
+        else {
+            return
+        }
 
-        nodeManipulator.absorbTree(at: point, animated: animated, completion: completion)
+        nodeManipulator.absorbTree(on: floorNode, animated: animated, completion: completion)
         grid.treePositions.remove(at: index)
     }
 
@@ -52,26 +62,38 @@ class TerrainOperations {
         } else if grid.treePositions.contains(point) {
             absorbTreeNode(at: point)
         } else {
-            nodeManipulator.absorbRock(at: point, animated: animated, completion: completion)
+            guard let floorNode = nodeMap.floorNode(at: point) else { return }
+            nodeManipulator.absorbRock(on: floorNode, animated: animated, completion: completion)
             grid.removeRock(at: point)
         }
     }
 
     func absorbSynthoidNode(at point: GridPoint, animated: Bool = false, completion: (() -> Void)? = nil) {
-        guard let index = grid.synthoidPositions.firstIndex(of: point) else { return }
+        guard
+            let floorNode = nodeMap.floorNode(at: point),
+            let index = grid.synthoidPositions.firstIndex(of: point)
+        else {
+            return
+        }
 
-        nodeManipulator.absorbSynthoid(at: point, animated: animated, completion: completion)
+        nodeManipulator.absorbSynthoid(on: floorNode, animated: animated, completion: completion)
         grid.synthoidPositions.remove(at: index)
     }
 
     func absorbSentryNode(at point: GridPoint, animated: Bool = false) {
-        guard let index = grid.sentryPositions.firstIndex(of: point) else { return }
+        guard
+            let floorNode = nodeMap.floorNode(at: point),
+            let index = grid.sentryPositions.firstIndex(of: point)
+        else {
+            return
+        }
 
-        nodeManipulator.absorbSentry(at: point, animated: animated)
+        nodeManipulator.absorbSentry(on: floorNode, animated: animated)
         grid.sentryPositions.remove(at: index)
     }
 
     func absorbSentinelNode(at point: GridPoint, animated: Bool = false) {
-        nodeManipulator.absorbSentinel(at: point, animated: false)
+        guard let floorNode = nodeMap.floorNode(at: point) else { return }
+        nodeManipulator.absorbSentinel(on: floorNode, animated: false)
     }
 }

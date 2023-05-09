@@ -36,20 +36,11 @@ class MultipleOpponentAbsorbViewModel {
 
         terrainNode.addChildNode(initialCameraNode)
 
-        let nodeManipulator = NodeManipulator(
-            terrainNode: terrainNode,
-            nodeMap: nodeMap,
-            nodeFactory: nodeFactory,
-            animatable: true
-        )
-        nodeManipulator.makeSynthoidCurrent(at: grid.startPosition)
+        let nodeManipulator = NodeManipulator(terrainNode: terrainNode, nodeFactory: nodeFactory, animatable: true)
+        nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
 
-        terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
-        opponentsOperations = .init(
-            opponentConfiguration: levelConfiguration,
-            terrainOperations: terrainOperations
-        )
-
+        terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
+        opponentsOperations = .init(opponentConfiguration: levelConfiguration, terrainOperations: terrainOperations)
         opponentsOperations.delegate = self
         opponentsOperations.timeMachine.start()
     }

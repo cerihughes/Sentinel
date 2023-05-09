@@ -25,12 +25,10 @@ class PlayerOperations {
     enum Item {
         case tree, rock, synthoid, sentry, sentinel
     }
-    private let terrainOperations: TerrainOperations
-    private let initialCameraNode: SCNNode
 
-    private let nodeManipulator: NodeManipulator
-    private var grid: Grid
+    private let terrainOperations: TerrainOperations
     private let synthoidEnergy: SynthoidEnergy
+    private let initialCameraNode: SCNNode
 
     weak var delegate: PlayerOperationsDelegate?
 
@@ -45,17 +43,26 @@ class PlayerOperations {
         self.terrainOperations = terrainOperations
         self.synthoidEnergy = synthoidEnergy
         self.initialCameraNode = initialCameraNode
+    }
 
-        nodeManipulator = terrainOperations.nodeManipulator
-        grid = terrainOperations.grid
+    private var nodeMap: NodeMap { terrainOperations.nodeMap }
+    private var nodeManipulator: NodeManipulator { terrainOperations.nodeManipulator }
+
+    private var grid: Grid {
+        get {
+            terrainOperations.grid
+        }
+        set {
+            terrainOperations.grid = newValue
+        }
     }
 
     func hasEnteredScene() -> Bool {
-        return grid.currentPosition != .undefined
+        grid.currentPosition != .undefined
     }
 
     func enterScene() -> Bool {
-        guard let synthoidNode = nodeManipulator.synthoidNode(at: grid.startPosition) else { return false }
+        guard let synthoidNode = nodeMap.synthoidNode(at: grid.startPosition) else { return false }
 
         moveCamera(from: initialCameraNode,
                    to: synthoidNode.cameraNode,
@@ -63,19 +70,17 @@ class PlayerOperations {
         grid.currentPosition = grid.startPosition
         delegate?.playerOperations(self, didPerform: .enterScene(grid.currentPosition))
 
-        nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
+        nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
 
         return true
     }
 
     func move(to synthoidNode: SynthoidNode) {
-        guard let floorNode = synthoidNode.floorNode, let point = nodeManipulator.point(for: floorNode) else {
-            return
-        }
+        guard let floorNode = synthoidNode.floorNode, let point = nodeMap.point(for: floorNode) else { return }
 
         moveCamera(to: synthoidNode, gridPoint: point, animationDuration: 1.0)
         grid.currentPosition = point
-        nodeManipulator.makeSynthoidCurrent(at: grid.currentPosition)
+        nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
     }
 
     func buildTree(at point: GridPoint) {
@@ -108,8 +113,7 @@ class PlayerOperations {
     }
 
     func absorbTopmostNode(at point: GridPoint) {
-        if let floorNode = nodeManipulator.floorNode(for: point),
-            let topmostNode = floorNode.topmostNode {
+        if let topmostNode = nodeMap.floorNode(at: point)?.topmostNode {
             if topmostNode is TreeNode {
                 absorbTreeNode(at: point)
             } else if topmostNode is RockNode {
@@ -143,13 +147,13 @@ class PlayerOperations {
     }
 
     private func absorbSentryNode(at point: GridPoint) {
-        nodeManipulator.absorbSentry(at: point, animated: false)
+        terrainOperations.absorbSentryNode(at: point)
         synthoidEnergy.adjust(delta: .sentryEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.sentry))
     }
 
     private func absorbSentinelNode(at point: GridPoint) {
-        nodeManipulator.absorbSentinel(at: point, animated: false)
+        terrainOperations.absorbSentinelNode(at: point)
         synthoidEnergy.adjust(delta: .sentinelEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.sentinel))
     }

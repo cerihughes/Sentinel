@@ -37,6 +37,7 @@ class SwipeInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
     let opponentsOperations: OpponentsOperations
 
+    private let nodeMap: NodeMap
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
 
@@ -48,10 +49,12 @@ class SwipeInputHandler: GameInputHandler {
     init(
         playerOperations: PlayerOperations,
         opponentsOperations: OpponentsOperations,
+        nodeMap: NodeMap,
         nodeManipulator: NodeManipulator
     ) {
         self.playerOperations = playerOperations
         self.opponentsOperations = opponentsOperations
+        self.nodeMap = nodeMap
         self.nodeManipulator = nodeManipulator
 
         hitTestOptions = [
@@ -256,7 +259,7 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
-            if removeIt, let point = nodeManipulator.point(for: floorNode) {
+            if removeIt, let point = nodeMap.point(for: floorNode) {
                 playerOperations.absorbTopmostNode(at: point)
                 topmostNode.removeFromParentNode()
             } else {
@@ -311,7 +314,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func processCompleteBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, buildIt: Bool) {
-        if let point = nodeManipulator.point(for: floorNode),
+        if let point = nodeMap.point(for: floorNode),
             let temporaryNode = floorNode.temporaryNode {
             temporaryNode.removeFromParentNode(animated: !buildIt)
 
