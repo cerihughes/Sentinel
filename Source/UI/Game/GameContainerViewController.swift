@@ -19,7 +19,7 @@ class GameContainerViewController: UIViewController {
         self.viewModel = viewModel
         self.inputHandler = inputHandler
 
-        let scene = viewModel.worldBuilder.world.scene
+        let scene = viewModel.built.scene
         let cameraNode = viewModel.built.initialCameraNode
         mainViewController = GameMainViewController(
             scene: scene,
@@ -110,7 +110,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
-            let scene = self.viewModel.worldBuilder.world.scene
+            let scene = self.viewModel.built.scene
             let opponentViewController = SceneViewController(scene: scene, cameraNode: cameraNode)
             self.add(opponentViewController: opponentViewController)
 

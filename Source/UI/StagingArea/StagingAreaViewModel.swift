@@ -2,7 +2,7 @@
 import SceneKit
 
 class StagingAreaViewModel {
-    let world = SpaceWorld()
+    let scene = SCNScene()
     let initialCameraNode: SCNNode
     let timeMachine: TimeMachine
     private let opponentsOperations: OpponentsOperations
@@ -21,7 +21,8 @@ class StagingAreaViewModel {
             materialFactory: materialFactory
         )
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-        world.set(terrainNode: terrainNode)
+        let world = SpaceWorld()
+        world.buildWorld(in: scene, around: terrainNode)
 
         initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
         initialCameraNode.position = SCNVector3Make(50.0, 175, 150)

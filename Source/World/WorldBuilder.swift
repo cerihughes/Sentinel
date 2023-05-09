@@ -6,6 +6,7 @@ struct WorldBuilder {
         let nodeMap: NodeMap
         let nodeManipulator: NodeManipulator
         let nodeFactory: NodeFactory
+        let scene: SCNScene
         let terrainNode: TerrainNode
         let terrainOperations: TerrainOperations
         let initialCameraNode: SCNNode
@@ -30,7 +31,8 @@ struct WorldBuilder {
             materialFactory: materialFactory
         )
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-        world.set(terrainNode: terrainNode)
+        let scene = SCNScene()
+        world.buildWorld(in: scene, around: terrainNode)
 
         let initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
         initialCameraNode.position = SCNVector3Make(0.0, 250, 275)
@@ -51,6 +53,7 @@ struct WorldBuilder {
             nodeMap: nodeMap,
             nodeManipulator: nodeManipulator,
             nodeFactory: nodeFactory,
+            scene: scene,
             terrainNode: terrainNode,
             terrainOperations: terrainOperations,
             initialCameraNode: initialCameraNode,

@@ -1,24 +1,19 @@
 import SceneKit
 
 class SpaceWorld: World {
-    internal let scene = SCNScene()
-
-    private let orbitNode = SCNNode()
-
-    init() {
-        setupScene()
-    }
-
-    func set(terrainNode: TerrainNode) {
+    func buildWorld(in scene: SCNScene, around terrainNode: TerrainNode) {
+        let orbitNode = createOrbitNode()
         orbitNode.addChildNode(terrainNode)
-    }
+        scene.rootNode.addChildNode(orbitNode)
 
-    private func setupScene() {
         let skyBox = SkyBox(sourceImage: #imageLiteral(resourceName: "skybox.png"))
         if let components = skyBox.componentImages() {
             scene.background.contents = components
         }
+    }
 
+    private func createOrbitNode() -> SCNNode {
+        let orbitNode = SCNNode()
         orbitNode.name = "orbitNodeName"
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
         let orbit = CABasicAnimation(keyPath: "rotation.w")
@@ -27,17 +22,17 @@ class SpaceWorld: World {
         orbit.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         orbit.repeatCount = Float.infinity
         orbitNode.addAnimation(orbit, forKey: "orbit")
-
-        addAmbientLights(to: orbitNode)
-
-        scene.rootNode.addChildNode(orbitNode)
+        orbitNode.addAmbientLights()
+        return orbitNode
     }
+}
 
-    private func addAmbientLights(to node: SCNNode) {
+private extension SCNNode {
+    func addAmbientLights() {
         let ambientLightNodes = createAmbientLightNodes(distance: 200.0)
 
         for ambientLightNode in ambientLightNodes {
-            node.addChildNode(ambientLightNode)
+            addChildNode(ambientLightNode)
         }
     }
 

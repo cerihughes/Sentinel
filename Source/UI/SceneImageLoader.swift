@@ -61,7 +61,7 @@ class SceneImageLoader {
 
             let worldBuilder = WorldBuilder.createDefault(level: level)
             let built = worldBuilder.build()
-            view.scene = worldBuilder.world.scene
+            view.scene = built.scene
             view.pointOfView = built.initialCameraNode
 
             let snapshot = view.snapshot()

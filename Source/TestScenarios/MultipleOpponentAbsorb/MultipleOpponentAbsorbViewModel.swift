@@ -3,7 +3,7 @@ import SceneKit
 
 /// A test scenario to make sure multiple opponents don't try and absorb the same objects at the same time.
 class MultipleOpponentAbsorbViewModel {
-    let world = SpaceWorld()
+    let scene = SCNScene()
     let initialCameraNode: SCNNode
     let timeMachine: TimeMachine
     private let opponentsOperations: OpponentsOperations
@@ -29,7 +29,8 @@ class MultipleOpponentAbsorbViewModel {
             materialFactory: materialFactory
         )
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
-        world.set(terrainNode: terrainNode)
+        let world = SpaceWorld()
+        world.buildWorld(in: scene, around: terrainNode)
 
         initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
         initialCameraNode.position = SCNVector3Make(50.0, 300, 300)
