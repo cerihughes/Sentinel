@@ -11,7 +11,7 @@ class LevelSummaryViewController: SceneViewController {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
-        super.init(scene: viewModel.worldBuilder.world.scene, cameraNode: viewModel.built.initialCameraNode)
+        super.init(scene: viewModel.built.scene, cameraNode: viewModel.built.initialCameraNode)
 
         tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
     }

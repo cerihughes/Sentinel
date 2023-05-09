@@ -21,7 +21,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         operations = built.opponentsOperations
         view = SCNView(frame: .init(x: 0, y: 0, width: 200, height: 200))
 
-        view.scene = worldBuilder.world.scene
+        view.scene = built.scene
         view.backgroundColor = UIColor.black
         view.pointOfView = built.initialCameraNode
     }
