@@ -10,7 +10,6 @@ protocol OpponentsOperationsDelegate: AnyObject {
 class OpponentsOperations: NSObject {
     private let opponentConfiguration: OpponentConfiguration
     private let terrainOperations: TerrainOperations
-    private let nodeManipulator: NodeManipulator
 
     weak var delegate: OpponentsOperationsDelegate?
 
@@ -20,12 +19,13 @@ class OpponentsOperations: NSObject {
         self.opponentConfiguration = opponentConfiguration
         self.terrainOperations = terrainOperations
 
-        nodeManipulator = terrainOperations.nodeManipulator
-
         super.init()
 
         setupTimingFunctions()
     }
+
+    private var nodeMap: NodeMap { terrainOperations.nodeMap }
+    private var nodeManipulator: NodeManipulator { terrainOperations.nodeManipulator }
 
     private func buildRandomTree() {
         let emptyPieces = terrainOperations.grid.emptyFloorPieces()
@@ -53,7 +53,7 @@ class OpponentsOperations: NSObject {
             // Don't absorb the player - this is handled by a separate timing function
             let visibleSynthoidPoints = opponentNode.visibleSynthoids(in: renderer).filter { $0 != synthoidNode }
                 .compactMap { $0.floorNode }
-                .compactMap { nodeManipulator.point(for: $0) }
+                .compactMap { nodeMap.point(for: $0) }
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleSynthoidPoint = visibleSynthoidPoints.first {
@@ -66,7 +66,7 @@ class OpponentsOperations: NSObject {
 
             let visibleRockPoints = opponentNode.visibleRocks(in: renderer)
                 .compactMap { $0.floorNode }
-                .compactMap { nodeManipulator.point(for: $0) }
+                .compactMap { nodeMap.point(for: $0) }
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleRockPoint = visibleRockPoints.first {
@@ -79,7 +79,7 @@ class OpponentsOperations: NSObject {
 
             let visibleTreePoints = opponentNode.visibleTreesOnRocks(in: renderer)
                 .compactMap { $0.floorNode }
-                .compactMap { nodeManipulator.point(for: $0) }
+                .compactMap { nodeMap.point(for: $0) }
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleTreePoint = visibleTreePoints.first {

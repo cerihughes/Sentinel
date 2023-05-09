@@ -39,11 +39,10 @@ struct WorldBuilder {
 
         let nodeManipulator = NodeManipulator(
             terrainNode: terrainNode,
-            nodeMap: nodeMap,
             nodeFactory: nodeFactory,
             animatable: animatable
         )
-        let terrainOperations = TerrainOperations(grid: grid, nodeManipulator: nodeManipulator)
+        let terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
         let synthoidEnergy = SynthoidEnergyMonitor()
         return .init(
             grid: grid,

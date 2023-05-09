@@ -21,6 +21,7 @@ class GameViewControllerProvider: TypedViewControllerProvider {
         let inputHandler = SwipeInputHandler(
             playerOperations: viewModel.built.playerOperations,
             opponentsOperations: viewModel.built.opponentsOperations,
+            nodeMap: viewModel.built.nodeMap,
             nodeManipulator: viewModel.built.nodeManipulator
         )
         return GameContainerViewController(

@@ -77,16 +77,17 @@ extension GameViewModel: PlayerOperationsDelegate {
 
     private func playerOperationsDidTeleport(to gridPoint: GridPoint) {
         guard
-            let floorNode = built.nodeManipulator.floorNode(for: gridPoint),
+            let floorNode = built.nodeMap.floorNode(at: gridPoint),
             let piece = built.grid.piece(at: gridPoint),
             piece.isFloor
         else {
             return
         }
 
-        let floorHeight = Int(piece.level)
         let rockCount = floorNode.rockNodes.count
-        levelScore.didTeleport(to: gridPoint, height: floorHeight + rockCount)
+        let rockHeight = Float(rockCount) * 0.5
+        let floorHeight = Int(piece.level + rockHeight)
+        levelScore.didTeleport(to: gridPoint, height: floorHeight)
     }
 }
 
