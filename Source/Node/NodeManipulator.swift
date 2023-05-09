@@ -15,22 +15,16 @@ class NodeManipulator {
     }
 
     func synthoidNode(at point: GridPoint) -> SynthoidNode? {
-        return nodeMap.getFloorNode(for: point)?.synthoidNode
+        nodeMap.getFloorNode(for: point)?.synthoidNode
     }
 
     func opponentNode(at point: GridPoint) -> OpponentNode? {
-        if let floorNode = nodeMap.getFloorNode(for: point) {
-            return floorNode.sentinelNode ?? floorNode.sentryNode
-        }
-        return nil
+        guard let floorNode = nodeMap.getFloorNode(for: point) else { return nil }
+        return floorNode.sentinelNode ?? floorNode.sentryNode
     }
 
     func point(for floorNode: FloorNode) -> GridPoint? {
-        guard let piece = nodeMap.getPiece(for: floorNode) else {
-            return nil
-        }
-
-        return piece.point
+        nodeMap.getPiece(for: floorNode).map { $0.point }
     }
 
     func makeSynthoidCurrent(at point: GridPoint) {
@@ -38,49 +32,43 @@ class NodeManipulator {
     }
 
     func floorNode(for point: GridPoint) -> FloorNode? {
-        return nodeMap.getFloorNode(for: point)
+        nodeMap.getFloorNode(for: point)
     }
 
-    func rotate(opponentNode: OpponentNode, by radians: Float, duration: TimeInterval) {
-        opponentNode.rotate(by: radians, duration: duration)
+    func rotate(opponentNode: OpponentNode, by radians: Float) {
+        opponentNode.rotate(by: radians)
     }
 
     func rotateCurrentSynthoid(rotationDelta: Float, elevationDelta: Float, persist: Bool = false) {
-        guard let synthoidNode = currentSynthoidNode else {
-            return
-        }
-
+        guard let synthoidNode = currentSynthoidNode else { return }
         synthoidNode.apply(rotationDelta: rotationDelta, elevationDelta: elevationDelta, persist: persist)
     }
 
-    func buildTree(at point: GridPoint, animated: Bool, completion: (() -> Void)? = nil) {
-        guard let floorNode = nodeMap.getFloorNode(for: point) else {
-            return
-        }
-
-        let treeNode = nodeFactory.createTreeNode(height: floorNode.rockNodes.count)
+    func buildTree(at point: GridPoint, height: Int, animated: Bool, completion: (() -> Void)? = nil) {
+        guard let floorNode = nodeMap.getFloorNode(for: point) else { return }
+        let treeNode = nodeFactory.createTreeNode(height: height)
         treeNode.scaleAllDimensions(by: 0.0)
         floorNode.treeNode = treeNode
         treeNode.scaleAllDimensions(by: 1.0, animated: animated, completion: completion)
     }
 
-    func buildRock(at point: GridPoint, rotation: Float? = nil, animated: Bool, completion: (() -> Void)? = nil) {
-        guard let floorNode = nodeMap.getFloorNode(for: point) else {
-            return
-        }
-
-        let rockNode = nodeFactory.createRockNode(height: floorNode.rockNodes.count, rotation: rotation)
+    func buildRock(
+        at point: GridPoint,
+        height: Int,
+        rotation: Float? = nil,
+        animated: Bool,
+        completion: (() -> Void)? = nil
+    ) {
+        guard let floorNode = nodeMap.getFloorNode(for: point) else { return }
+        let rockNode = nodeFactory.createRockNode(height: height, rotation: rotation)
         rockNode.scaleAllDimensions(by: 0.0)
         floorNode.add(rockNode: rockNode)
         rockNode.scaleAllDimensions(by: 1.0, animated: animated, completion: completion)
     }
 
-    func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
-        guard let floorNode = nodeMap.getFloorNode(for: point) else {
-            return
-        }
-
-        let synthoidNode = nodeFactory.createSynthoidNode(height: floorNode.rockNodes.count, viewingAngle: viewingAngle)
+    func buildSynthoid(at point: GridPoint, height: Int, viewingAngle: Float) {
+        guard let floorNode = nodeMap.getFloorNode(for: point) else { return }
+        let synthoidNode = nodeFactory.createSynthoidNode(height: height, viewingAngle: viewingAngle)
         floorNode.synthoidNode = synthoidNode
     }
 

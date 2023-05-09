@@ -102,8 +102,10 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
     func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
 
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {
-        viewModel.built.synthoidEnergy.adjust(delta: -treeEnergyValue)
+    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) -> Bool {
+        guard viewModel.built.synthoidEnergy.has(energy: .treeEnergyValue) else { return false }
+        viewModel.built.synthoidEnergy.adjust(delta: -.treeEnergyValue)
+        return true
     }
 
     func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
@@ -114,7 +116,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
             self.opponentViewContainer.setNeedsLayout()
 
-            UIView.animate(withDuration: 0.3) {
+            UIView.animate(withDuration: .animationDuration) {
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }
@@ -132,7 +134,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
 
             self.opponentViewContainer.setNeedsLayout()
 
-            UIView.animate(withDuration: 0.3) {
+            UIView.animate(withDuration: .animationDuration) {
                 self.opponentViewContainer.layoutIfNeeded()
             }
         }

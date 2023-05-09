@@ -1,11 +1,13 @@
 import SceneKit
 import SpriteKit
 
-let treeEnergyValue = 1
-let rockEnergyValue = 2
-let synthoidEnergyValue = 3
-let sentryEnergyValue = 3
-let sentinelEnergyValue = 4
+extension Int {
+    static let treeEnergyValue = 1
+    static let rockEnergyValue = 2
+    static let synthoidEnergyValue = 3
+    static let sentryEnergyValue = 3
+    static let sentinelEnergyValue = 4
+}
 
 enum PlayerOperation {
     case enterScene(GridPoint)
@@ -77,30 +79,30 @@ class PlayerOperations {
     }
 
     func buildTree(at point: GridPoint) {
-        guard synthoidEnergy.has(energy: treeEnergyValue) else {
+        guard synthoidEnergy.has(energy: .treeEnergyValue) else {
             return
         }
 
-        synthoidEnergy.adjust(delta: -treeEnergyValue)
+        synthoidEnergy.adjust(delta: -.treeEnergyValue)
         terrainOperations.buildTree(at: point)
         delegate?.playerOperations(self, didPerform: .build(.tree))
     }
 
     func buildRock(at point: GridPoint, rotation: Float? = nil) {
-        guard synthoidEnergy.has(energy: rockEnergyValue) else {
+        guard synthoidEnergy.has(energy: .rockEnergyValue) else {
             return
         }
 
-        synthoidEnergy.adjust(delta: -rockEnergyValue)
+        synthoidEnergy.adjust(delta: -.rockEnergyValue)
         terrainOperations.buildRock(at: point, rotation: rotation)
         delegate?.playerOperations(self, didPerform: .build(.rock))
     }
 
     func buildSynthoid(at point: GridPoint) {
-        guard synthoidEnergy.has(energy: synthoidEnergyValue) else { return }
+        guard synthoidEnergy.has(energy: .synthoidEnergyValue) else { return }
 
         let viewingAngle = point.angle(to: grid.currentPosition)
-        synthoidEnergy.adjust(delta: -synthoidEnergyValue)
+        synthoidEnergy.adjust(delta: -.synthoidEnergyValue)
         terrainOperations.buildSynthoid(at: point, viewingAngle: viewingAngle)
         delegate?.playerOperations(self, didPerform: .build(.synthoid))
     }
@@ -124,31 +126,31 @@ class PlayerOperations {
 
     private func absorbTreeNode(at point: GridPoint) {
         terrainOperations.absorbTreeNode(at: point)
-        synthoidEnergy.adjust(delta: treeEnergyValue)
+        synthoidEnergy.adjust(delta: .treeEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.tree))
     }
 
     private func absorbRockNode(at point: GridPoint) {
         terrainOperations.absorbRockNode(at: point)
-        synthoidEnergy.adjust(delta: rockEnergyValue)
+        synthoidEnergy.adjust(delta: .rockEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.rock))
     }
 
     private func absorbSynthoidNode(at point: GridPoint) {
         terrainOperations.absorbSynthoidNode(at: point)
-        synthoidEnergy.adjust(delta: synthoidEnergyValue)
+        synthoidEnergy.adjust(delta: .synthoidEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.synthoid))
     }
 
     private func absorbSentryNode(at point: GridPoint) {
         nodeManipulator.absorbSentry(at: point, animated: false)
-        synthoidEnergy.adjust(delta: sentryEnergyValue)
+        synthoidEnergy.adjust(delta: .sentryEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.sentry))
     }
 
     private func absorbSentinelNode(at point: GridPoint) {
         nodeManipulator.absorbSentinel(at: point, animated: false)
-        synthoidEnergy.adjust(delta: sentinelEnergyValue)
+        synthoidEnergy.adjust(delta: .sentinelEnergyValue)
         delegate?.playerOperations(self, didPerform: .absorb(.sentinel))
     }
 

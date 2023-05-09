@@ -426,53 +426,6 @@ private class SelectionNode: SCNNode {
     }
 }
 
-extension SCNNode {
-    func scaleAllDimensions(by scale: Float) {
-        let angle = Float.pi * 8.0 * scale
-        let position = self.position
-        transform = SCNMatrix4MakeRotation(angle, 0, 1, 0)
-        self.position = position
-        self.scale = SCNVector3Make(scale, scale, scale)
-    }
-
-    func scaleAllDimensions(by scale: Float, animated: Bool, completion: (() -> Void)? = nil) {
-        guard animated else {
-            scaleAllDimensions(by: scale)
-            completion?()
-            return
-        }
-
-        SCNTransaction.begin()
-        SCNTransaction.animationDuration = 0.3
-        SCNTransaction.completionBlock = {
-            completion?()
-        }
-
-        scaleAllDimensions(by: scale)
-
-        SCNTransaction.commit()
-    }
-
-    func removeFromParentNode(animated: Bool, completion: (() -> Void)? = nil) {
-        guard animated else {
-            removeFromParentNode()
-            completion?()
-            return
-        }
-
-        SCNTransaction.begin()
-        SCNTransaction.animationDuration = 0.3
-        SCNTransaction.completionBlock = { [weak self] in
-            self?.removeFromParentNode()
-            completion?()
-        }
-
-        scaleAllDimensions(by: 0.0)
-
-        SCNTransaction.commit()
-    }
-}
-
 private let temporaryNodeName = "temporaryNodeName"
 private let selectionNodeName = "selectionNodeName"
 

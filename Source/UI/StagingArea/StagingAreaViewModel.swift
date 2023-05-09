@@ -1,17 +1,16 @@
+#if DEBUG
 import SceneKit
 
 class StagingAreaViewModel {
     let world = SpaceWorld()
     let initialCameraNode: SCNNode
     let opponentsOperations: OpponentsOperations
-    private var absorbed = 0
 
     init(level: Int = 4) {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
         let terrainGenerator = DefaultTerrainGenerator(gridConfiguration: levelConfiguration)
         let materialFactory = DefaultMaterialFactory(level: level)
-        var grid = terrainGenerator.generate()
-        grid.addRockNodesToLowestLevel()
+        let grid = terrainGenerator.generate()
 
         let nodeMap = NodeMap()
         let nodePositioning = levelConfiguration.createNodePositioning()
@@ -42,31 +41,7 @@ class StagingAreaViewModel {
             opponentConfiguration: levelConfiguration,
             terrainOperations: terrainOperations
         )
-
-        opponentsOperations.delegate = self
         opponentsOperations.timeMachine.start()
     }
 }
-
-extension StagingAreaViewModel: OpponentsOperationsDelegate {
-    func opponentsOperationsDidAbsorb(_: OpponentsOperations) {
-        absorbed += 1
-    }
-
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) {}
-    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {}
-    func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {}
-}
-
-private extension Grid {
-    mutating func addRockNodesToLowestLevel() {
-        let points = emptyFloorPieces()
-            .filter { Int($0.level) > 5 }
-            .map { $0.point }
-        points.forEach {
-            addRock(at: $0)
-            addRock(at: $0)
-        }
-        synthoidPositions.append(contentsOf: points)
-    }
-}
+#endif

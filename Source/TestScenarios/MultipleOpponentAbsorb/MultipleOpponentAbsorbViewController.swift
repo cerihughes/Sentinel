@@ -1,11 +1,12 @@
 #if DEBUG
+import Madog
 import SceneKit
 import UIKit
 
-class StagingAreaViewController: SceneViewController {
-    private let viewModel: StagingAreaViewModel
+class MultipleOpponentAbsorbViewController: SceneViewController {
+    private let viewModel: MultipleOpponentAbsorbViewModel
 
-    init(viewModel: StagingAreaViewModel) {
+    init(viewModel: MultipleOpponentAbsorbViewModel) {
         self.viewModel = viewModel
         super.init(scene: viewModel.world.scene, cameraNode: viewModel.initialCameraNode)
     }
@@ -18,7 +19,6 @@ class StagingAreaViewController: SceneViewController {
         super.viewDidLoad()
 
         sceneView.delegate = viewModel.opponentsOperations
-        sceneView.allowsCameraControl = true
 //        sceneView.debugOptions = [.renderAsWireframe, .showCameras]
         sceneView.showsStatistics = true
     }

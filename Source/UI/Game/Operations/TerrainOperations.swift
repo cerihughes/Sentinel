@@ -11,8 +11,9 @@ class TerrainOperations {
     }
 
     func buildTree(at point: GridPoint, animated: Bool = false, completion: (() -> Void)? = nil) {
+        let height = grid.rockCount(at: point)
         grid.treePositions.append(point)
-        nodeManipulator.buildTree(at: point, animated: animated, completion: completion)
+        nodeManipulator.buildTree(at: point, height: height, animated: animated, completion: completion)
     }
 
     func buildRock(
@@ -21,13 +22,21 @@ class TerrainOperations {
         animated: Bool = false,
         completion: (() -> Void)? = nil
     ) {
+        let height = grid.rockCount(at: point)
         grid.addRock(at: point)
-        nodeManipulator.buildRock(at: point, rotation: rotation, animated: animated, completion: completion)
+        nodeManipulator.buildRock(
+            at: point,
+            height: height,
+            rotation: rotation,
+            animated: animated,
+            completion: completion
+        )
     }
 
     func buildSynthoid(at point: GridPoint, viewingAngle: Float) {
+        let height = grid.rockCount(at: point)
         grid.synthoidPositions.append(point)
-        nodeManipulator.buildSynthoid(at: point, viewingAngle: viewingAngle)
+        nodeManipulator.buildSynthoid(at: point, height: height, viewingAngle: viewingAngle)
     }
 
     func absorbTreeNode(at point: GridPoint, animated: Bool = false, completion: (() -> Void)? = nil) {
