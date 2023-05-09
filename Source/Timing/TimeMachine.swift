@@ -15,7 +15,7 @@ import SceneKit
  */
 
 typealias TimeMachineFunction = (TimeInterval, SCNSceneRenderer, Any?) -> Any?
-class TimeMachine {
+class TimeMachine: NSObject {
     private var timingTokens = [UUID]()
     private var timingFunctions = [UUID: TimeEngineData]()
     private var started = false
@@ -81,5 +81,13 @@ class TimeMachine {
             }
             return false
         }
+    }
+}
+
+extension TimeMachine: SCNSceneRendererDelegate {
+    // MARK: SCNSceneRendererDelegate
+
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        handle(currentTimeInterval: time, renderer: renderer)
     }
 }

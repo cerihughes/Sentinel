@@ -35,7 +35,6 @@ private let threshold: CGFloat = 200.0
 
 class SwipeInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
-    let opponentsOperations: OpponentsOperations
 
     private let nodeMap: NodeMap
     private let nodeManipulator: NodeManipulator
@@ -46,14 +45,8 @@ class SwipeInputHandler: GameInputHandler {
     private var startTapPoint: CGPoint?
     private var floorNode: FloorNode?
 
-    init(
-        playerOperations: PlayerOperations,
-        opponentsOperations: OpponentsOperations,
-        nodeMap: NodeMap,
-        nodeManipulator: NodeManipulator
-    ) {
+    init(playerOperations: PlayerOperations, nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
         self.playerOperations = playerOperations
-        self.opponentsOperations = opponentsOperations
         self.nodeMap = nodeMap
         self.nodeManipulator = nodeManipulator
 
@@ -330,8 +323,6 @@ class SwipeInputHandler: GameInputHandler {
                 case .synthoid:
                     playerOperations.buildSynthoid(at: point)
                 }
-
-                opponentsOperations.timeMachine.start()
             }
         }
     }

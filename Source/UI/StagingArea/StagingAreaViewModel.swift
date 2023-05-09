@@ -4,7 +4,8 @@ import SceneKit
 class StagingAreaViewModel {
     let world = SpaceWorld()
     let initialCameraNode: SCNNode
-    let opponentsOperations: OpponentsOperations
+    let timeMachine: TimeMachine
+    private let opponentsOperations: OpponentsOperations
 
     init(level: Int = 4) {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
@@ -32,11 +33,13 @@ class StagingAreaViewModel {
         nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.startPosition)
 
         let terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
+        timeMachine = .init()
         opponentsOperations = .init(
             opponentConfiguration: levelConfiguration,
-            terrainOperations: terrainOperations
+            terrainOperations: terrainOperations,
+            timeMachine: timeMachine
         )
-        opponentsOperations.timeMachine.start()
+        timeMachine.start()
     }
 }
 #endif

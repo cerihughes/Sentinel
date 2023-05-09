@@ -10,6 +10,7 @@ struct WorldBuilder {
         let terrainOperations: TerrainOperations
         let initialCameraNode: SCNNode
         let synthoidEnergy: SynthoidEnergy
+        let timeMachine: TimeMachine
         let playerOperations: PlayerOperations
         let opponentsOperations: OpponentsOperations
     }
@@ -44,6 +45,7 @@ struct WorldBuilder {
         )
         let terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
         let synthoidEnergy = SynthoidEnergyMonitor()
+        let timeMachine = TimeMachine()
         return .init(
             grid: grid,
             nodeMap: nodeMap,
@@ -53,12 +55,17 @@ struct WorldBuilder {
             terrainOperations: terrainOperations,
             initialCameraNode: initialCameraNode,
             synthoidEnergy: synthoidEnergy,
+            timeMachine: timeMachine,
             playerOperations: .init(
                 terrainOperations: terrainOperations,
                 synthoidEnergy: synthoidEnergy,
                 initialCameraNode: initialCameraNode
             ),
-            opponentsOperations: .init(opponentConfiguration: levelConfiguration, terrainOperations: terrainOperations)
+            opponentsOperations: .init(
+                opponentConfiguration: levelConfiguration,
+                terrainOperations: terrainOperations,
+                timeMachine: timeMachine
+            )
         )
     }
 }

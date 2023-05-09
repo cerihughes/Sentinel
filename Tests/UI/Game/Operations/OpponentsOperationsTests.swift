@@ -10,7 +10,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
     var timeInterval: TimeInterval = 0
 
     var timeMachine: TimeMachine! {
-        operations.timeMachine
+        built.timeMachine
     }
 
     override func setUpWithError() throws {
@@ -36,7 +36,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
 
     func testGenerateTree() {
         var timeMachineCompletedAllOperations = false
-        _ = operations.timeMachine.add(timeInterval: 2.0) { _, _, _ in
+        _ = timeMachine.add(timeInterval: 2.0) { _, _, _ in
             timeMachineCompletedAllOperations = true
             return true
         }
@@ -44,7 +44,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions().count, 1)
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 0)
 
-        operations.timeMachine.start()
+        timeMachine.start()
         XCTAssertTrue(built.playerOperations.enterScene())
 
         while !timeMachineCompletedAllOperations {
