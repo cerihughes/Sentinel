@@ -24,8 +24,7 @@ class GameContainerViewController: UIViewController {
         mainViewController = GameMainViewController(
             scene: scene,
             cameraNode: cameraNode,
-            overlay: overlay,
-            synthoidEnergy: viewModel.built.synthoidEnergy
+            overlay: overlay
         )
 
         super.init(nibName: nil, bundle: nil)
