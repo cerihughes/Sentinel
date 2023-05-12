@@ -49,9 +49,10 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
 
         runDetectionTest()
 
-        // The tree should have been detected and absorbed, creating another tree in the process
+        // The tree should have been detected and absorbed, creating another tree in the process (somewhere else)
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [.detectionPosition])
-        XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 2)
+        XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 1)
+        XCTAssertNotEqual(built.terrainOperations.grid.treePositions, [.detectionPosition])
     }
 
     func testDetectRock() {
