@@ -20,10 +20,8 @@ extension ViewingNode {
         return allTrees.filter { $0.floorNode != nil && !$0.floorNode!.rockNodes.isEmpty }
     }
 
-    private func visibleNodes<T: SCNNode>(in renderer: SCNSceneRenderer, type: T.Type) -> [T] {
-        guard let scene = renderer.scene else {
-            return []
-        }
+    private func visibleNodes<T: DetectableSCNNode>(in renderer: SCNSceneRenderer, type: T.Type) -> [T] {
+        guard let scene = renderer.scene else { return [] }
 
         let cameraPresentation = cameraNode.presentation
         let frustrumNodes = renderer.nodesInsideFrustum(of: cameraPresentation)
@@ -32,29 +30,26 @@ extension ViewingNode {
             .filter { self.hasLineOfSight(from: cameraPresentation, to: $0, in: scene) }
     }
 
-    private func hasLineOfSight(
-        from cameraPresentationNode: SCNNode,
-        to otherNode: SCNNode,
-        in scene: SCNScene
-    ) -> Bool {
-        guard let otherDetectableNode = otherNode as? DetectableNode else { return false }
-
+    private func hasLineOfSight(from camera: SCNNode, to other: DetectableSCNNode, in scene: SCNScene) -> Bool {
         let worldNode = scene.rootNode
-        for otherDetectionNode in otherDetectableNode.detectionNodes {
-            let detectionPresentationNode = otherDetectionNode.presentation
-            let startPosition = worldNode.convertPosition(cameraPresentationNode.worldPosition, to: nil)
-            let endPosition = worldNode.convertPosition(detectionPresentationNode.worldPosition, to: nil)
+        for detectionNode in other.detectionNodes {
+            let startPosition = worldNode.convertPosition(camera.worldPosition, to: nil)
+            let endPosition = worldNode.convertPosition(detectionNode.presentation.worldPosition, to: nil)
 
             let options: [String: Any] = [SCNHitTestOption.searchMode.rawValue: SCNHitTestSearchMode.all.rawValue]
             let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: options)
             for hit in hits {
-                if let placeableHit = hit.node.firstPlaceableParent() as? SCNNode {
-                    if placeableHit == otherNode {
-                        return true
-                    }
+                if let placeableHit = hit.node.firstPlaceableDetectableParent(), placeableHit == other {
+                    return true
                 }
             }
         }
         return false
+    }
+}
+
+private extension SCNNode {
+    func firstPlaceableDetectableParent() -> DetectableSCNNode? {
+        firstPlaceableParent() as? DetectableSCNNode
     }
 }
