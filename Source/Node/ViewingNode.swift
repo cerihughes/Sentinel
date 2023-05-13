@@ -4,6 +4,8 @@ protocol ViewingNode {
     var cameraNode: SCNNode { get }
 }
 
+typealias ViewingSCNNode = ViewingNode & SCNNode
+
 private let options: [String: Any] = [SCNHitTestOption.searchMode.rawValue: SCNHitTestSearchMode.all.rawValue]
 
 extension ViewingNode {

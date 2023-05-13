@@ -73,6 +73,24 @@ class NodeFactory {
         return terrainNode
     }
 
+    func createDetectionNode(from source: SCNVector3, to point: GridPoint, height: Float) -> SCNNode {
+        let destination = nodePositioning.calculateTerrainPosition(x: point.x, y: height, z: point.z)
+        let vector = source.subtractAllPoints(in: destination)
+        let distance = vector.distance
+        let midPosition = source.midPosition(between: destination)
+
+        let lineGeometry = SCNCylinder()
+        lineGeometry.radius = 0.5
+        lineGeometry.height = CGFloat(distance)
+        lineGeometry.radialSegmentCount = 5
+        lineGeometry.firstMaterial!.diffuse.contents = UIColor.red.withAlphaComponent(0.75)
+
+        let lineNode = SCNNode(geometry: lineGeometry)
+        lineNode.worldPosition = midPosition
+        lineNode.look(at: destination, up: sentinel.worldUp, localFront: lineNode.worldUp)
+        return lineNode
+    }
+
     private func createSentinelNode(initialAngle: Float) -> SentinelNode {
         let clone = sentinel.clone()
         clone.position = nodePositioning.calculateObjectPosition()
@@ -255,4 +273,18 @@ extension Float {
 extension CGFloat {
     static let floorSize = CGFloat(Float.floorSize)
     static let radiansInCircle = CGFloat(Float.radiansInCircle)
+}
+
+private extension SCNVector3 {
+    var distance: Float {
+        sqrt(x * x + y * y + z * z)
+    }
+
+    func subtractAllPoints(in other: SCNVector3) -> SCNVector3 {
+        .init(x - other.x, y - other.y, z - other.z)
+    }
+
+    func midPosition(between other: SCNVector3) -> SCNVector3 {
+        .init((x + other.x) / 2, (y + other.y) / 2, (z + other.z) / 2)
+    }
 }

@@ -55,6 +55,7 @@ class OpponentsOperations {
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleSynthoidPoint = visibleSynthoidPoints.first {
+                terrainOperations.showAbsorption(from: opponentNode, to: visibleSynthoidPoint)
                 terrainOperations.absorbSynthoidNode(at: visibleSynthoidPoint, animated: true)
                 terrainOperations.buildRock(at: visibleSynthoidPoint, animated: true)
                 buildRandomTree()
@@ -68,6 +69,7 @@ class OpponentsOperations {
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleRockPoint = visibleRockPoints.first {
+                terrainOperations.showAbsorption(from: opponentNode, to: visibleRockPoint)
                 terrainOperations.absorbRockNode(at: visibleRockPoint, animated: true)
                 terrainOperations.buildTree(at: visibleRockPoint, animated: true)
                 buildRandomTree()
@@ -81,6 +83,7 @@ class OpponentsOperations {
                 .sortedByDistance(from: terrainOperations.grid.sentinelPosition, ascending: true)
 
             if let visibleTreePoint = visibleTreePoints.first {
+                terrainOperations.showAbsorption(from: opponentNode, to: visibleTreePoint)
                 terrainOperations.absorbTreeNode(at: visibleTreePoint, animated: true)
                 buildRandomTree()
                 delegate?.opponentsOperationsDidAbsorb(self)

@@ -309,7 +309,7 @@ class SwipeInputHandler: GameInputHandler {
     private func processCompleteBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, buildIt: Bool) {
         if let point = nodeMap.point(for: floorNode),
             let temporaryNode = floorNode.temporaryNode {
-            temporaryNode.removeFromParentNode(animated: !buildIt)
+            temporaryNode.scaleDownAndRemove(animated: !buildIt)
 
             if buildIt {
                 switch buildableItem {
@@ -328,7 +328,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func cancelBuild(floorNode: FloorNode) {
-        floorNode.temporaryNode?.removeFromParentNode(animated: true)
+        floorNode.temporaryNode?.scaleDownAndRemove(animated: true)
     }
 
     private func processBuildEnd(floorNode: FloorNode) {

@@ -96,4 +96,24 @@ class TerrainOperations {
         guard let floorNode = nodeMap.floorNode(at: point) else { return }
         nodeManipulator.absorbSentinel(on: floorNode, animated: false)
     }
+
+    func showAbsorption(from viewingNode: ViewingSCNNode, to point: GridPoint) {
+        let height = grid.absorptionIndicationHeight(at: point)
+        nodeManipulator.showAbsorption(from: viewingNode.cameraNode.worldPosition, to: point, height: height)
+    }
+}
+
+private extension Grid {
+    func absorptionIndicationHeight(at point: GridPoint) -> Float {
+        guard let piece = piece(at: point) else { return 0.0 }
+        let rockHeight = Float(rockCount(at: point)) * 0.5
+        let height = rockHeight + piece.level - 0.5
+        if synthoidPositions.contains(point) {
+            return height + 0.5
+        }
+        if treePositions.contains(point) {
+            return height + 0.5
+        }
+        return height
+    }
 }

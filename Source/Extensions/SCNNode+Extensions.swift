@@ -80,7 +80,7 @@ extension SCNNode {
         SCNTransaction.commit()
     }
 
-    func removeFromParentNode(animated: Bool, completion: (() -> Void)? = nil) {
+    func scaleDownAndRemove(animated: Bool, completion: (() -> Void)? = nil) {
         guard animated else {
             removeFromParentNode()
             completion?()
@@ -95,6 +95,25 @@ extension SCNNode {
         }
 
         scaleAllDimensions(by: 0.0)
+
+        SCNTransaction.commit()
+    }
+
+    func alphaDownAndRemove(animated: Bool, completion: (() -> Void)? = nil) {
+        guard animated else {
+            removeFromParentNode()
+            completion?()
+            return
+        }
+
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = .animationDuration
+        SCNTransaction.completionBlock = { [weak self] in
+            self?.removeFromParentNode()
+            completion?()
+        }
+
+        geometry?.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(0.0)
 
         SCNTransaction.commit()
     }
