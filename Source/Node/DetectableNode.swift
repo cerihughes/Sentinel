@@ -1,5 +1,7 @@
 import SceneKit
 
-protocol DetectableNode {}
+protocol DetectableNode {
+    var detectionNodes: [SCNNode] { get }
+}
 
 typealias DetectableSCNNode = DetectableNode & SCNNode

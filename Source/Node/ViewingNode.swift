@@ -34,13 +34,15 @@ extension ViewingNode {
 
     private func hasLineOfSight(from camera: SCNNode, to other: DetectableSCNNode, in scene: SCNScene) -> Bool {
         let worldNode = scene.rootNode
-        let startPosition = worldNode.convertPosition(camera.worldPosition, to: nil)
-        let endPosition = worldNode.convertPosition(other.presentation.worldPosition, to: nil)
-        let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: options)
-        for hit in hits {
-            if let placeableHit = hit.node.firstPlaceableParent() as? SCNNode {
-                if placeableHit == other {
-                    return true
+        for node in other.detectionNodes {
+            let startPosition = worldNode.convertPosition(camera.worldPosition, to: nil)
+            let endPosition = worldNode.convertPosition(node.presentation.worldPosition, to: nil)
+            let hits = worldNode.hitTestWithSegment(from: startPosition, to: endPosition, options: options)
+            for hit in hits {
+                if let placeableHit = hit.node.firstPlaceableParent() as? SCNNode {
+                    if placeableHit == other {
+                        return true
+                    }
                 }
             }
         }
