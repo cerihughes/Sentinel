@@ -335,8 +335,8 @@ class SwipeInputHandler: GameInputHandler {
         floorNode.selectionNode?.removeFromParentNode()
     }
 
-    private func createNode(for buildableItem: BuildableItem) -> (SCNNode & PlaceableNode) {
-        let node: SCNNode & PlaceableNode
+    private func createNode(for buildableItem: BuildableItem) -> PlaceableSCNNode {
+        let node: PlaceableSCNNode
         switch buildableItem {
         case .tree:
             node = nodeManipulator.nodeFactory.createTreeNode(height: 0)
@@ -373,7 +373,7 @@ class SwipeInputHandler: GameInputHandler {
 }
 
 private class TemporaryNode: SCNNode {
-    var contents: (SCNNode & PlaceableNode)? {
+    var contents: PlaceableSCNNode? {
         didSet {
             oldValue?.removeFromParentNode()
             if let contents {
