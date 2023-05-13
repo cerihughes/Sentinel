@@ -67,6 +67,12 @@ class NodeManipulator {
         absorb(node: floorNode.sentinelNode, animated: animated, completion: completion)
     }
 
+    func showAbsorption(from source: SCNVector3, to point: GridPoint, height: Float) {
+        let node = nodeFactory.createDetectionNode(from: source, to: point, height: height)
+        terrainNode.addChildNode(node)
+        node.alphaAndRemove(animated: true)
+    }
+
     private func absorb(node: SCNNode?, animated: Bool, completion: (() -> Void)? = nil) {
         node?.removeFromParentNode(animated: animated && animatable, completion: completion)
     }

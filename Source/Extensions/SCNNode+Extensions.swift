@@ -98,4 +98,23 @@ extension SCNNode {
 
         SCNTransaction.commit()
     }
+
+    func alphaAndRemove(animated: Bool, completion: (() -> Void)? = nil) {
+        guard animated else {
+            removeFromParentNode()
+            completion?()
+            return
+        }
+
+        SCNTransaction.begin()
+        SCNTransaction.animationDuration = .animationDuration
+        SCNTransaction.completionBlock = { [weak self] in
+            self?.removeFromParentNode()
+            completion?()
+        }
+
+        geometry?.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(0.0)
+
+        SCNTransaction.commit()
+    }
 }
