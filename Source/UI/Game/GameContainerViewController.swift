@@ -102,7 +102,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
     func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
 
     func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) -> Bool {
-        guard viewModel.built.synthoidEnergy.has(energy: .treeEnergyValue) else { return false }
+        guard viewModel.built.synthoidEnergy.energy > 0 else { return false }
         viewModel.built.synthoidEnergy.adjust(delta: -.treeEnergyValue)
         return true
     }
