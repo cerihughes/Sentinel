@@ -80,7 +80,7 @@ extension SCNNode {
         SCNTransaction.commit()
     }
 
-    func removeFromParentNode(animated: Bool, completion: (() -> Void)? = nil) {
+    func scaleDownAndRemove(animated: Bool, completion: (() -> Void)? = nil) {
         guard animated else {
             removeFromParentNode()
             completion?()
@@ -99,7 +99,7 @@ extension SCNNode {
         SCNTransaction.commit()
     }
 
-    func alphaAndRemove(animated: Bool, completion: (() -> Void)? = nil) {
+    func alphaDownAndRemove(animated: Bool, completion: (() -> Void)? = nil) {
         guard animated else {
             removeFromParentNode()
             completion?()
