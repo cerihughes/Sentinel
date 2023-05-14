@@ -32,12 +32,15 @@ class GameViewModel {
 
     func nextNavigationToken() -> Navigation? {
         if levelScore.outcome == .victory {
-            // TODO: Make this variable based on "score"
             // TODO: Need a "success" screen
-            return .levelSummary(level: worldBuilder.levelConfiguration.level + 1)
+            return .levelSummary(level: currentLevel + levelScore.nextLevelIncrement)
         }
         // TODO: Need a "game over" screen
         return nil
+    }
+
+    private var currentLevel: Int {
+        worldBuilder.levelConfiguration.level
     }
 
     private func energyUpdated(_ energy: Int) {
@@ -143,5 +146,9 @@ private extension LevelScore {
     mutating func didTeleport(to gridPoint: GridPoint, height: Int) {
         teleports += 1
         heightReached(height)
+    }
+
+    var nextLevelIncrement: Int {
+        max(finalEnergy / 4, 1)
     }
 }

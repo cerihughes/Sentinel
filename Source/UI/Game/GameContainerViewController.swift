@@ -151,6 +151,8 @@ extension GameContainerViewController: GameViewModelDelegate {
         if let token = viewModel.nextNavigationToken() {
             // TODO: Navigate differently
             _ = navigationContext.navigateForward(token: token, animated: true)
+        } else {
+            _ = navigationContext.navigateBack(animated: true)
         }
     }
 }
