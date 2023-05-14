@@ -2,11 +2,13 @@ import XCTest
 @testable import Sentinel
 
 final class GameViewModelTests: XCTestCase {
+    private var localDataSource: MockLocalDataSource!
     private var viewModel: GameViewModel!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        viewModel = GameViewModel(worldBuilder: WorldBuilder.createMock(), gameScore: GameScore())
+        localDataSource = .init()
+        viewModel = GameViewModel(worldBuilder: WorldBuilder.createMock(), localDataSource: localDataSource)
     }
 
     override func tearDownWithError() throws {

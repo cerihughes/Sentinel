@@ -13,16 +13,18 @@ class GameViewModel {
 
     let worldBuilder: WorldBuilder
     let built: WorldBuilder.Built
-    let gameScore: GameScore
+    private let localDataSource: LocalDataSource
+    private let gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(worldBuilder: WorldBuilder, gameScore: GameScore) {
+    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource) {
         self.worldBuilder = worldBuilder
-        self.gameScore = gameScore
+        self.localDataSource = localDataSource
         built = worldBuilder.build()
+        gameScore = localDataSource.localStorage.gameScore ?? .init()
 
         built.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)

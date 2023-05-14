@@ -1,7 +1,7 @@
 import Madog
 import UIKit
 
-class TypedViewControllerProvider: SingleViewControllerProvider<Navigation> {
+class TypedViewControllerProvider: SingleViewControllerProvider<Navigation>, ServicesProvider {
     var services: Services?
 
     // MARK: SingleViewControllerProvider
