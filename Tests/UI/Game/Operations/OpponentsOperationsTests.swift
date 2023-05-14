@@ -31,11 +31,13 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         setupScene(grid: grid)
 
         XCTAssertEqual(built.terrainOperations.grid.treePositions, [.detectionPosition])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 0)
 
         runDetectionTest()
 
         // There should be no change in the tree positions
         XCTAssertEqual(built.terrainOperations.grid.treePositions, [.detectionPosition])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 0)
     }
 
     func testDetectTreeOnRock() {
@@ -48,6 +50,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
 
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [.detectionPosition])
         XCTAssertEqual(built.terrainOperations.grid.treePositions, [.detectionPosition])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 0)
 
         runDetectionTest()
 
@@ -55,6 +58,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [.detectionPosition])
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 1)
         XCTAssertNotEqual(built.terrainOperations.grid.treePositions, [.detectionPosition])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 1)
     }
 
     func testDetectRock() {
@@ -66,12 +70,14 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
 
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [.detectionPosition])
         XCTAssertEqual(built.terrainOperations.grid.treePositions, [])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 0)
 
         runDetectionTest()
 
         // A rock should have been detected and absorbed down to a tree, creating another tree in the process
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [])
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 2)
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 1)
     }
 
     func testDetectSynthoid() {
@@ -83,6 +89,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
 
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [])
         XCTAssertEqual(built.terrainOperations.grid.synthoidPositions, [.startPosition, .detectionPosition])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 0)
 
         runDetectionTest()
 
@@ -90,6 +97,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [.detectionPosition])
         XCTAssertEqual(built.terrainOperations.grid.synthoidPositions, [.startPosition])
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 1)
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 1)
     }
 
     func testDetectSynthoidOnRock() {
@@ -103,6 +111,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         XCTAssertEqual(built.terrainOperations.grid.allRockPositions(), [.detectionPosition])
         XCTAssertEqual(built.terrainOperations.grid.rockCount(at: .detectionPosition), 1)
         XCTAssertEqual(built.terrainOperations.grid.synthoidPositions, [.startPosition, .detectionPosition])
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 0)
 
         runDetectionTest()
 
@@ -111,6 +120,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
         XCTAssertEqual(built.terrainOperations.grid.rockCount(at: .detectionPosition), 2)
         XCTAssertEqual(built.terrainOperations.grid.synthoidPositions, [.startPosition])
         XCTAssertEqual(built.terrainOperations.grid.treePositions.count, 1)
+        XCTAssertEqual(delegate.opponentsOperationsDidAbsorbCalls, 1)
     }
 
     func testDetectPlayer() {
