@@ -9,19 +9,19 @@ extension Int {
     static let sentinelEnergyValue = 4
 }
 
-enum PlayerOperation {
-    case enterScene(GridPoint)
-    case build(BuildableItem)
-    case absorb(AbsorbableItem)
-    case teleport(GridPoint)
-}
-
 protocol PlayerOperationsDelegate: AnyObject {
     func playerOperations(_ playerOperations: PlayerOperations, didChange cameraNode: SCNNode)
-    func playerOperations(_ playerOperations: PlayerOperations, didPerform operation: PlayerOperation)
+    func playerOperations(_ playerOperations: PlayerOperations, didPerform operation: PlayerOperations.Operation)
 }
 
 class PlayerOperations {
+    enum Operation: Equatable {
+        case enterScene(GridPoint)
+        case build(BuildableItem)
+        case absorb(AbsorbableItem)
+        case teleport(GridPoint)
+    }
+
     enum Item {
         case tree, rock, synthoid, sentry, sentinel
     }
