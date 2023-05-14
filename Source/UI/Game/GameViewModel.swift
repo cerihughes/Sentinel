@@ -3,18 +3,14 @@ import SceneKit
 
 protocol GameViewModelDelegate: AnyObject {
     func gameViewModel(_ gameViewModel: GameViewModel, changeCameraNodeTo node: SCNNode)
-    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState)
+    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcome: LevelScore.Outcome)
 }
 
 class GameViewModel {
-    enum EndState {
-        case victory, defeat
-    }
-
     let worldBuilder: WorldBuilder
     let built: WorldBuilder.Built
     private let localDataSource: LocalDataSource
-    private let gameScore: GameScore
+    private var gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
@@ -34,9 +30,28 @@ class GameViewModel {
         built.playerOperations.delegate = self
     }
 
+    func nextNavigationToken() -> Navigation? {
+        if levelScore.outcome == .victory {
+            // TODO: Make this variable based on "score"
+            // TODO: Need a "success" screen
+            return .levelSummary(level: worldBuilder.levelConfiguration.level + 1)
+        }
+        // TODO: Need a "game over" screen
+        return nil
+    }
+
     private func energyUpdated(_ energy: Int) {
         guard energy <= 0 else { return }
-        delegate?.gameViewModel(self, levelDidEndWith: .defeat)
+        endLevelWithOutcome(.defeat)
+    }
+
+    private func endLevelWithOutcome(_ outcome: LevelScore.Outcome) {
+        levelScore.outcome = outcome
+        levelScore.finalEnergy = built.synthoidEnergy.energy
+        gameScore.levelScores[worldBuilder.levelConfiguration.level] = levelScore
+        localDataSource.localStorage.gameScore = gameScore
+
+        delegate?.gameViewModel(self, levelDidEndWith: outcome)
     }
 }
 
@@ -74,7 +89,7 @@ extension GameViewModel: PlayerOperationsDelegate {
     private func playerOperationsDidAbsorb(_ absorbableItem: AbsorbableItem) {
         levelScore.didAbsorbItem(absorbableItem)
         if absorbableItem == .sentinel {
-            delegate?.gameViewModel(self, levelDidEndWith: .victory)
+            endLevelWithOutcome(.victory)
         }
     }
 

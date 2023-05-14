@@ -2,14 +2,13 @@ import SceneKit
 @testable import Sentinel
 
 class MockGameViewModelDelegate: GameViewModelDelegate {
-    var cameraNode: SCNNode?
-    var endState: GameViewModel.EndState?
-
+    var lastCameraNode: SCNNode?
     func gameViewModel(_ gameViewModel: GameViewModel, changeCameraNodeTo node: SCNNode) {
-        cameraNode = node
+        lastCameraNode = node
     }
 
-    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState) {
-        endState = state
+    var lastOutcome: LevelScore.Outcome?
+    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcome: LevelScore.Outcome) {
+        lastOutcome = outcome
     }
 }

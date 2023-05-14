@@ -5,6 +5,11 @@ struct GameScore: Equatable, Codable {
 }
 
 struct LevelScore: Equatable, Codable {
+    enum Outcome: Codable {
+        case victory, defeat
+    }
+    var outcome: Outcome?
+    var finalEnergy = 0
     var treesBuilt = 0
     var treesAbsorbed = 0
     var rocksBuilt = 0

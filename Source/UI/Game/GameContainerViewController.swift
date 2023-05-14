@@ -146,13 +146,12 @@ extension GameContainerViewController: GameViewModelDelegate {
         sceneView.pointOfView = node
     }
 
-    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState) {
-        levelFinished()
-    }
-
-    private func levelFinished() {
+    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcode: LevelScore.Outcome) {
         viewModel.built.timeMachine.stop()
-        _ = navigationContext.navigateBack(animated: true)
+        if let token = viewModel.nextNavigationToken() {
+            // TODO: Navigate differently
+            _ = navigationContext.navigateForward(token: token, animated: true)
+        }
     }
 }
 

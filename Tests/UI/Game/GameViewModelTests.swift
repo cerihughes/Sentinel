@@ -143,7 +143,7 @@ final class GameViewModelTests: XCTestCase {
         let delegate = MockGameViewModelDelegate()
         viewModel.delegate = delegate
         viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
-        XCTAssertEqual(delegate.endState, .victory)
+        XCTAssertEqual(delegate.lastOutcome, .victory)
     }
 
     func testTeleportOntoFloor() throws {
