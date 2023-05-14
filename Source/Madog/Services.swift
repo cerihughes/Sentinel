@@ -13,7 +13,7 @@ class DefaultServices: ServiceProvider, Services {
 
     // MARK: ServiceProvider
     override init(context: ServiceProviderCreationContext) {
-        let localStorage = DefaultLocalStorage(userDefaults: .standard)
+        let localStorage = DefaultLocalStorage(persistentDataStore: UserDefaults.standard)
         localDataSource = DefaultLocalDataSource(localStorage: localStorage)
 
         super.init(context: context)
