@@ -16,7 +16,6 @@ class IntroViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        _ = navigationContext.navigateForward(token: Navigation.lobby, animated: true)
+        navigationContext.showLobby()
     }
 }

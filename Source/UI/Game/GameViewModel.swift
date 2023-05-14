@@ -3,26 +3,24 @@ import SceneKit
 
 protocol GameViewModelDelegate: AnyObject {
     func gameViewModel(_ gameViewModel: GameViewModel, changeCameraNodeTo node: SCNNode)
-    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith state: GameViewModel.EndState)
+    func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcome: LevelScore.Outcome)
 }
 
 class GameViewModel {
-    enum EndState {
-        case victory, defeat
-    }
-
     let worldBuilder: WorldBuilder
     let built: WorldBuilder.Built
-    let gameScore: GameScore
+    private let localDataSource: LocalDataSource
+    private var gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(worldBuilder: WorldBuilder, gameScore: GameScore) {
+    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource) {
         self.worldBuilder = worldBuilder
-        self.gameScore = gameScore
+        self.localDataSource = localDataSource
         built = worldBuilder.build()
+        gameScore = localDataSource.localStorage.gameScore ?? .init()
 
         built.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
@@ -32,9 +30,31 @@ class GameViewModel {
         built.playerOperations.delegate = self
     }
 
+    func nextNavigationToken() -> Navigation? {
+        if levelScore.outcome == .victory {
+            // TODO: Need a "success" screen
+            return .levelSummary(level: currentLevel + levelScore.nextLevelIncrement)
+        }
+        // TODO: Need a "game over" screen
+        return nil
+    }
+
+    private var currentLevel: Int {
+        worldBuilder.levelConfiguration.level
+    }
+
     private func energyUpdated(_ energy: Int) {
         guard energy <= 0 else { return }
-        delegate?.gameViewModel(self, levelDidEndWith: .defeat)
+        endLevelWithOutcome(.defeat)
+    }
+
+    private func endLevelWithOutcome(_ outcome: LevelScore.Outcome) {
+        levelScore.outcome = outcome
+        levelScore.finalEnergy = built.synthoidEnergy.energy
+        gameScore.levelScores[worldBuilder.levelConfiguration.level] = levelScore
+        localDataSource.localStorage.gameScore = gameScore
+
+        delegate?.gameViewModel(self, levelDidEndWith: outcome)
     }
 }
 
@@ -72,7 +92,7 @@ extension GameViewModel: PlayerOperationsDelegate {
     private func playerOperationsDidAbsorb(_ absorbableItem: AbsorbableItem) {
         levelScore.didAbsorbItem(absorbableItem)
         if absorbableItem == .sentinel {
-            delegate?.gameViewModel(self, levelDidEndWith: .victory)
+            endLevelWithOutcome(.victory)
         }
     }
 
@@ -126,5 +146,9 @@ private extension LevelScore {
     mutating func didTeleport(to gridPoint: GridPoint, height: Int) {
         teleports += 1
         heightReached(height)
+    }
+
+    var nextLevelIncrement: Int {
+        max(finalEnergy / 4, 1)
     }
 }

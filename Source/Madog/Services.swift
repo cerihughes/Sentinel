@@ -20,3 +20,11 @@ class DefaultServices: ServiceProvider, Services {
         name = serviceProviderName
     }
 }
+
+protocol ServicesProvider {
+    var services: Services? { get }
+}
+
+extension ServicesProvider {
+    var localDataSource: LocalDataSource? { services?.localDataSource }
+}

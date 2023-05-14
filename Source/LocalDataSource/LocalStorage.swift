@@ -1,7 +1,7 @@
 import Foundation
 
 protocol LocalStorage {
-    var gameScore: GameScore? { get set }
+    var gameScore: GameScore? { get nonmutating set }
 }
 
 protocol JSONConverting {
