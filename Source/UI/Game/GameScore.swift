@@ -1,10 +1,10 @@
 import Foundation
 
-struct GameScore: Codable {
+struct GameScore: Equatable, Codable {
     var levelScores = [Int: LevelScore]()
 }
 
-struct LevelScore: Codable {
+struct LevelScore: Equatable, Codable {
     var treesBuilt = 0
     var treesAbsorbed = 0
     var rocksBuilt = 0

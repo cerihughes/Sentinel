@@ -45,7 +45,7 @@ extension GameViewModel: PlayerOperationsDelegate {
         delegate?.gameViewModel(self, changeCameraNodeTo: cameraNode)
     }
 
-    func playerOperations(_ playerOperations: PlayerOperations, didPerform operation: PlayerOperation) {
+    func playerOperations(_ playerOperations: PlayerOperations, didPerform operation: PlayerOperations.Operation) {
         switch operation {
         case .enterScene(let gridPoint):
             playerOperationsDidEnterScene(at: gridPoint)
