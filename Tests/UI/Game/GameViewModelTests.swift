@@ -150,8 +150,7 @@ final class GameViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.built.playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
 
-        let synthoid = try XCTUnwrap(nodeMap.floorNode(at: .floor1)?.synthoidNode)
-        playerOperations.move(to: synthoid)
+        playerOperations.move(to: .floor1)
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
     }
 
@@ -162,8 +161,7 @@ final class GameViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.built.playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
 
-        let synthoid = try XCTUnwrap(nodeMap.floorNode(at: .floor2)?.synthoidNode)
-        playerOperations.move(to: synthoid)
+        playerOperations.move(to: .floor2)
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
     }
 
@@ -175,8 +173,7 @@ final class GameViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.built.playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
 
-        let synthoid = try XCTUnwrap(nodeMap.floorNode(at: .floor3)?.synthoidNode)
-        playerOperations.move(to: synthoid)
+        playerOperations.move(to: .floor3)
         XCTAssertEqual(viewModel.levelScore.highestPoint, 1)
     }
 }

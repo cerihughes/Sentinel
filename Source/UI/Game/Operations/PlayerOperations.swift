@@ -75,11 +75,11 @@ class PlayerOperations {
         return true
     }
 
-    func move(to synthoidNode: SynthoidNode) {
-        guard let floorNode = synthoidNode.floorNode, let point = nodeMap.point(for: floorNode) else { return }
+    func move(to position: GridPoint) {
+        guard let synthoidNode = nodeMap.synthoidNode(at: position) else { return }
 
-        moveCamera(to: synthoidNode, gridPoint: point, animationDuration: 1.0)
-        grid.currentPosition = point
+        moveCamera(to: synthoidNode, gridPoint: position, animationDuration: 1.0)
+        grid.currentPosition = position
         nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
     }
 
