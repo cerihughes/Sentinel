@@ -54,9 +54,12 @@ extension Grid {
             return "R"
         }
         if currentPosition == point {
-            return "*"
+            return "C"
         }
         if synthoidPositions.contains(point) {
+            if startPosition == point {
+                return "*"
+            }
             return "P"
         }
         if sentinelPosition == point {
@@ -66,7 +69,7 @@ extension Grid {
             return "s"
         }
         if startPosition == point {
-            return "i"
+            return "+"
         }
         return "."
     }
