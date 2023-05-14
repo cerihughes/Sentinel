@@ -3,11 +3,11 @@ import SceneKit
 import UIKit
 
 class LevelSummaryViewController: SceneViewController {
-    private let navigationContext: ForwardBackNavigationContext
+    private let navigationContext: Context
     private let viewModel: LevelSummaryViewModel
     private let tapGestureRecogniser = UITapGestureRecognizer()
 
-    init(navigationContext: ForwardBackNavigationContext, viewModel: LevelSummaryViewModel) {
+    init(navigationContext: Context, viewModel: LevelSummaryViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
@@ -42,8 +42,6 @@ class LevelSummaryViewController: SceneViewController {
     @objc
     private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
-
-        let token = Navigation.game(level: viewModel.worldBuilder.levelConfiguration.level)
-        _ = navigationContext.navigateForward(token: token, animated: true)
+        navigationContext.showGame(level: viewModel.worldBuilder.levelConfiguration.level)
     }
 }

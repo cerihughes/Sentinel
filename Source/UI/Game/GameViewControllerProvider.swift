@@ -4,10 +4,7 @@ import UIKit
 class GameViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(
-        token: Navigation,
-        navigationContext: ForwardBackNavigationContext
-    ) -> UIViewController? {
+    override func createViewController(token: Navigation, context: Context) -> UIViewController? {
         guard let localDataSource, case let .game(level) = token else { return nil }
 
         let worldBuilder = WorldBuilder.createDefault(level: level)
@@ -21,7 +18,7 @@ class GameViewControllerProvider: TypedViewControllerProvider {
             nodeManipulator: viewModel.built.nodeManipulator
         )
         return GameContainerViewController(
-            navigationContext: navigationContext,
+            navigationContext: context,
             viewModel: viewModel,
             inputHandler: inputHandler
         )

@@ -5,7 +5,7 @@ import SpriteKit
 import UIKit
 
 class GameContainerViewController: UIViewController {
-    private let navigationContext: ForwardBackNavigationContext
+    private let navigationContext: Context
     private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let overlay = OverlayScene()
@@ -14,7 +14,7 @@ class GameContainerViewController: UIViewController {
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(navigationContext: ForwardBackNavigationContext, viewModel: GameViewModel, inputHandler: GameInputHandler) {
+    init(navigationContext: Context, viewModel: GameViewModel, inputHandler: GameInputHandler) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
         self.inputHandler = inputHandler
@@ -149,10 +149,9 @@ extension GameContainerViewController: GameViewModelDelegate {
     func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcode: LevelScore.Outcome) {
         viewModel.built.timeMachine.stop()
         if let token = viewModel.nextNavigationToken() {
-            // TODO: Navigate differently
-            _ = navigationContext.navigateForward(token: token, animated: true)
+            navigationContext.showLevelSummary(token: token)
         } else {
-            _ = navigationContext.navigateBack(animated: true)
+            navigationContext.showIntro()
         }
     }
 }

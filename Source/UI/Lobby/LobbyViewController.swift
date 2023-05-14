@@ -57,7 +57,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
     // MARK: LobbyViewModelDelegate
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
-        let token = Navigation.levelSummary(level: level)
-        _ = navigationContext.navigateForward(token: token, animated: true)
+        navigationContext.showLevelSummary(level: level)
     }
 }
