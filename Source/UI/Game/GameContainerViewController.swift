@@ -99,15 +99,15 @@ class GameContainerViewController: UIViewController {
 extension GameContainerViewController: OpponentsOperationsDelegate {
     // MARK: OpponentsOperationsDelegate
 
-    func opponentsOperationsDidAbsorb(_: OpponentsOperations) {}
+    func opponentsOperationsDidAbsorb(_ opponentsOperations: OpponentsOperations) {}
 
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) -> Bool {
+    func opponentsOperationsDidDepleteEnergy(_ opponentsOperations: OpponentsOperations) -> Bool {
         guard viewModel.built.synthoidEnergy.energy > 0 else { return false }
         viewModel.built.synthoidEnergy.adjust(delta: -.treeEnergyValue)
         return true
     }
 
-    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
+    func opponentsOperations(_ opponentsOperations: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             let scene = self.viewModel.built.scene
             let opponentViewController = SceneViewController(scene: scene, cameraNode: cameraNode)
@@ -121,7 +121,7 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
         }
     }
 
-    func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {
+    func opponentsOperations(_ opponentsOperations: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async {
             for child in self.children {
                 if let opponentViewController = child as? SceneViewController {

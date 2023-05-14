@@ -1,10 +1,10 @@
 import SceneKit
 
 protocol OpponentsOperationsDelegate: AnyObject {
-    func opponentsOperationsDidAbsorb(_: OpponentsOperations)
-    func opponentsOperationsDidDepleteEnergy(_: OpponentsOperations) -> Bool
-    func opponentsOperations(_: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
-    func opponentsOperations(_: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
+    func opponentsOperationsDidAbsorb(_ opponentsOperations: OpponentsOperations)
+    func opponentsOperationsDidDepleteEnergy(_ opponentsOperations: OpponentsOperations) -> Bool
+    func opponentsOperations(_ opponentsOperations: OpponentsOperations, didDetectOpponent cameraNode: SCNNode)
+    func opponentsOperations(_ opponentsOperations: OpponentsOperations, didEndDetectOpponent cameraNode: SCNNode)
 }
 
 class OpponentsOperations {

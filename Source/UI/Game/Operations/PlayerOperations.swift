@@ -64,22 +64,16 @@ class PlayerOperations {
     func enterScene() -> Bool {
         guard let synthoidNode = nodeMap.synthoidNode(at: grid.startPosition) else { return false }
 
-        moveCamera(from: initialCameraNode,
-                   to: synthoidNode.cameraNode,
-                   animationDuration: 3.0)
+        moveCamera(from: initialCameraNode, to: synthoidNode.cameraNode, animationDuration: 3.0)
         grid.currentPosition = grid.startPosition
         delegate?.playerOperations(self, didPerform: .enterScene(grid.currentPosition))
-
         nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
-
         return true
     }
 
-    func move(to synthoidNode: SynthoidNode) {
-        guard let floorNode = synthoidNode.floorNode, let point = nodeMap.point(for: floorNode) else { return }
-
-        moveCamera(to: synthoidNode, gridPoint: point, animationDuration: 1.0)
-        grid.currentPosition = point
+    func move(to position: GridPoint) {
+        guard moveCamera(to: position, animationDuration: 1.0) else { return }
+        grid.currentPosition = position
         nodeManipulator.currentSynthoidNode = nodeMap.synthoidNode(at: grid.currentPosition)
     }
 
@@ -154,18 +148,20 @@ class PlayerOperations {
         delegate?.playerOperations(self, didPerform: .absorb(.sentinel))
     }
 
-    private func moveCamera(
-        to nextSynthoidNode: SynthoidNode,
-        gridPoint: GridPoint,
-        animationDuration: CFTimeInterval
-    ) {
-        guard let currentSynthoidNode = nodeManipulator.currentSynthoidNode else { return }
+    private func moveCamera(to point: GridPoint, animationDuration: CFTimeInterval) -> Bool {
+        guard
+            let currentSynthoidNode = nodeManipulator.currentSynthoidNode,
+            let nextSynthoidNode = nodeMap.floorNode(at: point)?.synthoidNode
+        else {
+            return false
+        }
         moveCamera(
             from: currentSynthoidNode.cameraNode,
             to: nextSynthoidNode.cameraNode,
             animationDuration: animationDuration
         )
-        self.delegate?.playerOperations(self, didPerform: .teleport(gridPoint))
+        delegate?.playerOperations(self, didPerform: .teleport(point))
+        return true
     }
 
     private func moveCamera(from: SCNNode, to: SCNNode, animationDuration: CFTimeInterval) {

@@ -118,9 +118,14 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func processDoubleTap(node: SCNNode) {
-        if let synthoidNode = node as? SynthoidNode {
-            playerOperations.move(to: synthoidNode)
+        guard
+            let synthoidNode = node as? SynthoidNode,
+            let floorNode = synthoidNode.floorNode,
+            let position = nodeMap.point(for: floorNode)
+        else {
+            return
         }
+        playerOperations.move(to: position)
     }
 
     // MARK: Long Press
