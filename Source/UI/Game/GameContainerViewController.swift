@@ -6,7 +6,6 @@ import UIKit
 
 class GameContainerViewController: UIViewController {
     private let navigationContext: Context
-    private let inputHandler: GameInputHandler
     private let viewModel: GameViewModel
     private let overlay = OverlayScene()
     private let mainViewController: GameMainViewController
@@ -14,10 +13,9 @@ class GameContainerViewController: UIViewController {
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(navigationContext: Context, viewModel: GameViewModel, inputHandler: GameInputHandler) {
+    init(navigationContext: Context, viewModel: GameViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
-        self.inputHandler = inputHandler
 
         let scene = viewModel.built.scene
         let cameraNode = viewModel.built.initialCameraNode
@@ -68,14 +66,7 @@ class GameContainerViewController: UIViewController {
             make.width.equalToSuperview().multipliedBy(0.2)
         }
 
-        inputHandler.addGestureRecognisers(to: sceneView)
-        viewModel.built.playerOperations.preAnimationBlock = {
-            self.inputHandler.setGestureRecognisersEnabled(false)
-        }
-
-        viewModel.built.playerOperations.postAnimationBlock = {
-            self.inputHandler.setGestureRecognisersEnabled(true)
-        }
+        viewModel.inputHandler.addGestureRecognisers(to: sceneView)
     }
 
     override func viewWillLayoutSubviews() {
