@@ -1,23 +1,6 @@
 import SceneKit
 import UIKit
 
-enum SwipeDirection: CaseIterable {
-    case up, down, left, right
-
-    var buildableItem: BuildableItem? {
-        switch self {
-        case .left:
-            return .tree
-        case .up:
-            return .rock
-        case .right:
-            return .synthoid
-        default:
-            return nil
-        }
-    }
-}
-
 enum SwipeState {
     case building(Float)
     case finished(Bool)
@@ -30,8 +13,6 @@ enum SwipeState {
         }
     }
 }
-
-private let threshold: CGFloat = 200.0
 
 class SwipeInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
@@ -154,41 +135,18 @@ class SwipeInputHandler: GameInputHandler {
                 sender.isEnabled = true
             }
         } else if state == .changed || state == .ended {
-            if let startTapPoint = startTapPoint,
-                let floorNode = floorNode {
-                let swipe = self.swipe(from: startTapPoint, to: point)
-                processSwipe(floorNode: floorNode,
-                             swipeDirection: swipe.direction,
-                             delta: swipe.delta,
-                             finished: state == .ended)
+            if let startTapPoint = startTapPoint, let floorNode {
+                if let swipe = Swipe.from(startTapPoint, to: point) {
+                    processSwipe(floorNode: floorNode, swipe: swipe, finished: state == .ended)
+                } else {
+                    // No swipe happened
+                    floorNode.playCancelSelectSound()
+                }
             }
         }
 
         if state == .ended || state == .cancelled || state == .failed, let floorNode {
             processBuildEnd(floorNode: floorNode)
-        }
-    }
-
-    private func swipe(from point1: CGPoint, to point2: CGPoint) -> (direction: SwipeDirection, delta: CGFloat) {
-        let deltaX = point2.x - point1.x
-        let deltaY = point2.y - point1.y
-        let absDeltaX = deltaX < 0 ? -deltaX : deltaX
-        let absDeltaY = deltaY < 0 ? -deltaY : deltaY
-
-        if absDeltaX > absDeltaY {
-            // Horizontal change is greater
-            if absDeltaX == deltaX {
-                return (.right, absDeltaX)
-            } else {
-                return (.left, absDeltaX)
-            }
-        } else {
-            // Vertical change is greater
-            if absDeltaY == deltaY {
-                return (.down, absDeltaY)
-            } else {
-                return (.up, absDeltaY)
-            }
         }
     }
 
@@ -204,34 +162,36 @@ class SwipeInputHandler: GameInputHandler {
         return nil
     }
 
-    private func processSwipe(floorNode: FloorNode, swipeDirection: SwipeDirection, delta: CGFloat, finished: Bool) {
+    private func processSwipe(floorNode: FloorNode, swipe: Swipe, finished: Bool) {
         let scale: Float
-        if delta < threshold {
-            scale = Float(delta / threshold)
+        if swipe.delta < Swipe.threshold {
+            scale = Float(swipe.delta / Swipe.threshold)
         } else {
             scale = 1.0
         }
 
         let swipeState = SwipeState(scale: scale, finished: finished)
 
-        switch swipeDirection {
+        switch swipe.direction {
         case .down:
             cancelBuild(floorNode: floorNode)
             processAbsorb(floorNode: floorNode, swipeState: swipeState)
         default:
             cancelAbsorb(floorNode: floorNode)
-            if let buildableItem = swipeDirection.buildableItem {
-                if validBuildSwipeDirections(for: floorNode).contains(swipeDirection) {
+            if let buildableItem = swipe.direction.buildableItem {
+                if validBuildSwipeDirections(for: floorNode).contains(swipe.direction) {
                     processBuild(buildableItem, floorNode: floorNode, swipeState: swipeState)
+                } else if finished {
+                    floorNode.playCancelSelectSound()
                 }
             }
         }
     }
 
-    private func validBuildSwipeDirections(for floorNode: FloorNode) -> [SwipeDirection] {
+    private func validBuildSwipeDirections(for floorNode: FloorNode) -> [Swipe.Direction] {
         if let topmostNode = floorNode.topmostNode {
             if topmostNode is RockNode {
-                return SwipeDirection.allCases
+                return Swipe.Direction.allCases
             } else {
                 return []
             }
@@ -258,11 +218,15 @@ class SwipeInputHandler: GameInputHandler {
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
             if removeIt, let point = nodeMap.point(for: floorNode) {
+                floorNode.playAbsorbSound()
                 playerOperations.absorbTopmostNode(at: point)
                 topmostNode.removeFromParentNode()
             } else {
+                floorNode.playCancelSelectSound()
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
             }
+        } else {
+            floorNode.playCancelSelectSound()
         }
     }
 
@@ -281,7 +245,9 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processBuildStart(floorNode: FloorNode) {
         let height = buildHeight(for: floorNode)
-        floorNode.selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
+        let selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
+        floorNode.selectionNode = selectionNode
+        floorNode.playStartSelectSound()
     }
 
     private func processInProgressBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, scale: Float) {
@@ -312,8 +278,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func processCompleteBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, buildIt: Bool) {
-        if let point = nodeMap.point(for: floorNode),
-            let temporaryNode = floorNode.temporaryNode {
+        if let point = nodeMap.point(for: floorNode), let temporaryNode = floorNode.temporaryNode {
             temporaryNode.scaleDownAndRemove(animated: !buildIt)
 
             if buildIt {
@@ -328,6 +293,9 @@ class SwipeInputHandler: GameInputHandler {
                 case .synthoid:
                     playerOperations.buildSynthoid(at: point)
                 }
+                floorNode.playBuildSound()
+            } else {
+                floorNode.playCancelSelectSound()
             }
         }
     }
@@ -374,6 +342,25 @@ class SwipeInputHandler: GameInputHandler {
             elevationDelta: deltaYRadians,
             persist: finished
         )
+    }
+}
+
+private extension Swipe {
+    static let threshold: Float = 200.0
+}
+
+private extension Swipe.Direction {
+    var buildableItem: BuildableItem? {
+        switch self {
+        case .left:
+            return .tree
+        case .up:
+            return .rock
+        case .right:
+            return .synthoid
+        default:
+            return nil
+        }
     }
 }
 
@@ -472,5 +459,23 @@ private extension FloorNode {
         set {
             set(instance: newValue, name: selectionNodeName)
         }
+    }
+}
+
+private extension SCNNode {
+    func playStartSelectSound() {
+        play(positionalSound: .buildStart1)
+    }
+
+    func playCancelSelectSound() {
+        play(positionalSound: .buildEnd1)
+    }
+
+    func playAbsorbSound() {
+        play(positionalSound: .buildStart2)
+    }
+
+    func playBuildSound() {
+        play(positionalSound: .buildEnd2)
     }
 }
