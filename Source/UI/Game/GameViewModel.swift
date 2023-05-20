@@ -9,6 +9,7 @@ protocol GameViewModelDelegate: AnyObject {
 class GameViewModel {
     let worldBuilder: WorldBuilder
     let built: WorldBuilder.Built
+    let inputHandler: SwipeInputHandler
     private let localDataSource: LocalDataSource
     private var gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
@@ -21,6 +22,22 @@ class GameViewModel {
         self.localDataSource = localDataSource
         built = worldBuilder.build()
         gameScore = localDataSource.localStorage.gameScore ?? .init()
+        let inputHandler = SwipeInputHandler(
+            playerOperations: built.playerOperations,
+            nodeMap: built.nodeMap,
+            nodeManipulator: built.nodeManipulator
+        )
+
+        built.playerOperations.preAnimationBlock = {
+            inputHandler.setGestureRecognisersEnabled(false)
+        }
+
+        built.playerOperations.postAnimationBlock = {
+            inputHandler.setGestureRecognisersEnabled(true)
+        }
+
+        self.inputHandler = inputHandler
+        self.inputHandler.delegate = self
 
         built.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
@@ -109,6 +126,24 @@ extension GameViewModel: PlayerOperationsDelegate {
         let rockHeight = Float(rockCount) * 0.5
         let floorHeight = Int(piece.level + rockHeight)
         levelScore.didTeleport(to: gridPoint, height: floorHeight)
+    }
+}
+
+extension GameViewModel: SwipeInputHandlerDelegate {
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode) {
+        floorNode.play(positionalSound: .buildStart1)
+    }
+
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode) {
+        floorNode.play(positionalSound: .buildEnd1)
+    }
+
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didBuildOnFloorNode floorNode: FloorNode) {
+        floorNode.play(positionalSound: .buildEnd2)
+    }
+
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didAbsorbOnFloorNode floorNode: FloorNode) {
+        floorNode.play(positionalSound: .buildStart2)
     }
 }
 

@@ -14,6 +14,13 @@ enum SwipeState {
     }
 }
 
+protocol SwipeInputHandlerDelegate: AnyObject {
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode)
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode)
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didBuildOnFloorNode floorNode: FloorNode)
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didAbsorbOnFloorNode floorNode: FloorNode)
+}
+
 class SwipeInputHandler: GameInputHandler {
     let playerOperations: PlayerOperations
 
@@ -25,6 +32,8 @@ class SwipeInputHandler: GameInputHandler {
 
     private var startTapPoint: CGPoint?
     private var floorNode: FloorNode?
+
+    weak var delegate: SwipeInputHandlerDelegate?
 
     init(playerOperations: PlayerOperations, nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
         self.playerOperations = playerOperations
@@ -140,7 +149,7 @@ class SwipeInputHandler: GameInputHandler {
                     processSwipe(floorNode: floorNode, swipe: swipe, finished: state == .ended)
                 } else {
                     // No swipe happened
-                    floorNode.playCancelSelectSound()
+                    delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
                 }
             }
         }
@@ -182,7 +191,8 @@ class SwipeInputHandler: GameInputHandler {
                 if validBuildSwipeDirections(for: floorNode).contains(swipe.direction) {
                     processBuild(buildableItem, floorNode: floorNode, swipeState: swipeState)
                 } else if finished {
-                    floorNode.playCancelSelectSound()
+                    // No absorb happened
+                    delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
                 }
             }
         }
@@ -218,15 +228,16 @@ class SwipeInputHandler: GameInputHandler {
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
             if removeIt, let point = nodeMap.point(for: floorNode) {
-                floorNode.playAbsorbSound()
                 playerOperations.absorbTopmostNode(at: point)
                 topmostNode.removeFromParentNode()
+                delegate?.swipeInputHandler(self, didAbsorbOnFloorNode: floorNode)
             } else {
-                floorNode.playCancelSelectSound()
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
+                delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
             }
         } else {
-            floorNode.playCancelSelectSound()
+            // Nothing to absorb
+            delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
         }
     }
 
@@ -247,7 +258,7 @@ class SwipeInputHandler: GameInputHandler {
         let height = buildHeight(for: floorNode)
         let selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
         floorNode.selectionNode = selectionNode
-        floorNode.playStartSelectSound()
+        delegate?.swipeInputHandler(self, didSelectFloorNode: floorNode)
     }
 
     private func processInProgressBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, scale: Float) {
@@ -293,9 +304,10 @@ class SwipeInputHandler: GameInputHandler {
                 case .synthoid:
                     playerOperations.buildSynthoid(at: point)
                 }
-                floorNode.playBuildSound()
+                delegate?.swipeInputHandler(self, didBuildOnFloorNode: floorNode)
             } else {
-                floorNode.playCancelSelectSound()
+                // Decided not to build
+                delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
             }
         }
     }
@@ -459,23 +471,5 @@ private extension FloorNode {
         set {
             set(instance: newValue, name: selectionNodeName)
         }
-    }
-}
-
-private extension SCNNode {
-    func playStartSelectSound() {
-        play(positionalSound: .buildStart1)
-    }
-
-    func playCancelSelectSound() {
-        play(positionalSound: .buildEnd1)
-    }
-
-    func playAbsorbSound() {
-        play(positionalSound: .buildStart2)
-    }
-
-    func playBuildSound() {
-        play(positionalSound: .buildEnd2)
     }
 }
