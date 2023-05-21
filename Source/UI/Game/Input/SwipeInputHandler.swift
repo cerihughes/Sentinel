@@ -15,15 +15,25 @@ enum SwipeState {
 }
 
 protocol SwipeInputHandlerDelegate: AnyObject {
+    func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler)
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint)
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode)
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didBuildOnFloorNode floorNode: FloorNode)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didAbsorbOnFloorNode floorNode: FloorNode)
+    func swipeInputHandler(
+        _ swipeInputHandler: SwipeInputHandler,
+        didBuild item: BuildableItem,
+        atPoint point: GridPoint,
+        rotation: Float?,
+        onFloorNode floorNode: FloorNode
+    )
+    func swipeInputHandler(
+        _ swipeInputHandler: SwipeInputHandler,
+        didAbsorbAtPoint point: GridPoint,
+        onFloorNode floorNode: FloorNode
+    )
 }
 
 class SwipeInputHandler: GameInputHandler {
-    let playerOperations: PlayerOperations
-
     private let nodeMap: NodeMap
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
@@ -35,8 +45,7 @@ class SwipeInputHandler: GameInputHandler {
 
     weak var delegate: SwipeInputHandlerDelegate?
 
-    init(playerOperations: PlayerOperations, nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
-        self.playerOperations = playerOperations
+    init(nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
         self.nodeMap = nodeMap
         self.nodeManipulator = nodeManipulator
 
@@ -83,23 +92,15 @@ class SwipeInputHandler: GameInputHandler {
 
     @objc
     func tapGesture(sender: UIGestureRecognizer) {
-        guard sender.state != .cancelled else {
-            return
-        }
-
-        if !playerOperations.hasEnteredScene() {
-            _ = playerOperations.enterScene()
-        }
+        guard sender.state != .cancelled else { return }
+        delegate?.swipeInputHandlerDidEnterScene(self)
     }
 
     // MARK: Double Tap
 
     @objc
     func doubleTapGesture(sender: UIGestureRecognizer) {
-        guard let sceneView = sender.view as? SCNView else {
-            return
-        }
-
+        guard let sceneView = sender.view as? SCNView else { return }
         let point = sender.location(in: sceneView)
         let hitTestResults = sceneView.hitTest(point, options: hitTestOptions)
         if let interactiveNode = hitTestResults.firstInteractiveNode() {
@@ -111,20 +112,18 @@ class SwipeInputHandler: GameInputHandler {
         guard
             let synthoidNode = node as? SynthoidNode,
             let floorNode = synthoidNode.floorNode,
-            let position = nodeMap.point(for: floorNode)
+            let point = nodeMap.point(for: floorNode)
         else {
             return
         }
-        playerOperations.move(to: position)
+        delegate?.swipeInputHandler(self, didMoveToPoint: point)
     }
 
     // MARK: Long Press
 
     @objc
     func longPressGesture(sender: UILongPressGestureRecognizer) {
-        guard let sceneView = sender.view as? SCNView else {
-            return
-        }
+        guard let sceneView = sender.view as? SCNView else { return }
 
         let point = sender.location(in: sceneView)
         let state = sender.state
@@ -228,9 +227,7 @@ class SwipeInputHandler: GameInputHandler {
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
             if removeIt, let point = nodeMap.point(for: floorNode) {
-                playerOperations.absorbTopmostNode(at: point)
-                topmostNode.removeFromParentNode()
-                delegate?.swipeInputHandler(self, didAbsorbOnFloorNode: floorNode)
+                delegate?.swipeInputHandler(self, didAbsorbAtPoint: point, onFloorNode: floorNode)
             } else {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
                 delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
@@ -293,18 +290,13 @@ class SwipeInputHandler: GameInputHandler {
             temporaryNode.scaleDownAndRemove(animated: !buildIt)
 
             if buildIt {
-                switch buildableItem {
-                case .rock:
-                    if let contents = temporaryNode.contents as? RockNode {
-                        let w = contents.rotation.w
-                        playerOperations.buildRock(at: point, rotation: w)
-                    }
-                case .tree:
-                    playerOperations.buildTree(at: point)
-                case .synthoid:
-                    playerOperations.buildSynthoid(at: point)
-                }
-                delegate?.swipeInputHandler(self, didBuildOnFloorNode: floorNode)
+                delegate?.swipeInputHandler(
+                    self,
+                    didBuild: buildableItem,
+                    atPoint: point,
+                    rotation: temporaryNode.contents?.rotation.w,
+                    onFloorNode: floorNode
+                )
             } else {
                 // Decided not to build
                 delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)

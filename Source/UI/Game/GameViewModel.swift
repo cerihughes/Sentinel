@@ -22,11 +22,7 @@ class GameViewModel {
         self.localDataSource = localDataSource
         built = worldBuilder.build()
         gameScore = localDataSource.localStorage.gameScore ?? .init()
-        let inputHandler = SwipeInputHandler(
-            playerOperations: built.playerOperations,
-            nodeMap: built.nodeMap,
-            nodeManipulator: built.nodeManipulator
-        )
+        let inputHandler = SwipeInputHandler(nodeMap: built.nodeMap, nodeManipulator: built.nodeManipulator)
 
         built.playerOperations.preAnimationBlock = {
             inputHandler.setGestureRecognisersEnabled(false)
@@ -130,6 +126,20 @@ extension GameViewModel: PlayerOperationsDelegate {
 }
 
 extension GameViewModel: SwipeInputHandlerDelegate {
+    private var playerOperations: PlayerOperations {
+        built.playerOperations
+    }
+
+    func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler) {
+        if !playerOperations.hasEnteredScene() {
+            _ = playerOperations.enterScene()
+        }
+    }
+
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
+        playerOperations.move(to: point)
+    }
+
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode) {
         floorNode.play(positionalSound: .buildStart1)
     }
@@ -138,12 +148,32 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         floorNode.play(positionalSound: .buildEnd1)
     }
 
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didBuildOnFloorNode floorNode: FloorNode) {
+    func swipeInputHandler(
+        _ swipeInputHandler: SwipeInputHandler,
+        didBuild item: BuildableItem,
+        atPoint point: GridPoint,
+        rotation: Float?,
+        onFloorNode floorNode: FloorNode
+    ) {
         floorNode.play(positionalSound: .buildEnd2)
+        switch item {
+        case .tree:
+            playerOperations.buildTree(at: point)
+        case .rock:
+            playerOperations.buildRock(at: point, rotation: rotation)
+        case .synthoid:
+            playerOperations.buildSynthoid(at: point)
+        }
     }
 
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didAbsorbOnFloorNode floorNode: FloorNode) {
+    func swipeInputHandler(
+        _ swipeInputHandler: SwipeInputHandler,
+        didAbsorbAtPoint point: GridPoint,
+        onFloorNode floorNode: FloorNode
+    ) {
         floorNode.play(positionalSound: .buildStart2)
+        playerOperations.absorbTopmostNode(at: point)
+        floorNode.topmostNode?.removeFromParentNode()
     }
 }
 
