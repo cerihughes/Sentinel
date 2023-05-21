@@ -2,7 +2,6 @@ import SceneKit
 
 struct WorldBuilder {
     struct Built {
-        let grid: Grid
         let nodeMap: NodeMap
         let nodeManipulator: NodeManipulator
         let nodeFactory: NodeFactory
@@ -49,7 +48,6 @@ struct WorldBuilder {
         let synthoidEnergy = SynthoidEnergyMonitor()
         let timeMachine = TimeMachine()
         return .init(
-            grid: grid,
             nodeMap: nodeMap,
             nodeManipulator: nodeManipulator,
             nodeFactory: nodeFactory,
