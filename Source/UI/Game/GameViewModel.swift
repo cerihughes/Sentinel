@@ -93,7 +93,7 @@ extension GameViewModel: PlayerOperationsDelegate {
     }
 
     private func playerOperationsDidEnterScene(at gridPoint: GridPoint) {
-        guard let piece = built.grid.piece(at: gridPoint), piece.isFloor else { return }
+        guard let piece = built.terrainOperations.grid.piece(at: gridPoint), piece.isFloor else { return }
         let floorHeight = Int(piece.level)
         levelScore.didEnterScene(at: gridPoint, height: floorHeight)
     }
@@ -112,7 +112,7 @@ extension GameViewModel: PlayerOperationsDelegate {
     private func playerOperationsDidTeleport(to gridPoint: GridPoint) {
         guard
             let floorNode = built.nodeMap.floorNode(at: gridPoint),
-            let piece = built.grid.piece(at: gridPoint),
+            let piece = built.terrainOperations.grid.piece(at: gridPoint),
             piece.isFloor
         else {
             return
@@ -137,6 +137,8 @@ extension GameViewModel: SwipeInputHandlerDelegate {
     }
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
+        guard let floorNode = built.nodeMap.floorNode(at: built.terrainOperations.grid.currentPosition) else { return }
+        floorNode.play(positionalSound: .teleport)
         playerOperations.move(to: point)
     }
 
@@ -173,7 +175,6 @@ extension GameViewModel: SwipeInputHandlerDelegate {
     ) {
         floorNode.play(positionalSound: .buildStart2)
         playerOperations.absorbTopmostNode(at: point)
-        floorNode.topmostNode?.removeFromParentNode()
     }
 }
 

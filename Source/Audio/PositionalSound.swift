@@ -5,6 +5,7 @@ enum PositionalSound: String {
     case buildEnd2 = "BuildEnd2.mp3"
     case buildStart1 = "BuildStart1.mp3"
     case buildStart2 = "BuildStart2.mp3"
+    case teleport = "Teleport.mp3"
 }
 
 extension SCNNode {
