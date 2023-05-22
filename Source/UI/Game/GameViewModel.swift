@@ -138,16 +138,16 @@ extension GameViewModel: SwipeInputHandlerDelegate {
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
         guard let floorNode = built.nodeMap.floorNode(at: built.terrainOperations.grid.currentPosition) else { return }
-        floorNode.play(positionalSound: .teleport)
+        floorNode.play(soundFile: .teleport)
         playerOperations.move(to: point)
     }
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode) {
-        floorNode.play(positionalSound: .buildStart1)
+        floorNode.play(soundFile: .buildStart1)
     }
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode) {
-        floorNode.play(positionalSound: .buildEnd1)
+        floorNode.play(soundFile: .buildEnd1)
     }
 
     func swipeInputHandler(
@@ -157,7 +157,7 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         rotation: Float?,
         onFloorNode floorNode: FloorNode
     ) {
-        floorNode.play(positionalSound: .buildEnd2)
+        floorNode.play(soundFile: .buildEnd2)
         switch item {
         case .tree:
             playerOperations.buildTree(at: point)
@@ -173,7 +173,7 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         didAbsorbAtPoint point: GridPoint,
         onFloorNode floorNode: FloorNode
     ) {
-        floorNode.play(positionalSound: .buildStart2)
+        floorNode.play(soundFile: .buildStart2)
         playerOperations.absorbTopmostNode(at: point)
     }
 }

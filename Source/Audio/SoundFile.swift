@@ -1,6 +1,6 @@
 import SceneKit
 
-enum PositionalSound: String {
+enum SoundFile: String {
     case buildEnd1 = "BuildEnd1.mp3"
     case buildEnd2 = "BuildEnd2.mp3"
     case buildStart1 = "BuildStart1.mp3"
@@ -9,8 +9,8 @@ enum PositionalSound: String {
 }
 
 extension SCNNode {
-    func play(positionalSound: PositionalSound, waitForCompletion: Bool = false) {
-        guard let source = SCNAudioSource(fileNamed: positionalSound.rawValue) else { return }
+    func play(soundFile: SoundFile, waitForCompletion: Bool = false) {
+        guard let source = SCNAudioSource(fileNamed: soundFile.rawValue) else { return }
         runAction(.playAudio(source, waitForCompletion: waitForCompletion))
     }
 }
