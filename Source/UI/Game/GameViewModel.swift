@@ -11,15 +11,17 @@ class GameViewModel {
     let built: WorldBuilder.Built
     let inputHandler: SwipeInputHandler
     private let localDataSource: LocalDataSource
+    private let audioManager: AudioManager
     private var gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource) {
+    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource, audioManager: AudioManager) {
         self.worldBuilder = worldBuilder
         self.localDataSource = localDataSource
+        self.audioManager = audioManager
         built = worldBuilder.build()
         gameScore = localDataSource.localStorage.gameScore ?? .init()
         let inputHandler = SwipeInputHandler(nodeMap: built.nodeMap, nodeManipulator: built.nodeManipulator)
@@ -67,6 +69,7 @@ class GameViewModel {
         gameScore.levelScores[worldBuilder.levelConfiguration.level] = levelScore
         localDataSource.localStorage.gameScore = gameScore
 
+        _ = audioManager.play(soundFile: outcome.soundFile)
         delegate?.gameViewModel(self, levelDidEndWith: outcome)
     }
 }
@@ -216,5 +219,16 @@ private extension LevelScore {
 
     var nextLevelIncrement: Int {
         max(finalEnergy / 4, 1)
+    }
+}
+
+private extension LevelScore.Outcome {
+    var soundFile: SoundFile {
+        switch self {
+        case .victory:
+            return .levelEnd
+        case .defeat:
+            return .absorbed
+        }
     }
 }
