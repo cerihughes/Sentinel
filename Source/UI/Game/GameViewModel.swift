@@ -11,15 +11,17 @@ class GameViewModel {
     let built: WorldBuilder.Built
     let inputHandler: SwipeInputHandler
     private let localDataSource: LocalDataSource
+    private let audioManager: AudioManager
     private var gameScore: GameScore
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource) {
+    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource, audioManager: AudioManager) {
         self.worldBuilder = worldBuilder
         self.localDataSource = localDataSource
+        self.audioManager = audioManager
         built = worldBuilder.build()
         gameScore = localDataSource.localStorage.gameScore ?? .init()
         let inputHandler = SwipeInputHandler(nodeMap: built.nodeMap, nodeManipulator: built.nodeManipulator)
@@ -67,6 +69,7 @@ class GameViewModel {
         gameScore.levelScores[worldBuilder.levelConfiguration.level] = levelScore
         localDataSource.localStorage.gameScore = gameScore
 
+        _ = audioManager.play(soundFile: outcome.soundFile)
         delegate?.gameViewModel(self, levelDidEndWith: outcome)
     }
 }
@@ -138,16 +141,16 @@ extension GameViewModel: SwipeInputHandlerDelegate {
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
         guard let floorNode = built.nodeMap.floorNode(at: built.terrainOperations.grid.currentPosition) else { return }
-        floorNode.play(positionalSound: .teleport)
+        floorNode.play(soundFile: .teleport)
         playerOperations.move(to: point)
     }
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode) {
-        floorNode.play(positionalSound: .buildStart1)
+        floorNode.play(soundFile: .buildStart1)
     }
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode) {
-        floorNode.play(positionalSound: .buildEnd1)
+        floorNode.play(soundFile: .buildEnd1)
     }
 
     func swipeInputHandler(
@@ -157,7 +160,7 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         rotation: Float?,
         onFloorNode floorNode: FloorNode
     ) {
-        floorNode.play(positionalSound: .buildEnd2)
+        floorNode.play(soundFile: .buildEnd2)
         switch item {
         case .tree:
             playerOperations.buildTree(at: point)
@@ -173,7 +176,7 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         didAbsorbAtPoint point: GridPoint,
         onFloorNode floorNode: FloorNode
     ) {
-        floorNode.play(positionalSound: .buildStart2)
+        floorNode.play(soundFile: .buildStart2)
         playerOperations.absorbTopmostNode(at: point)
     }
 }
@@ -216,5 +219,16 @@ private extension LevelScore {
 
     var nextLevelIncrement: Int {
         max(finalEnergy / 4, 1)
+    }
+}
+
+private extension LevelScore.Outcome {
+    var soundFile: SoundFile {
+        switch self {
+        case .victory:
+            return .levelEnd
+        case .defeat:
+            return .absorbed
+        }
     }
 }

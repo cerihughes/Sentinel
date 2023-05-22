@@ -5,10 +5,13 @@ class GameViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
     override func createViewController(token: Navigation, context: Context) -> UIViewController? {
-        guard let localDataSource, case let .game(level) = token else { return nil }
+        guard let localDataSource, let audioManager, case let .game(level) = token else { return nil }
 
-        let worldBuilder = WorldBuilder.createDefault(level: level)
-        let viewModel = GameViewModel(worldBuilder: worldBuilder, localDataSource: localDataSource)
+        let viewModel = GameViewModel(
+            worldBuilder: .createDefault(level: level),
+            localDataSource: localDataSource,
+            audioManager: audioManager
+        )
         return GameContainerViewController(navigationContext: context, viewModel: viewModel)
     }
 }

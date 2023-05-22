@@ -3,12 +3,18 @@ import XCTest
 
 final class GameViewModelTests: XCTestCase {
     private var localDataSource: MockLocalDataSource!
+    private var audioManager: MockAudioManager!
     private var viewModel: GameViewModel!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         localDataSource = .init()
-        viewModel = GameViewModel(worldBuilder: WorldBuilder.createMock(), localDataSource: localDataSource)
+        audioManager = .init()
+        viewModel = GameViewModel(
+            worldBuilder: WorldBuilder.createMock(),
+            localDataSource: localDataSource,
+            audioManager: audioManager
+        )
     }
 
     override func tearDownWithError() throws {
