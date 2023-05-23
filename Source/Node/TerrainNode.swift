@@ -12,21 +12,24 @@ class TerrainNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
+    var floorNodes: [FloorNode] {
+        childNodes.compactMap { $0 as? FloorNode }
+    }
+
+    var slopeNodes: [SlopeNode] {
+        childNodes.compactMap { $0 as? SlopeNode }
+    }
+
     var sentinelNode: SentinelNode? {
-        return childNode(withName: sentinelNodeName, recursively: true) as? SentinelNode
+        childNode(withName: sentinelNodeName, recursively: true) as? SentinelNode
     }
 
     var sentryNodes: [SentryNode] {
-        let floorNodes = childNodes.compactMap { $0 as? FloorNode }
-        return floorNodes.compactMap { $0.sentryNode }
+        floorNodes.compactMap { $0.sentryNode }
     }
 
     var opponentNodes: [OpponentNode] {
-        var nodes: [OpponentNode] = []
-        if let sentinelNode = sentinelNode {
-            nodes.append(sentinelNode)
-        }
-        nodes.append(contentsOf: sentryNodes)
-        return nodes
+        ([sentinelNode] + sentryNodes)
+            .compactMap { $0 }
     }
 }
