@@ -12,8 +12,17 @@ class IntroViewModel {
     }
 
     func animate() {
+        animateCamera()
         animateTerrain()
         animateSentinel()
+    }
+
+    private func animateCamera() {
+        let initialPosition = built.initialCameraNode.position
+        built.initialCameraNode.position = built.terrainNode.position
+        let action = SCNAction.move(to: initialPosition, duration: 30)
+        action.timingMode = .easeInEaseOut
+        built.initialCameraNode.runAction(action)
     }
 
     private func animateTerrain() {
