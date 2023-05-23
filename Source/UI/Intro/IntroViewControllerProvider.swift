@@ -9,6 +9,7 @@ class IntroViewControllerProvider: TypedViewControllerProvider {
         navigationContext: ForwardBackNavigationContext
     ) -> UIViewController? {
         guard token == .intro else { return nil }
-        return IntroViewController(navigationContext: navigationContext)
+        let viewModel = IntroViewModel()
+        return IntroViewController(navigationContext: navigationContext, viewModel: viewModel)
     }
 }

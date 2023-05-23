@@ -1,21 +1,26 @@
 import Madog
+import SceneKit
 import UIKit
 
-class IntroViewController: UIViewController {
-    let navigationContext: ForwardBackNavigationContext
+class IntroViewController: SceneViewController {
+    private let navigationContext: ForwardBackNavigationContext
+    private let viewModel: IntroViewModel
 
-    init(navigationContext: ForwardBackNavigationContext) {
+    init(navigationContext: ForwardBackNavigationContext, viewModel: IntroViewModel) {
         self.navigationContext = navigationContext
-        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+        super.init(scene: viewModel.built.scene, cameraNode: viewModel.built.initialCameraNode)
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.animate()
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        sceneView.addGestureRecognizer(tapGestureRecognizer)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
         navigationContext.showLobby()
     }
 }

@@ -11,9 +11,8 @@ class LevelSummaryViewModel {
 
     func startAnimations() {
         let rotationAction = SCNAction.rotateBy(x: 0, y: .radiansInCircle, z: 0, duration: 3.0)
-        let repeatedAction = SCNAction.repeatForever(rotationAction)
-        for opponentNode in built.terrainOperations.nodeManipulator.terrainNode.opponentNodes {
-            opponentNode.runAction(repeatedAction)
+        for opponentNode in built.terrainNode.opponentNodes {
+            opponentNode.runAction(.repeatForever(rotationAction))
         }
     }
 

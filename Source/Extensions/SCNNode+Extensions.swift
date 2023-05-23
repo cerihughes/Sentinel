@@ -118,3 +118,9 @@ extension SCNNode {
         SCNTransaction.commit()
     }
 }
+
+extension SCNVector3 {
+    var opposite: SCNVector3 {
+        .init(-x, -y, -z)
+    }
+}
