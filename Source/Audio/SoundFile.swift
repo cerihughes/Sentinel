@@ -8,6 +8,7 @@ enum SoundFile: String {
     case buildStart2 = "BuildStart2.mp3"
     case levelEnd = "LevelEnd.mp3"
     case teleport = "Teleport.mp3"
+    case theme = "Theme.mp3"
 }
 
 extension SCNNode {

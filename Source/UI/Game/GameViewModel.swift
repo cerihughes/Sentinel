@@ -69,7 +69,7 @@ class GameViewModel {
         gameScore.levelScores[worldBuilder.levelConfiguration.level] = levelScore
         localDataSource.localStorage.gameScore = gameScore
 
-        _ = audioManager.play(soundFile: outcome.soundFile)
+        audioManager.play(soundFile: outcome.soundFile)
         delegate?.gameViewModel(self, levelDidEndWith: outcome)
     }
 }
