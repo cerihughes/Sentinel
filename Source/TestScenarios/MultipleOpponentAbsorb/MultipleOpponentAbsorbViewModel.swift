@@ -22,7 +22,7 @@ class MultipleOpponentAbsorbViewModel {
         rocksCreated = grid.addRockNodesToLowestLevel()
 
         let nodeMap = NodeMap()
-        let nodePositioning = levelConfiguration.createNodePositioning()
+        let nodePositioning = grid.createNodePositioning()
         let nodeFactory = NodeFactory(
             nodePositioning: nodePositioning,
             detectionRadius: levelConfiguration.opponentDetectionRadius * .floorSize,

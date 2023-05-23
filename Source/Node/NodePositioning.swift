@@ -28,8 +28,8 @@ class NodePositioning {
     }
 }
 
-extension GridConfiguration {
+extension Grid {
     func createNodePositioning() -> NodePositioning {
-        .init(gridWidth: gridWidth, gridDepth: gridDepth)
+        .init(gridWidth: width, gridDepth: depth)
     }
 }
