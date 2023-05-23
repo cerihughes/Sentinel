@@ -1,14 +1,26 @@
 import SceneKit
 
 class IntroViewModel {
+    private let audioManager: AudioManager
     let built: IntroWorldBuilder.Built
 
-    init() {
+    private var token: PlaybackToken?
+
+    init(audioManager: AudioManager) {
+        self.audioManager = audioManager
         let worldBuilder = IntroWorldBuilder(
             terrainGenerator: IntroTerrainGenerator(),
             materialFactory: IntroMaterialFactory()
         )
         built = worldBuilder.build()
+    }
+
+    func startAudio() {
+        token = audioManager.play(soundFile: .theme)
+    }
+
+    func stopAudio() {
+        token?.fadeOut(duration: 1)
     }
 
     func animate() {

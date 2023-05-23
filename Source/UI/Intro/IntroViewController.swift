@@ -14,6 +14,7 @@ class IntroViewController: SceneViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.startAudio()
         viewModel.animate()
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
@@ -21,6 +22,7 @@ class IntroViewController: SceneViewController {
     }
 
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
+        viewModel.stopAudio()
         navigationContext.showLobby()
     }
 }
