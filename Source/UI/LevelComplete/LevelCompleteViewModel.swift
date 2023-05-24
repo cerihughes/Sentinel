@@ -1,23 +1,23 @@
 import SceneKit
 
 class LevelCompleteViewModel {
-    let worldBuilder: WorldBuilder
-    let built: WorldBuilder.Built
+    let level: Int
+    let terrain: WorldBuilder.Terrain
 
-    init(worldBuilder: WorldBuilder) {
-        self.worldBuilder = worldBuilder
-        built = worldBuilder.build()
+    init(level: Int, worldBuilder: WorldBuilder) {
+        self.level = level
+        terrain = worldBuilder.buildTerrain()
     }
 
     func startAnimations() {
         let rotationAction = SCNAction.rotateBy(x: 0, y: .radiansInCircle, z: 0, duration: 3.0)
-        for opponentNode in built.terrainNode.opponentNodes {
+        for opponentNode in terrain.terrainNode.opponentNodes {
             opponentNode.runAction(.repeatForever(rotationAction))
         }
     }
 
     func stopAnimations() {
-        for opponentNode in built.terrainOperations.nodeManipulator.terrainNode.opponentNodes {
+        for opponentNode in terrain.terrainOperations.nodeManipulator.terrainNode.opponentNodes {
             opponentNode.removeAllActions()
         }
     }

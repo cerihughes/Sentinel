@@ -24,7 +24,7 @@ final class GameViewModelTests: XCTestCase {
     }
 
     func testInitiallyHasNoTeleportsAfterEnteringScene() {
-        XCTAssertTrue(viewModel.built.playerOperations.enterScene())
+        XCTAssertTrue(viewModel.operations.playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.teleports, 0)
     }
 
@@ -149,14 +149,14 @@ final class GameViewModelTests: XCTestCase {
     func testSentinelAbsorbed() {
         let delegate = MockGameViewModelDelegate()
         viewModel.delegate = delegate
-        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+        viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
         XCTAssertEqual(delegate.lastOutcome, .victory)
     }
 
     func testTeleportOntoFloor() throws {
         playerOperations.buildSynthoid(at: .floor1)
 
-        XCTAssertTrue(viewModel.built.playerOperations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
 
         playerOperations.move(to: .floor1)
@@ -167,7 +167,7 @@ final class GameViewModelTests: XCTestCase {
         playerOperations.buildRock(at: .floor2)
         playerOperations.buildSynthoid(at: .floor2)
 
-        XCTAssertTrue(viewModel.built.playerOperations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
 
         playerOperations.move(to: .floor2)
@@ -179,7 +179,7 @@ final class GameViewModelTests: XCTestCase {
         playerOperations.buildRock(at: .floor3)
         playerOperations.buildSynthoid(at: .floor3)
 
-        XCTAssertTrue(viewModel.built.playerOperations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.highestPoint, 0)
 
         playerOperations.move(to: .floor3)
@@ -196,7 +196,7 @@ final class GameViewModelTests: XCTestCase {
         delegate.outcomeExpectation = outcomeExpectation
 
         viewModel.delegate = delegate
-        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+        viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
 
         waitForExpectations(timeout: 1)
         XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 3))
@@ -208,8 +208,8 @@ final class GameViewModelTests: XCTestCase {
         delegate.outcomeExpectation = outcomeExpectation
 
         viewModel.delegate = delegate
-        viewModel.built.synthoidEnergy.adjust(delta: -9)
-        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+        viewModel.operations.synthoidEnergy.adjust(delta: -9)
+        viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
 
         waitForExpectations(timeout: 1)
         XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 2))
@@ -221,8 +221,8 @@ final class GameViewModelTests: XCTestCase {
         delegate.outcomeExpectation = outcomeExpectation
 
         viewModel.delegate = delegate
-        viewModel.built.synthoidEnergy.adjust(delta: 20)
-        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+        viewModel.operations.synthoidEnergy.adjust(delta: 20)
+        viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
 
         waitForExpectations(timeout: 1)
         XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 8))
@@ -234,7 +234,7 @@ final class GameViewModelTests: XCTestCase {
         delegate.outcomeExpectation = outcomeExpectation
 
         viewModel.delegate = delegate
-        viewModel.built.synthoidEnergy.adjust(delta: -100)
+        viewModel.operations.synthoidEnergy.adjust(delta: -100)
 
         waitForExpectations(timeout: 1)
         XCTAssertEqual(delegate.lastOutcome, .defeat)
@@ -244,11 +244,7 @@ final class GameViewModelTests: XCTestCase {
 
 private extension GameViewModelTests {
     var playerOperations: PlayerOperations! {
-        viewModel.built.playerOperations
-    }
-
-    var nodeMap: NodeMap {
-        viewModel.built.nodeMap
+        viewModel.operations.playerOperations
     }
 }
 

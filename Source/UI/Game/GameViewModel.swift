@@ -8,8 +8,8 @@ protocol GameViewModelDelegate: AnyObject {
 
 class GameViewModel {
     private let level: Int
-    let worldBuilder: WorldBuilder
-    let built: WorldBuilder.Built
+    let terrain: WorldBuilder.Terrain
+    let operations: WorldBuilder.Operations
     let inputHandler: SwipeInputHandler
     private let localDataSource: LocalDataSource
     private let audioManager: AudioManager
@@ -21,30 +21,30 @@ class GameViewModel {
 
     init(level: Int, worldBuilder: WorldBuilder, localDataSource: LocalDataSource, audioManager: AudioManager) {
         self.level = level
-        self.worldBuilder = worldBuilder
         self.localDataSource = localDataSource
         self.audioManager = audioManager
-        built = worldBuilder.build()
+        terrain = worldBuilder.buildTerrain()
+        operations = terrain.createOperations()
         gameScore = localDataSource.localStorage.gameScore ?? .init()
-        let inputHandler = SwipeInputHandler(nodeMap: built.nodeMap, nodeManipulator: built.nodeManipulator)
+        let inputHandler = SwipeInputHandler(nodeMap: terrain.nodeMap, nodeManipulator: terrain.nodeManipulator)
 
-        built.playerOperations.preAnimationBlock = {
+        operations.playerOperations.preAnimationBlock = {
             inputHandler.setGestureRecognisersEnabled(false)
         }
 
-        built.playerOperations.postAnimationBlock = {
+        operations.playerOperations.postAnimationBlock = {
             inputHandler.setGestureRecognisersEnabled(true)
         }
 
         self.inputHandler = inputHandler
         self.inputHandler.delegate = self
 
-        built.synthoidEnergy.energyPublisher
+        operations.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
             .sink(receiveValue: energyUpdated(_:))
             .store(in: &cancellables)
 
-        built.playerOperations.delegate = self
+        operations.playerOperations.delegate = self
     }
 
     func nextNavigationToken() -> Navigation? {
@@ -63,7 +63,7 @@ class GameViewModel {
 
     private func endLevelWithOutcome(_ outcome: LevelScore.Outcome) {
         levelScore.outcome = outcome
-        levelScore.finalEnergy = built.synthoidEnergy.energy
+        levelScore.finalEnergy = operations.synthoidEnergy.energy
         gameScore.levelScores[level] = levelScore
         localDataSource.localStorage.gameScore = gameScore
 
@@ -83,7 +83,7 @@ extension GameViewModel: PlayerOperationsDelegate {
         switch operation {
         case .enterScene(let gridPoint):
             playerOperationsDidEnterScene(at: gridPoint)
-            built.timeMachine.start()
+            operations.timeMachine.start()
         case .build(let buildableItem):
             playerOperationsDidBuild(buildableItem)
         case .absorb(let absorbableItem):
@@ -94,7 +94,7 @@ extension GameViewModel: PlayerOperationsDelegate {
     }
 
     private func playerOperationsDidEnterScene(at gridPoint: GridPoint) {
-        guard let piece = built.terrainOperations.grid.piece(at: gridPoint), piece.isFloor else { return }
+        guard let piece = terrain.terrainOperations.grid.piece(at: gridPoint), piece.isFloor else { return }
         let floorHeight = Int(piece.level)
         levelScore.didEnterScene(at: gridPoint, height: floorHeight)
     }
@@ -112,8 +112,8 @@ extension GameViewModel: PlayerOperationsDelegate {
 
     private func playerOperationsDidTeleport(to gridPoint: GridPoint) {
         guard
-            let floorNode = built.nodeMap.floorNode(at: gridPoint),
-            let piece = built.terrainOperations.grid.piece(at: gridPoint),
+            let floorNode = terrain.nodeMap.floorNode(at: gridPoint),
+            let piece = terrain.terrainOperations.grid.piece(at: gridPoint),
             piece.isFloor
         else {
             return
@@ -128,7 +128,7 @@ extension GameViewModel: PlayerOperationsDelegate {
 
 extension GameViewModel: SwipeInputHandlerDelegate {
     private var playerOperations: PlayerOperations {
-        built.playerOperations
+        operations.playerOperations
     }
 
     func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler) {
@@ -138,7 +138,9 @@ extension GameViewModel: SwipeInputHandlerDelegate {
     }
 
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
-        guard let floorNode = built.nodeMap.floorNode(at: built.terrainOperations.grid.currentPosition) else { return }
+        guard let floorNode = terrain.nodeMap.floorNode(at: terrain.terrainOperations.grid.currentPosition) else {
+            return
+        }
         floorNode.play(soundFile: .teleport)
         playerOperations.move(to: point)
     }

@@ -9,7 +9,7 @@ class IntroViewController: SceneViewController {
     init(navigationContext: ForwardBackNavigationContext, viewModel: IntroViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
-        super.init(scene: viewModel.built.scene, cameraNode: viewModel.built.initialCameraNode)
+        super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
     }
 
     override func viewDidLoad() {

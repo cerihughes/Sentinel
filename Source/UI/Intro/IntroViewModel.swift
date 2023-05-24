@@ -2,17 +2,20 @@ import SceneKit
 
 class IntroViewModel {
     private let audioManager: AudioManager
-    let built: IntroWorldBuilder.Built
+    private let world = IntroWorld()
+    let terrain: WorldBuilder.Terrain
 
     private var token: PlaybackToken?
 
     init(audioManager: AudioManager) {
         self.audioManager = audioManager
-        let worldBuilder = IntroWorldBuilder(
+        let worldBuilder = WorldBuilder(
             terrainGenerator: IntroTerrainGenerator(),
-            materialFactory: IntroMaterialFactory()
+            materialFactory: IntroMaterialFactory(),
+            world: world,
+            animatable: true
         )
-        built = worldBuilder.build()
+        terrain = worldBuilder.buildTerrain(initialCameraPosition: world.sentinelNode.position.opposite)
     }
 
     func startAudio() {
@@ -30,15 +33,15 @@ class IntroViewModel {
     }
 
     private func animateCamera() {
-        let initialPosition = built.initialCameraNode.position
-        built.initialCameraNode.position = built.terrainNode.position
+        let initialPosition = terrain.initialCameraNode.position
+        terrain.initialCameraNode.position = terrain.terrainNode.position
         let action = SCNAction.move(to: initialPosition, duration: 30)
         action.timingMode = .easeInEaseOut
-        built.initialCameraNode.runAction(action)
+        terrain.initialCameraNode.runAction(action)
     }
 
     private func animateTerrain() {
-        for slopeNode in built.terrainNode.slopeNodes {
+        for slopeNode in terrain.terrainNode.slopeNodes {
             let from = SCNVector3.randomValue(range: 1000)
             let to = slopeNode.position
             slopeNode.position = from
@@ -53,7 +56,7 @@ class IntroViewModel {
 
     private func animateSentinel() {
         let rotationAction = SCNAction.rotateBy(x: 0, y: .radiansInCircle / 2, z: 0, duration: 15.0)
-        built.sentinelNode.runAction(rotationAction)
+        world.sentinelNode.runAction(rotationAction)
     }
 }
 

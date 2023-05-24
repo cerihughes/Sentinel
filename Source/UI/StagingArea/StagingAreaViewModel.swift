@@ -2,13 +2,15 @@
 import SceneKit
 
 class StagingAreaViewModel {
-    let built: WorldBuilder.Built
+    let terrain: WorldBuilder.Terrain
+    let operations: WorldBuilder.Operations
 
     init(level: Int = 4) {
         let worldBuilder = WorldBuilder.createDefault(level: level)
-        built = worldBuilder.build()
-        built.playerOperations.enterScene()
-        built.timeMachine.start()
+        terrain = worldBuilder.buildTerrain()
+        operations = terrain.createOperations()
+        operations.playerOperations.enterScene()
+        operations.timeMachine.start()
     }
 }
 #endif

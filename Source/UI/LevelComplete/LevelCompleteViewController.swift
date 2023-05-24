@@ -11,7 +11,7 @@ class LevelCompleteViewController: SceneViewController {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
-        super.init(scene: viewModel.built.scene, cameraNode: viewModel.built.initialCameraNode)
+        super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
 
         tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
     }
@@ -42,6 +42,6 @@ class LevelCompleteViewController: SceneViewController {
     @objc
     private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
-        navigationContext.showGame(level: viewModel.worldBuilder.levelConfiguration.level)
+        navigationContext.showGame(level: viewModel.level)
     }
 }
