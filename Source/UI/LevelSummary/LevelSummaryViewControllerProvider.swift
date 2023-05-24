@@ -7,7 +7,7 @@ class LevelSummaryViewControllerProvider: TypedViewControllerProvider {
     override func createViewController(token: Navigation, context: Context) -> UIViewController? {
         guard case let .levelSummary(level) = token else { return nil }
         let worldBuilder = WorldBuilder.createDefault(level: level)
-        let viewModel = LevelSummaryViewModel(worldBuilder: worldBuilder)
+        let viewModel = LevelSummaryViewModel(level: level, worldBuilder: worldBuilder)
         return LevelSummaryViewController(navigationContext: context, viewModel: viewModel)
     }
 }

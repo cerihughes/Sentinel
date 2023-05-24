@@ -11,6 +11,7 @@ final class GameViewModelTests: XCTestCase {
         localDataSource = .init()
         audioManager = .init()
         viewModel = GameViewModel(
+            level: 1,
             worldBuilder: WorldBuilder.createMock(),
             localDataSource: localDataSource,
             audioManager: audioManager
@@ -183,6 +184,61 @@ final class GameViewModelTests: XCTestCase {
 
         playerOperations.move(to: .floor3)
         XCTAssertEqual(viewModel.levelScore.highestPoint, 1)
+    }
+
+    func testNextToken_gameInProgress() {
+        XCTAssertNil(viewModel.nextNavigationToken())
+    }
+
+    func testNextToken_victory_defaultEnergy() {
+        let outcomeExpectation = expectation(description: "Level Finished")
+        let delegate = MockGameViewModelDelegate()
+        delegate.outcomeExpectation = outcomeExpectation
+
+        viewModel.delegate = delegate
+        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 3))
+    }
+
+    func testNextToken_victory_lowEnergy() {
+        let outcomeExpectation = expectation(description: "Level Finished")
+        let delegate = MockGameViewModelDelegate()
+        delegate.outcomeExpectation = outcomeExpectation
+
+        viewModel.delegate = delegate
+        viewModel.built.synthoidEnergy.adjust(delta: -9)
+        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 2))
+    }
+
+    func testNextToken_victory_highEnergy() {
+        let outcomeExpectation = expectation(description: "Level Finished")
+        let delegate = MockGameViewModelDelegate()
+        delegate.outcomeExpectation = outcomeExpectation
+
+        viewModel.delegate = delegate
+        viewModel.built.synthoidEnergy.adjust(delta: 20)
+        viewModel.playerOperations(viewModel.built.playerOperations, didPerform: .absorb(.sentinel))
+
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 8))
+    }
+
+    func testNextToken_defeat() {
+        let outcomeExpectation = expectation(description: "Level Finished")
+        let delegate = MockGameViewModelDelegate()
+        delegate.outcomeExpectation = outcomeExpectation
+
+        viewModel.delegate = delegate
+        viewModel.built.synthoidEnergy.adjust(delta: -100)
+
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(delegate.lastOutcome, .defeat)
+        XCTAssertNil(viewModel.nextNavigationToken())
     }
 }
 

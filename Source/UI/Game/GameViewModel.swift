@@ -7,6 +7,7 @@ protocol GameViewModelDelegate: AnyObject {
 }
 
 class GameViewModel {
+    private let level: Int
     let worldBuilder: WorldBuilder
     let built: WorldBuilder.Built
     let inputHandler: SwipeInputHandler
@@ -18,7 +19,8 @@ class GameViewModel {
 
     private var cancellables: Set<AnyCancellable> = []
 
-    init(worldBuilder: WorldBuilder, localDataSource: LocalDataSource, audioManager: AudioManager) {
+    init(level: Int, worldBuilder: WorldBuilder, localDataSource: LocalDataSource, audioManager: AudioManager) {
+        self.level = level
         self.worldBuilder = worldBuilder
         self.localDataSource = localDataSource
         self.audioManager = audioManager
@@ -48,14 +50,10 @@ class GameViewModel {
     func nextNavigationToken() -> Navigation? {
         if levelScore.outcome == .victory {
             // TODO: Need a "success" screen
-            return .levelSummary(level: currentLevel + levelScore.nextLevelIncrement)
+            return .levelSummary(level: level + levelScore.nextLevelIncrement)
         }
         // TODO: Need a "game over" screen
         return nil
-    }
-
-    private var currentLevel: Int {
-        worldBuilder.levelConfiguration.level
     }
 
     private func energyUpdated(_ energy: Int) {
@@ -66,7 +64,7 @@ class GameViewModel {
     private func endLevelWithOutcome(_ outcome: LevelScore.Outcome) {
         levelScore.outcome = outcome
         levelScore.finalEnergy = built.synthoidEnergy.energy
-        gameScore.levelScores[worldBuilder.levelConfiguration.level] = levelScore
+        gameScore.levelScores[level] = levelScore
         localDataSource.localStorage.gameScore = gameScore
 
         audioManager.play(soundFile: outcome.soundFile)

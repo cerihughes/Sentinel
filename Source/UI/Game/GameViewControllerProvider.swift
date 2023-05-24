@@ -8,6 +8,7 @@ class GameViewControllerProvider: TypedViewControllerProvider {
         guard let localDataSource, let audioManager, case let .game(level) = token else { return nil }
 
         let viewModel = GameViewModel(
+            level: level,
             worldBuilder: .createDefault(level: level),
             localDataSource: localDataSource,
             audioManager: audioManager
