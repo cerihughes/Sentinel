@@ -53,6 +53,6 @@ final class TerrainGeneratorTests: XCTestCase {
 
 private extension DefaultTerrainGenerator {
     convenience init(level: Int) {
-        self.init(gridConfiguration: DefaultLevelConfiguration(level: level))
+        self.init(levelConfiguration: DefaultLevelConfiguration(level: level))
     }
 }

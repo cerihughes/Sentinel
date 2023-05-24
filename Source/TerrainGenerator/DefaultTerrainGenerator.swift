@@ -1,14 +1,14 @@
 import Foundation
 
 class DefaultTerrainGenerator: TerrainGenerator {
-    private let gridConfiguration: GridConfiguration
+    private let levelConfiguration: LevelConfiguration
     private let builder: GridBuilder
     private let gen: ValueGenerator
 
-    init(gridConfiguration: GridConfiguration) {
-        self.gridConfiguration = gridConfiguration
-        builder = .init(width: gridConfiguration.gridWidth, depth: gridConfiguration.gridDepth)
-        gen = CosineValueGenerator(input: gridConfiguration.level)
+    init(levelConfiguration: LevelConfiguration) {
+        self.levelConfiguration = levelConfiguration
+        builder = .init(width: levelConfiguration.gridWidth, depth: levelConfiguration.gridDepth)
+        gen = CosineValueGenerator(input: levelConfiguration.level)
     }
 
     func generate() -> Grid {
@@ -32,39 +32,39 @@ class DefaultTerrainGenerator: TerrainGenerator {
 
     private func generateLargePlateaus() {
         generatePlateaus(
-            sizeRange: gridConfiguration.largePlateauSizeRange,
-            countRange: gridConfiguration.largePlateauCountRange
+            sizeRange: levelConfiguration.largePlateauSizeRange,
+            countRange: levelConfiguration.largePlateauCountRange
         )
     }
 
     private func generateSmallPlateaus() {
         generatePlateaus(
-            sizeRange: gridConfiguration.smallPlateauSizeRange,
-            countRange: gridConfiguration.smallPlateauCountRange
+            sizeRange: levelConfiguration.smallPlateauSizeRange,
+            countRange: levelConfiguration.smallPlateauCountRange
         )
     }
 
     private func generateLargePeaks() {
-        generatePeaks(summitSize: 3, countRange: gridConfiguration.largePeakCountRange)
+        generatePeaks(summitSize: 3, countRange: levelConfiguration.largePeakCountRange)
     }
 
     private func generateMediumPeaks() {
-        generatePeaks(summitSize: 2, countRange: gridConfiguration.mediumPeakCountRange)
+        generatePeaks(summitSize: 2, countRange: levelConfiguration.mediumPeakCountRange)
     }
 
     private func generateSmallPeaks() {
-        generatePeaks(summitSize: 1, countRange: gridConfiguration.smallPeakCountRange)
+        generatePeaks(summitSize: 1, countRange: levelConfiguration.smallPeakCountRange)
     }
 
     private func generateTrees() -> [GridPoint] {
-        let countRange = gridConfiguration.treeCountRange
+        let countRange = levelConfiguration.treeCountRange
         return GridQuadrant.allCases.flatMap { generateTrees(countRange: countRange, quadrant: $0) }
     }
 
     private func generateSentinel() -> GridPoint {
         guard let highestPiece = highestPiece(in: builder.emptyFloorPiecesByLevel()) else { return .undefined }
         let sentinelPosition = highestPiece.point
-        for _ in 0 ..< gridConfiguration.sentinelPlatformHeight {
+        for _ in 0 ..< levelConfiguration.sentinelPlatformHeight {
             builder.buildFloor(at: sentinelPosition)
         }
         return sentinelPosition
@@ -76,7 +76,7 @@ class DefaultTerrainGenerator: TerrainGenerator {
     }
 
     private func generateSentries() -> [GridPoint] {
-        let sentries = min(gridConfiguration.sentryCount, 3)
+        let sentries = min(levelConfiguration.sentryCount, 3)
         guard sentries > 0, let sentinelPosition = builder.sentinelPosition else { return [] }
         let points = GridQuadrant.allCases
             .filter { !$0.contains(point: sentinelPosition, sizeable: builder) }

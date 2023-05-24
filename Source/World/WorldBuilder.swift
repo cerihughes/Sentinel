@@ -24,11 +24,7 @@ struct WorldBuilder {
         let grid = terrainGenerator.generate()
         let nodeMap = NodeMap()
         let nodePositioning = grid.createNodePositioning()
-        let nodeFactory = NodeFactory(
-            nodePositioning: nodePositioning,
-            detectionRadius: levelConfiguration.opponentDetectionRadius * .floorSize,
-            materialFactory: materialFactory
-        )
+        let nodeFactory = NodeFactory(nodePositioning: nodePositioning, materialFactory: materialFactory)
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
         let scene = SCNScene()
         world.buildWorld(in: scene, around: terrainNode)
@@ -62,11 +58,7 @@ struct WorldBuilder {
                 synthoidEnergy: synthoidEnergy,
                 initialCameraNode: initialCameraNode
             ),
-            opponentsOperations: .init(
-                opponentConfiguration: levelConfiguration,
-                terrainOperations: terrainOperations,
-                timeMachine: timeMachine
-            )
+            opponentsOperations: .init(terrainOperations: terrainOperations, timeMachine: timeMachine)
         )
     }
 }
@@ -76,7 +68,7 @@ extension WorldBuilder {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
         return .init(
             levelConfiguration: levelConfiguration,
-            terrainGenerator: DefaultTerrainGenerator(gridConfiguration: levelConfiguration),
+            terrainGenerator: DefaultTerrainGenerator(levelConfiguration: levelConfiguration),
             materialFactory: DefaultMaterialFactory(level: level),
             world: world,
             animatable: true

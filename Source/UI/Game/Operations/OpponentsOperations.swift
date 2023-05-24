@@ -8,14 +8,12 @@ protocol OpponentsOperationsDelegate: AnyObject {
 }
 
 class OpponentsOperations {
-    private let opponentConfiguration: OpponentConfiguration
     private let terrainOperations: TerrainOperations
     private let timeMachine: TimeMachine
 
     weak var delegate: OpponentsOperationsDelegate?
 
-    init(opponentConfiguration: OpponentConfiguration, terrainOperations: TerrainOperations, timeMachine: TimeMachine) {
-        self.opponentConfiguration = opponentConfiguration
+    init(terrainOperations: TerrainOperations, timeMachine: TimeMachine) {
         self.terrainOperations = terrainOperations
         self.timeMachine = timeMachine
 
@@ -37,10 +35,7 @@ class OpponentsOperations {
             timeInterval: .animationDuration * 2.0,
             function: absorbObjects(timeInterval:renderer:lastResult:)
         )
-        timeMachine.add(
-            timeInterval: opponentConfiguration.opponentRotationPause,
-            function: rotation(timeInterval:renderer:lastResult:)
-        )
+        timeMachine.add(timeInterval: 5.0, function: rotation(timeInterval:renderer:lastResult:))
         timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:renderer:lastResult:))
     }
 
@@ -94,7 +89,7 @@ class OpponentsOperations {
     }
 
     private func rotation(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
-        let radians = 2.0 * Float.pi / Float(opponentConfiguration.opponentRotationSteps)
+        let radians = 2.0 * Float.pi / 12.0 // 12 rotation "steps"
         for opponentNode in nodeManipulator.terrainNode.opponentNodes {
             guard opponentNode.hasVisibleItemsToAbsorb(in: renderer) == false else { continue }
             nodeManipulator.rotate(opponentNode: opponentNode, by: radians)
