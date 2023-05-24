@@ -3,9 +3,6 @@ import Foundation
 
 class MockLevelConfiguration: LevelConfiguration {
     var level = 1
-    var opponentDetectionRadius = Float(5.0)
-    var opponentRotationSteps = 12
-    var opponentRotationPause = 5.0
 
     var gridWidth = 8
     var gridDepth = 8

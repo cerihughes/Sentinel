@@ -20,17 +20,15 @@ class NodeFactory {
     private let tree: TreeNode
     private let rock: RockNode
 
-    init(nodePositioning: NodePositioning,
-         detectionRadius: Float,
-         materialFactory: MaterialFactory) {
+    init(nodePositioning: NodePositioning, materialFactory: MaterialFactory) {
         self.nodePositioning = nodePositioning
 
         cube1 = FloorNode(colour: materialFactory.floor1Colour)
         cube2 = FloorNode(colour: materialFactory.floor2Colour)
         slope1 = SlopeNode(colour: materialFactory.slope1Colour)
         slope2 = SlopeNode(colour: materialFactory.slope2Colour)
-        sentinel = SentinelNode(detectionRadius: detectionRadius)
-        sentry = SentryNode(detectionRadius: detectionRadius)
+        sentinel = SentinelNode()
+        sentry = SentryNode()
         synthoid = SynthoidNode()
         tree = TreeNode()
         rock = RockNode()

@@ -16,12 +16,7 @@ struct IntroWorldBuilder {
         let grid = terrainGenerator.generate()
         let nodeMap = NodeMap()
         let nodePositioning = grid.createNodePositioning()
-        let nodeFactory = NodeFactory(
-            nodePositioning: nodePositioning,
-            detectionRadius: 0,
-            materialFactory: materialFactory
-        )
-
+        let nodeFactory = NodeFactory(nodePositioning: nodePositioning, materialFactory: materialFactory)
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
 
         let initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
@@ -29,7 +24,7 @@ struct IntroWorldBuilder {
         initialCameraNode.position = cameraPosition
         initialCameraNode.look(at: terrainNode.position)
 
-        let sentinelNode = SentinelNode(detectionRadius: 0)
+        let sentinelNode = SentinelNode()
         sentinelNode.position = cameraPosition.opposite
         sentinelNode.scale = SCNVector3(75, 75, 75)
         let scene = SCNScene()

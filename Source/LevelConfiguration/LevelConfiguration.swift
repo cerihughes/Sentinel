@@ -1,15 +1,9 @@
 import Foundation
 
-protocol OpponentConfiguration {
-    var opponentDetectionRadius: Float { get }
-    var opponentRotationSteps: Int { get }
-    var opponentRotationPause: TimeInterval { get }
-}
-
 /**
- Describes the level and what it's made up of (trees, terrain, opponents, opponent behaviour etc.)
+ Describes the level and what it's made up of (trees, terrain, opponents etc.)
  */
-protocol GridConfiguration {
+protocol LevelConfiguration {
     var level: Int { get }
 
     var gridWidth: Int { get }
@@ -30,14 +24,9 @@ protocol GridConfiguration {
     var treeCountRange: CountableRange<Int> { get }
 }
 
-typealias LevelConfiguration = OpponentConfiguration & GridConfiguration
-
 struct DefaultLevelConfiguration: LevelConfiguration {
     let level: Int
-    let opponentRotationSteps: Int = 12
 
-    private let detectionRadiusRange = 16.0 ..< 32.0
-    private let rotationPauseRange = 5.0 ..< 8.0
     private let gridWidthRange = 24 ..< 32
     private let gridDepthRange = 16 ..< 24
 
@@ -45,16 +34,6 @@ struct DefaultLevelConfiguration: LevelConfiguration {
 
     private var progression: Float {
         return Float(level) / Float(maxLevel)
-    }
-
-    var opponentDetectionRadius: Float {
-        let adjustment = progression * Float(detectionRadiusRange.upperBound - detectionRadiusRange.lowerBound)
-        return Float(detectionRadiusRange.lowerBound) + adjustment
-    }
-
-    var opponentRotationPause: TimeInterval {
-        let adjustment = TimeInterval(progression) * rotationPauseRange.lowerBound - rotationPauseRange.upperBound
-        return rotationPauseRange.upperBound - adjustment
     }
 
     var gridWidth: Int {
