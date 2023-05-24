@@ -24,7 +24,7 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
         let capsuleNode = SCNNode(geometry: capsule)
         addChildNode(capsuleNode)
 
-        let eyeNode = EyeNode(detectionRadius: nil)
+        let eyeNode = EyeNode()
         eyeNode.position.y += .floorSize / 4.0
         eyeNode.position.z = -radius
         addChildNode(eyeNode)

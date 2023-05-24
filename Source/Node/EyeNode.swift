@@ -3,15 +3,11 @@ import SceneKit
 let eyeNodeName = "eyeNodeName"
 
 class EyeNode: SCNNode {
-    override init() {
-        super.init()
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
-    init(detectionRadius: Float? = nil) {
+    override init() {
         super.init()
 
         let width = CGFloat.floorSize / 3.0
@@ -31,12 +27,7 @@ class EyeNode: SCNNode {
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
         cameraNode.position = SCNVector3Make(0.0, 0.0, .floorSize / -10.0)
-
-        if let detectionRadius = detectionRadius {
-            camera.zFar = Double(detectionRadius)
-        } else {
-            camera.automaticallyAdjustsZRange = true
-        }
+        camera.automaticallyAdjustsZRange = true
 
         boxNode.addChildNode(cameraNode)
         addChildNode(boxNode)

@@ -15,7 +15,7 @@ class MultipleOpponentAbsorbViewModel {
     init() {
         let level = 45
         let levelConfiguration = DefaultLevelConfiguration(level: level)
-        let terrainGenerator = DefaultTerrainGenerator(gridConfiguration: levelConfiguration)
+        let terrainGenerator = DefaultTerrainGenerator(levelConfiguration: levelConfiguration)
         let materialFactory = DefaultMaterialFactory(level: level)
         var grid = terrainGenerator.generate()
         initialTrees = grid.treePositions.count
@@ -23,11 +23,7 @@ class MultipleOpponentAbsorbViewModel {
 
         let nodeMap = NodeMap()
         let nodePositioning = grid.createNodePositioning()
-        let nodeFactory = NodeFactory(
-            nodePositioning: nodePositioning,
-            detectionRadius: levelConfiguration.opponentDetectionRadius * .floorSize,
-            materialFactory: materialFactory
-        )
+        let nodeFactory = NodeFactory(nodePositioning: nodePositioning, materialFactory: materialFactory)
         let terrainNode = nodeFactory.createTerrainNode(grid: grid, nodeMap: nodeMap)
         let world = SpaceWorld()
         world.buildWorld(in: scene, around: terrainNode)
@@ -43,11 +39,7 @@ class MultipleOpponentAbsorbViewModel {
 
         terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
         timeMachine = .init()
-        opponentsOperations = .init(
-            opponentConfiguration: levelConfiguration,
-            terrainOperations: terrainOperations,
-            timeMachine: timeMachine
-        )
+        opponentsOperations = .init(terrainOperations: terrainOperations, timeMachine: timeMachine)
         opponentsOperations.delegate = self
         timeMachine.start()
     }
