@@ -1,10 +1,12 @@
 import SceneKit
 
 class LevelSummaryViewModel {
+    let level: Int
     let worldBuilder: WorldBuilder
     let built: WorldBuilder.Built
 
-    init(worldBuilder: WorldBuilder) {
+    init(level: Int, worldBuilder: WorldBuilder) {
+        self.level = level
         self.worldBuilder = worldBuilder
         built = worldBuilder.build()
     }

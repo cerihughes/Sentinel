@@ -14,12 +14,10 @@ class MockWorld: World {
 
 extension WorldBuilder {
     static func createMock(
-        levelConfiguration: MockLevelConfiguration = MockLevelConfiguration(),
         terrainGenerator: TerrainGenerator = DefaultTerrainGenerator(levelConfiguration: MockLevelConfiguration()),
         world: MockWorld = MockWorld()
     ) -> WorldBuilder {
         .init(
-            levelConfiguration: levelConfiguration,
             terrainGenerator: terrainGenerator,
             materialFactory: MockMaterialFactory(),
             world: world,
@@ -27,14 +25,9 @@ extension WorldBuilder {
         )
     }
 
-    static func createMock(
-        levelConfiguration: MockLevelConfiguration = MockLevelConfiguration(),
-        grid: Grid,
-        world: MockWorld = MockWorld()
-    ) -> WorldBuilder {
+    static func createMock(grid: Grid, world: MockWorld = MockWorld()) -> WorldBuilder {
         let terrainGenerator = MockTerrainGenerator(grid: grid)
         return .init(
-            levelConfiguration: levelConfiguration,
             terrainGenerator: terrainGenerator,
             materialFactory: MockMaterialFactory(),
             world: world,

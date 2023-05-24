@@ -42,6 +42,6 @@ class LevelSummaryViewController: SceneViewController {
     @objc
     private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
-        navigationContext.showGame(level: viewModel.worldBuilder.levelConfiguration.level)
+        navigationContext.showGame(level: viewModel.level)
     }
 }
