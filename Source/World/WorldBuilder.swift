@@ -14,7 +14,6 @@ struct WorldBuilder {
         let playerOperations: PlayerOperations
         let opponentsOperations: OpponentsOperations
     }
-    let levelConfiguration: LevelConfiguration
     let terrainGenerator: TerrainGenerator
     let materialFactory: MaterialFactory
     let world: World
@@ -67,7 +66,6 @@ extension WorldBuilder {
     static func createDefault(level: Int, world: World = SpaceWorld()) -> WorldBuilder {
         let levelConfiguration = DefaultLevelConfiguration(level: level)
         return .init(
-            levelConfiguration: levelConfiguration,
             terrainGenerator: DefaultTerrainGenerator(levelConfiguration: levelConfiguration),
             materialFactory: DefaultMaterialFactory(level: level),
             world: world,
