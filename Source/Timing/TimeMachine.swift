@@ -20,6 +20,7 @@ class TimeMachine: NSObject {
     private var timingFunctions = [UUID: TimeEngineData]()
     private var started = false
 
+    @discardableResult
     func add(timeInterval: TimeInterval, function: @escaping TimeMachineFunction) -> UUID? {
         guard started == false else { return nil }
 

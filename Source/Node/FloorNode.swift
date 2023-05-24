@@ -32,7 +32,7 @@ class FloorNode: SCNNode {
 
     var treeNode: TreeNode? {
         get {
-            return get(name: treeNodeName) as? TreeNode
+            get(name: treeNodeName) as? TreeNode
         }
         set {
             set(instance: newValue, name: treeNodeName)
@@ -41,7 +41,7 @@ class FloorNode: SCNNode {
 
     var synthoidNode: SynthoidNode? {
         get {
-            return get(name: synthoidNodeName) as? SynthoidNode
+            get(name: synthoidNodeName) as? SynthoidNode
         }
         set {
             set(instance: newValue, name: synthoidNodeName)
@@ -50,7 +50,7 @@ class FloorNode: SCNNode {
 
     var sentinelNode: SentinelNode? {
         get {
-            return get(name: sentinelNodeName) as? SentinelNode
+            get(name: sentinelNodeName) as? SentinelNode
         }
         set {
             set(instance: newValue, name: sentinelNodeName)
@@ -59,7 +59,7 @@ class FloorNode: SCNNode {
 
     var sentryNode: SentryNode? {
         get {
-            return get(name: sentryNodeName) as? SentryNode
+            get(name: sentryNodeName) as? SentryNode
         }
         set {
             set(instance: newValue, name: sentryNodeName)
@@ -67,43 +67,29 @@ class FloorNode: SCNNode {
     }
 
     var rockNodes: [RockNode] {
-        return childNodes.compactMap { $0 as? RockNode }
+        childNodes.compactMap { $0 as? RockNode }
     }
 
     func get(name: String) -> SCNNode? {
-        return childNode(withName: name, recursively: false)
+        childNode(withName: name, recursively: false)
     }
 
     func set(instance: SCNNode?, name: String) {
-        _ = remove(name: name)
+        remove(name: name)
         if let node = instance {
             addChildNode(node)
         }
     }
 
-    private func remove(name: String) -> SCNNode? {
-        guard let existing = get(name: name) else {
-            return nil
-        }
-
-        existing.removeFromParentNode()
-        return existing
+    private func remove(name: String) {
+        get(name: name)?.removeFromParentNode()
     }
 
     func add(rockNode: RockNode) {
         addChildNode(rockNode)
     }
 
-    func removeLastRockNode() -> RockNode? {
-        guard let last = rockNodes.last else {
-            return nil
-        }
-
-        last.removeFromParentNode()
-        return last
-    }
-
     var topmostNode: PlaceableSCNNode? {
-        return treeNode ?? sentinelNode ?? sentryNode ?? synthoidNode ?? rockNodes.last
+        treeNode ?? sentinelNode ?? sentryNode ?? synthoidNode ?? rockNodes.last
     }
 }

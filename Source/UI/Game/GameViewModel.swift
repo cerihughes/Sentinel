@@ -135,7 +135,7 @@ extension GameViewModel: SwipeInputHandlerDelegate {
 
     func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler) {
         if !playerOperations.hasEnteredScene() {
-            _ = playerOperations.enterScene()
+            playerOperations.enterScene()
         }
     }
 

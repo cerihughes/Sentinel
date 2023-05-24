@@ -162,7 +162,7 @@ final class OpponentsOperationsTests: XCTestCase, TimeMachineTest {
     }
 
     private func runDetectionTest() {
-        _ = timeMachine.add(timeInterval: 2.0) { [weak self] _, _, _ in
+        timeMachine.add(timeInterval: 2.0) { [weak self] _, _, _ in
             self?.timeMachineCompletedAllOperations = true
             return true
         }
