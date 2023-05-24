@@ -61,6 +61,7 @@ class PlayerOperations {
         grid.currentPosition != .undefined
     }
 
+    @discardableResult
     func enterScene() -> Bool {
         guard let synthoidNode = nodeMap.synthoidNode(at: grid.startPosition) else { return false }
 

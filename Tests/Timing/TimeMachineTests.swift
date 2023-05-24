@@ -81,22 +81,22 @@ final class TimeMachineTests: XCTestCase, TimeMachineTest {
     func testFunctionsRunInOrder() {
         var numbers = [Int]()
 
-        _ = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+        timeMachine.add(timeInterval: 1.0) { _, _, _ in
             numbers.append(1)
             return true
         }
 
-        _ = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+        timeMachine.add(timeInterval: 1.0) { _, _, _ in
             numbers.append(2)
             return true
         }
 
-        _ = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+        timeMachine.add(timeInterval: 1.0) { _, _, _ in
             numbers.append(3)
             return true
         }
 
-        _ = timeMachine.add(timeInterval: 1.0) { _, _, _ in
+        timeMachine.add(timeInterval: 1.0) { _, _, _ in
             numbers.append(4)
             return true
         }
@@ -116,17 +116,17 @@ final class TimeMachineTests: XCTestCase, TimeMachineTest {
     func testFunctionsRunWithDifferentTimeIntervals() {
         var numbers = [Int]()
 
-        _ = timeMachine.add(timeInterval: 1.2) { _, _, _ in
+        timeMachine.add(timeInterval: 1.2) { _, _, _ in
             numbers.append(1)
             return true
         }
 
-        _ = timeMachine.add(timeInterval: 0.8) { _, _, _ in
+        timeMachine.add(timeInterval: 0.8) { _, _, _ in
             numbers.append(2)
             return true
         }
 
-        _ = timeMachine.add(timeInterval: 0.4) { _, _, _ in
+        timeMachine.add(timeInterval: 0.4) { _, _, _ in
             numbers.append(3)
             return true
         }

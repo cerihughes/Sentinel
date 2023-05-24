@@ -7,7 +7,7 @@ class StagingAreaViewModel {
     init(level: Int = 4) {
         let worldBuilder = WorldBuilder.createDefault(level: level)
         built = worldBuilder.build()
-        _ = built.playerOperations.enterScene()
+        built.playerOperations.enterScene()
         built.timeMachine.start()
     }
 }

@@ -33,15 +33,15 @@ class OpponentsOperations {
     }
 
     private func setupTimingFunctions() {
-        _ = timeMachine.add(
+        timeMachine.add(
             timeInterval: .animationDuration * 2.0,
             function: absorbObjects(timeInterval:renderer:lastResult:)
         )
-        _ = timeMachine.add(
+        timeMachine.add(
             timeInterval: opponentConfiguration.opponentRotationPause,
             function: rotation(timeInterval:renderer:lastResult:)
         )
-        _ = timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:renderer:lastResult:))
+        timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:renderer:lastResult:))
     }
 
     private func absorbObjects(timeInterval: TimeInterval, renderer: SCNSceneRenderer, lastResult: Any?) -> Any? {
