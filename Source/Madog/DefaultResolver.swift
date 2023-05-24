@@ -9,7 +9,8 @@ class DefaultResolver: Resolver<Navigation> {
             IntroViewControllerProvider.init,
             LobbyViewControllerProvider.init,
             LevelSummaryViewControllerProvider.init,
-            GameViewControllerProvider.init
+            GameViewControllerProvider.init,
+            LevelCompleteViewControllerProvider.init
         ] + debugViewControllerProviderFunctions()
     }
 

@@ -5,6 +5,7 @@ enum Navigation: Equatable {
     case lobby
     case levelSummary(level: Int)
     case game(level: Int)
+    case levelComplete(level: Int)
 
     #if DEBUG
     // Debug
