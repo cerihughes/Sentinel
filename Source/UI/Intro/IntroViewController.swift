@@ -3,10 +3,10 @@ import SceneKit
 import UIKit
 
 class IntroViewController: SceneViewController {
-    private let navigationContext: ForwardBackNavigationContext
+    private let navigationContext: Context
     private let viewModel: IntroViewModel
 
-    init(navigationContext: ForwardBackNavigationContext, viewModel: IntroViewModel) {
+    init(navigationContext: Context, viewModel: IntroViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
         super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
@@ -23,6 +23,6 @@ class IntroViewController: SceneViewController {
 
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
         viewModel.stopAudio()
-        navigationContext.showLobby()
+        navigationContext.show(.lobby)
     }
 }

@@ -141,9 +141,9 @@ extension GameContainerViewController: GameViewModelDelegate {
     func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcode: LevelScore.Outcome) {
         viewModel.operations.timeMachine.stop()
         if let token = viewModel.nextNavigationToken() {
-            navigationContext.showLevelSummary(token: token)
+            navigationContext.change(to: .basic, tokenData: .single(token))
         } else {
-            navigationContext.showIntro()
+            navigationContext.show(.intro)
         }
     }
 }
