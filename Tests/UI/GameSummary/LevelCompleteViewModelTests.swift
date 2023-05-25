@@ -1,9 +1,9 @@
 import XCTest
 @testable import Sentinel
 
-final class LevelCompleteViewModelTests: XCTestCase {
+final class GameSummaryViewModelTests: XCTestCase {
     private var localDataSource: MockLocalDataSource!
-    private var viewModel: LevelCompleteViewModel!
+    private var viewModel: GameSummaryViewModel!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -20,35 +20,35 @@ final class LevelCompleteViewModelTests: XCTestCase {
         storeLevelScore(outcome: .victory, finalEnergy: 1)
         createViewModel()
 
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 2))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .gamePreview(level: 2))
     }
 
     func testNextToken_victory_energy4() {
         storeLevelScore(outcome: .victory, finalEnergy: 4)
         createViewModel()
 
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 2))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .gamePreview(level: 2))
     }
 
     func testNextToken_victory_energy11() {
         storeLevelScore(outcome: .victory, finalEnergy: 11)
         createViewModel()
 
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 3))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .gamePreview(level: 3))
     }
 
     func testNextToken_victory_energy15() {
         storeLevelScore(outcome: .victory, finalEnergy: 15)
         createViewModel()
 
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 4))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .gamePreview(level: 4))
     }
 
     func testNextToken_victory_energy16() {
         storeLevelScore(outcome: .victory, finalEnergy: 16)
         createViewModel()
 
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 5))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .gamePreview(level: 5))
     }
 
     func testNextToken_defeat() {
@@ -72,7 +72,7 @@ final class LevelCompleteViewModelTests: XCTestCase {
     }
 
     private func createViewModel(level: Int = 1) {
-        viewModel = LevelCompleteViewModel(
+        viewModel = .init(
             level: level,
             worldBuilder: WorldBuilder.createMock(),
             localDataSource: localDataSource

@@ -2,11 +2,11 @@ import Madog
 import SceneKit
 import UIKit
 
-class LevelCompleteViewController: SceneViewController {
+class GameSummaryViewController: SceneViewController {
     private let navigationContext: Context
-    private let viewModel: LevelCompleteViewModel
+    private let viewModel: GameSummaryViewModel
 
-    init(navigationContext: Context, viewModel: LevelCompleteViewModel) {
+    init(navigationContext: Context, viewModel: GameSummaryViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
         super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)

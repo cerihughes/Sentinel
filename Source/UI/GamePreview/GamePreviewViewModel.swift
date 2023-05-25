@@ -1,6 +1,6 @@
 import SceneKit
 
-class LevelSummaryViewModel {
+class GamePreviewViewModel {
     let level: Int
     let terrain: WorldBuilder.Terrain
 

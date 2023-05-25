@@ -2,11 +2,11 @@ import Madog
 import SceneKit
 import UIKit
 
-class LevelSummaryViewController: SceneViewController {
+class GamePreviewViewController: SceneViewController {
     private let navigationContext: Context
-    private let viewModel: LevelSummaryViewModel
+    private let viewModel: GamePreviewViewModel
 
-    init(navigationContext: Context, viewModel: LevelSummaryViewModel) {
+    init(navigationContext: Context, viewModel: GamePreviewViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 

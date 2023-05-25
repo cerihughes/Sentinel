@@ -201,7 +201,7 @@ final class GameViewModelTests: XCTestCase {
         viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
 
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelComplete(level: 1))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .gameSummary(level: 1))
     }
 
     func testNextToken_defeat() {
