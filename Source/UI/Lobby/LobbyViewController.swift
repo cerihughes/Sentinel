@@ -57,6 +57,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
     // MARK: LobbyViewModelDelegate
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
-        navigationContext.show(.levelSummary(level: level))
+        navigationContext.show(.gamePreview(level: level))
     }
 }

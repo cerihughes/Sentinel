@@ -1,6 +1,6 @@
 import SceneKit
 
-class LevelCompleteViewModel {
+class GameSummaryViewModel {
     private let level: Int
     private let localDataSource: LocalDataSource
     let terrain: WorldBuilder.Terrain
@@ -37,7 +37,7 @@ class LevelCompleteViewModel {
         guard let levelScores = localDataSource.levelScores(for: level), levelScores.outcome == .victory else {
             return nil
         }
-        return .levelSummary(level: level + levelScores.nextLevelIncrement)
+        return .gamePreview(level: level + levelScores.nextLevelIncrement)
     }
 
     private func plantTree() {

@@ -1,14 +1,14 @@
 import Madog
 import UIKit
 
-class LevelCompleteViewControllerProvider: TypedViewControllerProvider {
+class GameSummaryViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
     override func createViewController(token: Navigation, context: Context) -> UIViewController? {
         guard
             let localDataSource,
-            case let .levelComplete(level) = token,
-            let viewModel = LevelCompleteViewModel(
+            case let .gameSummary(level) = token,
+            let viewModel = GameSummaryViewModel(
                 level: level,
                 worldBuilder: WorldBuilder.createDefault(level: level),
                 localDataSource: localDataSource
@@ -16,6 +16,6 @@ class LevelCompleteViewControllerProvider: TypedViewControllerProvider {
         else {
             return nil
         }
-        return LevelCompleteViewController(navigationContext: context, viewModel: viewModel)
+        return GameSummaryViewController(navigationContext: context, viewModel: viewModel)
     }
 }

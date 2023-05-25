@@ -49,7 +49,7 @@ class GameViewModel {
 
     func nextNavigationToken() -> Navigation? {
         if levelScore.outcome == .victory {
-            return .levelComplete(level: level)
+            return .gameSummary(level: level)
         }
         // TODO: Need a "game over" screen
         return nil

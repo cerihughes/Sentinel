@@ -3,9 +3,9 @@ import Foundation
 enum Navigation: Equatable {
     case intro
     case lobby
-    case levelSummary(level: Int)
+    case gamePreview(level: Int)
     case game(level: Int)
-    case levelComplete(level: Int)
+    case gameSummary(level: Int)
 
     #if DEBUG
     // Debug
