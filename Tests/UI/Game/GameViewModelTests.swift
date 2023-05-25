@@ -20,6 +20,8 @@ final class GameViewModelTests: XCTestCase {
 
     override func tearDownWithError() throws {
         viewModel = nil
+        audioManager = nil
+        localDataSource = nil
         try super.tearDownWithError()
     }
 
@@ -190,7 +192,7 @@ final class GameViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.nextNavigationToken())
     }
 
-    func testNextToken_victory_defaultEnergy() {
+    func testNextToken_victory() {
         let outcomeExpectation = expectation(description: "Level Finished")
         let delegate = MockGameViewModelDelegate()
         delegate.outcomeExpectation = outcomeExpectation
@@ -199,33 +201,7 @@ final class GameViewModelTests: XCTestCase {
         viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
 
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 3))
-    }
-
-    func testNextToken_victory_lowEnergy() {
-        let outcomeExpectation = expectation(description: "Level Finished")
-        let delegate = MockGameViewModelDelegate()
-        delegate.outcomeExpectation = outcomeExpectation
-
-        viewModel.delegate = delegate
-        viewModel.operations.synthoidEnergy.adjust(delta: -9)
-        viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
-
-        waitForExpectations(timeout: 1)
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 2))
-    }
-
-    func testNextToken_victory_highEnergy() {
-        let outcomeExpectation = expectation(description: "Level Finished")
-        let delegate = MockGameViewModelDelegate()
-        delegate.outcomeExpectation = outcomeExpectation
-
-        viewModel.delegate = delegate
-        viewModel.operations.synthoidEnergy.adjust(delta: 20)
-        viewModel.playerOperations(playerOperations, didPerform: .absorb(.sentinel))
-
-        waitForExpectations(timeout: 1)
-        XCTAssertEqual(viewModel.nextNavigationToken(), .levelSummary(level: 8))
+        XCTAssertEqual(viewModel.nextNavigationToken(), .levelComplete(level: 1))
     }
 
     func testNextToken_defeat() {

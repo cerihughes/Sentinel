@@ -49,8 +49,7 @@ class GameViewModel {
 
     func nextNavigationToken() -> Navigation? {
         if levelScore.outcome == .victory {
-            // TODO: Need a "success" screen
-            return .levelSummary(level: level + levelScore.nextLevelIncrement)
+            return .levelComplete(level: level)
         }
         // TODO: Need a "game over" screen
         return nil
@@ -215,10 +214,6 @@ private extension LevelScore {
     mutating func didTeleport(to gridPoint: GridPoint, height: Int) {
         teleports += 1
         heightReached(height)
-    }
-
-    var nextLevelIncrement: Int {
-        max(finalEnergy / 4, 1)
     }
 }
 

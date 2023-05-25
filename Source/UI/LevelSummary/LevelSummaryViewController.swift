@@ -5,21 +5,20 @@ import UIKit
 class LevelSummaryViewController: SceneViewController {
     private let navigationContext: Context
     private let viewModel: LevelSummaryViewModel
-    private let tapGestureRecogniser = UITapGestureRecognizer()
 
     init(navigationContext: Context, viewModel: LevelSummaryViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
         super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
-
-        tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         sceneView.allowsCameraControl = true
 
+        let tapGestureRecogniser = UITapGestureRecognizer()
+        tapGestureRecogniser.addTarget(self, action: #selector(tapGesture(sender:)))
         view.addGestureRecognizer(tapGestureRecogniser)
     }
 
@@ -27,8 +26,6 @@ class LevelSummaryViewController: SceneViewController {
         super.viewWillAppear(animated)
 
         viewModel.startAnimations()
-
-        tapGestureRecogniser.isEnabled = true
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -39,8 +36,7 @@ class LevelSummaryViewController: SceneViewController {
 
     // MARK: Tap
 
-    @objc
-    private func tapGesture(sender: UIGestureRecognizer) {
+    @objc private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
         navigationContext.showGame(level: viewModel.level)
     }
