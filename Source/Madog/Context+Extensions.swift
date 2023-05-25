@@ -7,10 +7,6 @@ extension Context {
         }
     }
 
-    func showLevelSummary(token: Navigation) {
-        change(to: .basic, tokenData: .single(token))
-    }
-
     func showGame(level: Int) {
         let token = Navigation.game(level: level)
         change(to: .basic, tokenData: .single(token))
