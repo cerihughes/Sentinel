@@ -1,7 +1,7 @@
 import SceneKit
 
 struct WorldBuilder {
-    struct Built {
+    struct Terrain {
         let nodeMap: NodeMap
         let nodeManipulator: NodeManipulator
         let nodeFactory: NodeFactory
@@ -9,6 +9,8 @@ struct WorldBuilder {
         let terrainNode: TerrainNode
         let terrainOperations: TerrainOperations
         let initialCameraNode: SCNNode
+    }
+    struct Operations {
         let synthoidEnergy: SynthoidEnergy
         let timeMachine: TimeMachine
         let playerOperations: PlayerOperations
@@ -19,7 +21,7 @@ struct WorldBuilder {
     let world: World
     let animatable: Bool
 
-    func build() -> Built {
+    func buildTerrain(initialCameraPosition: SCNVector3 = .initialCameraPosition) -> Terrain {
         let grid = terrainGenerator.generate()
         let nodeMap = NodeMap()
         let nodePositioning = grid.createNodePositioning()
@@ -29,7 +31,7 @@ struct WorldBuilder {
         world.buildWorld(in: scene, around: terrainNode)
 
         let initialCameraNode = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0).cameraNode
-        initialCameraNode.position = SCNVector3Make(0.0, 250, 275)
+        initialCameraNode.position = initialCameraPosition
         initialCameraNode.look(at: terrainNode.position)
 
         terrainNode.addChildNode(initialCameraNode)
@@ -40,8 +42,6 @@ struct WorldBuilder {
             animatable: animatable
         )
         let terrainOperations = TerrainOperations(grid: grid, nodeMap: nodeMap, nodeManipulator: nodeManipulator)
-        let synthoidEnergy = SynthoidEnergyMonitor()
-        let timeMachine = TimeMachine()
         return .init(
             nodeMap: nodeMap,
             nodeManipulator: nodeManipulator,
@@ -49,7 +49,20 @@ struct WorldBuilder {
             scene: scene,
             terrainNode: terrainNode,
             terrainOperations: terrainOperations,
-            initialCameraNode: initialCameraNode,
+            initialCameraNode: initialCameraNode
+        )
+    }
+}
+
+extension WorldBuilder.Terrain {
+    private var grid: Grid {
+        terrainOperations.grid
+    }
+
+    func createOperations() -> WorldBuilder.Operations {
+        let synthoidEnergy = SynthoidEnergyMonitor()
+        let timeMachine = TimeMachine()
+        return .init(
             synthoidEnergy: synthoidEnergy,
             timeMachine: timeMachine,
             playerOperations: .init(
@@ -72,4 +85,8 @@ extension WorldBuilder {
             animatable: true
         )
     }
+}
+
+extension SCNVector3 {
+    static let initialCameraPosition = SCNVector3(0, 250, 275)
 }

@@ -2,9 +2,9 @@ import XCTest
 @testable import Sentinel
 
 final class PlayerOperationsTests: XCTestCase {
-    private var built: WorldBuilder.Built!
+    private var terrain: WorldBuilder.Terrain!
+    private var operations: WorldBuilder.Operations!
     private var delegate: MockPlayerOperationsDelegate!
-    private var operations: PlayerOperations!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -16,146 +16,151 @@ final class PlayerOperationsTests: XCTestCase {
         grid.sentryPositions.append(.sentryPosition)
         print(grid.contentsDescription)
         let worldBuilder = WorldBuilder.createMock(grid: grid)
-        built = worldBuilder.build()
-        operations = built.playerOperations
+        terrain = worldBuilder.buildTerrain()
+        operations = terrain.createOperations()
 
         delegate = .init()
-        operations.delegate = delegate
+        playerOperations.delegate = delegate
     }
 
     override func tearDownWithError() throws {
+        delegate = nil
         operations = nil
-        built = nil
+        terrain = nil
         try super.tearDownWithError()
     }
 
+    private var playerOperations: PlayerOperations! {
+        operations.playerOperations
+    }
+
     private var synthoidEnergy: SynthoidEnergy! {
-        built.synthoidEnergy
+        operations.synthoidEnergy
     }
 
     func testNotEnteredScene() {
-        XCTAssertFalse(operations.hasEnteredScene())
+        XCTAssertFalse(playerOperations.hasEnteredScene())
     }
 
     func testEnterScene() {
         XCTAssertNil(delegate.lastCameraNode)
 
-        XCTAssertTrue(operations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
 
         XCTAssertNotNil(delegate.lastCameraNode)
         XCTAssertEqual(delegate.lastOperation, .enterScene(.startPosition))
     }
 
     func testMove() {
-        XCTAssertTrue(operations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
         let initialCamera = delegate.lastCameraNode
 
-        operations.move(to: .synthoidPosition)
+        playerOperations.move(to: .synthoidPosition)
 
         XCTAssertNotEqual(initialCamera, delegate.lastCameraNode)
         XCTAssertEqual(delegate.lastOperation, .teleport(.synthoidPosition))
     }
 
     func testMove_emptyPosition() {
-        XCTAssertTrue(operations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
 
         delegate.lastCameraNode = nil
         delegate.lastOperation = nil
-        operations.move(to: .emptyPosition)
+        playerOperations.move(to: .emptyPosition)
 
         XCTAssertNil(delegate.lastCameraNode)
         XCTAssertNil(delegate.lastOperation)
     }
 
     func testMove_invalidPosition() {
-        XCTAssertTrue(operations.enterScene())
+        XCTAssertTrue(playerOperations.enterScene())
 
         delegate.lastCameraNode = nil
         delegate.lastOperation = nil
-        operations.move(to: .invalidPosition)
+        playerOperations.move(to: .invalidPosition)
 
         XCTAssertNil(delegate.lastCameraNode)
         XCTAssertNil(delegate.lastOperation)
     }
 
     func testMove_notEnteredScene() {
-        operations.move(to: .synthoidPosition)
+        playerOperations.move(to: .synthoidPosition)
         XCTAssertNil(delegate.lastOperation)
     }
 
     func testBuild_invalidPosition() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.buildTree(at: .invalidPosition)
+        playerOperations.buildTree(at: .invalidPosition)
         XCTAssertEqual(synthoidEnergy.energy, 10)
         XCTAssertNil(delegate.lastOperation)
     }
 
     func testAbsorb_emptyPosition() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .emptyPosition)
+        playerOperations.absorbTopmostNode(at: .emptyPosition)
         XCTAssertEqual(synthoidEnergy.energy, 10)
         XCTAssertNil(delegate.lastOperation)
     }
 
     func testAbsorb_invalidPosition() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .invalidPosition)
+        playerOperations.absorbTopmostNode(at: .invalidPosition)
         XCTAssertEqual(synthoidEnergy.energy, 10)
         XCTAssertNil(delegate.lastOperation)
     }
 
     func testBuildTree() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.buildTree(at: .buildPosition)
+        playerOperations.buildTree(at: .buildPosition)
         XCTAssertEqual(synthoidEnergy.energy, 9)
         XCTAssertEqual(delegate.lastOperation, .build(.tree))
     }
 
     func testAbsorbTree() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .treePosition)
+        playerOperations.absorbTopmostNode(at: .treePosition)
         XCTAssertEqual(synthoidEnergy.energy, 11)
         XCTAssertEqual(delegate.lastOperation, .absorb(.tree))
     }
 
     func testBuildRock() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.buildRock(at: .buildPosition)
+        playerOperations.buildRock(at: .buildPosition)
         XCTAssertEqual(synthoidEnergy.energy, 8)
         XCTAssertEqual(delegate.lastOperation, .build(.rock))
     }
 
     func testAbsorbRock() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .rockPosition)
+        playerOperations.absorbTopmostNode(at: .rockPosition)
         XCTAssertEqual(synthoidEnergy.energy, 12)
         XCTAssertEqual(delegate.lastOperation, .absorb(.rock))
     }
 
     func testBuildSynthoid() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.buildSynthoid(at: .buildPosition)
+        playerOperations.buildSynthoid(at: .buildPosition)
         XCTAssertEqual(synthoidEnergy.energy, 7)
         XCTAssertEqual(delegate.lastOperation, .build(.synthoid))
     }
 
     func testAbsorbSynthoid() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .synthoidPosition)
+        playerOperations.absorbTopmostNode(at: .synthoidPosition)
         XCTAssertEqual(synthoidEnergy.energy, 13)
         XCTAssertEqual(delegate.lastOperation, .absorb(.synthoid))
     }
 
     func testAbsorbSentry() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .sentryPosition)
+        playerOperations.absorbTopmostNode(at: .sentryPosition)
         XCTAssertEqual(synthoidEnergy.energy, 13)
         XCTAssertEqual(delegate.lastOperation, .absorb(.sentry))
     }
 
     func testAbsorbSentinel() {
         XCTAssertEqual(synthoidEnergy.energy, 10)
-        operations.absorbTopmostNode(at: .sentinelPosition)
+        playerOperations.absorbTopmostNode(at: .sentinelPosition)
         XCTAssertEqual(synthoidEnergy.energy, 14)
         XCTAssertEqual(delegate.lastOperation, .absorb(.sentinel))
     }

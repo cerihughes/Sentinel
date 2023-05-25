@@ -2,11 +2,11 @@ import Madog
 import SceneKit
 import UIKit
 
-class IntroViewController: SceneViewController {
+class LevelCompleteViewController: SceneViewController {
     private let navigationContext: ForwardBackNavigationContext
-    private let viewModel: IntroViewModel
+    private let viewModel: LevelCompleteViewModel
 
-    init(navigationContext: ForwardBackNavigationContext, viewModel: IntroViewModel) {
+    init(navigationContext: ForwardBackNavigationContext, viewModel: LevelCompleteViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
         super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
@@ -14,15 +14,14 @@ class IntroViewController: SceneViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.startAudio()
-        viewModel.animate()
+        viewModel.animateCamera()
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
         sceneView.addGestureRecognizer(tapGestureRecognizer)
     }
 
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
-        viewModel.stopAudio()
-        navigationContext.showLobby()
+        guard let nextToken = viewModel.nextNavigationToken() else { return }
+        navigationContext.navigateForward(token: nextToken, animated: true)
     }
 }

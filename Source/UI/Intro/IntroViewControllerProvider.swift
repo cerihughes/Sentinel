@@ -8,8 +8,9 @@ class IntroViewControllerProvider: TypedViewControllerProvider {
         token: Navigation,
         navigationContext: ForwardBackNavigationContext
     ) -> UIViewController? {
-        guard let audioManager, token == .intro else { return nil }
-        let viewModel = IntroViewModel(audioManager: audioManager)
+        guard let audioManager, token == .intro, let viewModel = IntroViewModel(audioManager: audioManager) else {
+            return nil
+        }
         return IntroViewController(navigationContext: navigationContext, viewModel: viewModel)
     }
 }
