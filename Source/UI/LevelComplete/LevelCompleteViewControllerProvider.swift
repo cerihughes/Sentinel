@@ -4,10 +4,7 @@ import UIKit
 class LevelCompleteViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(
-        token: Navigation,
-        navigationContext: ForwardBackNavigationContext
-    ) -> UIViewController? {
+    override func createViewController(token: Navigation, context: Context) -> UIViewController? {
         guard
             let localDataSource,
             case let .levelComplete(level) = token,
@@ -19,6 +16,6 @@ class LevelCompleteViewControllerProvider: TypedViewControllerProvider {
         else {
             return nil
         }
-        return LevelCompleteViewController(navigationContext: navigationContext, viewModel: viewModel)
+        return LevelCompleteViewController(navigationContext: context, viewModel: viewModel)
     }
 }

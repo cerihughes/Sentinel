@@ -143,7 +143,7 @@ extension GameContainerViewController: GameViewModelDelegate {
         if let token = viewModel.nextNavigationToken() {
             navigationContext.change(to: .basic, tokenData: .single(token))
         } else {
-            navigationContext.showIntro()
+            navigationContext.show(.intro)
         }
     }
 }

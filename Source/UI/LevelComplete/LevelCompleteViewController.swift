@@ -3,10 +3,10 @@ import SceneKit
 import UIKit
 
 class LevelCompleteViewController: SceneViewController {
-    private let navigationContext: ForwardBackNavigationContext
+    private let navigationContext: Context
     private let viewModel: LevelCompleteViewModel
 
-    init(navigationContext: ForwardBackNavigationContext, viewModel: LevelCompleteViewModel) {
+    init(navigationContext: Context, viewModel: LevelCompleteViewModel) {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
         super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
@@ -22,6 +22,6 @@ class LevelCompleteViewController: SceneViewController {
 
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
         guard let nextToken = viewModel.nextNavigationToken() else { return }
-        navigationContext.navigateForward(token: nextToken, animated: true)
+        navigationContext.show(nextToken)
     }
 }
