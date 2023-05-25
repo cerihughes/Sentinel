@@ -35,7 +35,7 @@ class OpponentsOperations {
             timeInterval: .animationDuration * 2.0,
             function: absorbObjects(timeInterval:renderer:lastResult:)
         )
-        timeMachine.add(timeInterval: 5.0, function: rotation(timeInterval:renderer:lastResult:))
+        timeMachine.add(timeInterval: 8.0, function: rotation(timeInterval:renderer:lastResult:))
         timeMachine.add(timeInterval: 2.0, function: detection(timeInterval:renderer:lastResult:))
     }
 
