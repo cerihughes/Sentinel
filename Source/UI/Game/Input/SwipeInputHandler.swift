@@ -14,8 +14,15 @@ enum SwipeState {
     }
 }
 
+struct Pan {
+    let deltaX: Float
+    let deltaY: Float
+    let finished: Bool
+}
+
 protocol SwipeInputHandlerDelegate: AnyObject {
     func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler)
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didPan pan: Pan)
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint)
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode)
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode)
@@ -335,17 +342,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func processPan(by point: CGPoint, finished: Bool) {
-        let deltaX = Float(point.x)
-        let deltaY = Float(point.y)
-        let deltaXDegrees = deltaX / 10.0
-        let deltaXRadians = deltaXDegrees * Float.pi / 180.0
-        let deltaYDegrees = deltaY / 10.0
-        let deltaYRadians = deltaYDegrees * Float.pi / 180.0
-        nodeManipulator.rotateCurrentSynthoid(
-            rotationDelta: deltaXRadians,
-            elevationDelta: deltaYRadians,
-            persist: finished
-        )
+        delegate?.swipeInputHandler(self, didPan: point.createPan(finished: finished))
     }
 }
 
@@ -463,5 +460,11 @@ private extension FloorNode {
         set {
             set(instance: newValue, name: selectionNodeName)
         }
+    }
+}
+
+private extension CGPoint {
+    func createPan(finished: Bool) -> Pan {
+        .init(deltaX: .init(x), deltaY: .init(y), finished: finished)
     }
 }

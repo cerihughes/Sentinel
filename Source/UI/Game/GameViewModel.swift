@@ -136,6 +136,18 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         }
     }
 
+    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didPan pan: Pan) {
+        let deltaXDegrees = pan.deltaX / 10.0
+        let deltaXRadians = deltaXDegrees * Float.pi / 180.0
+        let deltaYDegrees = pan.deltaY / 10.0
+        let deltaYRadians = deltaYDegrees * Float.pi / 180.0
+        terrain.nodeManipulator.rotateCurrentSynthoid(
+            rotationDelta: deltaXRadians,
+            elevationDelta: deltaYRadians,
+            persist: pan.finished
+        )
+    }
+
     func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
         guard let floorNode = terrain.nodeMap.floorNode(at: terrain.terrainOperations.grid.currentPosition) else {
             return
