@@ -14,44 +14,25 @@ enum SwipeState {
     }
 }
 
-protocol SwipeInputHandlerDelegate: AnyObject {
-    func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode)
-    func swipeInputHandler(
-        _ swipeInputHandler: SwipeInputHandler,
-        didBuild item: BuildableItem,
-        atPoint point: GridPoint,
-        rotation: Float?,
-        onFloorNode floorNode: FloorNode
-    )
-    func swipeInputHandler(
-        _ swipeInputHandler: SwipeInputHandler,
-        didAbsorbAtPoint point: GridPoint,
-        onFloorNode floorNode: FloorNode
-    )
-}
-
-class SwipeInputHandler: GameInputHandler {
+class SwipeInputHandler: InputHandler {
     private let nodeMap: NodeMap
-    private let nodeManipulator: NodeManipulator
-    private let gestureRecognisers: [UIGestureRecognizer]
+    private let nodeFactory: NodeFactory
+    let gestureRecognisers: [UIGestureRecognizer]
 
     private let hitTestOptions: [SCNHitTestOption: Any]
 
     private var startTapPoint: CGPoint?
     private var floorNode: FloorNode?
 
-    weak var delegate: SwipeInputHandlerDelegate?
+    weak var delegate: InputHandlerDelegate?
 
-    init(nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
+    init(nodeMap: NodeMap, nodeFactory: NodeFactory, rootNode: SCNNode) {
         self.nodeMap = nodeMap
-        self.nodeManipulator = nodeManipulator
+        self.nodeFactory = nodeFactory
 
         hitTestOptions = [
             SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue,
-            SCNHitTestOption.rootNode: nodeManipulator.terrainNode
+            SCNHitTestOption.rootNode: rootNode
         ]
 
         let tapRecogniser = UITapGestureRecognizer()
@@ -74,26 +55,12 @@ class SwipeInputHandler: GameInputHandler {
         panRecogniser.isEnabled = false
     }
 
-    // MARK: InputHandler
-
-    func addGestureRecognisers(to view: UIView) {
-        for gestureRecogniser in gestureRecognisers {
-            view.addGestureRecognizer(gestureRecogniser)
-        }
-    }
-
-    func setGestureRecognisersEnabled(_ isEnabled: Bool) {
-        for gestureRecogniser in gestureRecognisers {
-            gestureRecogniser.isEnabled = isEnabled
-        }
-    }
-
     // MARK: Tap
 
     @objc
     func tapGesture(sender: UIGestureRecognizer) {
         guard sender.state != .cancelled else { return }
-        delegate?.swipeInputHandlerDidEnterScene(self)
+        delegate?.inputHandlerDidEnterScene(self)
     }
 
     // MARK: Double Tap
@@ -116,7 +83,7 @@ class SwipeInputHandler: GameInputHandler {
         else {
             return
         }
-        delegate?.swipeInputHandler(self, didMoveToPoint: point)
+        delegate?.inputHandler(self, didMoveToPoint: point)
     }
 
     // MARK: Long Press
@@ -148,7 +115,7 @@ class SwipeInputHandler: GameInputHandler {
                     processSwipe(floorNode: floorNode, swipe: swipe, finished: state == .ended)
                 } else {
                     // No swipe happened
-                    delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                    delegate?.inputHandler(self, didCancelFloorNode: floorNode)
                 }
             }
         }
@@ -191,7 +158,7 @@ class SwipeInputHandler: GameInputHandler {
                     processBuild(buildableItem, floorNode: floorNode, swipeState: swipeState)
                 } else if finished {
                     // No absorb happened
-                    delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                    delegate?.inputHandler(self, didCancelFloorNode: floorNode)
                 }
             }
         }
@@ -227,14 +194,14 @@ class SwipeInputHandler: GameInputHandler {
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
             if removeIt, let point = nodeMap.point(for: floorNode) {
-                delegate?.swipeInputHandler(self, didAbsorbAtPoint: point, onFloorNode: floorNode)
+                delegate?.inputHandler(self, didAbsorbAtPoint: point, onFloorNode: floorNode)
             } else {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
-                delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                delegate?.inputHandler(self, didCancelFloorNode: floorNode)
             }
         } else {
             // Nothing to absorb
-            delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+            delegate?.inputHandler(self, didCancelFloorNode: floorNode)
         }
     }
 
@@ -253,9 +220,9 @@ class SwipeInputHandler: GameInputHandler {
 
     private func processBuildStart(floorNode: FloorNode) {
         let height = buildHeight(for: floorNode)
-        let selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
+        let selectionNode = nodeFactory.createSelectionNode(height: height)
         floorNode.selectionNode = selectionNode
-        delegate?.swipeInputHandler(self, didSelectFloorNode: floorNode)
+        delegate?.inputHandler(self, didSelectFloorNode: floorNode)
     }
 
     private func processInProgressBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, scale: Float) {
@@ -264,7 +231,7 @@ class SwipeInputHandler: GameInputHandler {
             temporaryNode = node
         } else {
             let height = buildHeight(for: floorNode)
-            temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: height)
+            temporaryNode = nodeFactory.createTemporaryNode(height: height)
             floorNode.temporaryNode = temporaryNode
         }
 
@@ -290,7 +257,7 @@ class SwipeInputHandler: GameInputHandler {
             temporaryNode.scaleDownAndRemove(animated: !buildIt)
 
             if buildIt {
-                delegate?.swipeInputHandler(
+                delegate?.inputHandler(
                     self,
                     didBuild: buildableItem,
                     atPoint: point,
@@ -299,7 +266,7 @@ class SwipeInputHandler: GameInputHandler {
                 )
             } else {
                 // Decided not to build
-                delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                delegate?.inputHandler(self, didCancelFloorNode: floorNode)
             }
         }
     }
@@ -316,11 +283,11 @@ class SwipeInputHandler: GameInputHandler {
         let node: PlaceableSCNNode
         switch buildableItem {
         case .tree:
-            node = nodeManipulator.nodeFactory.createTreeNode(height: 0)
+            node = nodeFactory.createTreeNode(height: 0)
         case .rock:
-            node = nodeManipulator.nodeFactory.createRockNode(height: 0)
+            node = nodeFactory.createRockNode(height: 0)
         case .synthoid:
-            node = nodeManipulator.nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0)
+            node = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0)
         }
         node.position = SCNVector3Make(0, 0, 0)
         return node
@@ -335,17 +302,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func processPan(by point: CGPoint, finished: Bool) {
-        let deltaX = Float(point.x)
-        let deltaY = Float(point.y)
-        let deltaXDegrees = deltaX / 10.0
-        let deltaXRadians = deltaXDegrees * Float.pi / 180.0
-        let deltaYDegrees = deltaY / 10.0
-        let deltaYRadians = deltaYDegrees * Float.pi / 180.0
-        nodeManipulator.rotateCurrentSynthoid(
-            rotationDelta: deltaXRadians,
-            elevationDelta: deltaYRadians,
-            persist: finished
-        )
+        delegate?.inputHandler(self, didPan: point.createPan(finished: finished))
     }
 }
 
@@ -463,5 +420,11 @@ private extension FloorNode {
         set {
             set(instance: newValue, name: selectionNodeName)
         }
+    }
+}
+
+private extension CGPoint {
+    func createPan(finished: Bool) -> Pan {
+        .init(deltaX: .init(x), deltaY: .init(y), finished: finished)
     }
 }

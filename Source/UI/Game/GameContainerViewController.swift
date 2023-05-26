@@ -66,7 +66,7 @@ class GameContainerViewController: UIViewController {
             make.width.equalToSuperview().multipliedBy(0.2)
         }
 
-        viewModel.inputHandler.addGestureRecognisers(to: sceneView)
+        sceneView.addGestureRecognisers(from: viewModel.inputHandler)
     }
 
     override func viewWillLayoutSubviews() {
