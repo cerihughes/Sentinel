@@ -14,33 +14,7 @@ enum SwipeState {
     }
 }
 
-struct Pan {
-    let deltaX: Float
-    let deltaY: Float
-    let finished: Bool
-}
-
-protocol SwipeInputHandlerDelegate: AnyObject {
-    func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didPan pan: Pan)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode)
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode)
-    func swipeInputHandler(
-        _ swipeInputHandler: SwipeInputHandler,
-        didBuild item: BuildableItem,
-        atPoint point: GridPoint,
-        rotation: Float?,
-        onFloorNode floorNode: FloorNode
-    )
-    func swipeInputHandler(
-        _ swipeInputHandler: SwipeInputHandler,
-        didAbsorbAtPoint point: GridPoint,
-        onFloorNode floorNode: FloorNode
-    )
-}
-
-class SwipeInputHandler: GameInputHandler {
+class SwipeInputHandler: InputHandler {
     private let nodeMap: NodeMap
     private let nodeManipulator: NodeManipulator
     private let gestureRecognisers: [UIGestureRecognizer]
@@ -50,7 +24,7 @@ class SwipeInputHandler: GameInputHandler {
     private var startTapPoint: CGPoint?
     private var floorNode: FloorNode?
 
-    weak var delegate: SwipeInputHandlerDelegate?
+    weak var delegate: InputHandlerDelegate?
 
     init(nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
         self.nodeMap = nodeMap
@@ -100,7 +74,7 @@ class SwipeInputHandler: GameInputHandler {
     @objc
     func tapGesture(sender: UIGestureRecognizer) {
         guard sender.state != .cancelled else { return }
-        delegate?.swipeInputHandlerDidEnterScene(self)
+        delegate?.inputHandlerDidEnterScene(self)
     }
 
     // MARK: Double Tap
@@ -123,7 +97,7 @@ class SwipeInputHandler: GameInputHandler {
         else {
             return
         }
-        delegate?.swipeInputHandler(self, didMoveToPoint: point)
+        delegate?.inputHandler(self, didMoveToPoint: point)
     }
 
     // MARK: Long Press
@@ -155,7 +129,7 @@ class SwipeInputHandler: GameInputHandler {
                     processSwipe(floorNode: floorNode, swipe: swipe, finished: state == .ended)
                 } else {
                     // No swipe happened
-                    delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                    delegate?.inputHandler(self, didCancelFloorNode: floorNode)
                 }
             }
         }
@@ -198,7 +172,7 @@ class SwipeInputHandler: GameInputHandler {
                     processBuild(buildableItem, floorNode: floorNode, swipeState: swipeState)
                 } else if finished {
                     // No absorb happened
-                    delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                    delegate?.inputHandler(self, didCancelFloorNode: floorNode)
                 }
             }
         }
@@ -234,14 +208,14 @@ class SwipeInputHandler: GameInputHandler {
     private func processCompleteAbsorb(floorNode: FloorNode, removeIt: Bool) {
         if let topmostNode = floorNode.topmostNode {
             if removeIt, let point = nodeMap.point(for: floorNode) {
-                delegate?.swipeInputHandler(self, didAbsorbAtPoint: point, onFloorNode: floorNode)
+                delegate?.inputHandler(self, didAbsorbAtPoint: point, onFloorNode: floorNode)
             } else {
                 topmostNode.scaleAllDimensions(by: 1.0, animated: true)
-                delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                delegate?.inputHandler(self, didCancelFloorNode: floorNode)
             }
         } else {
             // Nothing to absorb
-            delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+            delegate?.inputHandler(self, didCancelFloorNode: floorNode)
         }
     }
 
@@ -262,7 +236,7 @@ class SwipeInputHandler: GameInputHandler {
         let height = buildHeight(for: floorNode)
         let selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
         floorNode.selectionNode = selectionNode
-        delegate?.swipeInputHandler(self, didSelectFloorNode: floorNode)
+        delegate?.inputHandler(self, didSelectFloorNode: floorNode)
     }
 
     private func processInProgressBuild(_ buildableItem: BuildableItem, floorNode: FloorNode, scale: Float) {
@@ -297,7 +271,7 @@ class SwipeInputHandler: GameInputHandler {
             temporaryNode.scaleDownAndRemove(animated: !buildIt)
 
             if buildIt {
-                delegate?.swipeInputHandler(
+                delegate?.inputHandler(
                     self,
                     didBuild: buildableItem,
                     atPoint: point,
@@ -306,7 +280,7 @@ class SwipeInputHandler: GameInputHandler {
                 )
             } else {
                 // Decided not to build
-                delegate?.swipeInputHandler(self, didCancelFloorNode: floorNode)
+                delegate?.inputHandler(self, didCancelFloorNode: floorNode)
             }
         }
     }
@@ -342,7 +316,7 @@ class SwipeInputHandler: GameInputHandler {
     }
 
     private func processPan(by point: CGPoint, finished: Bool) {
-        delegate?.swipeInputHandler(self, didPan: point.createPan(finished: finished))
+        delegate?.inputHandler(self, didPan: point.createPan(finished: finished))
     }
 }
 

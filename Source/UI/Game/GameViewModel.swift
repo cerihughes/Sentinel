@@ -125,18 +125,18 @@ extension GameViewModel: PlayerOperationsDelegate {
     }
 }
 
-extension GameViewModel: SwipeInputHandlerDelegate {
+extension GameViewModel: InputHandlerDelegate {
     private var playerOperations: PlayerOperations {
         operations.playerOperations
     }
 
-    func swipeInputHandlerDidEnterScene(_ swipeInputHandler: SwipeInputHandler) {
+    func inputHandlerDidEnterScene(_ inputHandler: InputHandler) {
         if !playerOperations.hasEnteredScene() {
             playerOperations.enterScene()
         }
     }
 
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didPan pan: Pan) {
+    func inputHandler(_ inputHandler: InputHandler, didPan pan: Pan) {
         let deltaXDegrees = pan.deltaX / 10.0
         let deltaXRadians = deltaXDegrees * Float.pi / 180.0
         let deltaYDegrees = pan.deltaY / 10.0
@@ -148,7 +148,7 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         )
     }
 
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didMoveToPoint point: GridPoint) {
+    func inputHandler(_ inputHandler: InputHandler, didMoveToPoint point: GridPoint) {
         guard let floorNode = terrain.nodeMap.floorNode(at: terrain.terrainOperations.grid.currentPosition) else {
             return
         }
@@ -156,16 +156,16 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         playerOperations.move(to: point)
     }
 
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didSelectFloorNode floorNode: FloorNode) {
+    func inputHandler(_ inputHandler: InputHandler, didSelectFloorNode floorNode: FloorNode) {
         floorNode.play(soundFile: .buildStart1)
     }
 
-    func swipeInputHandler(_ swipeInputHandler: SwipeInputHandler, didCancelFloorNode floorNode: FloorNode) {
+    func inputHandler(_ inputHandler: InputHandler, didCancelFloorNode floorNode: FloorNode) {
         floorNode.play(soundFile: .buildEnd1)
     }
 
-    func swipeInputHandler(
-        _ swipeInputHandler: SwipeInputHandler,
+    func inputHandler(
+        _ inputHandler: InputHandler,
         didBuild item: BuildableItem,
         atPoint point: GridPoint,
         rotation: Float?,
@@ -182,8 +182,8 @@ extension GameViewModel: SwipeInputHandlerDelegate {
         }
     }
 
-    func swipeInputHandler(
-        _ swipeInputHandler: SwipeInputHandler,
+    func inputHandler(
+        _ inputHandler: InputHandler,
         didAbsorbAtPoint point: GridPoint,
         onFloorNode floorNode: FloorNode
     ) {
