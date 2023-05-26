@@ -70,13 +70,13 @@ class LobbyCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return true
+        true
     }
 
     // MARK: Private
 
     private var peekOffset: CGFloat {
-        return collectionViewSize.width * peekOffsetPercentage
+        collectionViewSize.width * peekOffsetPercentage
     }
 
     private var spacing: CGFloat {

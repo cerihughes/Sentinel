@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 #if DEBUG
 extension UIApplicationDelegate {
     var isRunningUnitTests: Bool {
-        return UserDefaults.standard.bool(forKey: "isRunningUnitTests")
+        UserDefaults.standard.bool(forKey: "isRunningUnitTests")
     }
 }
 #endif

@@ -18,7 +18,7 @@ class LobbyViewModel: NSObject, UICollectionViewDataSource, UICollectionViewDele
     // MARK: UICollectionViewDataSource
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 100
+        100
     }
 
     func collectionView(

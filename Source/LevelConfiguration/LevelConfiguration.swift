@@ -33,7 +33,7 @@ struct DefaultLevelConfiguration: LevelConfiguration {
     private let maxLevel = 99
 
     private var progression: Float {
-        return Float(level) / Float(maxLevel)
+        Float(level) / Float(maxLevel)
     }
 
     var gridWidth: Int {

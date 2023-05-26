@@ -47,7 +47,7 @@ final class TimeMachineTests: XCTestCase, TimeMachineTest {
     func testAddingFunctionAfterStartDoesntReturnToken() {
         timeMachine.start()
         let token = timeMachine.add(timeInterval: 1.0) { _, _, _ in
-            return true
+            true
         }
         XCTAssertNil(token)
     }

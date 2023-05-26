@@ -10,7 +10,7 @@ private let options: [String: Any] = [SCNHitTestOption.searchMode.rawValue: SCNH
 
 extension ViewingNode {
     func visibleSynthoids(in renderer: SCNSceneRenderer) -> [SynthoidNode] {
-        return visibleNodes(in: renderer, type: SynthoidNode.self)
+        visibleNodes(in: renderer, type: SynthoidNode.self)
     }
 
     func visibleRocks(in renderer: SCNSceneRenderer) -> [RockNode] {

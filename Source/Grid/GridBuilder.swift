@@ -200,7 +200,7 @@ private extension Array where Element == GridPieceBuilder {
 }
 private extension GridPoint {
     func transform(deltaX: Int, deltaZ: Int) -> GridPoint {
-        return GridPoint(x: x + deltaX, z: z + deltaZ)
+        GridPoint(x: x + deltaX, z: z + deltaZ)
     }
 }
 

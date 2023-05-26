@@ -36,6 +36,6 @@ class EyeNode: SCNNode {
     }
 
     var cameraNode: SCNNode {
-        return childNode(withName: cameraNodeName, recursively: true)!
+        childNode(withName: cameraNodeName, recursively: true)!
     }
 }
