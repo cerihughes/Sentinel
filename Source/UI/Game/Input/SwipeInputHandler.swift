@@ -16,7 +16,7 @@ enum SwipeState {
 
 class SwipeInputHandler: InputHandler {
     private let nodeMap: NodeMap
-    private let nodeManipulator: NodeManipulator
+    private let nodeFactory: NodeFactory
     private let gestureRecognisers: [UIGestureRecognizer]
 
     private let hitTestOptions: [SCNHitTestOption: Any]
@@ -26,13 +26,13 @@ class SwipeInputHandler: InputHandler {
 
     weak var delegate: InputHandlerDelegate?
 
-    init(nodeMap: NodeMap, nodeManipulator: NodeManipulator) {
+    init(nodeMap: NodeMap, nodeFactory: NodeFactory, rootNode: SCNNode) {
         self.nodeMap = nodeMap
-        self.nodeManipulator = nodeManipulator
+        self.nodeFactory = nodeFactory
 
         hitTestOptions = [
             SCNHitTestOption.searchMode: SCNHitTestSearchMode.all.rawValue,
-            SCNHitTestOption.rootNode: nodeManipulator.terrainNode
+            SCNHitTestOption.rootNode: rootNode
         ]
 
         let tapRecogniser = UITapGestureRecognizer()
@@ -234,7 +234,7 @@ class SwipeInputHandler: InputHandler {
 
     private func processBuildStart(floorNode: FloorNode) {
         let height = buildHeight(for: floorNode)
-        let selectionNode = nodeManipulator.nodeFactory.createSelectionNode(height: height)
+        let selectionNode = nodeFactory.createSelectionNode(height: height)
         floorNode.selectionNode = selectionNode
         delegate?.inputHandler(self, didSelectFloorNode: floorNode)
     }
@@ -245,7 +245,7 @@ class SwipeInputHandler: InputHandler {
             temporaryNode = node
         } else {
             let height = buildHeight(for: floorNode)
-            temporaryNode = nodeManipulator.nodeFactory.createTemporaryNode(height: height)
+            temporaryNode = nodeFactory.createTemporaryNode(height: height)
             floorNode.temporaryNode = temporaryNode
         }
 
@@ -297,11 +297,11 @@ class SwipeInputHandler: InputHandler {
         let node: PlaceableSCNNode
         switch buildableItem {
         case .tree:
-            node = nodeManipulator.nodeFactory.createTreeNode(height: 0)
+            node = nodeFactory.createTreeNode(height: 0)
         case .rock:
-            node = nodeManipulator.nodeFactory.createRockNode(height: 0)
+            node = nodeFactory.createRockNode(height: 0)
         case .synthoid:
-            node = nodeManipulator.nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0)
+            node = nodeFactory.createSynthoidNode(height: 0, viewingAngle: 0.0)
         }
         node.position = SCNVector3Make(0, 0, 0)
         return node

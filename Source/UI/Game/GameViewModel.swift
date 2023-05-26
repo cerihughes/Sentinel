@@ -26,7 +26,7 @@ class GameViewModel {
         terrain = worldBuilder.buildTerrain()
         operations = terrain.createOperations()
         gameScore = localDataSource.localStorage.gameScore ?? .init()
-        let inputHandler = SwipeInputHandler(nodeMap: terrain.nodeMap, nodeManipulator: terrain.nodeManipulator)
+        let inputHandler = terrain.createInputHandler()
 
         operations.playerOperations.preAnimationBlock = {
             inputHandler.setGestureRecognisersEnabled(false)
@@ -189,6 +189,12 @@ extension GameViewModel: InputHandlerDelegate {
     ) {
         floorNode.play(soundFile: .buildStart2)
         playerOperations.absorbTopmostNode(at: point)
+    }
+}
+
+private extension WorldBuilder.Terrain {
+    func createInputHandler() -> SwipeInputHandler {
+        .init(nodeMap: nodeMap, nodeFactory: nodeFactory, rootNode: terrainNode)
     }
 }
 
