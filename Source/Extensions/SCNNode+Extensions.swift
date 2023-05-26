@@ -31,19 +31,19 @@ extension SCNNode {
     }
 
     func isInteractive() -> Bool {
-        return hasCategoryBit(bit: interactiveNodeBitMask)
+        hasCategoryBit(bit: interactiveNodeBitMask)
     }
 
     func isNonInteractiveTransparent() -> Bool {
-        return hasCategoryBit(bit: noninteractiveTransparentNodeBitMask)
+        hasCategoryBit(bit: noninteractiveTransparentNodeBitMask)
     }
 
     func isNonInteractiveBlocking() -> Bool {
-        return hasCategoryBit(bit: noninteractiveBlockingNodeBitMask)
+        hasCategoryBit(bit: noninteractiveBlockingNodeBitMask)
     }
 
     private func hasCategoryBit(bit: Int) -> Bool {
-        return categoryBitMask & bit != 0
+        categoryBitMask & bit != 0
     }
 }
 

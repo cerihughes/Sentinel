@@ -50,10 +50,10 @@ class TreeNode: SCNNode, PlaceableNode, DetectableNode {
     }
 
     var floorNode: FloorNode? {
-        return parent as? FloorNode
+        parent as? FloorNode
     }
 
     var detectionNodes: [SCNNode] {
-        return childNodes.compactMap { $0.geometry is SCNCone ? $0 : nil }
+        childNodes.compactMap { $0.geometry is SCNCone ? $0 : nil }
     }
 }

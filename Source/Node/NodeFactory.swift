@@ -35,7 +35,7 @@ class NodeFactory {
     }
 
     func createCameraNode() -> SCNNode {
-        return CameraNode(zFar: nil)
+        CameraNode(zFar: nil)
     }
 
     func createTerrainNode(grid: Grid, nodeMap: NodeMap) -> TerrainNode {
@@ -160,7 +160,7 @@ class NodeFactory {
 
     private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
         if grid.piece(at: grid.sentinelPosition) != nil,
-            let floorNode = nodeMap.floorNode(at: grid.sentinelPosition) {
+           let floorNode = nodeMap.floorNode(at: grid.sentinelPosition) {
             let initialAngle = min(grid.startPosition.angle(to: grid.sentinelPosition), .radiansInCircle)
             let rightAngle = initialAngle.closestRightAngle
             floorNode.sentinelNode = createSentinelNode(initialAngle: rightAngle)

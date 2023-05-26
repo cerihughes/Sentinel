@@ -449,7 +449,7 @@ private extension NodePositioning {
 private extension FloorNode {
     var temporaryNode: TemporaryNode? {
         get {
-            return get(name: temporaryNodeName) as? TemporaryNode
+            get(name: temporaryNodeName) as? TemporaryNode
         }
         set {
             set(instance: newValue, name: temporaryNodeName)

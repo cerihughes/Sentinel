@@ -35,15 +35,15 @@ class SynthoidNode: SCNNode, PlaceableNode, ViewingNode, DetectableNode {
     }
 
     var floorNode: FloorNode? {
-        return parent as? FloorNode
+        parent as? FloorNode
     }
 
     var cameraNode: SCNNode {
-        return childNode(withName: cameraNodeName, recursively: true)!
+        childNode(withName: cameraNodeName, recursively: true)!
     }
 
     var detectionNodes: [SCNNode] {
-        return [self]
+        [self]
     }
 
     func apply(rotationDelta: Float, elevationDelta: Float, persist: Bool) {

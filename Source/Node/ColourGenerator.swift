@@ -24,11 +24,11 @@ class ColourGenerator {
     }
 
     func nextFloorSaturation() -> CGFloat {
-        return nextValue(range: floorSaturationRange)
+        nextValue(range: floorSaturationRange)
     }
 
     func nextSlopeSaturation() -> CGFloat {
-        return nextValue(range: slopeSaturationRange)
+        nextValue(range: slopeSaturationRange)
     }
 
     private func nextValue(range: CountableRange<Int>) -> CGFloat {

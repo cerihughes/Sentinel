@@ -39,11 +39,11 @@ class OpponentNode: SCNNode, PlaceableNode, ViewingNode {
     }
 
     var floorNode: FloorNode? {
-        return parent as? FloorNode
+        parent as? FloorNode
     }
 
     var cameraNode: SCNNode {
-        return childNode(withName: cameraNodeName, recursively: true)!
+        childNode(withName: cameraNodeName, recursively: true)!
     }
 
     func rotate(by radians: Float) {

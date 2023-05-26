@@ -47,11 +47,11 @@ class RockNode: SCNNode, PlaceableNode, DetectableNode {
     }
 
     var floorNode: FloorNode? {
-        return parent as? FloorNode
+        parent as? FloorNode
     }
 
     var detectionNodes: [SCNNode] {
-        return [self]
+        [self]
     }
 
     private class RockSectionNode: SCNNode {

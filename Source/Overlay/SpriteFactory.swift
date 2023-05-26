@@ -7,23 +7,23 @@ class SpriteFactory {
     let textureAtlas = SKTextureAtlas(named: "Sprites.atlas")
 
     var treeSpriteNode: SKSpriteNode {
-        return createSpriteNode(named: "Tree")
+        createSpriteNode(named: "Tree")
     }
 
     var rockSpriteNode: SKSpriteNode {
-        return createSpriteNode(named: "Rock")
+        createSpriteNode(named: "Rock")
     }
 
     var synthoidSpriteNode: SKSpriteNode {
-        return createSpriteNode(named: "Synthoid")
+        createSpriteNode(named: "Synthoid")
     }
 
     var synthoid4SpriteNode: SKSpriteNode {
-        return createSpriteNode(named: "Synthoid_4")
+        createSpriteNode(named: "Synthoid_4")
     }
 
     var sentinel4SpriteNode: SKSpriteNode {
-        return createSpriteNode(named: "Sentinel_4")
+        createSpriteNode(named: "Sentinel_4")
     }
 
     private func createSpriteNode(named textureName: String) -> SKSpriteNode {
