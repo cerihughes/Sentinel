@@ -2,10 +2,7 @@ import SceneKit
 
 /**
  The game input handler allows experimentation with different input mechanisms. The implementation will be made up of
- a number of UIGestureRecognisers, and its job is to translate gestures into invocations on PlayerOperations.
-
- The "owning" view will be passed into the addGestureReconisers(view:) call, and these should be enabled / disabled on
- calls to setGestureRecognisersEnabled(_:)
+ a number of UIGestureRecognisers, and its job is to translate gestures into invocations on the InputHandlerDelegate.
  */
 
 struct Pan {
@@ -32,6 +29,17 @@ protocol InputHandlerDelegate: AnyObject {
 
 protocol InputHandler {
     var delegate: InputHandlerDelegate? { get set }
-    func addGestureRecognisers(to view: UIView)
-    func setGestureRecognisersEnabled(_ isEnabled: Bool)
+    var gestureRecognisers: [UIGestureRecognizer] { get }
+}
+
+extension InputHandler {
+    func setGestureRecognisersEnabled(_ isEnabled: Bool) {
+        gestureRecognisers.forEach { $0.isEnabled = isEnabled }
+    }
+}
+
+extension UIView {
+    func addGestureRecognisers(from inputHandler: InputHandler) {
+        inputHandler.gestureRecognisers.forEach { addGestureRecognizer($0) }
+    }
 }

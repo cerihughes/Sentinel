@@ -17,7 +17,7 @@ enum SwipeState {
 class SwipeInputHandler: InputHandler {
     private let nodeMap: NodeMap
     private let nodeFactory: NodeFactory
-    private let gestureRecognisers: [UIGestureRecognizer]
+    let gestureRecognisers: [UIGestureRecognizer]
 
     private let hitTestOptions: [SCNHitTestOption: Any]
 
@@ -53,20 +53,6 @@ class SwipeInputHandler: InputHandler {
 
         panRecogniser.addTarget(self, action: #selector(panGesture(sender:)))
         panRecogniser.isEnabled = false
-    }
-
-    // MARK: InputHandler
-
-    func addGestureRecognisers(to view: UIView) {
-        for gestureRecogniser in gestureRecognisers {
-            view.addGestureRecognizer(gestureRecogniser)
-        }
-    }
-
-    func setGestureRecognisersEnabled(_ isEnabled: Bool) {
-        for gestureRecogniser in gestureRecognisers {
-            gestureRecogniser.isEnabled = isEnabled
-        }
     }
 
     // MARK: Tap
