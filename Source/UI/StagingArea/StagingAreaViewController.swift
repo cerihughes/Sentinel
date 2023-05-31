@@ -7,7 +7,7 @@ class StagingAreaViewController: SceneViewController {
 
     init(viewModel: StagingAreaViewModel) {
         self.viewModel = viewModel
-        super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
+        super.init(scene: viewModel.scene, cameraNode: viewModel.cameraNode)
     }
 
     override func viewDidLoad() {
@@ -17,7 +17,7 @@ class StagingAreaViewController: SceneViewController {
 
         super.viewDidLoad()
 
-        sceneView.delegate = viewModel.operations.timeMachine
+        sceneView.delegate = viewModel.timeMachine
         sceneView.allowsCameraControl = true
 //        sceneView.debugOptions = [.renderAsWireframe, .showCameras]
         sceneView.showsStatistics = true
