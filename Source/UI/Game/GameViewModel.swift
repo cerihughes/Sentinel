@@ -8,16 +8,23 @@ protocol GameViewModelDelegate: AnyObject {
 
 class GameViewModel {
     private let level: Int
-    let terrain: WorldBuilder.Terrain
-    let operations: WorldBuilder.Operations
-    let inputHandler: SwipeInputHandler
+    private let terrain: WorldBuilder.Terrain
+    private let operations: WorldBuilder.Operations
     private let localDataSource: LocalDataSource
     private let audioManager: AudioManager
     private var gameScore: GameScore
+    private var cancellables: Set<AnyCancellable> = []
+
+    let inputHandler: SwipeInputHandler
     weak var delegate: GameViewModelDelegate?
     var levelScore = LevelScore()
 
-    private var cancellables: Set<AnyCancellable> = []
+    var scene: SCNScene { terrain.scene }
+    var cameraNode: SCNNode { terrain.initialCameraNode }
+    var synthoidEnergy: SynthoidEnergy { operations.synthoidEnergy }
+    var playerOperations: PlayerOperations { operations.playerOperations }
+    var opponentsOperations: OpponentsOperations { operations.opponentsOperations }
+    var timeMachine: TimeMachine { operations.timeMachine }
 
     init(level: Int, worldBuilder: WorldBuilder, localDataSource: LocalDataSource, audioManager: AudioManager) {
         self.level = level
@@ -39,7 +46,7 @@ class GameViewModel {
         self.inputHandler = inputHandler
         self.inputHandler.delegate = self
 
-        operations.synthoidEnergy.energyPublisher
+        synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
             .sink(receiveValue: energyUpdated(_:))
             .store(in: &cancellables)
@@ -62,7 +69,7 @@ class GameViewModel {
 
     private func endLevelWithOutcome(_ outcome: LevelScore.Outcome) {
         levelScore.outcome = outcome
-        levelScore.finalEnergy = operations.synthoidEnergy.energy
+        levelScore.finalEnergy = synthoidEnergy.energy
         gameScore.levelScores[level] = levelScore
         localDataSource.localStorage.gameScore = gameScore
 
@@ -82,7 +89,7 @@ extension GameViewModel: PlayerOperationsDelegate {
         switch operation {
         case .enterScene(let gridPoint):
             playerOperationsDidEnterScene(at: gridPoint)
-            operations.timeMachine.start()
+            timeMachine.start()
         case .build(let buildableItem):
             playerOperationsDidBuild(buildableItem)
         case .absorb(let absorbableItem):
@@ -126,10 +133,6 @@ extension GameViewModel: PlayerOperationsDelegate {
 }
 
 extension GameViewModel: InputHandlerDelegate {
-    private var playerOperations: PlayerOperations {
-        operations.playerOperations
-    }
-
     func inputHandlerDidEnterScene(_ inputHandler: InputHandler) {
         if !playerOperations.hasEnteredScene() {
             playerOperations.enterScene()

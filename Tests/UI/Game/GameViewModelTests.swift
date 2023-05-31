@@ -26,7 +26,7 @@ final class GameViewModelTests: XCTestCase {
     }
 
     func testInitiallyHasNoTeleportsAfterEnteringScene() {
-        XCTAssertTrue(viewModel.operations.playerOperations.enterScene())
+        XCTAssertTrue(viewModel.playerOperations.enterScene())
         XCTAssertEqual(viewModel.levelScore.teleports, 0)
     }
 
@@ -210,7 +210,7 @@ final class GameViewModelTests: XCTestCase {
         delegate.outcomeExpectation = outcomeExpectation
 
         viewModel.delegate = delegate
-        viewModel.operations.synthoidEnergy.adjust(delta: -100)
+        viewModel.synthoidEnergy.adjust(delta: -100)
 
         waitForExpectations(timeout: 1)
         XCTAssertEqual(delegate.lastOutcome, .defeat)
@@ -220,7 +220,7 @@ final class GameViewModelTests: XCTestCase {
 
 private extension GameViewModelTests {
     var playerOperations: PlayerOperations! {
-        viewModel.operations.playerOperations
+        viewModel.playerOperations
     }
 }
 
