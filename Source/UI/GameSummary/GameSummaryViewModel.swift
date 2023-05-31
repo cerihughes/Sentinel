@@ -3,12 +3,12 @@ import SceneKit
 class GameSummaryViewModel {
     private let level: Int
     private let localDataSource: LocalDataSource
-    let terrain: WorldBuilder.Terrain
+    private let terrain: WorldBuilder.Terrain
     private let operations: WorldBuilder.Operations
+    private var terrainOperations: TerrainOperations { terrain.terrainOperations }
 
-    private var terrainOperations: TerrainOperations {
-        terrain.terrainOperations
-    }
+    var scene: SCNScene { terrain.scene }
+    var cameraNode: SCNNode { terrain.initialCameraNode }
 
     init?(level: Int, worldBuilder: WorldBuilder, localDataSource: LocalDataSource) {
         guard
