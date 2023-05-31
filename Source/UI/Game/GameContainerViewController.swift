@@ -17,18 +17,16 @@ class GameContainerViewController: UIViewController {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
-        let scene = viewModel.terrain.scene
-        let cameraNode = viewModel.terrain.initialCameraNode
         mainViewController = GameMainViewController(
-            scene: scene,
-            cameraNode: cameraNode,
+            scene: viewModel.scene,
+            cameraNode: viewModel.cameraNode,
             overlay: overlay
         )
 
         super.init(nibName: nil, bundle: nil)
 
         viewModel.delegate = self
-        viewModel.operations.synthoidEnergy.energyPublisher
+        viewModel.synthoidEnergy.energyPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] energy in self?.overlay.updateEnergyUI(energy: energy) }
             .store(in: &cancellables)
@@ -46,8 +44,8 @@ class GameContainerViewController: UIViewController {
             return
         }
 
-        sceneView.delegate = viewModel.operations.timeMachine
-        viewModel.operations.opponentsOperations.delegate = self
+        sceneView.delegate = viewModel.timeMachine
+        viewModel.opponentsOperations.delegate = self
 
         addChild(mainViewController)
         view.addSubview(mainViewController.view)
@@ -93,16 +91,15 @@ extension GameContainerViewController: OpponentsOperationsDelegate {
     func opponentsOperationsDidAbsorb(_ opponentsOperations: OpponentsOperations) {}
 
     func opponentsOperationsDidDepleteEnergy(_ opponentsOperations: OpponentsOperations) -> Bool {
-        guard viewModel.operations.synthoidEnergy.energy > 0 else { return false }
-        viewModel.operations.synthoidEnergy.adjust(delta: -.treeEnergyValue)
+        guard viewModel.synthoidEnergy.energy > 0 else { return false }
+        viewModel.synthoidEnergy.adjust(delta: -.treeEnergyValue)
         return true
     }
 
     func opponentsOperations(_ opponentsOperations: OpponentsOperations, didDetectOpponent cameraNode: SCNNode) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            let scene = self.viewModel.terrain.scene
-            let opponentViewController = SceneViewController(scene: scene, cameraNode: cameraNode)
+            let opponentViewController = SceneViewController(scene: self.viewModel.scene, cameraNode: cameraNode)
             self.add(opponentViewController: opponentViewController)
 
             self.opponentViewContainer.setNeedsLayout()
@@ -139,7 +136,7 @@ extension GameContainerViewController: GameViewModelDelegate {
     }
 
     func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcode: LevelScore.Outcome) {
-        viewModel.operations.timeMachine.stop()
+        viewModel.timeMachine.stop()
         if let token = viewModel.nextNavigationToken() {
             navigationContext.change(to: .basic, tokenData: .single(token))
         } else {

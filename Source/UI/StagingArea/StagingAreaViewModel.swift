@@ -2,8 +2,12 @@
 import SceneKit
 
 class StagingAreaViewModel {
-    let terrain: WorldBuilder.Terrain
-    let operations: WorldBuilder.Operations
+    private let terrain: WorldBuilder.Terrain
+    private let operations: WorldBuilder.Operations
+
+    var scene: SCNScene { terrain.scene }
+    var cameraNode: SCNNode { terrain.initialCameraNode }
+    var timeMachine: TimeMachine { operations.timeMachine }
 
     init(level: Int = 4) {
         let worldBuilder = WorldBuilder.createDefault(level: level)

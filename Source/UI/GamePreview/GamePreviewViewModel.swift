@@ -2,7 +2,10 @@ import SceneKit
 
 class GamePreviewViewModel {
     let level: Int
-    let terrain: WorldBuilder.Terrain
+    private let terrain: WorldBuilder.Terrain
+
+    var scene: SCNScene { terrain.scene }
+    var cameraNode: SCNNode { terrain.initialCameraNode }
 
     init(level: Int, worldBuilder: WorldBuilder) {
         self.level = level

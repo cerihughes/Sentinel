@@ -3,9 +3,11 @@ import SceneKit
 class IntroViewModel {
     private let audioManager: AudioManager
     private let world = IntroWorld()
-    let terrain: WorldBuilder.Terrain
-
+    private let terrain: WorldBuilder.Terrain
     private var token: PlaybackToken?
+
+    var scene: SCNScene { terrain.scene }
+    var cameraNode: SCNNode { terrain.initialCameraNode }
 
     init?(audioManager: AudioManager) {
         guard let image = UIImage.create(text: "The Sentinel") else { return nil }

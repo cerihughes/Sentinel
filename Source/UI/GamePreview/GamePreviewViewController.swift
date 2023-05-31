@@ -10,7 +10,7 @@ class GamePreviewViewController: SceneViewController {
         self.navigationContext = navigationContext
         self.viewModel = viewModel
 
-        super.init(scene: viewModel.terrain.scene, cameraNode: viewModel.terrain.initialCameraNode)
+        super.init(scene: viewModel.scene, cameraNode: viewModel.cameraNode)
     }
 
     override func viewDidLoad() {
