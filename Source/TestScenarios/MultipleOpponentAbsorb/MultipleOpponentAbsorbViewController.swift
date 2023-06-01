@@ -8,7 +8,7 @@ class MultipleOpponentAbsorbViewController: SceneViewController {
 
     init(viewModel: MultipleOpponentAbsorbViewModel) {
         self.viewModel = viewModel
-        super.init(scene: viewModel.scene, cameraNode: viewModel.initialCameraNode)
+        super.init(scene: viewModel.scene, cameraNode: viewModel.cameraNode)
     }
 
     override func viewDidLoad() {
