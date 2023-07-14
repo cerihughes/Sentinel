@@ -10,6 +10,7 @@ class SpaceWorld: World {
         if let components = skyBox.componentImages() {
             scene.background.contents = components
         }
+        scene.rootNode.addSunLight()
     }
 
     private func createOrbitNode() -> SCNNode {
@@ -18,52 +19,35 @@ class SpaceWorld: World {
         orbitNode.rotation = SCNVector4Make(0.38, 0.42, 0.63, 0.0)
         let orbit = CABasicAnimation(keyPath: "rotation.w")
         orbit.byValue = Float.pi * -2.0
-        orbit.duration = 100.0
+        orbit.duration = 120.0
         orbit.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         orbit.repeatCount = Float.infinity
         orbitNode.addAnimation(orbit, forKey: "orbit")
-        orbitNode.addAmbientLights()
+        orbitNode.addAmbientLight()
         return orbitNode
     }
 }
 
 private extension SCNNode {
-    func addAmbientLights() {
-        let ambientLightNodes = createAmbientLightNodes(distance: 200.0)
-
-        for ambientLightNode in ambientLightNodes {
-            addChildNode(ambientLightNode)
-        }
+    func addSunLight() {
+        let lightNode = createLightNode(colourLevel: 1, type: .omni)
+        lightNode.position = SCNVector3Make(-1200, 1000, -1200)
+        addChildNode(lightNode)
     }
 
-    private func createAmbientLightNodes(distance: Float) -> [SCNNode] {
-        var ambientLightNodes: [SCNNode] = []
-        var ambientLightNode = createAmbientLightNode()
-        for x in -1 ... 1 {
-            for z in -1 ... 1 {
-                if abs(x + z) == 1 {
-                    continue
-                }
-
-                let xf = Float(x) * distance
-                let yf = distance
-                let zf = Float(z) * distance
-                ambientLightNode.position = SCNVector3Make(xf, yf, zf)
-                ambientLightNodes.append(ambientLightNode)
-
-                ambientLightNode = ambientLightNode.clone()
-            }
-        }
-        return ambientLightNodes
+    func addAmbientLight() {
+        let lightNode = createLightNode(colourLevel: 0.75, type: .omni)
+        lightNode.position = SCNVector3Make(0, 500, 0)
+        addChildNode(lightNode)
     }
 
-    func createAmbientLightNode() -> SCNNode {
-        let ambient = SCNLight()
-        ambient.type = .omni
-        ambient.color = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 0.75)
-        let ambientNode = SCNNode()
-        ambientNode.name = ambientLightNodeName
-        ambientNode.light = ambient
-        return ambientNode
+    func createLightNode(colourLevel: CGFloat, type: SCNLight.LightType) -> SCNNode {
+        let light = SCNLight()
+        light.type = type
+        light.color = UIColor(red: colourLevel, green: colourLevel, blue: colourLevel, alpha: colourLevel)
+        let node = SCNNode()
+        node.name = ambientLightNodeName
+        node.light = light
+        return node
     }
 }
