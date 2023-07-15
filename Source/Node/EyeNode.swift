@@ -21,13 +21,16 @@ class EyeNode: SCNNode {
 
         let camera = SCNCamera()
         camera.projectionDirection = .horizontal
-        camera.fieldOfView = 60.0
+        camera.zNear = 1
+        camera.zFar = 10000 // automaticallyAdjustsZRange doesn't seem to work...
+        camera.wantsDepthOfField = true
+        camera.wantsHDR = true
+        camera.motionBlurIntensity = 0.25
 
         let cameraNode = SCNNode()
         cameraNode.name = cameraNodeName
         cameraNode.camera = camera
         cameraNode.position = SCNVector3Make(0.0, 0.0, .floorSize / -10.0)
-        camera.automaticallyAdjustsZRange = true
 
         boxNode.addChildNode(cameraNode)
         addChildNode(boxNode)
