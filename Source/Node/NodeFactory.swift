@@ -62,6 +62,7 @@ class NodeFactory {
         }
 
         addWallNodes(to: terrainNode, grid: grid)
+        addBaseNodes(to: terrainNode, grid: grid)
         addSentinelNode(grid: grid, nodeMap: nodeMap)
         addSentryNodes(grid: grid, nodeMap: nodeMap)
         addSynthoidNodes(grid: grid, nodeMap: nodeMap)
@@ -156,6 +157,19 @@ class NodeFactory {
                 terrainNode.addChildNode(wallNode)
             }
         }
+    }
+
+    private func addBaseNodes(to terrainNode: SCNNode, grid: Grid) {
+        for x in 0 ..< grid.width {
+            for z in 0 ..< grid.depth {
+                addBaseNode(to: terrainNode, x: x, z: z)
+            }
+        }
+    }
+
+    private func addBaseNode(to terrainNode: SCNNode, x: Int, z: Int) {
+        let baseNode = createFloorNode(x: x, y: -2, z: z)
+        terrainNode.addChildNode(baseNode)
     }
 
     private func addSentinelNode(grid: Grid, nodeMap: NodeMap) {
