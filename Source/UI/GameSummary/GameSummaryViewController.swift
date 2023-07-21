@@ -3,7 +3,7 @@ import SceneKit
 import UIKit
 
 class GameSummaryViewController: SceneViewController {
-    private let context: AnyContext<Navigation>
+    private weak var context: AnyContext<Navigation>?
     private let viewModel: GameSummaryViewModel
 
     init(context: AnyContext<Navigation>, viewModel: GameSummaryViewModel) {
@@ -22,6 +22,6 @@ class GameSummaryViewController: SceneViewController {
 
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
         guard let nextToken = viewModel.nextNavigationToken() else { return }
-        context.show(nextToken)
+        context?.show(nextToken)
     }
 }

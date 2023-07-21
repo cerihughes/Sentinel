@@ -3,7 +3,7 @@ import SceneKit
 import UIKit
 
 class IntroViewController: SceneViewController {
-    private let context: AnyContext<Navigation>
+    private weak var context: AnyContext<Navigation>?
     private let viewModel: IntroViewModel
 
     init(context: AnyContext<Navigation>, viewModel: IntroViewModel) {
@@ -23,6 +23,6 @@ class IntroViewController: SceneViewController {
 
     @objc private func tapped(_ gestureRecognizer: UITapGestureRecognizer) {
         viewModel.stopAudio()
-        context.show(.lobby)
+        context?.show(.lobby)
     }
 }

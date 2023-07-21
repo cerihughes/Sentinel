@@ -3,7 +3,7 @@ import SceneKit
 import UIKit
 
 class GamePreviewViewController: SceneViewController {
-    private let context: AnyContext<Navigation>
+    private weak var context: AnyContext<Navigation>?
     private let viewModel: GamePreviewViewModel
 
     init(context: AnyContext<Navigation>, viewModel: GamePreviewViewModel) {
@@ -38,6 +38,6 @@ class GamePreviewViewController: SceneViewController {
 
     @objc private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
-        context.show(.game(level: viewModel.level))
+        context?.show(.game(level: viewModel.level))
     }
 }
