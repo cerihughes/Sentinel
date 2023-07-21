@@ -1,10 +1,11 @@
 import Madog
 
-class DefaultResolver: Resolver<Navigation> {
-    override func serviceProviderFunctions() -> [(ServiceProviderCreationContext) -> ServiceProvider] {
+class DefaultResolver: Resolver {
+    func serviceProviderFunctions() -> [(ServiceProviderCreationContext) -> ServiceProvider] {
         [DefaultServices.init(context:)]
     }
-    override func viewControllerProviderFunctions() -> [() -> ViewControllerProvider<Navigation>] {
+
+    func viewControllerProviderFunctions() -> [() -> AnyViewControllerProvider<Navigation>] {
         [
             IntroViewControllerProvider.init,
             LobbyViewControllerProvider.init,
@@ -14,7 +15,7 @@ class DefaultResolver: Resolver<Navigation> {
         ] + debugViewControllerProviderFunctions()
     }
 
-    private func debugViewControllerProviderFunctions() -> [() -> ViewControllerProvider<Navigation>] {
+    private func debugViewControllerProviderFunctions() -> [() -> AnyViewControllerProvider<Navigation>] {
 #if DEBUG
         [StagingAreaViewControllerProvider.init, MultipleOpponentAbsorbViewControllerProvider.init]
 #else

@@ -4,7 +4,7 @@ import UIKit
 class GameViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(token: Navigation, context: Context) -> UIViewController? {
+    override func createViewController(token: Navigation, context: AnyContext<Navigation>) -> UIViewController? {
         guard let localDataSource, let audioManager, case let .game(level) = token else { return nil }
 
         let viewModel = GameViewModel(
@@ -13,6 +13,6 @@ class GameViewControllerProvider: TypedViewControllerProvider {
             localDataSource: localDataSource,
             audioManager: audioManager
         )
-        return GameContainerViewController(navigationContext: context, viewModel: viewModel)
+        return GameContainerViewController(context: context, viewModel: viewModel)
     }
 }

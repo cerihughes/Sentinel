@@ -3,11 +3,11 @@ import SceneKit
 import UIKit
 
 class GamePreviewViewController: SceneViewController {
-    private let navigationContext: Context
+    private let context: AnyContext<Navigation>
     private let viewModel: GamePreviewViewModel
 
-    init(navigationContext: Context, viewModel: GamePreviewViewModel) {
-        self.navigationContext = navigationContext
+    init(context: AnyContext<Navigation>, viewModel: GamePreviewViewModel) {
+        self.context = context
         self.viewModel = viewModel
 
         super.init(scene: viewModel.scene, cameraNode: viewModel.cameraNode)
@@ -38,6 +38,6 @@ class GamePreviewViewController: SceneViewController {
 
     @objc private func tapGesture(sender: UIGestureRecognizer) {
         sender.isEnabled = false
-        navigationContext.show(.game(level: viewModel.level))
+        context.show(.game(level: viewModel.level))
     }
 }
