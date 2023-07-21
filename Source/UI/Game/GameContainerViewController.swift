@@ -5,7 +5,7 @@ import SpriteKit
 import UIKit
 
 class GameContainerViewController: UIViewController {
-    private let context: AnyContext<Navigation>
+    private weak var context: AnyContext<Navigation>?
     private let viewModel: GameViewModel
     private let overlay = OverlayScene()
     private let mainViewController: GameMainViewController
@@ -138,9 +138,9 @@ extension GameContainerViewController: GameViewModelDelegate {
     func gameViewModel(_ gameViewModel: GameViewModel, levelDidEndWith outcode: LevelScore.Outcome) {
         viewModel.timeMachine.stop()
         if let token = viewModel.nextNavigationToken() {
-            context.change(to: .basic(), tokenData: .single(token))
+            context?.change(to: .basic(), tokenData: .single(token))
         } else {
-            context.show(.intro)
+            context?.show(.intro)
         }
     }
 }
