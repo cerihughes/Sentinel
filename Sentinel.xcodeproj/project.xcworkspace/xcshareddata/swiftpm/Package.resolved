@@ -5,7 +5,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/cerihughes/Madog",
       "state" : {
-        "revision" : "00db01be5d1dc19f0c0d54116229d9701bb14219",
+        "revision" : "b6b5f81616ca7e86b09fbf9e947bd7d2677abc94",
         "version" : "7.0.0"
       }
     },
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SnapKit/SnapKit",
       "state" : {
-        "revision" : "d458564516e5676af9c70b4f4b2a9178294f1bc6",
-        "version" : "5.0.1"
+        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
+        "version" : "5.6.0"
       }
     }
   ],
