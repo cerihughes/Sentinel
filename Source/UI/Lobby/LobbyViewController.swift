@@ -4,12 +4,12 @@ import SnapKit
 import UIKit
 
 class LobbyViewController: UIViewController, LobbyViewModelDelegate {
-    private let navigationContext: Context
+    private let context: AnyContext<Navigation>
     private let lobbyViewModel: LobbyViewModel
     private let collectionViewLayout = LobbyCollectionViewLayout()
 
-    init(navigationContext: Context, lobbyViewModel: LobbyViewModel) {
-        self.navigationContext = navigationContext
+    init(context: AnyContext<Navigation>, lobbyViewModel: LobbyViewModel) {
+        self.context = context
         self.lobbyViewModel = lobbyViewModel
 
         super.init(nibName: nil, bundle: nil)
@@ -57,6 +57,6 @@ class LobbyViewController: UIViewController, LobbyViewModelDelegate {
     // MARK: LobbyViewModelDelegate
 
     func viewModel(_: LobbyViewModel, didSelect level: Int) {
-        navigationContext.show(.gamePreview(level: level))
+        context.show(.gamePreview(level: level))
     }
 }

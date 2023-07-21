@@ -4,7 +4,7 @@ import UIKit
 class GameSummaryViewControllerProvider: TypedViewControllerProvider {
     // MARK: TypedViewControllerProvider
 
-    override func createViewController(token: Navigation, context: Context) -> UIViewController? {
+    override func createViewController(token: Navigation, context: AnyContext<Navigation>) -> UIViewController? {
         guard
             let localDataSource,
             case let .gameSummary(level) = token,
@@ -16,6 +16,6 @@ class GameSummaryViewControllerProvider: TypedViewControllerProvider {
         else {
             return nil
         }
-        return GameSummaryViewController(navigationContext: context, viewModel: viewModel)
+        return GameSummaryViewController(context: context, viewModel: viewModel)
     }
 }

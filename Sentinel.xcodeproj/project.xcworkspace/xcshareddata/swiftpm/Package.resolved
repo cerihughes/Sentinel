@@ -5,17 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/cerihughes/Madog",
       "state" : {
-        "revision" : "2d09f81b4e26a8c2f08e2d076ad76ba7861676ba",
-        "version" : "6.0.0"
-      }
-    },
-    {
-      "identity" : "provident",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/cerihughes/provident.git",
-      "state" : {
-        "revision" : "a45ebca07b6c60b119b50eb2719a5ff44734a583",
-        "version" : "4.0.0"
+        "revision" : "00db01be5d1dc19f0c0d54116229d9701bb14219",
+        "version" : "7.0.0"
       }
     },
     {

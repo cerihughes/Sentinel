@@ -1,7 +1,7 @@
 import Madog
 
-extension Context {
+extension Context where T == Navigation {
     func show(_ token: Navigation) {
-        change(to: .basic, tokenData: .single(token))
+        change(to: .basic(), tokenData: .single(token))
     }
 }

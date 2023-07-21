@@ -20,7 +20,7 @@ options:
 packages:
   Madog:
     url: https://github.com/cerihughes/Madog
-    majorVersion: 6.0.0
+    majorVersion: 7.0.0
   SnapKit:
     url: https://github.com/SnapKit/SnapKit
     majorVersion: 5.0.0

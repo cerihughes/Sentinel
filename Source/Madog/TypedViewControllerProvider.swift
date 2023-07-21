@@ -1,14 +1,16 @@
 import Madog
 import UIKit
 
-class TypedViewControllerProvider: SingleViewControllerProvider<Navigation>, ServicesProvider {
+class TypedViewControllerProvider: ViewControllerProvider, ServicesProvider {
     var services: Services?
 
     // MARK: SingleViewControllerProvider
 
-    override final func configure(with serviceProviders: [String: ServiceProvider]) {
-        super.configure(with: serviceProviders)
-
+    final func configure(with serviceProviders: [String: ServiceProvider]) {
         services = serviceProviders[serviceProviderName] as? Services
+    }
+
+    func createViewController(token: Navigation, context: AnyContext<Navigation>) -> ViewController? {
+        nil
     }
 }

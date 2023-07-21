@@ -1,5 +1,4 @@
 import Foundation
-import Provident
 import Madog
 
 let serviceProviderName = "serviceProviderName"
@@ -12,15 +11,13 @@ protocol Services {
 class DefaultServices: ServiceProvider, Services {
     let localDataSource: LocalDataSource
     let audioManager: AudioManager
+    let name = serviceProviderName
 
     // MARK: ServiceProvider
-    override init(context: ServiceProviderCreationContext) {
+    required init(context: ServiceProviderCreationContext) {
         let localStorage = DefaultLocalStorage(persistentDataStore: UserDefaults.standard)
         localDataSource = DefaultLocalDataSource(localStorage: localStorage)
         audioManager = DefaultAudioManager()
-
-        super.init(context: context)
-        name = serviceProviderName
     }
 }
 
