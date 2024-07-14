@@ -32,7 +32,7 @@ class LocalStorageTests: XCTestCase {
     }
 
     func testWithGarbageData() throws {
-        let garbageData = try XCTUnwrap("This is not valid JSON".data(using: .utf8))
+        let garbageData = Data("This is not valid JSON".utf8)
         persistentDataStore.set(data: garbageData, forKey: DefaultLocalStorage.gameScoreDataKey)
         XCTAssertNil(localStorage.gameScore)
     }
