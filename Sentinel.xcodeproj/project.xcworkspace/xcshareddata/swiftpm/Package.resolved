@@ -1,5 +1,4 @@
 {
-  "originHash" : "c4e709c1b68b6bbfab4fc76a4de3cd3de3226ce7ac47f698c0f5240dec69334e",
   "pins" : [
     {
       "identity" : "madog",
@@ -20,5 +19,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }
