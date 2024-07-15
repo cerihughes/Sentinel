@@ -4,20 +4,27 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-12
+    strategy:
+      matrix:
+        xcode: [15.4]
+        include:
+          - ios: 17.5
+            xcode: 15.4
+          - ipad: "iPad (10th generation)"
+            xcode: 15.4
+
+    runs-on: macos-14
 
     steps:
       # Xcode select
-      - run: sudo xcode-select -switch /Applications/Xcode_14.2.app
+      - run: sudo xcode-select -switch /Applications/Xcode_${{ matrix.xcode }}.app
 
       # Caching
       - name: SPM Cache
         uses: actions/cache@v2
         with:
           path: SPM
-          key: ${{ runner.os }}-spm-xcode14_2-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-xcode14_2-
+          key: ${{ runner.os }}-spm-xcode${{ matrix.xcode }}-${{ hashFiles('**/Package.resolved') }}
 
       # Install dependencies
       - run: brew install xcodegen || true
@@ -32,7 +39,7 @@ jobs:
       - run: set -o pipefail
       - run: mkdir build
       - run: xcodegen
-      - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -resultBundlePath coverage.xcresult -destination "OS=16.2,name=iPad (10th generation)" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES VALID_ARCHS=x86_64
+      - run: xcodebuild clean test -project Sentinel.xcodeproj -scheme Sentinel -clonedSourcePackagesDirPath SPM -resultBundlePath coverage.xcresult -destination "OS=${{ matrix.ios }},name=${{ matrix.ipad }}" -sdk iphonesimulator CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES
       - name: Codecov
         uses: codecov/codecov-action@v3.1.0
         with:

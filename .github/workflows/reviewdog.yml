@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   reviewdog:
     name: reviewdog
-    runs-on: macos-12
+    runs-on: macos-14
     steps:
       - run: brew install reviewdog/tap/reviewdog || true
       - run: brew outdated reviewdog/tap/reviewdog || brew upgrade reviewdog/tap/reviewdog
